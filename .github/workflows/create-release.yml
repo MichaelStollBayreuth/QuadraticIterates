@@ -1,24 +1,43 @@
 name: Create Release
 
+# Tagging is deliberate, not automatic. A Mathlib bump is finished only after the
+# simplification pass (see the "Update / bump Mathlib" procedure), so the release tag must point
+# at the LAST commit of the bump — not at the commit that happened to change `lean-toolchain`,
+# which is where an `on: push` trigger would inevitably put it. Run this workflow by hand
+# (`gh workflow run create-release.yml`, or the Actions tab) once that work is pushed.
 on:
-  push:
-    branches:
-      - 'main'
-      - 'master'
-    paths:
-      - 'lean-toolchain'
+  workflow_dispatch:
 
 jobs:
   lean-release-tag:
-    name: Add Lean release tag
+    name: Tag the current head with the Lean version
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-    - name: lean-release-tag action
-      uses: leanprover-community/lean-release-tag@9ca7ed09e240259871327bfc3a3a8d8c4bcb41aa # 2025-05-22
-      with:
-        before: ${{ github.event.before }}
-        after: ${{ github.event.after }}
-        do-release: true
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout project
+        uses: actions/checkout@v7
+
+      - name: Tag the head and create the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          toolchain="$(cat lean-toolchain)"
+          if [[ "$toolchain" =~ ^leanprover/lean4:(.*)$ ]]; then
+            version="${BASH_REMATCH[1]}"
+          else
+            echo "ERROR: not on a leanprover/lean4 toolchain: $toolchain" >&2
+            exit 1
+          fi
+          if git ls-remote --tags --exit-code origin "$version" >/dev/null; then
+            echo "ERROR: tag $version already exists. To move it, delete the tag (and its" >&2
+            echo "release) first, or move it by hand with 'git tag -f' + 'git push --force'." >&2
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$version" -m "Release $version" HEAD
+          git push origin "$version"
+          gh release create "$version" --title "$version" \
+            --notes "Automated release for Lean version $version"
