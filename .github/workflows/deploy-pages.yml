@@ -65,11 +65,15 @@ jobs:
           python3 -m venv ~/blueprint-venv
           ~/blueprint-venv/bin/pip install --upgrade pip
           ~/blueprint-venv/bin/pip install leanblueprint
+          # `leanblueprint web` shells out to `plastex`, so the venv must be on PATH for the
+          # later steps -- invoking `~/blueprint-venv/bin/leanblueprint` by absolute path leaves
+          # the subprocess unable to find it.
+          echo "$HOME/blueprint-venv/bin" >> "$GITHUB_PATH"
 
       - name: Build the blueprint
         run: |
-          ~/blueprint-venv/bin/leanblueprint pdf
-          ~/blueprint-venv/bin/leanblueprint web
+          leanblueprint pdf
+          leanblueprint web
 
       # `leanblueprint web` writes blueprint/lean_decls, so this has to come after it.
       - name: Check the declarations referenced by the blueprint
