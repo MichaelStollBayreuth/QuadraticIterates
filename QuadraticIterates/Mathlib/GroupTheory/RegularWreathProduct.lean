@@ -174,7 +174,8 @@ theorem wreath_max_elem_ab (n : ℕ) :
     Nat.card (IteratedWreathProduct (Multiplicative (ZMod 2)) n →* Multiplicative (ZMod 2))
       = 2 ^ n := by
   induction n with
-  | zero => simp [IteratedWreathProduct_zero]
+  -- `IteratedWreathProduct _ 0` is `PUnit` by `rfl`; spelled out so instance search fires.
+  | zero => exact Nat.card_unique (α := PUnit →* Multiplicative (ZMod 2))
   | succ n ih =>
       refine (RegularWreathProduct.card_hom (IteratedWreathProduct (Multiplicative (ZMod 2)) n)
         (Multiplicative (ZMod 2)) (Multiplicative (ZMod 2))).trans ?_

@@ -382,7 +382,7 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
   have hm1' : m ≠ 1 := by
     rintro rfl
     rw [gammaSeq_one] at hpm
-    exact hpg ((hp.dvd_mul.mp hpm).resolve_left fun h ↦ hp.not_unit (isUnit_of_dvd_unit h hεu))
+    exact hpg ((hp.dvd_mul.mp hpm).resolve_left fun h ↦ hp.not_isUnit (isUnit_of_dvd_unit h hεu))
   have hm2 : 2 ≤ m := by lia
   set E := factorization (gammaSeq g ε m) p with hE
   have hE1 := (one_le_factorization_iff_dvd hp hpn (hne m hm1)).mpr hpm
