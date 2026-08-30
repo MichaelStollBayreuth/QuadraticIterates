@@ -51,13 +51,17 @@ jobs:
         run: ~/.elan/bin/lake build QuadraticIterates
 
       # The TeX package list is the one the blueprint actually loads; extend it when the
-      # blueprint starts using further packages.
+      # blueprint starts using further packages. `texlive-fonts-recommended` is not there for a
+      # `\usepackage`: hyperref's xetex driver sets `\font\XeTeXLink@font=pzdr`, so the build
+      # dies on a missing ZapfDingbats metric (`pzdr.tfm`) without it. A full local TeX Live
+      # hides that, so this list can only be validated by a CI run.
       - name: Install the blueprint dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             fonts-lmodern ghostscript graphviz latexmk libgraphviz-dev python3-venv \
-            texlive-base texlive-latex-base texlive-latex-recommended texlive-xetex
+            texlive-base texlive-fonts-recommended texlive-latex-base \
+            texlive-latex-recommended texlive-xetex
           python3 -m venv ~/blueprint-venv
           ~/blueprint-venv/bin/pip install --upgrade pip
           ~/blueprint-venv/bin/pip install leanblueprint
