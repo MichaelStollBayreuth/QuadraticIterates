@@ -9,7 +9,7 @@ relaxedAutoImplicit = false
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4.git"
-rev = "v4.31.0"
+rev = "v4.32.2"
 
 # Only used by `lake build QuadraticIterates:docs`, which generates the API documentation deployed
 # alongside the blueprint (see .github/workflows/deploy-pages.yml). A plain `lake build` does not
@@ -17,7 +17,7 @@ rev = "v4.31.0"
 [[require]]
 name = "doc-gen4"
 git = "https://github.com/leanprover/doc-gen4.git"
-rev = "v4.31.0"
+rev = "v4.32.2"
 
 [[lean_lib]]
 name = "QuadraticIterates"

@@ -138,8 +138,8 @@ theorem even_reducible_factorization {p : ℚ[X]} (hmonic : p.Monic)
     rw [← multiset_prod_comp, hgdef]
   have hNmapτ : Associated (N.map τ).prod (g.comp (-X)) := by
     have heq : (N.map τ).prod = normalize ((N.map (fun q ↦ q.comp (-X))).prod) := by
-      simpa [Multiset.map_map, hτdef] using
-        (map_multiset_prod (normalize (α := ℚ[X])) (N.map (fun q ↦ q.comp (-X)))).symm
+      simpa [Multiset.map_map, hτdef, coe_normalizeHom] using
+        (map_multiset_prod (normalizeHom (α := ℚ[X])) (N.map (fun q ↦ q.comp (-X)))).symm
     rw [heq, hNcompprod]
     exact normalize_associated _
   have hassoc_p : Associated p (g * g.comp (-X)) := by
