@@ -1,3 +1,8 @@
+# A project page is served under /<repo>, and the `github-pages` gem sets no `baseurl` of its
+# own, so `{{ site.baseurl }}` in index.md needs these two set explicitly.
+url: https://michaelstollbayreuth.github.io
+baseurl: /QuadraticIterates
+
 title: QuadraticIterates
 description: >-
   A Lean 4 formalization of M. Stoll, Galois groups over ℚ of some iterated polynomials,

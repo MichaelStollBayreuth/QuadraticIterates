@@ -1,15 +1,15 @@
 name: Build and Deploy Pages
 
-# GitHub Pages cannot be enabled while this repository is private (not supported on the
-# free plan), so this workflow only runs when triggered manually. If the repository is
-# made public, enable Pages (Settings > Pages > Source: GitHub Actions) and restore the
-# push trigger:
-#   push:
-#     branches:
-#       - main
-#       - master
+# Deploys to <https://michaelstollbayreuth.github.io/QuadraticIterates/>. There is deliberately
+# no `paths` filter: the site is built from the Lean sources, the blueprint and `website/`
+# together, so almost any change to the repository can stale it. The run is long — the API
+# documentation covers all of Mathlib, see the note on that step below — which the
+# `github-pages` concurrency group below keeps from piling up.
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
 
 concurrency:
   group: github-pages

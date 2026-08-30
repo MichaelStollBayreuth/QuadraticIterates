@@ -73,8 +73,9 @@ project imports, that is, all of Mathlib, so the first run takes a long time and
 gigabytes.
 
 The [Pages workflow](.github/workflows/deploy-pages.yml) builds the blueprint and the
-documentation and publishes them alongside the project website, under `/blueprint` and `/docs`.
-It has to be triggered manually while the repository is private.
+documentation and publishes them alongside the project website, under `/blueprint` and `/docs`,
+at <https://michaelstollbayreuth.github.io/QuadraticIterates/>. It runs on every push to `main`,
+and can also be triggered by hand.
 
 ## Building
 
