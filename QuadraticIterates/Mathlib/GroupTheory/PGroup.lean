@@ -77,11 +77,9 @@ private theorem exists_ne_zero_orbit_const_mem {G : Type*} [Group G] [Finite G] 
   have hcomm : SMulCommClass Gᵈᵐᵃ (ZMod 2) ↥V :=
     ⟨fun g r v ↦ by ext i; simp [hsmulV_coe, smul_comm]⟩
   have hntV : Nontrivial ↥V := Submodule.nontrivial_iff_ne_bot.mpr hVne
-  have : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  have hfinGdma : Finite Gᵈᵐᵃ := Finite.of_equiv G DomMulAct.mk
   have hGdma : IsPGroup 2 Gᵈᵐᵃ := by
-    obtain ⟨k, hk⟩ := (IsPGroup.iff_card).mp hG
-    exact IsPGroup.iff_card.mpr ⟨k, by rw [Nat.card_congr DomMulAct.mk.symm]; exact hk⟩
+    obtain ⟨k, hk⟩ := hG.exists_card_dvd_pow
+    exact .of_card_dvd_pow (by rwa [Nat.card_congr DomMulAct.mk.symm])
   obtain ⟨w, hwne, hwfix⟩ := fixed_points_nontrivial (G := Gᵈᵐᵃ) hGdma (M := ↥V)
   exact ⟨(w : ι → ZMod 2), w.2, fun h0 ↦ hwne (Subtype.ext h0),
     fun g i ↦ congrFun (congrArg (fun x : ↥V ↦ (x : ι → ZMod 2)) (hwfix (DomMulAct.mk g))) i⟩

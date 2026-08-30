@@ -304,10 +304,7 @@ theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
   set F := fℚ[a, n]
   have : Fact (F.map (algebraMap ℚ (AlgebraicClosure ℚ))).Splits := ⟨IsAlgClosed.splits _⟩
   have : IsAlgClosure ℚ (AlgebraicClosure ℚ) := AlgebraicClosure.instIsAlgClosure ℚ
-  rw [IsPGroup.iff_orderOf]
-  intro σ
-  rw [exists_orderOf_eq_prime_pow_iff]
-  refine ⟨n, ?_⟩
+  refine isPGroup_iff_pow_pow_eq_one.mpr fun σ ↦ ⟨n, ?_⟩
   obtain ⟨ϕ, rfl⟩ := Gal.restrict_surjective F (AlgebraicClosure ℚ) σ
   apply Gal.galActionHom_injective F (AlgebraicClosure ℚ)
   rw [map_pow, map_one, ← map_pow, ← map_pow]
