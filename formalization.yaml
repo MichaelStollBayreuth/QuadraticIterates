@@ -1,0 +1,172 @@
+# formalization.yaml (v0.3): repo-root metadata for formalization projects.
+# See https://github.com/mathlib-initiative/formalization.yaml
+
+version: "v0.3"
+
+# project - the formalization itself (not the source).
+project:
+  name: "QuadraticIterates: Galois groups over ℚ of some iterated polynomials"
+  authors: ["Michael Stoll"]
+  license: "Apache-2.0"
+
+# sources - what was formalized.
+sources:
+  - title: "Galois groups over ℚ of some iterated polynomials"
+    authors: ["Michael Stoll"]
+    id: "10.1007/BF01197321"   # Arch. Math. 59 (1992), 239-244
+    type: "journal article"
+    license: "© 1992 Birkhäuser Verlag, Basel"
+    author_contacted: "yes"    # the source author is the formalization author
+    prior_work: ""
+
+# project status
+status:
+  scope: >
+    Complete formalization of the paper: the criterion for the Galois group Ω_n of the n-th
+    iterate of X² + a to be the full iterated wreath power [C₂]ⁿ (Theorem of Section 1, both
+    parts, including all supporting lemmas 1.0-1.6, 2.1, 2.2 and Odoni's embedding theorem),
+    and the main result of Section 3. Supporting theory (multiquadratic extensions, iterated
+    wreath products, Möbius sums, p-adic valuations) is developed in Mathlib generality under
+    QuadraticIterates/Mathlib/ as upstreaming candidates.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+  - declaration: "QuadraticIterates.section1_equiv"
+    file: "QuadraticIterates/ArchMath1992/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.section1_squarefree"
+    file: "QuadraticIterates/ArchMath1992/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.section3_main"
+    file: "QuadraticIterates/ArchMath1992/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/section3_main.json"
+    literature_dependencies: []
+
+# how it was produced.
+automation:
+  methods:
+    - method: "autonomous"
+      models: []               # TODO: system/models used for the original AI-generated version
+      framework: "Logos Research (https://www.logosresearch.ai/)"
+      tool_setup: ""
+      cost:
+        wall_time: "~2 days"
+        spend_usd: "free trial access"
+        hardware: ""
+      prompting_notes: >
+        Initial autonomous formalization of the paper; the resulting code compiled but did not
+        meet Mathlib quality standards. It was fully replaced (see next entry).
+    - method: "agent"
+      models: ["claude-opus-4.8", "claude-fable-5", "claude-opus-5"]
+      framework: "Claude Code"
+      tool_setup: >
+        Interactive agent sessions directed by the author, with project-specific style and
+        design conventions (CLAUDE.md/MATHLIB.md) enforced. The AI-generated original was
+        reduced to a statement skeleton (all proofs replaced by `sorry`, names aligned with
+        Mathlib conventions); all proofs were then re-proved from scratch, followed by
+        multi-round review/refactor passes (parallel audit sub-agents, per-round improvement).
+      cost:
+        wall_time: "~6 days of interactive sessions over three weeks (2026-07-12 to 2026-08-03)"
+        spend_usd: "Claude Max 20x subscription"
+        hardware: "API-only"
+      prompting_notes: >
+        Paper-counterpart statements were frozen; the agent was free to restructure all
+        auxiliary definitions, lemmas and proofs. Review rounds followed a fixed lens order
+        (structure, extraction of general content, deduplication, docstrings, style,
+        ergonomics).
+  spend_usd: "subscription-based usage (no metered API spend)"
+  notes: >
+    Two-phase process: a discarded fully autonomous first version, then an author-directed
+    agent rebuild against a frozen statement skeleton, with continuous human review.
+
+# fidelity
+fidelity:
+  divergences: >
+    Lemma 1.6 (`degree_criterion`) is proved from irreducibility of f_n, which is weaker than
+    the paper's maximality hypothesis [K_n : ℚ] = 2^(2^n - 1). The sequences c_n, γ_n, β_n,
+    b_n are total functions with junk values at index 0; b_n and β_n are defined as Möbius
+    products over divisor antidiagonals in ℚ, with integrality of b_n proved as Lemma 1.1 b).
+    Corollary 1.3 and the degree criterion are extended to n = 0. Supporting material is
+    stated in natural Mathlib generality rather than in the paper's ad-hoc setting.
+
+# review status
+review:
+  status: ""                   # TODO: suggest "author-verified" (author = source author)
+  reviewers: ["Michael Stoll"]
+  notes: >
+    The formalization was directed and reviewed round-by-round by the author of the source
+    paper, including the choice of formal statements for all paper-counterpart results.
+
+# alignment - how source statements map to formal declarations.
+alignment:
+  namespace: "QuadraticIterates"
+  statements:
+    - source: "Lemma 1.0 (Kummer tower facts)"
+      lean: "kummer_degree_bound"
+      module: "QuadraticIterates.ArchMath1992.Iterates"
+      status: "proved"
+    - source: "Lemma 1.1 a)"
+      lean: "cSeq_pos"
+      module: "QuadraticIterates.ArchMath1992.Irreducibility"
+      status: "proved"
+    - source: "Lemma 1.1 b)"
+      lean: "intCast_bSeq, cSeq_eq_prod_bSeq, isCoprime_bSeq"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
+    - source: "Lemma 1.2"
+      lean: "irreducible_iteratedPoly_of_not_isSquare_cSeq"
+      module: "QuadraticIterates.ArchMath1992.Irreducibility"
+      status: "proved"
+    - source: "Corollary 1.3"
+      lean: "irreducible_iteratedPoly_of_pos"
+      module: "QuadraticIterates.ArchMath1992.Irreducibility"
+      status: "proved"
+    - source: "Odoni's embedding theorem"
+      lean: "odoni_embedding"
+      module: "QuadraticIterates.ArchMath1992.Iterates"
+      status: "proved"
+    - source: "Lemma 1.4"
+      lean: "embed_equiv"
+      module: "QuadraticIterates.ArchMath1992.Iterates"
+      status: "proved"
+    - source: "Lemma 1.5"
+      lean: "kummer_extension_criterion"
+      module: "QuadraticIterates.ArchMath1992.DegreeCriterion"
+      status: "proved"
+    - source: "Lemma 1.6"
+      lean: "degree_criterion"
+      module: "QuadraticIterates.ArchMath1992.DegreeCriterion"
+      status: "proved"
+      note: "proved from the weaker hypothesis that f_n is irreducible"
+    - source: "Theorem (Section 1), part 1"
+      lean: "section1_equiv"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
+    - source: "Theorem (Section 1), part 2"
+      lean: "section1_squarefree"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
+    - source: "Lemma 2.1"
+      lean: "not_isSquare_betaSeq"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Lemma 2.2"
+      lean: "not_isSquare_betaSeq_of_pos"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Section 3, main result"
+      lean: "section3_main"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
+
+# acknowledgements
+acknowledgements: ""

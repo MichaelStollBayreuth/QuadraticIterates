@@ -1,0 +1,65 @@
+name: Build QuadraticIterates
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.lean'
+      - 'lean-toolchain'
+      - 'lakefile.toml'
+      - 'lake-manifest.json'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.lean'
+      - 'lean-toolchain'
+      - 'lakefile.toml'
+      - 'lake-manifest.json'
+  workflow_dispatch: # Allow manual triggering of the workflow from the GitHub Actions interface
+
+# Cancel previous runs if a new commit is pushed to the same PR or branch
+concurrency:
+  group: ${{ github.ref }}  # Group runs by the ref (branch or PR)
+  cancel-in-progress: true  # Cancel any ongoing runs in the same group
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages and modify PR labels
+permissions:
+  contents: read          # Read access to repository contents
+  pages: write            # Write access to GitHub Pages
+  id-token: write         # Write access to ID tokens
+
+jobs:
+  build_QuadraticIterates:
+    runs-on: ubuntu-latest
+    name: Build QuadraticIterates
+    steps:
+      - name: Checkout QuadraticIterates
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      - name: Install and configure Lean, and get mathlib cache
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          auto-config: false
+          use-github-cache: false
+          use-mathlib-cache: true
+
+      # `--lib` is required: without it, mk_all also visits the comparator libraries, which have
+      # no module folder of their own. Note that there is no `|| echo` here on purpose -- that
+      # would swallow the non-zero exit status and let the step pass while the check failed.
+      - name: "Check that QuadraticIterates.lean is up to date"
+        run: |
+          ~/.elan/bin/lake exe mk_all --check --lib QuadraticIterates
+
+      - name: Cache build artifacts
+        uses: actions/cache@v6
+        with:
+          path: .lake/build
+          key: LakeBuild-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
+          restore-keys: LakeBuild-
+
+      - name: Build QuadraticIterates
+        run: ~/.elan/bin/lake build QuadraticIterates

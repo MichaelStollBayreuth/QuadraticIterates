@@ -1,0 +1,30 @@
+% Macros and settings used by both the pdf and the web version.
+
+% Theorem-like environments (numbered within chapters). These are the environments that
+% appear in the dependency graph.
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{facts}[theorem]{Facts}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+% Notation of the paper.
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\Qbar}{\overline{\QQ}}
+\newcommand{\Om}{\Omega}
+\newcommand{\Ct}[1]{[C_2]^{#1}}       % iterated wreath power of C_2
+\newcommand{\Gal}{\operatorname{Gal}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\ord}{\operatorname{ord}}
+\newcommand{\sgn}{\operatorname{sign}}
+\newcommand{\rad}{\operatorname{rad}}
+\newcommand{\dvd}{\mathrel{\mid}}
+
+% Marks a place where the formal statement deviates from the paper.
+\newcommand{\formalnote}[1]{\par\smallskip\noindent\textit{Formalization:} #1\par\smallskip}

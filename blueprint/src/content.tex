@@ -1,0 +1,41 @@
+\chapter*{About this blueprint}
+
+This blueprint reproduces M.~Stoll, \emph{Galois groups over $\QQ$ of some iterated
+polynomials}, Arch.\ Math.\ \textbf{59} (1992), 239--244, and links each of its definitions and
+statements to the Lean~4 formalization in this repository. Chapters~1--3 correspond to the three
+sections of the paper; their numbering has been chosen so that the numbered items carry the
+\emph{same} numbers as in the paper (Facts~1.0, Lemma~1.1, \dots, Lemma~2.2). Chapter~0 collects
+the definitions from the introduction, and Chapter~4 the general-purpose theory that the
+formalization develops on the side, in Mathlib generality, under
+\texttt{QuadraticIterates/Mathlib/}.
+
+All statements are formalized and proved: there is no \texttt{sorry} anywhere, so every node
+below is green. Where the formal statement differs from the printed one --- a weaker hypothesis,
+a total function with a junk value, a more general coefficient ring --- this is recorded in a
+\emph{Formalization} paragraph. The Lean names attached to each item are the declarations that
+carry its content; clicking one leads to the generated documentation.
+
+\emph{Standing hypotheses.} Throughout, $a$ is an integer such that $-a$ is not a square in
+$\QQ$, $f := X^2 + a \in \ZZ[X]$, and $f_0 := X$, $f_{n+1} := f(f_n) = f_n^2 + a$ are its
+iterates. $K_n$ is the splitting field of $f_n$ over $\QQ$ and $\Om_n := \Gal(K_n/\QQ) =
+\Gal(f_n/\QQ)$. $\Ct{n}$ denotes the $n$-fold iterated wreath product of the cyclic group $C_2$
+with itself. In Chapter~2, $g \in \ZZ[X^2]$ is an even polynomial and $\varepsilon = \pm 1$.
+
+\input{chapters/00-intro}
+\input{chapters/01-criterion}
+\input{chapters/02-even}
+\input{chapters/03-values}
+\input{chapters/04-support}
+
+\begin{thebibliography}{9}
+  \bibitem{cremona}
+    J.~E.~Cremona, \emph{On the Galois groups of the iterates of $x^2 + 1$}.
+    Mathematika \textbf{36}, 259--261 (1989).
+  \bibitem{odoni}
+    R.~W.~K.~Odoni, \emph{Realising wreath products of cyclic groups as Galois groups}.
+    Mathematika \textbf{35}, 101--113 (1988).
+  \bibitem{paper}
+    M.~Stoll, \emph{Galois groups over $\QQ$ of some iterated polynomials}.
+    Arch.\ Math.\ \textbf{59}, 239--244 (1992).
+    \href{https://doi.org/10.1007/BF01197321}{DOI: 10.1007/BF01197321}.
+\end{thebibliography}

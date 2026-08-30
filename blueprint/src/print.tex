@@ -1,0 +1,27 @@
+% This file makes the printable version of the blueprint.
+% It should include all the \usepackage needed for the pdf version, and is compiled with a
+% modern TeX engine (xelatex, see latexmkrc). expl3 is used for the \uses/\proves macros in
+% macros/print.tex.
+
+\documentclass[a4paper]{report}
+
+\usepackage{geometry}
+
+\usepackage{expl3}
+
+\usepackage{amssymb, amsthm, mathtools}
+\usepackage[unicode,colorlinks=true,linkcolor=blue,urlcolor=magenta, citecolor=blue]{hyperref}
+
+\usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
+
+\input{macros/common}
+\input{macros/print}
+
+\title{Galois groups over $\mathbb{Q}$ of some iterated polynomials: a blueprint}
+\author{Michael Stoll}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\input{content}
+\end{document}

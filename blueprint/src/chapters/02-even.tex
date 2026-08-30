@@ -1,0 +1,120 @@
+\chapter{Iteration sequences associated to even integer polynomials}
+
+% The counter is set so that the two lemmas below carry the numbers 2.1, 2.2 of the paper.
+\setcounter{theorem}{-1}
+
+In this section, let $g \in \ZZ[X^2]$ be an even polynomial with integer coefficients. Put
+$\gamma_1 := \pm g(0)$, and for $n \ge 1$, $\gamma_{n+1} := g(\gamma_n)$. Assume that all
+$\gamma_n \ne 0$ and set $\beta_n := \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$ for $n \ge 1$.
+
+\begin{definition}[The sequences $\gamma$ and $\beta$]
+  \label{def:gammaseq}
+  \lean{QuadraticIterates.EvenPoly, QuadraticIterates.evenPoly_iff_comp_neg_X,
+    QuadraticIterates.EvenPoly.eval_neg, QuadraticIterates.EvenPoly.eval_congr,
+    QuadraticIterates.EvenPoly.dvd_eval_sub, QuadraticIterates.EvenPoly.map,
+    QuadraticIterates.gammaSeq, QuadraticIterates.gammaSeq_zero,
+    QuadraticIterates.gammaSeq_one, QuadraticIterates.gammaSeq_succ,
+    QuadraticIterates.gammaSeq_add, QuadraticIterates.map_gammaSeq,
+    QuadraticIterates.intCast_gammaSeq, QuadraticIterates.betaSeq,
+    QuadraticIterates.betaSeq_eq_moebiusFactorR, QuadraticIterates.intCast_betaSeq}
+  \leanok
+  $\gamma_1 = \varepsilon\,g(0)$ with $\varepsilon = \pm 1$, $\gamma_{n+1} = g(\gamma_n)$ for
+  $n \ge 1$, and $\beta_n = \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$.
+  \formalnote{Being even is defined as membership in $R[X^2]$, i.e.\ $g = h(X^2)$ for some $h$;
+  over a domain of characteristic $\ne 2$ this is equivalent to $g(-X) = g$
+  (\lname{evenPoly\_iff\_comp\_neg\_X}), and both forms are used. As with $c$, the sequence
+  $\gamma$ is total with junk value $\gamma_0 = 0$, and $\beta_n$ is an element of the
+  coefficient ring, defined as the preimage of the Möbius product in the fraction field. The
+  sequences are set up over an arbitrary commutative semiring, and each result below is stated
+  over the weakest structure that carries it: a commutative ring for the congruences, a GCD
+  domain for strong divisibility, a UFD for the valuation shape, and $\ZZ$ for Lemmas~2.1
+  and~2.2. Since the whole construction commutes with ring homomorphisms
+  (\lname{map\_gammaSeq}), congruences mod $m$ are proved by computing in $\ZZ/m\ZZ$, and $c$ is
+  literally the case $g = X^2 + a$, $\varepsilon = -1$.}
+\end{definition}
+
+\begin{lemma}
+  \label{lem:2.1}
+  \uses{def:gammaseq}
+  \lean{QuadraticIterates.not_isSquare_betaSeq, QuadraticIterates.gammaSeq_mul_eq_two_mul,
+    QuadraticIterates.prod_gammaSeq_mul_eq, QuadraticIterates.gammaSeq_gcd,
+    QuadraticIterates.gammaSeq_associated_gcd, QuadraticIterates.gammaSeq_associated_one,
+    QuadraticIterates.gammaSeq_eq_gammaSeq_one}
+  \leanok
+  Suppose that for all $n \ge 1$ there is an $m$ such that $m \dvd \gamma_n + \gamma_{2n}$, $m$
+  is prime to $\gamma_n$, and $-1$ is not a square mod $m$. Then for all $n \ge 2$, $\beta_n$ is
+  not a square in $\QQ$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{lem:moebiussign, lem:zmodsquare}
+  Let $n > 1$ have prime decomposition $n = p_1^{e_1} \cdots p_r^{e_r}$, where $r \ge 1$, the
+  $p_j$ are distinct primes, and all $e_j \ge 1$. Set $n' := p_1 \cdots p_r > 1$ and
+  $k := n/n'$. Put $\alpha := \gamma_{2k}$. Let $m$ be such that
+  $m \dvd \gamma_k + \gamma_{2k}$, $m$ is prime to $\gamma_k$ and hence to $\alpha$, and $-1$ is
+  not a square mod $m$. Then $\gamma_k \equiv -\alpha \bmod m$, and
+  $\gamma_{3k} = g_k(\gamma_{2k}) = g_k(-\gamma_k) = g_k(\gamma_k) = \gamma_{2k} = \alpha
+  \bmod m$ --- writing $g_k$ for the $k$-fold iterate of $z \mapsto g(z)$, which is an even
+  function --- and by induction $\gamma_{tk} \equiv \alpha \bmod m$ for all $t \ge 2$. Therefore
+  \[ \beta_n = \prod_{d \dvd n} \gamma_d^{\mu(n/d)}
+             = \prod_{t \dvd n'} \gamma_{kt}^{\mu(n'/t)}
+             \equiv (-1)^{\mu(n')} \prod_{t \dvd n'} \alpha^{\mu(n'/t)}
+             = -1 \bmod m \]
+  (for $\mu(n') = \pm 1$ and $\sum_{t \dvd n'} \mu(n'/t) = 0$). Since $-1$ is not a square mod
+  $m$, $\beta_n$ cannot be a square in $\QQ$.
+  \formalnote{$n'$ is $\rad(n)$, and the Möbius product is split along the partition of the
+  divisors of $n'$ into those with $\mu = +1$ and those with $\mu = -1$
+  (Lemma~\ref{lem:moebiussign}), which have equal cardinality; $\beta_n$ is then the quotient
+  $P/Q$ of the two subproducts, and the computation above becomes $P \equiv -Q \bmod m$ with $Q$
+  a unit mod $m$. That a quotient of two such integers cannot be a square when $-1$ is not a
+  square mod $m$ is \lname{ZMod.isSquare\_neg\_one\_of\_isSquare\_div}
+  (Lemma~\ref{lem:zmodsquare}). The sign $(-1)^{\mu(n')}$ comes from the single index $t = 1$,
+  where $\gamma_k \equiv -\alpha$ rather than $\alpha$; this bookkeeping is
+  \lname{prod\_gammaSeq\_mul\_eq}.}
+\end{proof}
+
+We will now give a handier criterion for the assumptions of Lemma~\ref{lem:2.1} to hold.
+
+\begin{lemma}
+  \label{lem:2.2}
+  \uses{def:gammaseq, lem:2.1}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_pos,
+    QuadraticIterates.gammaSeq_add_succ_dvd, QuadraticIterates.isCoprime_gammaSeq_add_succ,
+    QuadraticIterates.gammaSeq_add_eq_succ,
+    QuadraticIterates.gammaSeq_add_succ_zmod_four_eq_three,
+    QuadraticIterates.gammaSeq_add_succ_zmod_eight_eq_six,
+    QuadraticIterates.gammaSeq_add_succ_eq_three,
+    QuadraticIterates.gammaSeq_add_succ_eq_two_mul_eval_one}
+  \leanok
+  If all the $\gamma_n$ are positive, and
+  \begin{enumerate}
+    \item[a)] $g(0) = 1$ and $g(1) \equiv 2 \bmod 4$, or
+    \item[b)] $g(0) = \pm 1$ and $g(1) \equiv 3 \bmod 4$,
+  \end{enumerate}
+  then $\beta_n$ is not a square in $\QQ$ for $n \ge 2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{lem:zmodsquare}
+  Notice first that since $\gamma_n + \gamma_{n+1} \dvd \gamma_n + \gamma_{2n}$ (same argument as
+  in the proof of Lemma~\ref{lem:2.1}, applied $(n-1)$ times), and $\gamma_n$ and
+  $\gamma_{n+1}$ are coprime (since $\gamma_{n+1} = g(\gamma_n) \equiv g(0) = \pm 1
+  \bmod \gamma_n$), we can take $m := \gamma_n + \gamma_{n+1}$ in Lemma~\ref{lem:2.1}, if $-1$ is
+  not a square mod $m$. This holds for $m \equiv 3 \bmod 4$ and for $m \equiv 6 \bmod 8$.
+
+  a) $\gamma_n \equiv 1$ or $2 \bmod 4$, according to whether $n$ is odd or even, so for all $n$,
+  $\gamma_n + \gamma_{n+1} \equiv 3 \bmod 4$.
+
+  b) $\gamma_1 + \gamma_2 \equiv 0 \bmod 4$, and for $n \ge 2$,
+  $\gamma_n + \gamma_{n+1} \equiv 6 \bmod 8$, since all $\gamma_n$ $(n \ge 2)$ are
+  $\equiv 3 \bmod 4$ and equal mod $8$.
+  \formalnote{Positivity of the $\gamma_n$ is what makes $m := \gamma_n + \gamma_{n+1}$ a
+  \emph{positive} integer, so that ``$-1$ is not a square mod $m$'' is a statement about
+  $\ZZ/m\ZZ$. The two congruence computations are done in $\ZZ/4\ZZ$ resp.\ $\ZZ/8\ZZ$, over an
+  arbitrary ring: for a) the only input is $4 = 0$, $g(0) = 1$, $g(1) = 2$, which forces the
+  sequence to alternate between $1$ and $2$; for b) the only input is that the relevant residues
+  square to $1$, which forces $\gamma_n = g(1)$ for all $n \ge 2$. The case $n = 1$ of b) is the
+  separate observation that $4 \dvd \gamma_1 + \gamma_2$ and that $-1$ is not a square mod $4$.}
+\end{proof}
+
+In the next section, we will apply this result to the Galois groups of Chapter~1.

@@ -1,0 +1,33 @@
+name = "QuadraticIterates"
+defaultTargets = ["QuadraticIterates"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.31.0"
+
+# Only used by `lake build QuadraticIterates:docs`, which generates the API documentation deployed
+# alongside the blueprint (see .github/workflows/deploy-pages.yml). A plain `lake build` does not
+# build it. Keep `rev` in sync with `lean-toolchain`.
+[[require]]
+name = "doc-gen4"
+git = "https://github.com/leanprover/doc-gen4.git"
+rev = "v4.31.0"
+
+[[lean_lib]]
+name = "QuadraticIterates"
+
+# Comparator (https://github.com/leanprover/comparator) verification harness. Not part of
+# `defaultTargets`, so a plain `lake build` ignores it. See comparator/README.md.
+[[lean_lib]]
+name = "Challenge"
+srcDir = "comparator"
+
+[[lean_lib]]
+name = "Solution"
+srcDir = "comparator"

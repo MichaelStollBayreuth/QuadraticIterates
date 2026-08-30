@@ -1,0 +1,6 @@
+title: QuadraticIterates
+description: >-
+  A Lean 4 formalization of M. Stoll, Galois groups over ℚ of some iterated polynomials,
+  Arch. Math. 59 (1992), 239-244
+theme: minima
+markdown: kramdown

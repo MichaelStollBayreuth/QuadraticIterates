@@ -1,0 +1,113 @@
+name: Build and Deploy Pages
+
+# GitHub Pages cannot be enabled while this repository is private (not supported on the
+# free plan), so this workflow only runs when triggered manually. If the repository is
+# made public, enable Pages (Settings > Pages > Source: GitHub Actions) and restore the
+# push trigger:
+#   push:
+#     branches:
+#       - main
+#       - master
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout QuadraticIterates
+        uses: actions/checkout@v7
+
+      # The upstreaming dashboard is currently not used. To re-enable it, uncomment this step
+      # and restore the dashboard include in website/index.md.
+      # See https://github.com/leanprover-community/upstreaming-dashboard-action
+      # for more details on how this action works and its parameters
+      # - name: Generate upstream dashboard snippets
+      #   uses: leanprover-community/upstreaming-dashboard-action@e3ee7dc54fd376f093ef62973d7b04cf7beabad0
+      #   with:
+      #     website-directory: website
+      #     project-name: QuadraticIterates
+      #     branch-name: ${{ github.event.repository.default_branch }}
+      #     # include-drafts: false             # Include draft PRs in the dashboard?
+      #     # relevant-labels: "label1,label2"  # Group PRs by 'relevant' based on these labels
+
+      - name: Install and configure Lean, and get mathlib cache
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          auto-config: false
+          use-github-cache: false
+          use-mathlib-cache: true
+
+      - name: Build QuadraticIterates
+        run: ~/.elan/bin/lake build QuadraticIterates
+
+      # The TeX package list is the one the blueprint actually loads; extend it when the
+      # blueprint starts using further packages.
+      - name: Install the blueprint dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            fonts-lmodern ghostscript graphviz latexmk libgraphviz-dev python3-venv \
+            texlive-base texlive-latex-base texlive-latex-recommended texlive-xetex
+          python3 -m venv ~/blueprint-venv
+          ~/blueprint-venv/bin/pip install --upgrade pip
+          ~/blueprint-venv/bin/pip install leanblueprint
+
+      - name: Build the blueprint
+        run: |
+          ~/blueprint-venv/bin/leanblueprint pdf
+          ~/blueprint-venv/bin/leanblueprint web
+
+      # `leanblueprint web` writes blueprint/lean_decls, so this has to come after it.
+      - name: Check the declarations referenced by the blueprint
+        run: ~/.elan/bin/lake env lean blueprint/checkdecls.lean
+
+      # Last, because it is by far the most expensive step: `QuadraticIterates:docs` documents
+      # everything the library imports, i.e. all of Mathlib, so this takes well over half an hour
+      # and produces several gigabytes. It is deliberately not cached — a cache that large would
+      # evict the `.lake/build` cache of the build workflow, and caching only part of it
+      # (database, marker files) makes Lake skip work whose output is then missing.
+      - name: Build the API documentation
+        run: ~/.elan/bin/lake build QuadraticIterates:docs
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: website
+          destination: ./_site
+
+      # Copied into the built site, not into `website`, so that Jekyll leaves the generated
+      # html alone.
+      - name: Add the blueprint and the API documentation to the site
+        run: |
+          cp -r blueprint/web _site/blueprint
+          cp blueprint/print/print.pdf _site/blueprint.pdf
+          cp -r .lake/build/doc _site/docs
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./_site
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    needs: build-pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

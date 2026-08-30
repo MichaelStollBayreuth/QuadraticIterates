@@ -1,0 +1,266 @@
+\chapter{Auxiliary theory}
+
+The paper carries out several arguments by hand that are really instances of general theory:
+degrees of multiquadratic extensions, invariants of a $2$-group acting on an $\FF_2$-vector
+space, abelian quotients of iterated wreath products, and Möbius quotients of a strong
+divisibility sequence. In the formalization these are developed separately, in the generality
+they naturally have, under \texttt{QuadraticIterates/Mathlib/}; they are candidates for
+upstreaming into Mathlib. This chapter records them, since the proofs of Chapters~1--3 refer to
+them.
+
+\section{Multiquadratic extensions}
+
+\begin{lemma}[Degree of a multiquadratic extension]
+  \label{lem:multiquadratic}
+  \lean{multiquadraticRelations, mem_multiquadraticRelations, multiquadratic_degree,
+    multiquadratic_degree_family, multiquadratic_degree_insert_of_maximal,
+    multiquadratic_degree_insert_family, finrank_adjoin_sq_le, finrank_adjoin_finset_sq_le,
+    finrank_adjoin_sq_eq, multiquadraticRelations_finrank_le,
+    multiquadraticRelations_insert_finrank}
+  \leanok
+  Let $F$ be a field of characteristic $\ne 2$ and $s$ a finite set of square roots of elements
+  $c_y \in F^*$ inside an extension. Then
+  $[F(s) : F] = 2^{\#s - \dim_{\FF_2} R(s)}$, where $R(s) \subseteq \FF_2^{s}$ is the space of
+  \emph{relations}: the $\varepsilon$ with $\prod_{y : \varepsilon_y = 1} c_y$ a square in $F$.
+  In particular $[F(s) : F] \le 2^{\#s}$, with equality iff there are no relations; and adjoining
+  one further square root either doubles the degree or leaves it unchanged.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Induction on $\#s$, the step being the descent Lemma~\ref{lem:descent}: the degree doubles
+  exactly when the new radicand is not a square in the field generated so far.
+\end{proof}
+
+\begin{lemma}[Square descent]
+  \label{lem:descent}
+  \lean{square_descent, square_descent_step, isSquare_algebraMap_iff,
+    not_isSquare_algebraMap_of_sqrt_notMem, isSquare_algebraMap_bot_iff, mem_adjoin_simple_sq,
+    sqClass_mul, sqClass_prod, sqClass_prod_zpow, sqClass_eq_zero_iff,
+    isSquare_prod_iff_sum_sqClass_eq_zero}
+  \leanok
+  An element of $F^*$ is a square in a multiquadratic extension $F(\sqrt{c_y} : y \in s)$ if and
+  only if it becomes a square in $F$ after multiplication by a subproduct of the $c_y$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Adjoining one square root at a time; in each step, an element of the smaller field whose square
+  root lies in the quadratic extension differs from a square by the radicand.
+\end{proof}
+
+\begin{lemma}[Relations among the shifted roots]
+  \label{lem:relations}
+  \lean{rootRelations, mem_rootRelations, rootRelations_finrank_le,
+    rootRelations_finrank_reindex, multiquadraticRelations_finrank_eq_rootRelations,
+    all_ones_mem_rootRelations, extendByZeroLM, extendByZeroLM_injective,
+    multiquadraticRelations_ycoord, multiquadraticRelations_ker_finrank,
+    multiquadraticRelations_finite}
+  \leanok
+  For an injective family $(r_i)_{i \in \iota}$ of nonzero elements of $F$, the relation space
+  $R \subseteq \FF_2^{\iota}$ indexed by the family agrees with the relation space of its image
+  set, and $\dim R \le \#\iota$. The all-ones vector lies in $R$ if and only if $\prod_i r_i$ is
+  a square in $F$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Reindexing along the bijection $\iota \to \mathrm{range}$, plus the definition of the relation
+  space.
+\end{proof}
+
+\begin{lemma}[Invariants of a $2$-group]
+  \label{lem:invariant}
+  \lean{fixed_points_nontrivial, invariant_submodule_all_ones, rootRelations_invariant,
+    rootRelations_all_ones}
+  \leanok
+  If a finite $2$-group $G$ acts on a nontrivial $\FF_2$-vector space $M$, then $M^G \ne 0$. If
+  moreover $M \subseteq \FF_2^{\iota}$ is a submodule stable under a \emph{transitive} action of
+  $G$ on $\iota$ permuting coordinates, then $M \ne 0$ implies that the all-ones vector lies in
+  $M$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  For the first statement, $\#M$ is a power of $2$, and $\#M \equiv \#M^G \bmod 2$ by Mathlib's
+  \lname{IsPGroup.card\_modEq\_card\_fixedPoints}; hence $\#M^G > 1$.
+  For the second, a nonzero invariant vector has constant coordinates along the orbits of $G$ on
+  $\iota$, and there is only one orbit.
+\end{proof}
+
+\section{Wreath products}
+
+\begin{lemma}[Sylow $2$-subgroups of symmetric groups]
+  \label{lem:sylowwreath}
+  \lean{Sylow.mulEquivIteratedWreathProduct, IteratedWreathProduct.card,
+    MonoidHom.nonempty_mulEquiv_iff_card_eq}
+  \leanok
+  A Sylow $2$-subgroup of the symmetric group on $2^n$ letters is isomorphic to $\Ct{n}$, which
+  has order $2^{2^n - 1}$. Consequently, an injective homomorphism between finite groups of equal
+  order is an isomorphism, which is how ``$\Om_n \cong \Ct{n}$'' is obtained from an embedding
+  plus a degree count.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Both statements are in Mathlib (\texttt{Sylow.mulEquivIteratedWreathProduct}); the last one is
+  elementary.
+\end{proof}
+
+\begin{lemma}[The abelian quotient of $\Ct{n}$]
+  \label{lem:wreathab}
+  \lean{wreath_max_elem_ab, RegularWreathProduct.card_hom, elem_ab_card_hom,
+    isGalois_adjoin_of_sq_eq_algebraMap, algEquiv_adjoin_sq_eq_one,
+    apply_eq_or_eq_neg_of_sq_eq_algebraMap}
+  \leanok
+  $\#\Hom(\Ct{n}, C_2) = 2^n$; equivalently, the largest elementary abelian $2$-quotient of
+  $\Ct{n}$ is $C_2^n$. A field extension generated by square roots of base-field elements is
+  Galois with elementary abelian group of exponent $2$, so its degree equals the number of
+  homomorphisms of its Galois group to $C_2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  For a regular wreath product $A \wr B$ the homomorphisms to an abelian group of exponent $2$
+  factor through the coinvariants of the base, giving
+  $\#\Hom(A \wr B, C_2) = \#\Hom(A, C_2) \cdot \#\Hom(B, C_2)$; induction on $n$ then gives
+  $2^n$. The statement about elementary abelian groups is the identity $\#G = \#\Hom(G, C_2)$
+  for such $G$.
+\end{proof}
+
+\section{Möbius quotients of a strong divisibility sequence}
+
+\begin{lemma}[Strong divisibility from a translation congruence]
+  \label{lem:strongdvd}
+  \lean{associated_gcd_of_dvd_sub, gcd_eq_normalize_of_dvd_sub, Int.gcd_eq_natAbs_of_dvd_sub}
+  \leanok
+  Let $(c_n)$ be a sequence in a GCD domain with $c_0 = 0$ and $c_m \dvd c_{m+j} - c_j$ for all
+  $m, j$. Then $\gcd(c_m, c_n)$ is associated to $c_{\gcd(m,n)}$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The Euclidean algorithm on the indices: the hypothesis gives
+  $\gcd(c_{m+j}, c_j) = \gcd(c_m, c_j)$, which is the step of the subtractive algorithm; the
+  junk value $c_0 = 0$ makes the base case $\gcd(c_m, c_0) = c_m$ come out right.
+\end{proof}
+
+\begin{lemma}[Integrality of the Möbius quotients]
+  \label{lem:moebiusfactor}
+  \lean{moebiusFactorK, moebiusFactorK_eq_div, moebiusFactorR, numProd, denProd,
+    denProd_dvd_numProd, moebiusFactorK_isInteger, algebraMap_moebiusFactorR,
+    prod_moebiusFactorR, moebiusFactorR_ne_zero, moebiusFactorR_mul_denProd,
+    factorization_gcd_min, isInteger_div_iff_dvd}
+  \leanok
+  Let $R$ be a UFD and $(c_n)$ a sequence in $R \setminus \{0\}$ (on positive indices) which is a
+  strong divisibility sequence. Then each Möbius quotient
+  $b_n := \prod_{d \dvd n} c_d^{\mu(n/d)}$ lies in $R$ and is nonzero, and Möbius inversion
+  holds: $c_n = \prod_{d \dvd n} b_d$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Write the quotient as $N/D$ with $N$ the product of the $c_d$ with $\mu(n/d) = 1$ and $D$ the
+  product of those with $\mu(n/d) = -1$. At each prime $p$, strong divisibility bounds
+  $v_p(c_{\gcd(d,d')})$ below by $\min(v_p(c_d), v_p(c_{d'}))$, and a counting argument on the
+  divisor lattice shows $v_p(D) \le v_p(N)$; hence $D \dvd N$.
+\end{proof}
+
+\begin{theorem}[Constant valuation shape]
+  \label{thm:valshape}
+  \lean{factorization_periodic_shape, factorization_moebiusFactorR_shape,
+    moebiusFactorR_isRelPrime, factorization_eq_of_dvd_sub, one_le_factorization_iff_dvd,
+    factorization_eq_zero_iff_not_dvd, pow_dvd_iff_le_factorization,
+    QuadraticIterates.factorization_gammaSeq_shape,
+    QuadraticIterates.factorization_gammaSeq_of_dvd_eval_zero,
+    QuadraticIterates.gammaSeq_period, QuadraticIterates.sq_dvd_gammaSeq_succ_sub,
+    QuadraticIterates.pow_succ_dvd_gammaSeq_succ_sub}
+  \leanok
+  For the iteration sequence of an even polynomial with $\varepsilon^2 = 1$ over a UFD, and each
+  normalized prime $p$, there are $m \ge 1$ and $E$ with $v_p(\gamma_n) = E$ for $m \dvd n$ and
+  $v_p(\gamma_n) = 0$ otherwise. Consequently the valuation of each Möbius quotient $\beta_n$ is
+  supported on the single index $n = m$, so the $\beta_n$ are pairwise coprime.
+\end{theorem}
+\begin{proof}
+  \leanok
+  Two cases. If $p \dvd g(0)$, the valuation is constantly $v_p(g(0))$, since
+  $\gamma_n^2 \dvd \gamma_{n+1} - g(0)$ forces $v_p(\gamma_{n+1}) = v_p(g(0))$ by induction. If
+  not, let $m$ be minimal with $p \dvd \gamma_m$ and $E := v_p(\gamma_m)$; then
+  $p^{E+1} \dvd \gamma_{m+1} - g(0)$, whence $p \nmid \gamma_{m+1}$, and the sequence is periodic
+  mod $p^{E+1}$ with period $m$ from index $2$ on --- this is the periodicity argument of the
+  proof of Lemma~\ref{lem:1.1}~b), isolated and stated for an arbitrary sequence with these
+  properties (\lname{factorization\_periodic\_shape}).
+\end{proof}
+
+\begin{lemma}[Möbius sums]
+  \label{lem:moebiussign}
+  \lean{moebius_sign_partition, prod_pow_moebius_eq_div, moebius_antidiag_sum_zero,
+    beta_radical, moebius_restricted_sum, indicator_moebius_nonneg, moebius_transform_nonneg}
+  \leanok
+  For squarefree $n' > 1$, the divisors of $n'$ split into two sets of equal cardinality
+  according to the sign of $\mu$, so a Möbius product $\prod_{d \dvd n} x_d^{\mu(n/d)}$ is a
+  quotient of two products with the same number of factors; and
+  $\sum_{d \dvd n} \mu(n/d) = 0$ for $n \ge 2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Standard properties of $\mu$. The equal-cardinality statement is the binomial identity
+  \[ \sum_{k} (-1)^k \binom{r}{k} = 0, \]
+  where $r \ge 1$ is the number of prime divisors of $n'$.
+\end{proof}
+
+\section{Squares}
+
+\begin{lemma}[Non-squares mod $m$]
+  \label{lem:zmodsquare}
+  \lean{ZMod.isSquare_neg_one_of_isSquare_div, ZMod.not_isSquare_neg_one_of_dvd,
+    ZMod.not_isSquare_neg_one_of_four_dvd, ZMod.isUnit_intCast_of_isCoprime_of_dvd_add,
+    ZMod.intCast_eq_neg_intCast_of_dvd_add}
+  \leanok
+  If $P \equiv -Q \bmod m$ with $Q$ a unit mod $m$, and $P/Q$ is a square in $\QQ$, then $-1$ is
+  a square mod $m$. Moreover $-1$ is not a square mod $m$ whenever $m$ has a divisor
+  $\equiv 3 \bmod 4$, and not mod $4$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Reduce a representation $P/Q = (u/v)^2$ modulo $m$ and use that $Q$ is invertible; the
+  supplementary statements are the standard obstructions to $-1$ being a square.
+\end{proof}
+
+\begin{lemma}[Squares and coprimality]
+  \label{lem:coprimesquare}
+  \lean{Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime, prod_zpow_eq_zpow_sum}
+  \leanok
+  If a product of pairwise coprime integers is a square, then the absolute value of each factor
+  is a square.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Compare the $p$-adic valuations: each prime occurs in exactly one factor.
+\end{proof}
+
+\section{Even polynomials}
+
+\begin{lemma}[Even polynomials are polynomials in $X^2$]
+  \label{lem:evenpoly}
+  \lean{Polynomial.even_eq_comp_X_sq_add_C, Polynomial.eq_expand_two_contract_of_comp_neg_X,
+    Polynomial.expand_two_comp_neg_X, Polynomial.X_sq_add_C_comp_neg_X,
+    Polynomial.comp_neg_X_eq_or_eq_neg_of_associated, Associated.comp_neg_X,
+    Polynomial.normalize_normalize_comp_neg_X}
+  \leanok
+  Over a domain of characteristic $\ne 2$, a polynomial fixed by $X \mapsto -X$ is a polynomial
+  in $X^2$, hence in $X^2 + c$ for any $c$. A polynomial merely \emph{associated} to its
+  reflection satisfies $p(-X) = p$ or $p(-X) = -p$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The odd coefficients vanish because $2 \ne 0$; for the second statement, the unit relating $p$
+  to $p(-X)$ is a constant squaring to $1$.
+\end{proof}
+
+\begin{lemma}[Pairing the irreducible factors]
+  \label{lem:involution}
+  \lean{Multiset.exists_add_map_of_involutive, normalizedFactors_map_mulEquiv_eq}
+  \leanok
+  A fixed-point-free involution of a multiset splits it as $N + \tau(N)$. Applied to
+  $q \mapsto \mathrm{normalize}(q(-X))$ on the normalized factors of an even polynomial without
+  nontrivial even divisors, this yields the factorization $\pm p = g \cdot g(-X)$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Induction on the multiset, removing an orbit $\{q, \tau q\}$ at a time; that the involution
+  preserves the multiset of normalized factors is functoriality of factorization under the ring
+  automorphism $X \mapsto -X$.
+\end{proof}

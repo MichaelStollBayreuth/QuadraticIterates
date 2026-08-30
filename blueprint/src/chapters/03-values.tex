@@ -1,0 +1,94 @@
+\chapter{\texorpdfstring{Some values of $a$ with $\Om_n \cong \Ct{n}$ for all $n$}{Some values of
+  a with the full wreath power for all n}}
+
+We combine the results of Chapters~1 and~2 to get the following.
+
+\begin{definition}[The rescaled polynomial]
+  \label{def:normpoly}
+  \uses{def:cseq, def:gammaseq}
+  \lean{QuadraticIterates.normPoly, QuadraticIterates.eval_normPoly,
+    QuadraticIterates.evenPoly_normPoly, QuadraticIterates.evenPoly_X_sq_add_C,
+    QuadraticIterates.evenPoly_C_mul_X_sq_add_C,
+    QuadraticIterates.abs_cSeq_eq_gammaSeq_mul_abs,
+    QuadraticIterates.gammaSeq_normPoly_pos, QuadraticIterates.abs_bSeq_eq_betaSeq}
+  \leanok
+  $g := |a|\,X^2 + \sgn(a)$, an even polynomial with $\gamma_1 = \sgn(a)\,g(0) = 1$. Its
+  iteration sequence satisfies $\gamma_n \cdot |a| = |c_n|$ for all $n \ge 1$; in particular all
+  $\gamma_n$ are positive, and $\beta_n = |b_n|$ for $n \ge 2$.
+  \formalnote{Substituting $x \mapsto |a|\,x$ turns the recursion $c_{n+1} = c_n^2 + a$ into the
+  $\gamma$-recursion of $g$, which is why the rescaled polynomial is introduced: $X^2 + a$ itself
+  does not have a positive iteration sequence when $a < 0$, and positivity is what
+  Lemma~\ref{lem:2.2} needs. The identity $\beta_n = |b_n|$ follows from
+  $\gamma_n = |c_n|/|a|$ because the exponents $\mu(n/d)$ sum to zero for $n \ge 2$, so the
+  factors $|a|$ cancel.}
+\end{definition}
+
+\begin{theorem}[Section 3]
+  \label{thm:section3}
+  \uses{def:normpoly, def:galois, def:wreath}
+  \lean{QuadraticIterates.section3_main}
+  \leanok
+  If $a \in \ZZ$ has one of the following properties:
+  \begin{enumerate}
+    \item[a)] $a > 0$ and $a \equiv 1 \bmod 4$;
+    \item[b)] $a > 0$ and $a \equiv 2 \bmod 4$;
+    \item[c)] $a < 0$, $a \equiv 0 \bmod 4$, and $-a$ is not a square in $\ZZ$;
+  \end{enumerate}
+  then, denoting by $f_n$ the $n$-th iterate of $f := X^2 + a$, we have
+  \[ \Gal(f_n/\QQ) \cong \Ct{n} \quad\text{for all } n \ge 1. \]
+\end{theorem}
+\begin{proof}
+  \leanok
+  \uses{thm:section1, lem:2.2, lem:1.1}
+  In all cases, $-a$ is not a square in $\ZZ$. Let $g := |a|\,X^2 + \sgn(a)$. Then we have in
+  case a) $g(0) = 1$ and $g(1) \equiv 2 \bmod 4$, and in cases b) and c) $g(1) \equiv 3 \bmod 4$.
+  We put $\gamma_1 := +1$ and have $\gamma_n \cdot |a| = c_n$ for all $n \ge 2$, therefore
+  $\gamma_n > 0$ for all $n \ge 1$, cf.\ Lemma~\ref{lem:1.1}~a). Now, according to
+  Lemma~\ref{lem:2.2}, for $n \ge 2$, $|b_n| = \beta_n$ is not a square in $\QQ$. We can thus
+  apply part 2) of Theorem~\ref{thm:section1}, which gives us $\Gal(f_n/\QQ) \cong \Ct{n}$ for
+  all $n$.
+  \formalnote{The three cases are stated in Lean exactly as here, as
+  \texttt{(0 < a $\wedge$ a \% 4 = 1) $\vee$ (0 < a $\wedge$ a \% 4 = 2) $\vee$
+  (a < 0 $\wedge$ a \% 4 = 0 $\wedge$ $\neg$IsSquare (-a))}. In case b) the value $g(1) =
+  |a| + 1 \equiv 3 \bmod 4$, and in case c) $g(1) = |a| - 1 \equiv 3 \bmod 4$; case a) satisfies
+  hypothesis a) of Lemma~\ref{lem:2.2} and the other two hypothesis b).}
+\end{proof}
+
+\section*{Concluding remarks}
+
+Odoni \cite{odoni} investigates the case $f = X^2 + 1$, i.e.\ $a = 1$. His result
+(\cite{odoni}, p.~111, L.~4.4~(iv)) is equivalent in this case to Theorem~\ref{thm:section1}. He
+then gives an algorithm deciding whether $\Om_n \cong \Ct{n}$ for any given $n$, which has been
+carried out by Cremona \cite{cremona} up to $n = 5 \cdot 10^7$, leading him to conjecture that
+$|b_n|$ for $n > 1$ is never a square, i.e.\ $\Om_n \cong \Ct{n}$ for all $n$. This conjecture is
+now a special case of Theorem~\ref{thm:section3}, part a).
+
+The more general problem of determining all $a \in \ZZ$ such that $\Om_n \cong \Ct{n}$ for all
+$n$ remains open, as does the still more general problem of determining the groups $\Om_n$ when
+$a \in \ZZ$ is given. Besides the cases dealt with in this paper and the (exceptional) case
+$a = -2$, where $\Om_n \cong C_{2^n}$, not much seems to be known in this direction.
+
+However, it is clear that there are infinitely many $a$ such that $\#\Om_2 = 4$ (and therefore
+not for all $n$, $\Om_n \cong \Ct{n}$), since this is equivalent to $b_1$ and $b_2$ being
+$2$-dependent, meaning $(-b_1)$ being a square, i.e.\ $b_2 = b^2$ is a square (since $b_1 = -a$
+and $b_1 b_2 = a^2 + a$ cannot be squares), i.e.\ $a = -b^2 - 1$ with some $b > 0$. Moreover,
+since $b_1 b_3 = c_3 = c_2^2 + a$ is never a square and (as is easily seen) $b_2$ and $b_3$ are
+both squares only if $a = -2$, we have $[K_2 : \QQ] = 4$ and $[K_3 : K_2] < 16$ only for
+$a = -2$; so in particular, $-2$ is the only value such that $\Om_2 \cong C_4$ and
+$\Om_3 \cong C_8$ (or such that for all $n$, $\Om_n \cong C_{2^n}$).
+
+A final remark concerning the sequence $(1, 2, 5, 26, 677, \dots)$ discussed in \cite{cremona}
+and \cite{odoni}, which comes up in the case $a = 1$: numerical calculations reveal $603$ primes
+up to $11\,684\,149$ which divide one of the $b_n$, but none of them divides ``its'' $b_n$ more
+than once. Thus, one may be led to conjecture that the $b_n$, and therefore the $c_n$ too, are
+squarefree. To prove this (if true) seems to be quite hard in any case.
+
+\emph{Note added in proof.} There are plausibility arguments indicating that for a given prime
+$p$, the ``probability'' that there is some $n$ such that $p^2 \dvd b_n$ should be approximately
+$\sqrt{\pi/(8p^3)}$. Considering the above data, the ``probability'' for the conjecture to be
+true should then be at least $\prod_{p > 11\,684\,149} \bigl(1 - \sqrt{\pi/(8p^3)}\bigr)$, which
+is very near $1$.
+
+\emph{None of the material in these concluding remarks is formalized}: the statements about
+$a = -2$, about $\#\Om_2 = 4$ and the squarefreeness heuristics are outside the scope of the
+formalization, which covers the numbered results of the three sections.

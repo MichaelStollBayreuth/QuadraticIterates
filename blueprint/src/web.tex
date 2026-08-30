@@ -1,0 +1,26 @@
+% This file makes the web version of the blueprint.
+% It should include all the \usepackage needed for this version.
+
+\documentclass{report}
+
+\usepackage{amssymb, amsthm, amsmath}
+\usepackage{hyperref}
+\usepackage[showmore, dep_graph]{blueprint}
+
+\input{macros/common}
+\input{macros/web}
+
+% Note: the github.io pages only go live once the repository is public and GitHub Pages
+% deployment is set up. \dochome is the base URL of the doc-gen4 documentation; the links to
+% Lean declarations point there.
+\home{https://MichaelStollBayreuth.github.io/QuadraticIterates}
+\github{https://github.com/MichaelStollBayreuth/QuadraticIterates}
+\dochome{https://MichaelStollBayreuth.github.io/QuadraticIterates/docs}
+
+\title{Galois groups over $\mathbb{Q}$ of some iterated polynomials: a blueprint}
+\author{Michael Stoll}
+
+\begin{document}
+\maketitle
+\input{content}
+\end{document}
