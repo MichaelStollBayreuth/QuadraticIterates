@@ -36,17 +36,20 @@ theorem ZMod.isSquare_neg_one_of_isSquare_div {P Q : ℤ} {m : ℕ} (hQne : Q �
   linear_combination ((↑u⁻¹ : ZMod m) * (↑u⁻¹ : ZMod m)) * hw
     + ((Q : ZMod m) * (↑u⁻¹ : ZMod m) + 1) * huinv
 
+/-- A sum of two squares is never congruent to `3` modulo `4`, a square being `0` or `1`. -/
+theorem Nat.not_sq_add_sq_modEq_three (x y : ℕ) : ¬x ^ 2 + y ^ 2 ≡ 3 [MOD 4] := by
+  rw [← ZMod.natCast_eq_natCast_iff]
+  push_cast
+  generalize (x : ZMod 4) = a, (y : ZMod 4) = b
+  decide +revert
+
 /-- If `d ∣ m` with `d ≡ 3 mod 4`, then `-1` is not a square in `ZMod m`. -/
 theorem ZMod.not_isSquare_neg_one_of_dvd (m d : ℕ) (hdm : d ∣ m) (hd : d % 4 = 3) :
     ¬IsSquare (-1 : ZMod m) := by
   intro hsq
-  obtain ⟨x, y, hxy⟩ :=
+  obtain ⟨x, y, rfl⟩ :=
     Nat.eq_sq_add_sq_of_isSquare_mod_neg_one (ZMod.isSquare_neg_one_of_dvd hdm hsq)
-  have key (z : ℕ) : z ^ 2 % 4 = 0 ∨ z ^ 2 % 4 = 1 := by
-    have h : z % 4 = 0 ∨ z % 4 = 1 ∨ z % 4 = 2 ∨ z % 4 = 3 := by lia
-    rw [Nat.pow_mod]
-    rcases h with h | h | h | h <;> rw [h] <;> norm_num
-  rcases key x with hx | hx <;> rcases key y with hy | hy <;> lia
+  exact Nat.not_sq_add_sq_modEq_three x y hd
 
 /-- If `4 ∣ m`, then `-1` is not a square in `ZMod m`. -/
 theorem ZMod.not_isSquare_neg_one_of_four_dvd (m : ℕ) (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
