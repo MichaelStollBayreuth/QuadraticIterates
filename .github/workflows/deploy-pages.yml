@@ -79,11 +79,25 @@ jobs:
       - name: Check the declarations referenced by the blueprint
         run: ~/.elan/bin/lake env lean blueprint/checkdecls.lean
 
-      # Last, because it is by far the most expensive step: `QuadraticIterates:docs` documents
-      # everything the library imports, i.e. all of Mathlib, so this takes well over half an hour
-      # and produces several gigabytes. It is deliberately not cached — a cache that large would
-      # evict the `.lake/build` cache of the build workflow, and caching only part of it
-      # (database, marker files) makes Lake skip work whose output is then missing.
+      # doc-gen4 walks the full import closure by construction — `module_facet docInfo` fetches
+      # `docInfo` for every import — so there is no way to document only this library and link to
+      # Mathlib's hosted docs: `QuadraticIterates:docs` documents all of Mathlib, ~25.8k module
+      # jobs, which dominated a 90-minute run. That pass's entire output is `api-docs.db` plus the
+      # `doc-data/*.doc` markers, and the HTML under `build/doc` is regenerated from the database
+      # by a single `fromDb` run — so caching those two skips the pass whenever the dependency set
+      # is unchanged, while the HTML (the multi-gigabyte part, and different on every commit) is
+      # deliberately left out. No `restore-keys` on purpose: a cache built against a different
+      # Mathlib would leave Lake trusting markers whose database rows no longer match, so it is an
+      # exact hit or nothing.
+      - name: Cache the API documentation database
+        uses: actions/cache@v6
+        with:
+          path: |
+            .lake/build/api-docs.db
+            .lake/build/doc-data
+          key: DocData-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
+
+      # Last, because it is by far the most expensive step even when the cache above hits.
       - name: Build the API documentation
         run: ~/.elan/bin/lake build QuadraticIterates:docs
 
