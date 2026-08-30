@@ -15,7 +15,7 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 /-- Adjoining a single square root `x` (with `x² ∈ L`) to a field `L` gives degree at most `2`. -/
 theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
-    (x : E) (c : L) (hc : x ^ 2 = algebraMap L E c) :
+    {x : E} (c : L) (hc : x ^ 2 = algebraMap L E c) :
     Module.finrank L (IntermediateField.adjoin L {x}) ≤ 2 := by
   have hmonic := Polynomial.monic_X_pow_sub_C c (by norm_num : 2 ≠ 0)
   rw [IntermediateField.adjoin.finrank ⟨_, hmonic, by simp [hc]⟩]
@@ -24,7 +24,7 @@ theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
 /-- Adjoining a finite set of square roots (each squaring into `L`) gives degree at most
 `2 ^ |s|`. -/
 theorem finrank_adjoin_finset_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
-    (s : Finset E) (hs : ∀ x ∈ s, ∃ c : L, x ^ 2 = algebraMap L E c) :
+    {s : Finset E} (hs : ∀ x ∈ s, ∃ c : L, x ^ 2 = algebraMap L E c) :
     Module.finrank L (IntermediateField.adjoin L (s : Set E)) ≤ 2 ^ s.card := by
   classical
   induction s using Finset.induction_on with
@@ -51,7 +51,7 @@ theorem finrank_adjoin_finset_sq_le {L : Type*} [Field L] {E : Type*} [Field E] 
         rw [hBeq, IntermediateField.relfinrank_eq_finrank_of_le hle,
           IntermediateField.restrictScalars_injective L
             (IntermediateField.extendScalars_restrictScalars hle)]
-        exact finrank_adjoin_sq_le x (algebraMap L (↥A) c) (by
+        exact finrank_adjoin_sq_le (algebraMap L (↥A) c) (by
           rw [hc, IsScalarTower.algebraMap_apply L (↥A) E c])
       calc Module.finrank L B
           = Module.finrank L A * A.relfinrank B :=
@@ -243,7 +243,7 @@ end
 /-- Adjoining a square root of `c` gives degree `1` if `c` is already a square in `L`, and `2`
 otherwise. -/
 theorem finrank_adjoin_sq_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
-    (x : E) (c : L) (hc : x ^ 2 = algebraMap L E c) [Decidable (IsSquare c)] :
+    {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) [Decidable (IsSquare c)] :
     Module.finrank L (IntermediateField.adjoin L {x}) = if IsSquare c then 1 else 2 := by
   have hmem_iff : x ∈ (⊥ : IntermediateField L E) ↔ IsSquare c := by
     refine ⟨fun hx ↦ ?_, fun hsq ↦ ?_⟩
@@ -265,7 +265,7 @@ theorem finrank_adjoin_sq_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
     rw [IntermediateField.finrank_adjoin_simple_eq_one_iff, hmem_iff]
   split_ifs with hsq
   · rwa [hone_iff]
-  · have hle2 := finrank_adjoin_sq_le x c hc
+  · have hle2 := finrank_adjoin_sq_le c hc
     have hpos : 0 < Module.finrank L (IntermediateField.adjoin L {x}) := Module.finrank_pos
     have hne1 := mt hone_iff.mp hsq
     lia
@@ -273,7 +273,7 @@ theorem finrank_adjoin_sq_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
 /-- One-step square descent: over `L(x)` with `x² = c` and `x ∉ L`, the image of `d ∈ L` is a
 square iff `d` or `d · c` is a square in `L`. -/
 theorem square_descent_step {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field E]
-    [Algebra L E] (x : E) (c : L) (hc : x ^ 2 = algebraMap L E c)
+    [Algebra L E] {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c)
     (hx : x ∉ (⊥ : IntermediateField L E)) (d : L) :
     (∃ u v : L, algebraMap L E d = (algebraMap L E u + algebraMap L E v * x) ^ 2)
       ↔ (IsSquare d ∨ IsSquare (d * c)) := by
@@ -384,7 +384,7 @@ theorem mem_adjoin_simple_sq {F : Type*} [Field F] {E : Type*} [Field E] [Algebr
 /-- Induction step of `square_descent` when the new radical `y` already lies in `L(s')`: adjoining
 `y` changes nothing, so the descent set is unchanged up to `⊆ insert y s'`. -/
 private theorem square_descent_insert_of_mem {L : Type*} [Field L] {E : Type*} [Field E]
-    [DecidableEq E] [Algebra L E] (s' : Finset E) (y : E) (c : E → L)
+    [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} {c : E → L}
     (hs : ∀ z ∈ insert y s', z ^ 2 = algebraMap L E (c z)) (hc : ∀ z ∈ insert y s', c z ≠ 0)
     (hyK : y ∈ IntermediateField.adjoin L (s' : Set E))
     (ih : ∀ e : L, (∃ z ∈ IntermediateField.adjoin L (s' : Set E), z ^ 2 = algebraMap L E e)
@@ -428,7 +428,7 @@ private theorem square_descent_insert_of_mem {L : Type*} [Field L] {E : Type*} [
 /-- Induction step of `square_descent` when the new radical `y` is genuinely new (`y ∉ L(s')`):
 one degree-`2` step via `square_descent_step`, tracking whether `y` enters the descent set. -/
 private theorem square_descent_insert_of_notMem {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] (s' : Finset E) (y : E) (hys : y ∉ s') (c : E → L)
+    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
     (hy : y ^ 2 = algebraMap L E (c y)) (hyK : y ∉ IntermediateField.adjoin L (s' : Set E))
     (hbridge : ∀ e : L, IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) e)
         ↔ ∃ t ⊆ s', IsSquare (e * ∏ i ∈ t, c i)) (d : L) :
@@ -443,8 +443,7 @@ private theorem square_descent_insert_of_notMem {L : Type*} [Field L] [NeZero (2
     rw [hy, ← IsScalarTower.algebraMap_apply L (↥K) E]
   have hynotbot : y ∉ (⊥ : IntermediateField (↥K) E) := by
     rw [IntermediateField.mem_bot]; rintro ⟨w, hw⟩; exact hyK (hw ▸ w.2)
-  have hstep := square_descent_step (L := ↥K) (E := E) y
-    (algebraMap L (↥K) (c y)) hcyK hynotbot (algebraMap L (↥K) d)
+  have hstep := square_descent_step (L := ↥K) (E := E) hcyK hynotbot (algebraMap L (↥K) d)
   have hLbridge : (∃ u v : ↥K, algebraMap (↥K) E (algebraMap L (↥K) d)
         = (algebraMap (↥K) E u + algebraMap (↥K) E v * y) ^ 2)
       ↔ (∃ z ∈ IntermediateField.adjoin (↥K) ({y} : Set E), z ^ 2 = algebraMap L E d) := by
@@ -475,7 +474,7 @@ private theorem square_descent_insert_of_notMem {L : Type*} [Field L] [NeZero (2
 /-- Iterated square descent: some element of `L(s)` squares to `d` iff `d * ∏_{y ∈ t} c y` is a
 square in `L` for some subset `t ⊆ s`. -/
 theorem square_descent {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field E] [Algebra L E]
-    (s : Finset E) (c : E → L) (hs : ∀ y ∈ s, y ^ 2 = algebraMap L E (c y))
+    {s : Finset E} {c : E → L} (hs : ∀ y ∈ s, y ^ 2 = algebraMap L E (c y))
     (hc : ∀ y ∈ s, c y ≠ 0) (d : L) :
     (∃ z : E, z ∈ IntermediateField.adjoin L (s : Set E) ∧ z ^ 2 = algebraMap L E d)
       ↔ (∃ t : Finset E, t ⊆ s ∧ IsSquare (d * ∏ y ∈ t, c y)) := by
@@ -515,11 +514,11 @@ theorem square_descent {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field
       rw [← SetLike.mem_coe, hset, SetLike.mem_coe]
     simp only [hmemK]
     by_cases hyK : y ∈ K
-    · exact square_descent_insert_of_mem s' y c hs hc hyK ih' d
+    · exact square_descent_insert_of_mem hs hc hyK ih' d
     · have hbridge (e : L) : IsSquare (algebraMap L (↥K) e)
           ↔ ∃ t ⊆ s', IsSquare (e * ∏ y ∈ t, c y) :=
         (isSquare_algebraMap_iff K e).trans (ih' e)
-      exact square_descent_insert_of_notMem s' y hys c hy hyK hbridge d
+      exact square_descent_insert_of_notMem hys hy hyK hbridge d
 
 /-- The relation space of an `ι`-indexed family has `𝔽₂`-dimension at most `|ι|`. -/
 theorem rootRelations_finrank_le {ι : Type*} [Fintype ι] {L : Type*} [Field L] (r : ι → L) :
@@ -547,7 +546,7 @@ theorem multiquadraticRelations_finite {L : Type*} [Field L] {E : Type*} [Decida
 /-- Intersecting `V (insert y s')` with the hyperplane `ε y = 0` recovers `V s'` (equal
 `𝔽₂`-dimension). -/
 theorem multiquadraticRelations_ker_finrank {L : Type*} [Field L] {E : Type*} [Field E]
-    [DecidableEq E] [Algebra L E] (s' : Finset E) (y : E) (hys : y ∉ s') (c : E → L)
+    [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
     (hc : ∀ x ∈ insert y s', c x ≠ 0) (hc' : ∀ x ∈ s', c x ≠ 0) :
     Module.finrank (ZMod 2)
         (↥((multiquadraticRelations (insert y s') c : Submodule (ZMod 2) (E → ZMod 2))
@@ -575,7 +574,7 @@ theorem multiquadraticRelations_ker_finrank {L : Type*} [Field L] {E : Type*} [F
 /-- Some relation of `V (insert y s')` has `y`-coordinate `1` iff `c y` is a square in
 `L(s')`. -/
 theorem multiquadraticRelations_ycoord {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] (s' : Finset E) (y : E) (hys : y ∉ s') (c : E → L)
+    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
     (hs : ∀ x ∈ insert y s', x ^ 2 = algebraMap L E (c x)) (hc : ∀ x ∈ insert y s', c x ≠ 0) :
     (∃ ε : E → ZMod 2, ε ∈ multiquadraticRelations (insert y s') c ∧ ε y = 1)
       ↔ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y)) := by
@@ -585,7 +584,7 @@ theorem multiquadraticRelations_ycoord {L : Type*} [Field L] [NeZero (2 : L)] {E
     isSquare_algebraMap_iff K e
   have hbridge : IsSquare (algebraMap L (↥K) (c y)) ↔ ∃ t ⊆ s', IsSquare (c y * ∏ x ∈ t, c x) := by
     rw [hKsq (c y), ← hK]
-    exact square_descent s' c
+    exact square_descent
       (fun x hx ↦ hs x (Finset.mem_insert_of_mem hx))
       (fun x hx ↦ hc x (Finset.mem_insert_of_mem hx)) (c y)
   rw [hbridge]
@@ -619,7 +618,7 @@ theorem multiquadraticRelations_ycoord {L : Type*} [Field L] [NeZero (2 : L)] {E
 /-- Adjoining `y` raises `dim V` by `1` when `c y` is a square in `L(s')`, and leaves it
 unchanged otherwise. -/
 theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] (s' : Finset E) (y : E) (hys : y ∉ s') (c : E → L)
+    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
     (hs : ∀ x ∈ insert y s', x ^ 2 = algebraMap L E (c x))
     (hc : ∀ x ∈ insert y s', c x ≠ 0) (hc' : ∀ x ∈ s', c x ≠ 0)
     [Decidable (IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y)))] :
@@ -649,9 +648,9 @@ theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [NeZero (2 
       exact ⟨⟨e, heW⟩, by simpa [evy] using hey, rfl⟩
   have hker : Module.finrank (ZMod 2) (LinearMap.ker evy) = Module.finrank (ZMod 2) V0 := by
     rw [← Submodule.finrank_map_subtype_eq W (LinearMap.ker evy), hkermap]
-    exact multiquadraticRelations_ker_finrank s' y hys c hc hc'
+    exact multiquadraticRelations_ker_finrank hys hc hc'
   have hyiff : (∃ ε : E → ZMod 2, ε ∈ W ∧ ε y = 1) ↔ IsSquare (algebraMap L (↥K) (c y)) :=
-    multiquadraticRelations_ycoord s' y hys c hs hc
+    multiquadraticRelations_ycoord hys hs hc
   have hrange : Module.finrank (ZMod 2) (LinearMap.range evy)
       = (if IsSquare (algebraMap L (↥K) (c y)) then 1 else 0) := by
     by_cases hsq : IsSquare (algebraMap L (↥K) (c y))
@@ -679,7 +678,7 @@ theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [NeZero (2 
 /-- Degree of a multiquadratic extension: `[L(s) : L] = 2 ^ (|s| - dim V)`, where `V` is the
 `𝔽₂`-space of square relations among the radicands. -/
 theorem multiquadratic_degree {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field E]
-    [DecidableEq E] [Algebra L E] (s : Finset E) (c : E → L)
+    [DecidableEq E] [Algebra L E] {s : Finset E} {c : E → L}
     (hs : ∀ x ∈ s, x ^ 2 = algebraMap L E (c x))
     (hc : ∀ x ∈ s, c x ≠ 0) :
     Module.finrank L (IntermediateField.adjoin L (s : Set E))
@@ -697,7 +696,7 @@ theorem multiquadratic_degree {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
     set K := IntermediateField.adjoin L (s' : Set E) with hK
     have hdeg2 : Module.finrank (↥K) (IntermediateField.adjoin (↥K) ({y} : Set E))
         = if IsSquare (algebraMap L (↥K) (c y)) then 1 else 2 :=
-      finrank_adjoin_sq_eq y (algebraMap L (↥K) (c y))
+      finrank_adjoin_sq_eq
         (by rw [hs y (Finset.mem_insert_self y s'), ← IsScalarTower.algebraMap_apply L (↥K) E])
     have hadjeq : IntermediateField.adjoin L ((insert y s' : Finset E) : Set E)
         = IntermediateField.restrictScalars L (IntermediateField.adjoin (↥K) ({y} : Set E)) := by
@@ -715,7 +714,7 @@ theorem multiquadratic_degree {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
     have hVincr : Module.finrank (ZMod 2) (multiquadraticRelations (insert y s') c)
         = Module.finrank (ZMod 2) (multiquadraticRelations s' c)
           + (if IsSquare (algebraMap L (↥K) (c y)) then 1 else 0) :=
-      multiquadraticRelations_insert_finrank s' y hys c hs hc hc'
+      multiquadraticRelations_insert_finrank hys hs hc hc'
     have hVle : Module.finrank (ZMod 2) (multiquadraticRelations s' c) ≤ s'.card :=
       multiquadraticRelations_finrank_le s' c
     rw [htower, ih', hdeg2, hVincr, Finset.card_insert_of_notMem hys]
@@ -730,7 +729,7 @@ theorem multiquadratic_degree {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
 /-- If a multiquadratic family `s` generates a field of maximal degree `2 ^ |s|` and `w` is a
 new square root whose radicand is not a square in `L(s)`, then adjoining `w` doubles the degree. -/
 theorem multiquadratic_degree_insert_of_maximal {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [Algebra L E] (s : Finset E) (w : E) (hws : w ∉ s) (c : E → L)
+    [Field E] [Algebra L E] {s : Finset E} {w : E} (hws : w ∉ s) {c : E → L}
     (hs : ∀ x ∈ s, x ^ 2 = algebraMap L E (c x)) (hsw : w ^ 2 = algebraMap L E (c w))
     (hc : ∀ x ∈ s, c x ≠ 0) (hcw : c w ≠ 0)
     (hmax : Module.finrank L (IntermediateField.adjoin L (s : Set E)) = 2 ^ s.card)
@@ -742,15 +741,15 @@ theorem multiquadratic_degree_insert_of_maximal {L : Type*} [Field L] [NeZero (2
   have hc' : ∀ x ∈ insert w s, c x ≠ 0 := fun x hx ↦ by
     rcases Finset.mem_insert.mp hx with rfl | h; exacts [hcw, hc x h]
   have hrels0 : Module.finrank (ZMod 2) (multiquadraticRelations s c) = 0 := by
-    have hdeg := multiquadratic_degree s c hs hc
+    have hdeg := multiquadratic_degree hs hc
     rw [hmax] at hdeg
     have hle := multiquadraticRelations_finrank_le s c
     have hexp : s.card = s.card - Module.finrank (ZMod 2) (multiquadraticRelations s c) :=
       Nat.pow_right_injective (by norm_num) hdeg
     lia
   have hins_fr : Module.finrank (ZMod 2) (multiquadraticRelations (insert w s) c) = 0 := by
-    rw [multiquadraticRelations_insert_finrank s w hws c hs' hc' hc, hrels0, if_neg hwnotsq]
-  have hdeg := multiquadratic_degree (insert w s) c hs' hc'
+    rw [multiquadraticRelations_insert_finrank hws hs' hc' hc, hrels0, if_neg hwnotsq]
+  have hdeg := multiquadratic_degree hs' hc'
   rw [Finset.coe_insert, hins_fr, Finset.card_insert_of_notMem hws] at hdeg
   simpa using hdeg
 
@@ -758,9 +757,9 @@ theorem multiquadratic_degree_insert_of_maximal {L : Type*} [Field L] [NeZero (2
 `x` of size `n` (square roots of `v`) gains a new square root `w` whose radicand is not a square
 in `L(range x)`, doubling the degree. -/
 theorem multiquadratic_degree_insert_family {n : ℕ} {L : Type*} [Field L] [NeZero (2 : L)]
-    {E : Type*} [Field E] [Algebra L E] (x : Fin n → E) (hxinj : Function.Injective x)
+    {E : Type*} [Field E] [Algebra L E] {x : Fin n → E} (hxinj : Function.Injective x)
     {v : Fin n → L} (hx : ∀ i, x i ^ 2 = algebraMap L E (v i)) (hv : ∀ i, v i ≠ 0)
-    (w : E) (hw : w ∉ Set.range x) (c₀ : L) (hwc : w ^ 2 = algebraMap L E c₀) (hc₀ : c₀ ≠ 0)
+    {w : E} (hw : w ∉ Set.range x) {c₀ : L} (hwc : w ^ 2 = algebraMap L E c₀) (hc₀ : c₀ ≠ 0)
     (hmax : Module.finrank L (IntermediateField.adjoin L (Set.range x)) = 2 ^ n)
     (hwnotsq : ¬ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (Set.range x))) c₀)) :
     Module.finrank L (IntermediateField.adjoin L (insert w (Set.range x))) = 2 ^ (n + 1) := by
@@ -785,14 +784,14 @@ theorem multiquadratic_degree_insert_family {n : ℕ} {L : Type*} [Field L] [NeZ
   have hwnotsq' :
       ¬ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s : Set E))) (cfw w)) := by
     rw [hrange, hcfw_w]; exact hwnotsq
-  have hdeg := multiquadratic_degree_insert_of_maximal s w hws cfw hs_sq
+  have hdeg := multiquadratic_degree_insert_of_maximal hws hs_sq
     (by rw [hcfw_w]; exact hwc) hs_ne (by rw [hcfw_w]; exact hc₀) hmax' hwnotsq'
   rwa [hrange, hscard] at hdeg
 
 /-- The dimension of the relation space is invariant under reindexing the family by a
 bijection. -/
 theorem rootRelations_finrank_reindex {ι : Type*} [Fintype ι] {κ : Type*} [Fintype κ]
-    {L : Type*} [Field L] (r : ι → L) (hr : ∀ i, r i ≠ 0) (r' : κ → L) (hr' : ∀ j, r' j ≠ 0)
+    {L : Type*} [Field L] (r : ι → L) (hr : ∀ i, r i ≠ 0) {r' : κ → L} (hr' : ∀ j, r' j ≠ 0)
     (e : ι ≃ κ) (he : ∀ i, r' (e i) = r i) :
     Module.finrank (ZMod 2) (rootRelations r) = Module.finrank (ZMod 2) (rootRelations r') := by
   classical
@@ -831,8 +830,8 @@ theorem multiquadraticRelations_finrank_eq_rootRelations {L : Type*} [Field L] {
 of nonzero radicands `r : ι → L`, the degree of `L(x i : i)` over `L` is
 `2 ^ (|ι| - dim rootRelations r)`. -/
 theorem multiquadratic_degree_family {ι : Type*} [Fintype ι] {L : Type*} [Field L] [NeZero (2 : L)]
-    {E : Type*} [Field E] [Algebra L E] (x : ι → E) (hxinj : Function.Injective x)
-    (r : ι → L) (hx : ∀ i, x i ^ 2 = algebraMap L E (r i)) (hr : ∀ i, r i ≠ 0) :
+    {E : Type*} [Field E] [Algebra L E] {x : ι → E} (hxinj : Function.Injective x)
+    {r : ι → L} (hx : ∀ i, x i ^ 2 = algebraMap L E (r i)) (hr : ∀ i, r i ≠ 0) :
     Module.finrank L (IntermediateField.adjoin L (Set.range x))
       = 2 ^ (Fintype.card ι - Module.finrank (ZMod 2) (rootRelations r)) := by
   classical
@@ -854,9 +853,9 @@ theorem multiquadratic_degree_family {ι : Type*} [Fintype ι] {L : Type*} [Fiel
       = Module.finrank (ZMod 2) (rootRelations r) :=
     (multiquadraticRelations_finrank_eq_rootRelations s cf).trans
       (rootRelations_finrank_reindex (fun y : ↥(s : Set E) ↦ cf y.1)
-        (fun y ↦ hs_ne y.1 (Finset.mem_coe.mp y.2)) r hr e
+        (fun y ↦ hs_ne y.1 (Finset.mem_coe.mp y.2)) hr e
         fun y ↦ by rw [← hcf_x (e y), hxe y])
-  rw [← hrange, multiquadratic_degree s cf hs_sq hs_ne, hscard, hdim]
+  rw [← hrange, multiquadratic_degree hs_sq hs_ne, hscard, hdim]
 
 /-- If every `g ∈ G` acts on the radicands through a field automorphism, the relation space is
 invariant under the coordinate action. -/
@@ -901,7 +900,7 @@ lemma apply_eq_or_eq_neg_of_sq_eq_algebraMap (φ : E ≃ₐ[F] E) {y : E} {q : F
   sq_eq_sq_iff_eq_or_eq_neg.mp (by rw [← map_pow, hy, AlgEquiv.commutes])
 
 /-- Such a subfield has exponent `2`: every `F`-automorphism of it is an involution. -/
-lemma algEquiv_adjoin_sq_eq_one (t : Finset E)
+lemma algEquiv_adjoin_sq_eq_one {t : Finset E}
     (ht : ∀ y ∈ t, ∃ q : F, y ^ 2 = algebraMap F E q)
     (τ : ↥(IntermediateField.adjoin F (t : Set E)) ≃ₐ[F]
           ↥(IntermediateField.adjoin F (t : Set E))) :
@@ -925,7 +924,7 @@ lemma algEquiv_adjoin_sq_eq_one (t : Finset E)
 variable [Normal F E]
 
 /-- A subfield of `E` generated by square roots of elements of `F` is Galois over `F`. -/
-lemma isGalois_adjoin_of_sq_eq_algebraMap [PerfectField F] (t : Finset E)
+lemma isGalois_adjoin_of_sq_eq_algebraMap [PerfectField F] {t : Finset E}
     (ht : ∀ y ∈ t, ∃ q : F, y ^ 2 = algebraMap F E q) :
     IsGalois F ↥(IntermediateField.adjoin F (t : Set E)) := by
   set K := IntermediateField.adjoin F (t : Set E) with hK

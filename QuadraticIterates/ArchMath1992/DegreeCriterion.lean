@@ -70,7 +70,7 @@ theorem relfinrank_succ_eq_pow {n : ℕ} (hn : 1 ≤ n) (hirr : Irreducible (f�
   have hset : g '' ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
       = Set.range x := Set.image_eq_range g _
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg, hset,
-    multiquadratic_degree_family x hxinj (rootShift a n) hx (rootShift_ne_zero a hnsq hn),
+    multiquadratic_degree_family hxinj hx (rootShift_ne_zero a hnsq hn),
     card_rootSet_iteratedPoly a hirr]
 
 lemma exists_ringEquiv_radicand_smul {n : ℕ}
@@ -189,7 +189,7 @@ lemma finrank_splittingField_one (hsq : ¬IsSquare (-a : ℚ)) :
     · refine IntermediateField.adjoin_le_iff.mpr ?_
       rintro x rfl
       exact IntermediateField.subset_adjoin ℚ _ hβroot
-  rw [hadjeq, finrank_adjoin_sq_eq β (-a : ℚ) hβsq, if_neg hsq]
+  rw [hadjeq, finrank_adjoin_sq_eq hβsq, if_neg hsq]
 
 lemma degree_criterion_zero :
     (splittingField a 0).relfinrank (splittingField a 1) = 2 ^ 2 ^ 0 ↔
@@ -307,7 +307,7 @@ lemma finrank_adjoin_range_eq_two_pow {n : ℕ}
         rw [hS]; exact Finset.mem_filter.mpr ⟨Finset.mem_univ i, h1⟩ : i ∈ S))
       exact ((by decide : ∀ z : ZMod 2, z = 0 ∨ z = 1) (ε (x i))).resolve_right hne1
     · exact hεsupp y hy
-  rw [← hrange, multiquadratic_degree s cf hs_sq hs_ne, hscard, hrelbot, finrank_bot, Nat.sub_zero]
+  rw [← hrange, multiquadratic_degree hs_sq hs_ne, hscard, hrelbot, finrank_bot, Nat.sub_zero]
 
 lemma card_monoidHom_eq_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n)) :
     Nat.card (((splittingField a n) ≃ₐ[ℚ] (splittingField a n)) →*
@@ -321,8 +321,8 @@ lemma finrank_adjoin_le_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃*
     (ht : ∀ y ∈ t, ∃ q : ℚ, y ^ 2 = algebraMap ℚ ↥(splittingField a n) q) :
     Module.finrank ℚ (IntermediateField.adjoin ℚ (t : Set ↥(splittingField a n))) ≤ 2 ^ n := by
   set M := IntermediateField.adjoin ℚ (t : Set ↥(splittingField a n))
-  have hgalM : IsGalois ℚ ↥M := isGalois_adjoin_of_sq_eq_algebraMap t ht
-  have hexp : ∀ τ : ↥M ≃ₐ[ℚ] ↥M, τ ^ 2 = 1 := algEquiv_adjoin_sq_eq_one t ht
+  have hgalM : IsGalois ℚ ↥M := isGalois_adjoin_of_sq_eq_algebraMap ht
+  have hexp : ∀ τ : ↥M ≃ₐ[ℚ] ↥M, τ ^ 2 = 1 := algEquiv_adjoin_sq_eq_one ht
   have hinv (g : ↥M ≃ₐ[ℚ] ↥M) : g⁻¹ = g := (eq_inv_of_mul_eq_one_left (sq (a := g) ▸ hexp g)).symm
   rw [← IsGalois.card_aut_eq_finrank ℚ ↥M,
     elem_ab_card_hom (↥M ≃ₐ[ℚ] ↥M)
@@ -361,7 +361,7 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
     not_isSquare_algebraMap_of_sqrt_notMem hw2 hwnotM
   have hinsdeg : Module.finrank ℚ
       (IntermediateField.adjoin ℚ (insert w (Set.range x))) = 2 ^ (n + 1) :=
-    multiquadratic_degree_insert_family x hxinj hx hindep.1 w hwnotr c hw2 hc
+    multiquadratic_degree_insert_family hxinj hx hindep.1 hwnotr hw2 hc
       (finrank_adjoin_range_eq_two_pow a hindep hx) hnotsqM
   have hle : Module.finrank ℚ
       (IntermediateField.adjoin ℚ (insert w (Set.range x))) ≤ 2 ^ n := by
@@ -433,7 +433,7 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
   set s : Finset ↥(splittingField a n) := Finset.univ.image x with hs
   have hrange : (s : Set ↥(splittingField a n)) = Set.range x := by
     rw [hs, Finset.coe_image, Finset.coe_univ, Set.image_univ]
-  rw [← hrange, square_descent s cf hs_sq hs_ne c]
+  rw [← hrange, square_descent hs_sq hs_ne c]
   refine ⟨fun ⟨t, hts, hsq⟩ ↦ ?_, fun ⟨S, hsq⟩ ↦ ?_⟩
   · refine ⟨Finset.univ.filter (fun i ↦ x i ∈ t), ?_⟩
     have htimg : t = (Finset.univ.filter (fun i ↦ x i ∈ t)).image x := by
