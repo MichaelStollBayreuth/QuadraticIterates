@@ -150,7 +150,7 @@ lemma prod_radicand_eq_cSeq {n : ℕ} (hirr : Irreducible (fℚ[a, n]))
       (algebraMap ℚ (↥(splittingField a n)) (cSeq a (n + 1) : ℚ))
       = (cSeq a (n + 1) : AlgebraicClosure ℚ) := by
     simp
-  rw [hleft, prod_rootSet_eq_prod_aroots _ hnodup (· - (a : AlgebraicClosure ℚ)), hright]
+  rw [hleft, prod_rootSet_eq_prod_aroots hnodup (· - (a : AlgebraicClosure ℚ)), hright]
   exact prod_aroots_sub_eq_cSeq a n
 
 end
@@ -236,13 +236,13 @@ theorem degree_criterion {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
     have hallne : (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations (rootShift a n)
         ↔ rootRelations (rootShift a n) ≠ ⊥ := by
       refine ⟨fun hmem hbot ↦ one_ne_zero (α := ZMod 2) ?_,
-        fun hbot ↦ rootRelations_all_ones (isPGroup_galoisGroup a n) _ hrne ?_ hbot⟩
+        fun hbot ↦ rootRelations_all_ones (isPGroup_galoisGroup a n) hrne ?_ hbot⟩
       · rw [hbot, Submodule.mem_bot] at hmem
         exact congrFun hmem (Classical.arbitrary _)
       · exact exists_ringEquiv_radicand_smul a (rootShift a n) fun _ ↦ rfl
     have hallsq : (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations (rootShift a n)
         ↔ IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) :=
-      (all_ones_mem_rootRelations _ hrne).trans
+      (all_ones_mem_rootRelations hrne).trans
         (by rw [prod_radicand_eq_cSeq a hirr (rootShift a n) fun _ ↦ rfl])
     rw [hrfd, Submodule.finrank_eq_zero, ← not_iff_not]
     simpa using hallne.symm.trans hallsq
@@ -358,10 +358,10 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
   by_contra hwnotM
   have hwnotr : w ∉ Set.range x := fun hr ↦ hwnotM (IntermediateField.subset_adjoin ℚ _ hr)
   have hnotsqM : ¬ IsSquare (algebraMap ℚ ↥(IntermediateField.adjoin ℚ (Set.range x)) c) :=
-    not_isSquare_algebraMap_of_sqrt_notMem _ hw2 hwnotM
+    not_isSquare_algebraMap_of_sqrt_notMem hw2 hwnotM
   have hinsdeg : Module.finrank ℚ
       (IntermediateField.adjoin ℚ (insert w (Set.range x))) = 2 ^ (n + 1) :=
-    multiquadratic_degree_insert_family x hxinj _ hx hindep.1 w hwnotr c hw2 hc
+    multiquadratic_degree_insert_family x hxinj hx hindep.1 w hwnotr c hw2 hc
       (finrank_adjoin_range_eq_two_pow a hindep hx) hnotsqM
   have hle : Module.finrank ℚ
       (IntermediateField.adjoin ℚ (insert w (Set.range x))) ≤ 2 ^ n := by
@@ -406,7 +406,7 @@ lemma isSquare_algebraMap_cSeq (n : ℕ) (hnsq : ¬IsSquare (-a : ℚ)) (m : ℕ
           ((β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ)) := by
     rw [← Finset.prod_mul_distrib]
     exact Finset.prod_congr rfl fun β _ ↦ by rw [← sq, hw β]
-  rw [hsplit, prod_rootSet_eq_prod_aroots _ hnodup (· - (a : AlgebraicClosure ℚ))]
+  rw [hsplit, prod_rootSet_eq_prod_aroots hnodup (· - (a : AlgebraicClosure ℚ))]
   exact (prod_aroots_sub_eq_cSeq a k).symm
 
 lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}

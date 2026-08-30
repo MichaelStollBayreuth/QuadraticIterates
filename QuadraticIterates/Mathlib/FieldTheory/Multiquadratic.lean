@@ -332,7 +332,7 @@ theorem isSquare_algebraMap_iff {L : Type*} [Field L] {E : Type*} [Field E] [Alg
 /-- If `w` is a square root of `algebraMap e` lying outside an intermediate field `K`, then `e`
 is not a square in `K`. -/
 theorem not_isSquare_algebraMap_of_sqrt_notMem {L : Type*} [Field L] {E : Type*} [Field E]
-    [Algebra L E] (K : IntermediateField L E) {e : L} {w : E}
+    [Algebra L E] {K : IntermediateField L E} {e : L} {w : E}
     (hw : w ^ 2 = algebraMap L E e) (hwK : w ∉ K) :
     ¬ IsSquare (algebraMap L ↥K e) := by
   rw [isSquare_algebraMap_iff]
@@ -759,7 +759,7 @@ theorem multiquadratic_degree_insert_of_maximal {L : Type*} [Field L] [NeZero (2
 in `L(range x)`, doubling the degree. -/
 theorem multiquadratic_degree_insert_family {n : ℕ} {L : Type*} [Field L] [NeZero (2 : L)]
     {E : Type*} [Field E] [Algebra L E] (x : Fin n → E) (hxinj : Function.Injective x)
-    (v : Fin n → L) (hx : ∀ i, x i ^ 2 = algebraMap L E (v i)) (hv : ∀ i, v i ≠ 0)
+    {v : Fin n → L} (hx : ∀ i, x i ^ 2 = algebraMap L E (v i)) (hv : ∀ i, v i ≠ 0)
     (w : E) (hw : w ∉ Set.range x) (c₀ : L) (hwc : w ^ 2 = algebraMap L E c₀) (hc₀ : c₀ ≠ 0)
     (hmax : Module.finrank L (IntermediateField.adjoin L (Set.range x)) = 2 ^ n)
     (hwnotsq : ¬ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (Set.range x))) c₀)) :
@@ -861,7 +861,7 @@ theorem multiquadratic_degree_family {ι : Type*} [Fintype ι] {L : Type*} [Fiel
 /-- If every `g ∈ G` acts on the radicands through a field automorphism, the relation space is
 invariant under the coordinate action. -/
 theorem rootRelations_invariant {G : Type*} [Group G] {ι : Type*} [Fintype ι] [MulAction G ι]
-    {L : Type*} [Field L] (r : ι → L) (hr : ∀ i, r i ≠ 0)
+    {L : Type*} [Field L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) :
     ∀ (g : G) (v : ι → ZMod 2), v ∈ rootRelations r → (fun i ↦ v (g⁻¹ • i)) ∈ rootRelations r := by
   classical
@@ -879,14 +879,14 @@ theorem rootRelations_invariant {G : Type*} [Group G] {ι : Type*} [Fintype ι] 
 nonzero relation space contains the all-ones vector. -/
 theorem rootRelations_all_ones {G : Type*} [Group G] [Finite G] (hG : IsPGroup 2 G)
     {ι : Type*} [Fintype ι] [Nonempty ι] [MulAction G ι] [MulAction.IsPretransitive G ι]
-    {L : Type*} [Field L] (r : ι → L) (hr : ∀ i, r i ≠ 0)
+    {L : Type*} [Field L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) (hne : rootRelations r ≠ ⊥) :
     (fun _ ↦ 1) ∈ rootRelations r :=
-invariant_submodule_all_ones hG (rootRelations r) (rootRelations_invariant r hr hcompat) hne
+invariant_submodule_all_ones hG (rootRelations r) (rootRelations_invariant hr hcompat) hne
 
 /-- The all-ones vector is a relation iff `∏ i, r i` is a square in `L`. -/
 theorem all_ones_mem_rootRelations {ι : Type*} [Fintype ι] {L : Type*} [Field L]
-    (r : ι → L) (hr : ∀ i, r i ≠ 0) :
+    {r : ι → L} (hr : ∀ i, r i ≠ 0) :
     (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations r ↔ IsSquare (∏ i, r i) := by
   classical
   rw [mem_rootRelations hr, Finset.filter_true_of_mem (fun i _ ↦ rfl)]

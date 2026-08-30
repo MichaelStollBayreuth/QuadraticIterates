@@ -63,7 +63,7 @@ variable {S : Type*} [CommRing S] [UniqueFactorizationMonoid S]
 /-- The multiplicity at `p` is determined by the residue mod `p ^ (E+1)`: if `v_p y = E` and
 `p ^ (E+1) ∣ x - y`, then `v_p x = E`. -/
 theorem factorization_eq_of_dvd_sub {p : S} (hp : Prime p) (hpn : normalize p = p)
-    {x y : S} (hx : x ≠ 0) (hy : y ≠ 0) (E : ℕ) (hyE : factorization y p = E)
+    {x y : S} (hx : x ≠ 0) (hy : y ≠ 0) {E : ℕ} (hyE : factorization y p = E)
     (hcong : p ^ (E + 1) ∣ x - y) : factorization x p = E := by
   have hpEy : p ^ E ∣ y := (pow_dvd_iff_le_factorization hp hpn hy).mpr (by lia)
   have hpEx : p ^ E ∣ x := by
@@ -113,7 +113,7 @@ theorem factorization_periodic_shape {p : S} (hp : Prime p) (hpn : normalize p =
           fun h ↦ by rw [show n = (n - m) + m from by lia]; exact Nat.dvd_add h (dvd_refl m)⟩
       by_cases hmn : m ∣ n
       · rw [if_pos hmn]; rw [if_pos (hmdvd_iff.mp hmn)] at ihval
-        exact factorization_eq_of_dvd_sub hp hpn (hne n hn) (hne (n - m) hge1) E ihval hcong
+        exact factorization_eq_of_dvd_sub hp hpn (hne n hn) (hne (n - m) hge1) ihval hcong
       · rw [if_neg hmn]; rw [if_neg (fun h ↦ hmn (hmdvd_iff.mpr h))] at ihval
         have hnpnm : ¬ p ∣ x (n - m) :=
           (factorization_eq_zero_iff_not_dvd hp hpn (hne (n - m) hge1)).mp ihval

@@ -60,20 +60,20 @@ lemma intCast_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
 
 lemma bSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : bSeq a n ≠ 0 := by
   rw [bSeq_eq_moebiusFactorR]
-  exact moebiusFactorR_ne_zero (cSeq a) (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
+  exact moebiusFactorR_ne_zero (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
 
 /-- Möbius inversion for the integer factors (Lemma 1.1 b): `c_n = ∏_{d ∣ n} b_d`. -/
 lemma cSeq_eq_prod_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     cSeq a n = ∏ d ∈ n.divisors, bSeq a d := by
   simp only [bSeq_eq_moebiusFactorR]
-  exact prod_moebiusFactorR (cSeq a) (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
+  exact prod_moebiusFactorR (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
 
 /-- The integer factors `b_n` are pairwise coprime (Lemma 1.1 b): the valuation of `b_n` at
 each prime is supported on a single index, so no prime divides two distinct factors. -/
 lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n)
     (hmn : m ≠ n) : IsCoprime (bSeq a m) (bSeq a n) := by
   rw [bSeq_eq_moebiusFactorR, bSeq_eq_moebiusFactorR]
-  exact (moebiusFactorR_isRelPrime (cSeq a) (cSeq_ne_zero' a ha) (cSeq_associated_gcd a)
+  exact (moebiusFactorR_isRelPrime (cSeq_ne_zero' a ha) (cSeq_associated_gcd a)
     (cSeq_factorization_shape a ha) m n hm hn hmn).isCoprime
 
 end

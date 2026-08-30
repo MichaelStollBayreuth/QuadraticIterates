@@ -228,7 +228,7 @@ theorem gammaSeq_associated_gcd [IsDomain R] [NormalizedGCDMonoid R] (hg : EvenP
 variable (g) in
 /-- Periodicity propagates along the recursion: a divisor of `γ_{n₀+m} - γ_{n₀}` divides
 `γ_{n+m} - γ_n` for all `n ≥ n₀ ≥ 1`. -/
-lemma gammaSeq_period (ε : R) (m : ℕ) {n₀ : ℕ} (hn₀ : 1 ≤ n₀) {q : R}
+lemma gammaSeq_period {ε : R} {m : ℕ} {n₀ : ℕ} (hn₀ : 1 ≤ n₀) {q : R}
     (hbase : q ∣ gammaSeq g ε (n₀ + m) - gammaSeq g ε n₀) :
     ∀ n ≥ n₀, q ∣ gammaSeq g ε (n + m) - gammaSeq g ε n := by
   intro n hn
@@ -247,7 +247,7 @@ lemma sq_dvd_gammaSeq_succ_sub (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ 
 
 /-- Sharpening of `sq_dvd_gammaSeq_succ_sub`: a prime power `p^E` with `E ≥ 1` dividing `γ_n`
 already forces `p^{E+1} ∣ γ_{n+1} - g(0)` (`n ≥ 1`). -/
-lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ n) {p : R}
+lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 1 ≤ n) {p : R}
     {E : ℕ} (hE : 1 ≤ E) (hpE : p ^ E ∣ gammaSeq g ε n) :
     p ^ (E + 1) ∣ gammaSeq g ε (n + 1) - g.eval 0 :=
   calc p ^ (E + 1) ∣ p ^ (2 * E) := pow_dvd_pow p (by lia)
@@ -256,7 +256,7 @@ lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 
 
 /-- If `γ_k + γ_{2k} = 0`, then `γ_{lk} = γ_{2k}` for all `l ≥ 2` (over any ring, for even `g`):
 `γ` is constant on positive multiples of `k` past the first. -/
-theorem gammaSeq_mul_eq_two_mul (hg : EvenPoly g) (ε : R) {k : ℕ} (hk : 1 ≤ k)
+theorem gammaSeq_mul_eq_two_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
     (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) :
     ∀ l ≥ 2, gammaSeq g ε (l * k) = gammaSeq g ε (2 * k) := by
   have hγ (i j : ℕ) (hi : 1 ≤ i) :
@@ -275,7 +275,7 @@ theorem gammaSeq_mul_eq_two_mul (hg : EvenPoly g) (ε : R) {k : ℕ} (hk : 1 ≤
 
 /-- A product of terms each equal to `α · (-1 if t = 1 else 1)` collapses to `α ^ |S|` times a
 single sign depending on whether `1 ∈ S`. -/
-private theorem prod_eq_pow_card_mul_ite {α : R} (S : Finset ℕ) {f : ℕ → R}
+private theorem prod_eq_pow_card_mul_ite {α : R} {S : Finset ℕ} {f : ℕ → R}
     (hf : ∀ t ∈ S, f t = α * (if t = 1 then (-1 : R) else 1)) :
     (∏ t ∈ S, f t) = α ^ S.card * (if 1 ∈ S then (-1 : R) else 1) := by
   rw [Finset.prod_congr rfl hf, Finset.prod_mul_distrib, Finset.prod_const,
@@ -283,21 +283,21 @@ private theorem prod_eq_pow_card_mul_ite {α : R} (S : Finset ℕ) {f : ℕ → 
 
 /-- If `γ_k + γ_{2k} = 0`, then a product `∏_{t ∈ S} γ_{kt}` over positive indices `t` collapses
 to `γ_{2k} ^ |S|` up to a sign recording whether `1 ∈ S` (over any ring, for even `g`). -/
-theorem prod_gammaSeq_mul_eq (hg : EvenPoly g) (ε : R) {k : ℕ} (hk : 1 ≤ k)
+theorem prod_gammaSeq_mul_eq (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
     (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0)
     {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) :
     (∏ t ∈ S, gammaSeq g ε (k * t))
       = gammaSeq g ε (2 * k) ^ S.card * (if 1 ∈ S then -1 else 1) := by
   have hγk_neg : gammaSeq g ε k = -gammaSeq g ε (2 * k) := by linear_combination hzero
-  refine prod_eq_pow_card_mul_ite S fun t ht ↦ ?_
+  refine prod_eq_pow_card_mul_ite fun t ht ↦ ?_
   have ht1 : 1 ≤ t := hS t ht
   rcases eq_or_ne t 1 with rfl | h
   · rw [mul_one, if_pos rfl, mul_neg, mul_one, hγk_neg]
-  · rw [if_neg h, mul_one, mul_comm k t, gammaSeq_mul_eq_two_mul hg ε hk hzero t (by lia)]
+  · rw [if_neg h, mul_one, mul_comm k t, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)]
 
 /-- If `γ_n + γ_{n+1} = 0`, then `γ_{n+j} = γ_{n+1}` for all `j ≥ 1` (over any ring, for even `g`):
 the fixed-point relation `g(γ_{n+1}) = γ_{n+1}` makes `γ` constant past index `n`. -/
-theorem gammaSeq_add_eq_succ (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ n)
+theorem gammaSeq_add_eq_succ (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 1 ≤ n)
     (hzero : gammaSeq g ε n + gammaSeq g ε (n + 1) = 0) :
     ∀ j ≥ 1, gammaSeq g ε (n + j) = gammaSeq g ε (n + 1) := by
   have hsucc (m : ℕ) (hm : 1 ≤ m) : gammaSeq g ε (m + 1) = g.eval (gammaSeq g ε m) :=
@@ -321,7 +321,7 @@ lemma gammaSeq_add_succ_dvd (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ n) 
       Ideal.mem_span_singleton]
   have key : π (gammaSeq g ε (n + n)) = π (gammaSeq g ε (n + 1)) := by
     rw [map_gammaSeq, map_gammaSeq]
-    exact gammaSeq_add_eq_succ (hg.map _) _ hn hz n hn
+    exact gammaSeq_add_eq_succ (hg.map _) hn hz n hn
   have hsplit : gammaSeq g ε n + gammaSeq g ε (2 * n)
       = D + (gammaSeq g ε (n + n) - gammaSeq g ε (n + 1)) := by rw [hD, two_mul]; ring
   rw [hsplit]
@@ -362,8 +362,8 @@ lemma factorization_gammaSeq_of_dvd_eval_zero (hg : EvenPoly g) {ε : R} (hε : 
       exact associated_unit_mul_left (g.eval 0) ε hεu
     rw [factorization_eq_count, hassoc.normalizedFactors_eq, ← factorization_eq_count]
   | succ k hk ih =>
-    refine factorization_eq_of_dvd_sub hp hpn (hne (k + 1) (by lia)) hg0 _ rfl ?_
-    exact pow_succ_dvd_gammaSeq_succ_sub hg ε hk hv1
+    refine factorization_eq_of_dvd_sub hp hpn (hne (k + 1) (by lia)) hg0 rfl ?_
+    exact pow_succ_dvd_gammaSeq_succ_sub hg hk hv1
       ((pow_dvd_iff_le_factorization hp hpn (hne k hk)).mpr ih.ge)
 
 /-- The main case: if `p ∤ g(0)` but `p` divides some `γ_m`, the valuation `v_p(γ_n)` is
@@ -388,7 +388,7 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
   have hE1 := (one_le_factorization_iff_dvd hp hpn (hne m hm1)).mpr hpm
   have hpEm : p ^ E ∣ gammaSeq g ε m := (pow_dvd_iff_le_factorization hp hpn (hne m hm1)).mpr le_rfl
   -- `p^{E+1} ∣ γ_{m+1} - g(0)` via `γ_m² ∣ γ_{m+1} - g(0)`
-  have hcm1 := pow_succ_dvd_gammaSeq_succ_sub hg ε hm1 hE1 hpEm
+  have hcm1 := pow_succ_dvd_gammaSeq_succ_sub hg hm1 hE1 hpEm
   have hpncm1 : ¬ p ∣ gammaSeq g ε (m + 1) := by
     intro hdvd
     refine hpg ?_
@@ -406,7 +406,7 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
     rw [hsq]
     exact hcm1.mul_right _
   exact ⟨m, hm1, E, factorization_periodic_shape hp hpn (gammaSeq g ε) m E hm2 hne hE.symm
-    hmin hpncm1 (gammaSeq_period g ε m (by lia) hbase)⟩
+    hmin hpncm1 (gammaSeq_period g (by lia) hbase)⟩
 
 /-- **Constant-valuation shape of the `γ`-sequence over a UFD** (for even `g`, `ε² = 1`, `γ`
 nowhere zero): for each normalized prime `p`, the valuation `v_p(γ_n)` equals a constant `E`
@@ -455,7 +455,7 @@ lemma intCast_moebiusFactorR {c : ℕ → ℤ} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Int.gcd (c m) (c n) = (c (m.gcd n)).natAbs) {n : ℕ} (hn : 1 ≤ n) :
     ((moebiusFactorR c n : ℤ) : ℚ) = moebiusFactor c n := by
   rw [← eq_intCast (algebraMap ℤ ℚ) (moebiusFactorR c n),
-    algebraMap_moebiusFactorR c hc (associated_gcd_of_int_gcd_eq_natAbs hsd) n hn,
+    algebraMap_moebiusFactorR hc (associated_gcd_of_int_gcd_eq_natAbs hsd) n hn,
     moebiusFactorK, moebiusFactor_eq_prod]
   exact Finset.prod_congr rfl fun x _ ↦ by norm_num
 
@@ -483,7 +483,7 @@ lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε = -1)
   intCast_moebiusFactorR hγ (gammaSeq_gcd hg hε) hn
 
 /-- The `ZMod m` specialization of `prod_gammaSeq_mul_eq` via `intCast_gammaSeq`. -/
-private lemma prod_gammaSeq_mul_cast_eq (hg : EvenPoly g) (ε : ℤ) {k : ℕ} (hk : 1 ≤ k) {m : ℕ}
+private lemma prod_gammaSeq_mul_cast_eq (hg : EvenPoly g) {ε : ℤ} {k : ℕ} (hk : 1 ≤ k) {m : ℕ}
     (hdvd : (m : ℤ) ∣ gammaSeq g ε k + gammaSeq g ε (2 * k))
     {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) :
     ((∏ t ∈ S, gammaSeq g ε (k * t) : ℤ) : ZMod m)
@@ -494,7 +494,7 @@ private lemma prod_gammaSeq_mul_cast_eq (hg : EvenPoly g) (ε : ℤ) {k : ℕ} (
       ZMod.intCast_zmod_eq_zero_iff_dvd]; exact_mod_cast hdvd
   rw [Int.cast_prod, intCast_gammaSeq,
     Finset.prod_congr rfl fun t _ ↦ intCast_gammaSeq g ε (ZMod m) (k * t),
-    prod_gammaSeq_mul_eq (hg.map _) _ hk hz hS]
+    prod_gammaSeq_mul_eq (hg.map _) hk hz hS]
 
 /-- Lemma 2.1: if for each `n ≥ 1` some `m` divides `γ_n + γ_{2n}`, is prime to `γ_n`, and `-1` is
 not a square mod `m`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
@@ -525,10 +525,10 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε =
     ring
   set α : ZMod m := ((gammaSeq g ε (2 * k) : ℤ) : ZMod m)
   have hPmod : (P : ZMod m) = α ^ Sp.card * (if 1 ∈ Sp then -1 else 1) :=
-    prod_gammaSeq_mul_cast_eq hg ε hkpos hmdvd fun t ht ↦ Nat.pos_of_mem_divisors
+    prod_gammaSeq_mul_cast_eq hg hkpos hmdvd fun t ht ↦ Nat.pos_of_mem_divisors
       (hunion ▸ Finset.mem_union_left Sm ht : t ∈ n'.divisors)
   have hQmod : (Q : ZMod m) = α ^ Sm.card * (if 1 ∈ Sm then -1 else 1) :=
-    prod_gammaSeq_mul_cast_eq hg ε hkpos hmdvd fun t ht ↦ Nat.pos_of_mem_divisors
+    prod_gammaSeq_mul_cast_eq hg hkpos hmdvd fun t ht ↦ Nat.pos_of_mem_divisors
       (hunion ▸ Finset.mem_union_right Sp ht : t ∈ n'.divisors)
   have hone : (1 ∈ Sp ∧ 1 ∉ Sm) ∨ (1 ∉ Sp ∧ 1 ∈ Sm) :=
     (Finset.mem_union.mp (hunion ▸ Nat.one_mem_divisors.mpr (by lia) : (1 : ℕ) ∈ Sp ∪ Sm)).imp
@@ -600,7 +600,7 @@ theorem not_isSquare_betaSeq_of_pos (hg : EvenPoly g) {ε : ℤ}
       rcases hε with rfl | rfl
       · rfl
       · exact absurd hp1 (by decide)
-    refine ZMod.not_isSquare_neg_one_of_dvd D.toNat D.toNat dvd_rfl ?_
+    refine ZMod.not_isSquare_neg_one_of_dvd dvd_rfl ?_
     have h1' : ((g.eval 1 : ℤ) : ZMod 4) = 2 :=
       (ZMod.intCast_eq_intCast_iff' (g.eval 1) 2 4).mpr (by lia)
     have hsum : (D : ZMod 4) = 3 := gammaSeq_add_succ_zmod_four_eq_three hg h0 h1' n hn
@@ -614,7 +614,7 @@ theorem not_isSquare_betaSeq_of_pos (hg : EvenPoly g) {ε : ℤ}
         rcases hε with rfl | rfl <;> rcases h0 with h0' | h0' <;> rw [h0'] at hp1 ⊢ <;> lia
       have hγ2 : gammaSeq g ε 2 = g.eval 1 := by
         rw [gammaSeq_succ g ε le_rfl, hγ1]
-      exact ZMod.not_isSquare_neg_one_of_four_dvd D.toNat
+      exact ZMod.not_isSquare_neg_one_of_four_dvd
         (mod_cast (by rw [hdtn, hD, hγ1, hγ2]; lia : (4 : ℤ) ∣ (D.toNat : ℤ)))
     · have h1' : ((g.eval 1 : ℤ) : ZMod 4) = 3 :=
         (ZMod.intCast_eq_intCast_iff' (g.eval 1) 3 4).mpr (by lia)
@@ -622,8 +622,8 @@ theorem not_isSquare_betaSeq_of_pos (hg : EvenPoly g) {ε : ℤ}
         have hcast := gammaSeq_add_succ_zmod_eight_eq_six hg hε heval0 h1' n hn2
         have := ((ZMod.intCast_eq_intCast_iff D 6 8).mp (mod_cast hcast)).dvd
         omega
-      exact ZMod.not_isSquare_neg_one_of_dvd D.toNat (D.toNat / 2)
-        (Nat.div_dvd_of_dvd (by lia)) (by lia)
+      exact ZMod.not_isSquare_neg_one_of_dvd
+        (Nat.div_dvd_of_dvd (show 2 ∣ D.toNat by lia)) (by lia)
 
 end
 

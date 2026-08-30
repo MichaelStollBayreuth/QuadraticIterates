@@ -44,7 +44,7 @@ theorem Nat.not_sq_add_sq_modEq_three (x y : ℕ) : ¬x ^ 2 + y ^ 2 ≡ 3 [MOD 4
   decide +revert
 
 /-- If `d ∣ m` with `d ≡ 3 mod 4`, then `-1` is not a square in `ZMod m`. -/
-theorem ZMod.not_isSquare_neg_one_of_dvd (m d : ℕ) (hdm : d ∣ m) (hd : d % 4 = 3) :
+theorem ZMod.not_isSquare_neg_one_of_dvd {m d : ℕ} (hdm : d ∣ m) (hd : d % 4 = 3) :
     ¬IsSquare (-1 : ZMod m) := by
   intro hsq
   obtain ⟨x, y, rfl⟩ :=
@@ -52,7 +52,7 @@ theorem ZMod.not_isSquare_neg_one_of_dvd (m d : ℕ) (hdm : d ∣ m) (hd : d % 4
   exact Nat.not_sq_add_sq_modEq_three x y hd
 
 /-- If `4 ∣ m`, then `-1` is not a square in `ZMod m`. -/
-theorem ZMod.not_isSquare_neg_one_of_four_dvd (m : ℕ) (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
+theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
 
 /-- If a family `f` is pairwise coprime on a finite set `S` and `∏_{i ∈ S} f i` is a square, then
