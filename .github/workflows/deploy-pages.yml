@@ -111,12 +111,19 @@ jobs:
           destination: ./_site
 
       # Copied into the built site, not into `website`, so that Jekyll leaves the generated
-      # html alone.
+      # html alone. `actions/jekyll-build-pages` is a container action running as root, so `_site`
+      # comes back root-owned and this step -- which runs as `runner` -- has to take ownership
+      # before it can write into it. The API documentation is `mv`d rather than copied: it is by
+      # far the largest part, and a rename inside the workspace costs neither time nor a second
+      # copy on a runner disk that already holds Mathlib. The `du` reports the published size,
+      # which has to stay under the 1 GB GitHub Pages limit.
       - name: Add the blueprint and the API documentation to the site
         run: |
+          sudo chown -R "$(id -u):$(id -g)" _site
           cp -r blueprint/web _site/blueprint
           cp blueprint/print/print.pdf _site/blueprint.pdf
-          cp -r .lake/build/doc _site/docs
+          mv .lake/build/doc _site/docs
+          du -sh _site/blueprint _site/docs _site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
