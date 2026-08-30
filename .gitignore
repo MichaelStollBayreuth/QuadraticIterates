@@ -3,8 +3,10 @@
 ## Lake
 .lake/*
 .cache/*
-## The paper itself is copyrighted and must not be committed
-/ArchMath-1992.pdf
+## Papers are copyrighted and must not be committed. This is deliberately a blanket rule and
+## covers symlinks to papers kept elsewhere on disk: a symlink commits its target path, and an
+## unguarded `git add -A` in the repository root would otherwise pick one up.
+*.pdf
 ## Blueprint
 /blueprint/print/print.log
 /blueprint/web/
