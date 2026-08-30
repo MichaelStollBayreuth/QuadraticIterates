@@ -15,7 +15,7 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 /-- Adjoining a single square root `x` (with `x² ∈ L`) to a field `L` gives degree at most `2`. -/
 theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
-    {x : E} (c : L) (hc : x ^ 2 = algebraMap L E c) :
+    {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
     Module.finrank L (IntermediateField.adjoin L {x}) ≤ 2 := by
   have hmonic := Polynomial.monic_X_pow_sub_C c (by norm_num : 2 ≠ 0)
   rw [IntermediateField.adjoin.finrank ⟨_, hmonic, by simp [hc]⟩]
@@ -51,7 +51,7 @@ theorem finrank_adjoin_finset_sq_le {L : Type*} [Field L] {E : Type*} [Field E] 
         rw [hBeq, IntermediateField.relfinrank_eq_finrank_of_le hle,
           IntermediateField.restrictScalars_injective L
             (IntermediateField.extendScalars_restrictScalars hle)]
-        exact finrank_adjoin_sq_le (algebraMap L (↥A) c) (by
+        exact finrank_adjoin_sq_le (c := algebraMap L (↥A) c) (by
           rw [hc, IsScalarTower.algebraMap_apply L (↥A) E c])
       calc Module.finrank L B
           = Module.finrank L A * A.relfinrank B :=
@@ -265,7 +265,7 @@ theorem finrank_adjoin_sq_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
     rw [IntermediateField.finrank_adjoin_simple_eq_one_iff, hmem_iff]
   split_ifs with hsq
   · rwa [hone_iff]
-  · have hle2 := finrank_adjoin_sq_le c hc
+  · have hle2 := finrank_adjoin_sq_le hc
     have hpos : 0 < Module.finrank L (IntermediateField.adjoin L {x}) := Module.finrank_pos
     have hne1 := mt hone_iff.mp hsq
     lia
