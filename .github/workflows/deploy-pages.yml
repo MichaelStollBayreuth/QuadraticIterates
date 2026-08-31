@@ -79,6 +79,29 @@ jobs:
       - name: Check the declarations referenced by the blueprint
         run: ~/.elan/bin/lake env lean blueprint/checkdecls.lean
 
+      # `lake build ...:docs` starts by building doc-gen4 itself -- ~50 Lean modules plus the C
+      # sources of leansqlite/MD4Lean/UnicodeBasic and a statically linked executable, 84 s of
+      # every run and, once the database below is cached, a third of what is left. Nothing else
+      # covers it: the Mathlib cache holds only oleans, and doc-gen4 publishes no binaries.
+      # Deliberately a *separate* step from the database cache: `actions/cache` derives its
+      # version from the path list, so folding these paths into that step would orphan its entry
+      # and force another full uncached documentation build. Note also that lean-action's
+      # `use-github-cache` is not an alternative here -- it caches `.lake/build` wholesale, which
+      # is where the marker files, the database and the multi-gigabyte HTML live. These package
+      # directories are safe by contrast: every doc-gen4 facet writes into the *root* package's
+      # build directory, so a dependency's own build directory holds no documentation state.
+      - name: Cache the doc-gen4 build
+        uses: actions/cache@v6
+        with:
+          path: |
+            .lake/packages/doc-gen4/.lake/build
+            .lake/packages/leansqlite/.lake/build
+            .lake/packages/MD4Lean/.lake/build
+            .lake/packages/UnicodeBasic/.lake/build
+            .lake/packages/BibtexQuery/.lake/build
+            .lake/packages/Cli/.lake/build
+          key: DocGen4-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
+
       # doc-gen4 walks the full import closure by construction — `module_facet docInfo` fetches
       # `docInfo` for every import — so there is no way to document only this library and link to
       # Mathlib's hosted docs: `QuadraticIterates:docs` documents all of Mathlib, ~25.8k module
@@ -92,8 +115,8 @@ jobs:
       # `bibPrepass`) that write into `build/doc` — restoring any of those makes Lake skip work
       # whose output is then missing, and the build dies on `doc/style.css` or
       # `doc/references.bib`. This is what the comment replaced here originally warned about.
-      # No `restore-keys` on purpose: a cache built against a different Mathlib would leave Lake trusting markers
-      # whose database rows no longer match, so it is an exact hit or nothing.
+      # No `restore-keys` on purpose: a cache built against a different Mathlib would leave Lake
+      # trusting markers whose database rows no longer match, so it is an exact hit or nothing.
       - name: Cache the API documentation database
         uses: actions/cache@v6
         with:
