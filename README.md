@@ -1,5 +1,9 @@
 # QuadraticIterates
 
+[![Website](https://img.shields.io/badge/Website-ready-green)](https://michaelstollbayreuth.github.io/QuadraticIterates/)
+[![Blueprint](https://img.shields.io/badge/Blueprint-complete-green)](https://michaelstollbayreuth.github.io/QuadraticIterates/blueprint/)
+[![Blueprint PDF](https://img.shields.io/badge/Blueprint-PDF-blue)](https://michaelstollbayreuth.github.io/QuadraticIterates/blueprint.pdf)
+[![Documentation](https://img.shields.io/badge/Documentation-API-green)](https://michaelstollbayreuth.github.io/QuadraticIterates/docs/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-lightblue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A complete formalization in [Lean 4](https://lean-lang.org), based on
