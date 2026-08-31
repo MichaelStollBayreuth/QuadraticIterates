@@ -33,6 +33,7 @@ them.
 
 \begin{lemma}[Square descent]
   \label{lem:descent}
+  \uses{def:twoindep}
   \lean{square_descent, square_descent_step, isSquare_algebraMap_iff,
     not_isSquare_algebraMap_of_sqrt_notMem, isSquare_algebraMap_bot_iff, mem_adjoin_simple_sq,
     sqClass_mul, sqClass_prod, sqClass_prod_zpow, sqClass_eq_zero_iff,
@@ -49,6 +50,7 @@ them.
 
 \begin{lemma}[Relations among the shifted roots]
   \label{lem:relations}
+  \uses{lem:multiquadratic}
   \lean{rootRelations, mem_rootRelations, rootRelations_finrank_le,
     rootRelations_finrank_reindex, multiquadraticRelations_finrank_eq_rootRelations,
     all_ones_mem_rootRelations, extendByZeroLM, extendByZeroLM_injective,
@@ -61,6 +63,7 @@ them.
   a square in $F$.
 \end{lemma}
 \begin{proof}
+  \uses{def:twoindep, lem:descent}
   \leanok
   Reindexing along the bijection $\iota \to \mathrm{range}$, plus the definition of the relation
   space.
@@ -68,6 +71,7 @@ them.
 
 \begin{lemma}[Invariants of a $2$-group]
   \label{lem:invariant}
+  \uses{lem:relations}
   \lean{fixed_points_nontrivial, invariant_submodule_all_ones, rootRelations_invariant,
     rootRelations_all_ones}
   \leanok
@@ -151,6 +155,7 @@ them.
   holds: $c_n = \prod_{d \dvd n} b_d$.
 \end{lemma}
 \begin{proof}
+  \uses{lem:moebiussign}
   \leanok
   Write the quotient as $N/D$ with $N$ the product of the $c_d$ with $\mu(n/d) = 1$ and $D$ the
   product of those with $\mu(n/d) = -1$. At each prime $p$, strong divisibility bounds
