@@ -160,6 +160,7 @@ them.
 
 \begin{theorem}[Constant valuation shape]
   \label{thm:valshape}
+  \uses{def:gammaseq, lem:moebiusfactor}
   \lean{factorization_periodic_shape, factorization_moebiusFactorR_shape,
     moebiusFactorR_isRelPrime, factorization_eq_of_dvd_sub, one_le_factorization_iff_dvd,
     factorization_eq_zero_iff_not_dvd, pow_dvd_iff_le_factorization,
@@ -175,6 +176,7 @@ them.
 \end{theorem}
 \begin{proof}
   \leanok
+  \uses{lem:moebiussign}
   Two cases. If $p \dvd g(0)$, the valuation is constantly $v_p(g(0))$, since
   $\gamma_n^2 \dvd \gamma_{n+1} - g(0)$ forces $v_p(\gamma_{n+1}) = v_p(g(0))$ by induction. If
   not, let $m$ be minimal with $p \dvd \gamma_m$ and $E := v_p(\gamma_m)$; then
