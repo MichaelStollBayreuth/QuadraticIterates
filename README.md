@@ -69,8 +69,9 @@ lake build QuadraticIterates:docs   # .lake/build/doc/index.html
 generates the documentation with [doc-gen4](https://github.com/leanprover/doc-gen4), which is
 required by `lakefile.toml` for this purpose only (a plain `lake build` does not build it; keep
 its `rev` in sync with `lean-toolchain`). Note that the documentation covers everything the
-project imports, that is, all of Mathlib, so the first run takes a long time and produces several
-gigabytes.
+project imports, that is, all of Mathlib: doc-gen4 walks the import closure by construction, so
+this cannot be narrowed to the project's own modules. On CI it takes about 80 minutes and the
+generated HTML is around 1.3 GB.
 
 The [Pages workflow](.github/workflows/deploy-pages.yml) builds the blueprint and the
 documentation and publishes them alongside the project website, under `/blueprint` and `/docs`,
