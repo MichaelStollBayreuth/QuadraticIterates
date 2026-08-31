@@ -1,7 +1,9 @@
-import Mathlib
+module
 
-import QuadraticIterates.Mathlib.Algebra.BigOperators
-import QuadraticIterates.Mathlib.NumberTheory.Moebius
+public import Mathlib
+
+public import QuadraticIterates.Mathlib.Algebra.BigOperators
+public import QuadraticIterates.Mathlib.NumberTheory.Moebius
 
 /-!
 # Integrality of Möbius factors of strong divisibility sequences
@@ -14,6 +16,8 @@ its image in any fraction field is the Möbius formula.
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 open scoped ArithmeticFunction.Moebius
 open UniqueFactorizationMonoid ArithmeticFunction

@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Unique factorization lemmas
@@ -6,6 +8,8 @@ import Mathlib
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 open UniqueFactorizationMonoid in
 /-- If `σ` is a multiplicative automorphism of a normalization UFD and `σ p` is associated to

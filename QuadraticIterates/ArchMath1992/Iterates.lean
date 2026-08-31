@@ -3,12 +3,14 @@ Copyright (c) 2026 Michael Stoll. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael Stoll
 -/
-import Mathlib
+module
 
-import QuadraticIterates.ArchMath1992.Sequences
-import QuadraticIterates.Mathlib.Data.Nat
-import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
-import QuadraticIterates.Mathlib.GroupTheory.Card
+public import Mathlib
+
+public import QuadraticIterates.ArchMath1992.Sequences
+public import QuadraticIterates.Mathlib.Data.Nat
+public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
+public import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
 # The iterates of `X² + a`, their splitting fields and Galois groups
@@ -27,6 +29,8 @@ Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
 
 `fℚ[a, n]` is scoped notation for the iterate `f_n` viewed in `ℚ[X]`.
 -/
+
+@[expose] public section
 
 open Polynomial
 

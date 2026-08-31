@@ -3,11 +3,13 @@ Copyright (c) 2026 Michael Stoll. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael Stoll
 -/
-import QuadraticIterates.ArchMath1992.DegreeCriterion
-import QuadraticIterates.ArchMath1992.Irreducibility
-import QuadraticIterates.ArchMath1992.Iterates
-import QuadraticIterates.ArchMath1992.Main
-import QuadraticIterates.ArchMath1992.Sequences
+module
+
+public import QuadraticIterates.ArchMath1992.DegreeCriterion
+public import QuadraticIterates.ArchMath1992.Irreducibility
+public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.ArchMath1992.Main
+public import QuadraticIterates.ArchMath1992.Sequences
 
 /-!
 # Galois groups over ℚ of some iterated polynomials

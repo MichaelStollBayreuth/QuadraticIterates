@@ -1,6 +1,8 @@
-import Mathlib
-import QuadraticIterates.Mathlib.Algebra.BigOperators
-import QuadraticIterates.Mathlib.GroupTheory.PGroup
+module
+
+public import Mathlib
+public import QuadraticIterates.Mathlib.Algebra.BigOperators
+public import QuadraticIterates.Mathlib.GroupTheory.PGroup
 
 /-!
 # Multiquadratic field extensions
@@ -12,6 +14,8 @@ realized as the kernel of a linear map to `Lˣ/(Lˣ)²`; descent of squares alon
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 /-- Adjoining a single square root `x` (with `x² ∈ L`) to a field `L` gives degree at most `2`. -/
 theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]

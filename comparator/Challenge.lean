@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Comparator challenge statement (Section 3 main result)
@@ -15,6 +17,8 @@ definition bodies (not just types) between challenge and solution, so a solution
 these definitions is rejected. The companion `Solution.lean` discharges the `sorry` with the
 library theorem.
 -/
+
+@[expose] public section
 
 namespace QuadraticIterates
 

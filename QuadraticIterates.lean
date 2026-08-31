@@ -1,23 +1,25 @@
-import QuadraticIterates.ArchMath1992
-import QuadraticIterates.ArchMath1992.DegreeCriterion
-import QuadraticIterates.ArchMath1992.Irreducibility
-import QuadraticIterates.ArchMath1992.Iterates
-import QuadraticIterates.ArchMath1992.Main
-import QuadraticIterates.ArchMath1992.Sequences
-import QuadraticIterates.Mathlib.Algebra.BigOperators
-import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
-import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
-import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
-import QuadraticIterates.Mathlib.Algebra.Squares
-import QuadraticIterates.Mathlib.Data.Int.DvdSequence
-import QuadraticIterates.Mathlib.Data.Multiset
-import QuadraticIterates.Mathlib.Data.Nat
-import QuadraticIterates.Mathlib.Data.ZMod
-import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
-import QuadraticIterates.Mathlib.GroupTheory.Card
-import QuadraticIterates.Mathlib.GroupTheory.PGroup
-import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
-import QuadraticIterates.Mathlib.NumberTheory.Moebius
-import QuadraticIterates.Mathlib.NumberTheory.PadicVal
-import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
-import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
+module  -- shake: keep-all --deprecated_module: ignore
+
+public import QuadraticIterates.ArchMath1992
+public import QuadraticIterates.ArchMath1992.DegreeCriterion
+public import QuadraticIterates.ArchMath1992.Irreducibility
+public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.ArchMath1992.Main
+public import QuadraticIterates.ArchMath1992.Sequences
+public import QuadraticIterates.Mathlib.Algebra.BigOperators
+public import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
+public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
+public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
+public import QuadraticIterates.Mathlib.Algebra.Squares
+public import QuadraticIterates.Mathlib.Data.Int.DvdSequence
+public import QuadraticIterates.Mathlib.Data.Multiset
+public import QuadraticIterates.Mathlib.Data.Nat
+public import QuadraticIterates.Mathlib.Data.ZMod
+public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
+public import QuadraticIterates.Mathlib.GroupTheory.Card
+public import QuadraticIterates.Mathlib.GroupTheory.PGroup
+public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
+public import QuadraticIterates.Mathlib.NumberTheory.Moebius
+public import QuadraticIterates.Mathlib.NumberTheory.PadicVal
+public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
+public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain

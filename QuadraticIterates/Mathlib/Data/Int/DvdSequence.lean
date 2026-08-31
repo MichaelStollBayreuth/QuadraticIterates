@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Strong divisibility of sequences from a translation congruence
@@ -12,6 +14,8 @@ Fibonacci-style `Int.gcd_fib`, isolated from the specific recurrence.
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 variable {R : Type*} [CommRing R] [IsDomain R] [NormalizedGCDMonoid R]
 

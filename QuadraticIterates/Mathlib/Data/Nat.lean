@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Natural-number lemmas
@@ -6,6 +8,8 @@ import Mathlib
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 /-- If `a ≤ c`, `b ≤ d` and `a * b = c * d` with `c, d` positive, then `a = c` and `b = d`.
 The positivity hypotheses are needed since `ℕ`-multiplication is not strictly monotone at `0`

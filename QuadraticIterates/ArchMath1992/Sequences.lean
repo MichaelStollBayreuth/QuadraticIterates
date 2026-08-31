@@ -3,14 +3,16 @@ Copyright (c) 2026 Michael Stoll. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael Stoll
 -/
-import Mathlib
+module
 
-import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
-import QuadraticIterates.Mathlib.Algebra.Squares
-import QuadraticIterates.Mathlib.Data.Int.DvdSequence
-import QuadraticIterates.Mathlib.Data.ZMod
-import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
-import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
+public import Mathlib
+
+public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
+public import QuadraticIterates.Mathlib.Algebra.Squares
+public import QuadraticIterates.Mathlib.Data.Int.DvdSequence
+public import QuadraticIterates.Mathlib.Data.ZMod
+public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
+public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
 /-!
 # The iteration sequence of a polynomial and its Möbius factors
@@ -25,6 +27,8 @@ and 2.2 of the paper (`not_isSquare_betaSeq` and `not_isSquare_betaSeq_of_pos`).
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
 -/
+
+@[expose] public section
 
 open Polynomial
 open scoped ArithmeticFunction.Moebius

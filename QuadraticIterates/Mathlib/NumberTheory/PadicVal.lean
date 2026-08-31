@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Auxiliary results on p-adic valuations
@@ -10,6 +12,8 @@ kept as self-contained upstreaming candidates.)
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 @[simp]
 theorem padicValInt_neg (p : ℕ) (a : ℤ) : padicValInt p (-a) = padicValInt p a := by

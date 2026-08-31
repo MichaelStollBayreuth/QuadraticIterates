@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Polynomial evaluation lemmas
@@ -6,6 +8,8 @@ import Mathlib
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 /-- A ring homomorphism intertwines iterated evaluation of `p` with iterated evaluation of the
 mapped polynomial. -/

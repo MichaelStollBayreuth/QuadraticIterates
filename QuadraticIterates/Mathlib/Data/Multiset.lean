@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Splitting a multiset along a fixed-point-free involution
@@ -8,6 +10,8 @@ A multiset invariant under a fixed-point-free involution `τ` splits as `N + N.m
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 /-- A multiset `M` invariant under an involution `τ` that is fixed-point-free on its support
 splits as `N + N.map τ`. -/

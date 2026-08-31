@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Homomorphisms from wreath products to abelian groups
@@ -9,6 +11,8 @@ elementary abelian 2-quotient of the `n`-fold iterated wreath power of `C₂` ha
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 /-- For a finite commutative group `H` of exponent `2`, `#H = #(H →* C₂)` where
 `C₂ = Multiplicative (ZMod 2)`. -/

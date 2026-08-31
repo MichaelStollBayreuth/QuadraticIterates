@@ -1,4 +1,6 @@
-import Mathlib
+module
+
+public import Mathlib
 
 /-!
 # Sums of the Möbius function over divisors
@@ -9,6 +11,8 @@ sign partition of the divisors of a squarefree number.
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
+
+@[expose] public section
 
 open ArithmeticFunction
 open scoped ArithmeticFunction.Moebius ArithmeticFunction.zeta

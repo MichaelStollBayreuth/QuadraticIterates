@@ -3,9 +3,11 @@ Copyright (c) 2026 Michael Stoll. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michael Stoll
 -/
-import Mathlib
+module
 
-import QuadraticIterates.ArchMath1992.DegreeCriterion
+public import Mathlib
+
+public import QuadraticIterates.ArchMath1992.DegreeCriterion
 
 /-!
 # The main theorems
@@ -19,6 +21,8 @@ guarantee this for every `n`).
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
 -/
+
+@[expose] public section
 
 open Polynomial
 open scoped ArithmeticFunction.Moebius

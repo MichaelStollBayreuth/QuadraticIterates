@@ -1,4 +1,6 @@
-import QuadraticIterates
+module
+
+public import QuadraticIterates
 
 /-!
 # Comparator solution (Section 3 main result)
@@ -8,6 +10,8 @@ Proof of `challenge_section3_main` from `Challenge.lean`, discharged by the libr
 brings in the definitions `iteratedPoly`, `GaloisGroup`, `WreathPower` that the statement refers
 to; Comparator checks that these agree with the copies reproduced in `Challenge.lean`.
 -/
+
+@[expose] public section
 
 open QuadraticIterates in
 theorem challenge_section3_main (a : ℤ)
