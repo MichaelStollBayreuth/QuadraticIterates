@@ -5,13 +5,14 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib
-
+public import Mathlib.FieldTheory.PolynomialGaloisGroup
+public import Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.ArchMath1992.Sequences
-public import QuadraticIterates.Mathlib.Algebra.BigOperators
-public import QuadraticIterates.Mathlib.Data.Nat
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
-public import QuadraticIterates.Mathlib.GroupTheory.Card
+
+import QuadraticIterates.Mathlib.Algebra.BigOperators
+import QuadraticIterates.Mathlib.Data.Nat
+import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
 # The iterates of `X² + a`, their splitting fields and Galois groups

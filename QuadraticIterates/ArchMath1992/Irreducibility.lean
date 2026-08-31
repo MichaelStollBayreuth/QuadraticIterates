@@ -5,11 +5,12 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib
-
 public import QuadraticIterates.ArchMath1992.Iterates
-public import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
-public import QuadraticIterates.Mathlib.Data.Multiset
+
+import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
+import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
+import QuadraticIterates.Mathlib.Data.Multiset
+import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
 /-!
 # Irreducibility of the iterates over `ℚ`

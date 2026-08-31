@@ -5,11 +5,14 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib
+public import QuadraticIterates.ArchMath1992.Iterates
 
-public import QuadraticIterates.ArchMath1992.Irreducibility
-public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
-public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
+import Mathlib.Data.FunLike.Fintype
+import Mathlib.Data.Rat.Sqrt
+import QuadraticIterates.ArchMath1992.Irreducibility
+import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
+import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
+import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 
 /-!
 # The relative degree `[K_{n+1} : K_n]`

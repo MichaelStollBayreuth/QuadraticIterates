@@ -5,14 +5,19 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib
-
-public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
-public import QuadraticIterates.Mathlib.Algebra.Squares
-public import QuadraticIterates.Mathlib.Data.Int.DvdSequence
-public import QuadraticIterates.Mathlib.Data.ZMod
+public import Mathlib.Algebra.Polynomial.Expand
+public import Mathlib.RingTheory.Int.Basic
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
-public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
+
+import Mathlib.Data.ZMod.Basic
+import Mathlib.RingTheory.Ideal.Quotient.Defs
+import Mathlib.RingTheory.Radical.NatInt
+import Mathlib.Tactic.LinearCombination
+import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
+import QuadraticIterates.Mathlib.Algebra.Squares
+import QuadraticIterates.Mathlib.Data.Int.DvdSequence
+import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
 /-!
 # The iteration sequence of a polynomial and its Möbius factors

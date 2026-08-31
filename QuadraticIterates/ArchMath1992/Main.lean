@@ -5,9 +5,15 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib
+public import QuadraticIterates.ArchMath1992.Iterates
 
-public import QuadraticIterates.ArchMath1992.DegreeCriterion
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Field.Power
+import Mathlib.LinearAlgebra.Dimension.OrzechProperty
+import QuadraticIterates.ArchMath1992.DegreeCriterion
+import QuadraticIterates.ArchMath1992.Irreducibility
+import QuadraticIterates.Mathlib.Algebra.Squares
+import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
 # The main theorems
