@@ -10,20 +10,20 @@ simple
 \begin{facts}[Kummer tower]
   \label{facts:1.0}
   \uses{def:iterates, def:galois}
-  \lean{QuadraticIterates.natDegree_iteratedPoly, QuadraticIterates.kummer_degree_bound,
+  \lean{QuadraticIterates.kummer_degree_bound,
     QuadraticIterates.splittingField_le_succ, QuadraticIterates.splittingField_mono,
     QuadraticIterates.relfinrank_succ_le,
     QuadraticIterates.relfinrank_succ_eq_finrank_adjoin,
     QuadraticIterates.mem_rootSet_iteratedPoly_succ, QuadraticIterates.exists_sq_eq_sub}
   \leanok
-  $f_n$ has degree $2^n$. $K_{n+1} = K_n\bigl(\sqrt{\alpha - a} \bigm| \alpha \text{ root of }
+  $K_{n+1} = K_n\bigl(\sqrt{\alpha - a} \bigm| \alpha \text{ root of }
   f_n\bigr)$, so $K_n \subset K_{n+1}$ is a $2$-Kummer extension, and
   $[K_{n+1} : K_n] \le 2^{2^n}$.
 \end{facts}
 \begin{proof}
   \leanok
-  \uses{lem:multiquadratic}
-  The degree statement is immediate from $f_{n+1} = f_n^2 + a$. A root of $f_{n+1}$ is precisely
+  \uses{lem:1.2, lem:multiquadratic}
+  A root of $f_{n+1}$ is precisely
   an element $\beta$ with $\beta^2 + a$ a root of $f_n$; as $\Qbar$ is algebraically closed,
   every root $\alpha$ of $f_n$ has such a $\beta$, namely a square root of $\alpha - a$. Hence
   $K_{n+1}$ is generated over $K_n$ by square roots of the $2^n$ elements $\alpha - a \in K_n$,
@@ -48,7 +48,7 @@ simple
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:strongdvd, lem:moebiusfactor, thm:valshape}
+  \uses{def:normpoly, lem:2.1, lem:moebiusfactor, lem:strongdvd, thm:valshape}
   a) $a \ne 0, -1$ since $-a$ is not a square. Therefore $c_2 = a^2 + a \ge |a| > 0$, and
   induction shows that $c_{n+1} = c_n^2 + a \ge a^2 + a \ge |a| > 0$.
 
@@ -142,7 +142,6 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   \uses{def:galois, def:wreath, facts:1.0}
   \lean{QuadraticIterates.embed_equiv, QuadraticIterates.odoni_embedding,
     QuadraticIterates.isPGroup_galoisGroup, QuadraticIterates.pow_two_pow_apply_root,
-    QuadraticIterates.ncard_rootSet_iteratedPoly_le,
     QuadraticIterates.nonempty_mulEquiv_of_finrank_eq}
   \leanok
   $\Om_n$ can be embedded into $\Ct{n}$. In particular, we have for all $n$:
@@ -167,7 +166,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
 
 \begin{lemma}
   \label{lem:1.5}
-  \uses{def:twoindep, def:galois, def:cseq}
+  \uses{def:cseq, def:galois, def:twoindep, def:wreath}
   \lean{QuadraticIterates.kummer_extension_criterion,
     QuadraticIterates.isSquare_algebraMap_iff_exists_mul_prod,
     QuadraticIterates.isSquare_algebraMap_iff_exists_sq_eq,
@@ -184,7 +183,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:wreathab, lem:multiquadratic, lem:descent}
+  \uses{cor:1.3, facts:1.0, lem:1.6, lem:descent, lem:multiquadratic, lem:wreathab}
   One proves easily by induction (using the fact that for a transitive permutation group $G$ one
   has $(G[H])^{ab} \cong G^{ab} \times H^{ab}$, where $G[H]$ denotes the wreath product) that
   $(\Ct{n})^{ab}$, the largest abelian factor group of $\Ct{n}$, is isomorphic with $C_2^n$.
@@ -229,7 +228,7 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{cor:1.3, lem:multiquadratic, lem:invariant, lem:relations}
+  \uses{cor:1.3, lem:1.4, lem:descent, lem:invariant, lem:multiquadratic, lem:relations}
   Let $\alpha_j$ $(j = 1, 2, \dots, 2^n)$ be the roots of $f_n$ in $K_n$. Then
   $K_n \subset K_{n+1}$ is a $2$-Kummer extension, and $[K_{n+1} : K_n] = 2^{2^n - \dim V}$,
   where $V$ is the $\FF_2$-vector space of all $(\varepsilon_1, \dots, \varepsilon_{2^n}) \in
