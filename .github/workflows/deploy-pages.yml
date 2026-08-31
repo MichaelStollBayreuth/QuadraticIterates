@@ -86,27 +86,26 @@ jobs:
       # `doc-data/*.doc` markers, and the HTML under `build/doc` is regenerated from the database
       # by a single `fromDb` run — so caching those two skips the pass whenever the dependency set
       # is unchanged, while the HTML (the multi-gigabyte part, and different on every commit) is
-      # deliberately left out — see the marker caveat on the build step below. No `restore-keys`
-      # on purpose: a cache built against a different Mathlib would leave Lake trusting markers
+      # deliberately left out. Hence the narrow `*.doc` glob: only a marker whose command writes
+      # solely into the cached database may be restored. `doc-data` also holds `*.docs_built`,
+      # `*.docsHeader_built` and `references.json`, which gate commands (`fromDb`, `headerData`,
+      # `bibPrepass`) that write into `build/doc` — restoring any of those makes Lake skip work
+      # whose output is then missing, and the build dies on `doc/style.css` or
+      # `doc/references.bib`. This is what the comment replaced here originally warned about.
+      # No `restore-keys` on purpose: a cache built against a different Mathlib would leave Lake trusting markers
       # whose database rows no longer match, so it is an exact hit or nothing.
       - name: Cache the API documentation database
         uses: actions/cache@v6
         with:
           path: |
             .lake/build/api-docs.db
-            .lake/build/doc-data
+            .lake/build/doc-data/*.doc
+            .lake/build/doc-data/*.doc.trace
           key: DocData-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
 
       # Last, because it is by far the most expensive step even when the cache above hits.
-      # `doc-data` holds two kinds of marker. The per-module `*.doc` ones gate work whose output is
-      # the cached database, so restoring them is exactly the point. But `*.docs_built` /
-      # `*.docsHeader_built` gate the `fromDb` run that writes `build/doc`, which is deliberately
-      # NOT cached — restore those and Lake skips the HTML generation, then dies computing the
-      # trace of the missing `doc/style.css`. So drop them before building.
       - name: Build the API documentation
-        run: |
-          rm -f .lake/build/doc-data/*.docs_built .lake/build/doc-data/*.docsHeader_built
-          ~/.elan/bin/lake build QuadraticIterates:docs
+        run: ~/.elan/bin/lake build QuadraticIterates:docs
 
       - name: Configure Pages
         uses: actions/configure-pages@v6

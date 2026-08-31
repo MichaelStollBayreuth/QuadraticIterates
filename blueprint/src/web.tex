@@ -5,7 +5,11 @@
 
 \usepackage{amssymb, amsthm, amsmath}
 \usepackage{hyperref}
-\usepackage[showmore, dep_graph]{blueprint}
+% `facts` is a \newtheorem like the others (macros/common.tex), but the dependency-graph
+% plugin only turns the types listed here into nodes; its default list omits it, which left
+% `facts:1.0` out of the graph although two lemmas \uses it.
+\usepackage[showmore, dep_graph,
+  thms=definition+lemma+proposition+theorem+corollary+facts]{blueprint}
 
 \input{macros/common}
 \input{macros/web}
