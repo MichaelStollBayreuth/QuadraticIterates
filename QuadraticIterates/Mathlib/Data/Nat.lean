@@ -1,6 +1,6 @@
 module
 
-public import Mathlib
+import Mathlib.Tactic.Linarith
 
 /-!
 # Natural-number lemmas

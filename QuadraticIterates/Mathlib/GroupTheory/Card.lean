@@ -1,6 +1,6 @@
 module
 
-public import Mathlib
+public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
 # A cardinality criterion for group isomorphism

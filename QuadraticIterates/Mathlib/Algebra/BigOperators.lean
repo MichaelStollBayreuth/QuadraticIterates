@@ -1,6 +1,8 @@
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Field.ZMod
+
+import Mathlib.Algebra.BigOperators.Ring.Finset
 
 /-!
 # Big-operator lemmas

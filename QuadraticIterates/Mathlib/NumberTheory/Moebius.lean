@@ -1,6 +1,9 @@
 module
 
-public import Mathlib
+public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
+public import Mathlib.RingTheory.Radical.Basic
+
+import Mathlib.RingTheory.Radical.NatInt
 
 /-!
 # Sums of the Möbius function over divisors

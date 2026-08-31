@@ -1,6 +1,14 @@
 module
 
-public import Mathlib
+-- Beyond the sibling `Mathlib.GroupTheory.PGroup`: the results below concern a 2-group acting
+-- on an `𝔽₂`-module, so they need the `Module` API as well (their Mathlib home is unsettled
+-- for the same reason; see the implementation note below).
+public import Mathlib.Algebra.Module.Pi
+public import Mathlib.Algebra.Module.Submodule.Lattice
+public import Mathlib.GroupTheory.PGroup
+
+import Mathlib.Algebra.Field.ZMod
+import Mathlib.FieldTheory.Finiteness
 
 /-!
 # Fixed points of 2-groups on 𝔽₂-modules

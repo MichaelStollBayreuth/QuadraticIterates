@@ -8,6 +8,7 @@ module
 public import Mathlib
 
 public import QuadraticIterates.ArchMath1992.Sequences
+public import QuadraticIterates.Mathlib.Algebra.BigOperators
 public import QuadraticIterates.Mathlib.Data.Nat
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 public import QuadraticIterates.Mathlib.GroupTheory.Card

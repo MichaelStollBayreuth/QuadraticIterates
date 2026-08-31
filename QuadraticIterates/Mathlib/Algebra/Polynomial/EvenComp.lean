@@ -1,6 +1,9 @@
 module
 
-public import Mathlib
+public import Mathlib.Algebra.GCDMonoid.Basic
+public import Mathlib.Algebra.Polynomial.Expand
+
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Even polynomials as polynomials in `X² + c`

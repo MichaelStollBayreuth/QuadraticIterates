@@ -1,6 +1,15 @@
 module
 
-public import Mathlib
+-- Beyond the sibling `Mathlib.GroupTheory.RegularWreathProduct`: homomorphisms into `C₂` are
+-- counted through the `𝔽₂`-dual of an elementary abelian quotient, whence the module,
+-- finite-field and dual-space imports.
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.GroupTheory.RegularWreathProduct
+
+import Mathlib.Algebra.Module.ZMod
+import Mathlib.FieldTheory.Finite.GaloisField
+import Mathlib.FieldTheory.Finiteness
+import Mathlib.LinearAlgebra.Dual.Lemmas
 
 /-!
 # Homomorphisms from wreath products to abelian groups

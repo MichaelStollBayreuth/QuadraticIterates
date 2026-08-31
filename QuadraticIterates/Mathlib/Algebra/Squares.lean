@@ -1,6 +1,11 @@
 module
 
-public import Mathlib
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Data.ZMod.Defs
+public import Mathlib.RingTheory.Coprime.Basic
+
+import Mathlib.NumberTheory.SumTwoSquares
+import Mathlib.RingTheory.Int.Basic
 
 /-!
 # Lemmas about squares

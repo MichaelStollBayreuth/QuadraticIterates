@@ -1,6 +1,9 @@
 module
 
-public import Mathlib
+public import Mathlib.RingTheory.UniqueFactorizationDomain.Finsupp
+
+import Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
+import Mathlib.Tactic.Ring
 
 /-!
 # Unique factorization lemmas

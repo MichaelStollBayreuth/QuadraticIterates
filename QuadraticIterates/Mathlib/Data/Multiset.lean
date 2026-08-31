@@ -1,6 +1,8 @@
 module
 
-public import Mathlib
+public import Mathlib.Data.Multiset.MapFold
+
+import Mathlib.Data.Multiset.Basic
 
 /-!
 # Splitting a multiset along a fixed-point-free involution

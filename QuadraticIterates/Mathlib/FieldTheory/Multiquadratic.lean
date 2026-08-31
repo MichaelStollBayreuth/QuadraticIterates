@@ -1,8 +1,11 @@
 module
 
-public import Mathlib
-public import QuadraticIterates.Mathlib.Algebra.BigOperators
-public import QuadraticIterates.Mathlib.GroupTheory.PGroup
+public import Mathlib.Algebra.Module.ZMod
+public import Mathlib.FieldTheory.Galois.Basic
+public import Mathlib.FieldTheory.Relrank
+
+import QuadraticIterates.Mathlib.Algebra.BigOperators
+import QuadraticIterates.Mathlib.GroupTheory.PGroup
 
 /-!
 # Multiquadratic field extensions

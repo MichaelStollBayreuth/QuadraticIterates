@@ -1,9 +1,12 @@
 module
 
-public import Mathlib
-
-public import QuadraticIterates.Mathlib.Algebra.BigOperators
+public import Mathlib.RingTheory.Localization.FractionRing
+public import Mathlib.RingTheory.Localization.Integer
+public import Mathlib.RingTheory.UniqueFactorizationDomain.Finsupp
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
+
+import Mathlib.Tactic.FieldSimp
+import QuadraticIterates.Mathlib.Algebra.BigOperators
 
 /-!
 # Integrality of Möbius factors of strong divisibility sequences
