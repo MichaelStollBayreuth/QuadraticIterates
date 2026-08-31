@@ -86,9 +86,9 @@ jobs:
       # `doc-data/*.doc` markers, and the HTML under `build/doc` is regenerated from the database
       # by a single `fromDb` run — so caching those two skips the pass whenever the dependency set
       # is unchanged, while the HTML (the multi-gigabyte part, and different on every commit) is
-      # deliberately left out. No `restore-keys` on purpose: a cache built against a different
-      # Mathlib would leave Lake trusting markers whose database rows no longer match, so it is an
-      # exact hit or nothing.
+      # deliberately left out — see the marker caveat on the build step below. No `restore-keys`
+      # on purpose: a cache built against a different Mathlib would leave Lake trusting markers
+      # whose database rows no longer match, so it is an exact hit or nothing.
       - name: Cache the API documentation database
         uses: actions/cache@v6
         with:
@@ -98,8 +98,15 @@ jobs:
           key: DocData-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
 
       # Last, because it is by far the most expensive step even when the cache above hits.
+      # `doc-data` holds two kinds of marker. The per-module `*.doc` ones gate work whose output is
+      # the cached database, so restoring them is exactly the point. But `*.docs_built` /
+      # `*.docsHeader_built` gate the `fromDb` run that writes `build/doc`, which is deliberately
+      # NOT cached — restore those and Lake skips the HTML generation, then dies computing the
+      # trace of the missing `doc/style.css`. So drop them before building.
       - name: Build the API documentation
-        run: ~/.elan/bin/lake build QuadraticIterates:docs
+        run: |
+          rm -f .lake/build/doc-data/*.docs_built .lake/build/doc-data/*.docsHeader_built
+          ~/.elan/bin/lake build QuadraticIterates:docs
 
       - name: Configure Pages
         uses: actions/configure-pages@v6
