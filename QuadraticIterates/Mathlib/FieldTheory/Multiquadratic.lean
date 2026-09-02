@@ -86,8 +86,12 @@ variable [DecidableEq L]
 noncomputable def sqClass (r : L) : SquareClasses L :=
   if hr : r = 0 then 0 else Additive.ofMul (QuotientGroup.mk (Units.mk0 r hr))
 
-/-- The square class of a nonzero `r` vanishes iff `r` is a square in `L`. -/
-theorem sqClass_eq_zero_iff {r : L} (hr : r ≠ 0) : sqClass r = 0 ↔ IsSquare r := by
+@[simp] theorem sqClass_zero : sqClass (0 : L) = 0 := by rw [sqClass, dif_pos rfl]
+
+/-- The square class of `r` vanishes iff `r` is a square in `L` (at `r = 0` both sides hold). -/
+theorem sqClass_eq_zero_iff (r : L) : sqClass r = 0 ↔ IsSquare r := by
+  rcases eq_or_ne r 0 with rfl | hr
+  · simp
   rw [sqClass, dif_neg hr,
     show (0 : SquareClasses L) = Additive.ofMul 1 from rfl,
     Additive.ofMul.apply_eq_iff_eq, QuotientGroup.eq_one_iff]
@@ -102,6 +106,8 @@ theorem sqClass_eq_zero_iff {r : L} (hr : r ≠ 0) : sqClass r = 0 ↔ IsSquare 
     ext
     simp [ht, pow_two]
 
+@[simp] theorem sqClass_one : sqClass (1 : L) = 0 := (sqClass_eq_zero_iff 1).mpr IsSquare.one
+
 theorem sqClass_mul {r t : L} (hr : r ≠ 0) (ht : t ≠ 0) :
     sqClass (r * t) = sqClass r + sqClass t := by
   rw [sqClass, sqClass, sqClass, dif_neg hr, dif_neg ht, dif_neg (mul_ne_zero hr ht),
@@ -114,17 +120,12 @@ theorem sqClass_prod {ι : Type*} {s : Finset ι} {r : ι → L} (hr : ∀ i ∈
     sqClass (∏ i ∈ s, r i) = ∑ i ∈ s, sqClass (r i) := by
   classical
   induction s using Finset.induction with
-  | empty => simp [sqClass]
+  | empty => simp
   | insert a t ha ih =>
     rw [Finset.prod_insert ha, Finset.sum_insert ha,
       sqClass_mul (hr a (Finset.mem_insert_self a t))
         (Finset.prod_ne_zero_iff.mpr fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)),
       ih fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)]
-
-@[simp] theorem sqClass_zero : sqClass (0 : L) = 0 := by rw [sqClass, dif_pos rfl]
-
-@[simp] theorem sqClass_one : sqClass (1 : L) = 0 :=
-  (sqClass_eq_zero_iff one_ne_zero).mpr IsSquare.one
 
 /-- `sqClass` sends a `zpow` to a `ZMod 2`-scalar multiple (the class is written additively). -/
 theorem sqClass_zpow {x : L} (hx : x ≠ 0) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
@@ -136,7 +137,7 @@ theorem sqClass_zpow {x : L} (hx : x ≠ 0) (k : ℤ) : sqClass (x ^ k) = k • 
 /-- A product over `s` is a square iff the classes in `Lˣ/(Lˣ)²` sum to zero. -/
 theorem isSquare_prod_iff_sum_sqClass_eq_zero {ι : Type*} {s : Finset ι} {r : ι → L}
     (hr : ∀ i ∈ s, r i ≠ 0) : IsSquare (∏ i ∈ s, r i) ↔ ∑ i ∈ s, sqClass (r i) = 0 := by
-  rw [← sqClass_prod hr, sqClass_eq_zero_iff (Finset.prod_ne_zero_iff.mpr hr)]
+  rw [← sqClass_prod hr, sqClass_eq_zero_iff _]
 
 /-- `sqClass` linearises a product of `zpow`s: `[∏ rᵢ ^ eᵢ] = ∑ eᵢ • [rᵢ]`. -/
 theorem sqClass_prod_zpow {ι : Type*} {s : Finset ι} {r : ι → L} (e : ι → ℤ)
