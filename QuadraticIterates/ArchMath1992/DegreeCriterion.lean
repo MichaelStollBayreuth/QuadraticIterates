@@ -68,17 +68,10 @@ theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] {n : ℕ} (h
   have hx (β) :
       x β ^ 2 = algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (rootShift a n β) :=
     hg β.1
-  have hxinj : Function.Injective x := by
-    intro β β' h
-    have h2 : (β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ)
-        = (β' : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ) := by
-      rw [← hg β.1, ← hg β'.1]
-      exact congrArg (· ^ 2) h
-    exact Subtype.ext (by linear_combination h2)
   have hset : g '' ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
       = Set.range x := Set.image_eq_range g _
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg, hset,
-    multiquadratic_degree_family hxinj hx (rootShift_ne_zero a hnsq hn),
+    multiquadratic_degree_family hx (rootShift_ne_zero a hnsq hn),
     card_rootSet_iteratedPoly a hirr]
 
 lemma exists_ringEquiv_radicand_smul {n : ℕ}
@@ -261,62 +254,15 @@ lemma finrank_eq_of_nonempty_mulEquiv {n : ℕ}
     Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1) := by
   rw [← card_galoisGroup_eq_finrank a n, Nat.card_congr hiso.some.toEquiv, card_wreathPower]
 
-/-- Package a family of square roots `x i` of the `algebraMap`-images of nonzero rationals `v i`
-as the finset `Finset.univ.image x` together with a coefficient function `cf`, in the form
-consumed by the multiquadratic API (`multiquadratic_degree`, `square_descent`). -/
-private lemma exists_coeffs_of_sq_eq_algebraMap {K : Type*} [Field K] [Algebra ℚ K]
-    [DecidableEq K] {n : ℕ}
-    {v : Fin n → ℚ} (hv0 : ∀ i, v i ≠ 0) {x : Fin n → K} (hxinj : Function.Injective x)
-    (hx : ∀ i, x i ^ 2 = algebraMap ℚ K (v i)) :
-    ∃ cf : K → ℚ,
-      (∀ i, cf (x i) = v i) ∧
-      (∀ y ∈ Finset.univ.image x, y ^ 2 = algebraMap ℚ K (cf y)) ∧
-      (∀ y ∈ Finset.univ.image x, cf y ≠ 0) ∧
-      ∀ S : Finset (Fin n), ∏ y ∈ S.image x, cf y = ∏ i ∈ S, v i := by
-  classical
-  refine ⟨Function.extend x v 1, fun i ↦ hxinj.extend_apply _ _ i, ?_, ?_, fun S ↦ ?_⟩
-  · intro y hy
-    obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-    rw [hxinj.extend_apply]
-    exact hx i
-  · intro y hy
-    obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-    rw [hxinj.extend_apply]
-    exact hv0 i
-  · rw [Finset.prod_image fun i _ j _ h ↦ hxinj h]
-    exact Finset.prod_congr rfl fun i _ ↦ hxinj.extend_apply _ _ i
-
 lemma finrank_adjoin_range_eq_two_pow {n : ℕ}
     (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)))
     {x : Fin n → ↥(splittingField a n)}
     (hx : ∀ i, x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ)) :
     Module.finrank ℚ (IntermediateField.adjoin ℚ (Set.range x)) = 2 ^ n := by
   classical
-  have hxinj : Function.Injective x := hindep.sqrt_injective hx
-  obtain ⟨cf, hcf_eq, hs_sq, hs_ne, hprodS⟩ := exists_coeffs_of_sq_eq_algebraMap hindep.1 hxinj hx
-  set s : Finset ↥(splittingField a n) := Finset.univ.image x with hs
-  have hrange : (s : Set ↥(splittingField a n)) = Set.range x := by
-    simp [hs, Finset.coe_image]
-  have hscard : s.card = n := by
-    rw [hs, Finset.card_image_of_injective _ hxinj, Finset.card_univ, Fintype.card_fin]
-  have hrelbot : multiquadraticRelations s cf = ⊥ := by
-    rw [Submodule.eq_bot_iff]
-    intro ε hε
-    obtain ⟨hεsupp, hεsq⟩ := (mem_multiquadraticRelations hs_ne).mp hε
-    set S : Finset (Fin n) := Finset.univ.filter (fun i ↦ ε (x i) = 1) with hS
-    have hfilter_img : s.filter (fun y ↦ ε y = 1) = S.image x := by
-      simpa [hs, hS] using Finset.filter_image (p := fun y ↦ ε y = 1) (f := x)
-        (s := Finset.univ)
-    rw [hfilter_img, hprodS S] at hεsq
-    have hSempty : S = ∅ := Finset.not_nonempty_iff_eq_empty.mp fun hSnon ↦ hindep.2 S hSnon hεsq
-    funext y
-    by_cases hy : y ∈ s
-    · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp (hs ▸ hy)
-      have hne1 : ¬ ε (x i) = 1 := fun h1 ↦ Finset.notMem_empty i (hSempty ▸ (by
-        rw [hS]; exact Finset.mem_filter.mpr ⟨Finset.mem_univ i, h1⟩ : i ∈ S))
-      exact ((by decide : ∀ z : ZMod 2, z = 0 ∨ z = 1) (ε (x i))).resolve_right hne1
-    · exact hεsupp y hy
-  rw [← hrange, multiquadratic_degree hs_sq hs_ne, hscard, hrelbot, finrank_bot, Nat.sub_zero]
+  rw [multiquadratic_degree_family hx hindep.1, (rootRelations_eq_bot_iff _).mpr
+    ((twoIndependent_iff_linearIndependent _).mp hindep), finrank_bot, Fintype.card_fin,
+    Nat.sub_zero]
 
 lemma card_monoidHom_eq_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n)) :
     Nat.card (((splittingField a n) ≃ₐ[ℚ] (splittingField a n)) →*
@@ -433,24 +379,9 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
   have hx2 (i) : x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ) := by
     rw [sq]
     exact (hx i).symm
-  rw [isSquare_algebraMap_iff_exists_sq_eq a hiso hindep hx2 c]
-  have hxinj : Function.Injective x := hindep.sqrt_injective hx2
-  obtain ⟨cf, hcf_eq, hs_sq, hs_ne, hprodS⟩ := exists_coeffs_of_sq_eq_algebraMap hindep.1 hxinj hx2
-  set s : Finset ↥(splittingField a n) := Finset.univ.image x with hs
-  have hrange : (s : Set ↥(splittingField a n)) = Set.range x := by
-    rw [hs, Finset.coe_image, Finset.coe_univ, Set.image_univ]
-  rw [← hrange, square_descent hs_sq hs_ne c]
-  refine ⟨fun ⟨t, hts, hsq⟩ ↦ ?_, fun ⟨S, hsq⟩ ↦ ?_⟩
-  · refine ⟨Finset.univ.filter (fun i ↦ x i ∈ t), ?_⟩
-    have htimg : t = (Finset.univ.filter (fun i ↦ x i ∈ t)).image x := by
-      ext y
-      simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
-      refine ⟨fun hy ↦ ?_, fun ⟨i, hi, hxy⟩ ↦ hxy ▸ hi⟩
-      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp (hs ▸ hts hy)
-      exact ⟨i, hy, rfl⟩
-    rwa [htimg, hprodS] at hsq
-  · refine ⟨S.image x, by rw [hs]; exact Finset.image_subset_image (Finset.subset_univ S), ?_⟩
-    rwa [hprodS]
+  rw [isSquare_algebraMap_iff_exists_sq_eq a hiso hindep hx2 c, ← Set.image_univ,
+    ← Finset.coe_univ, square_descent (fun i _ ↦ hx2 i) (fun i _ ↦ hindep.1 i) c]
+  exact exists_congr fun S ↦ and_iff_right (Finset.subset_univ S)
 
 lemma twoIndependent_snoc_iff {n : ℕ} {v : Fin n → ℚ} (hv : TwoIndependent v) {c : ℚ} (hc : c ≠ 0) :
     TwoIndependent (Fin.snoc v c) ↔

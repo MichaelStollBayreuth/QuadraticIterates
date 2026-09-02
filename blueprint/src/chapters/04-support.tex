@@ -20,12 +20,13 @@ them.
     finrank_adjoin_sqrt_eq, multiquadraticRelations_finrank_le,
     multiquadraticRelations_insert_finrank}
   \leanok
-  Let $F$ be a field of characteristic $\ne 2$ and $s$ a finite set of square roots of elements
-  $c_y \in F^*$ inside an extension. Then
-  $[F(s) : F] = 2^{\#s - \dim_{\FF_2} R(s)}$, where $R(s) \subseteq \FF_2^{s}$ is the space of
-  \emph{relations}: the $\varepsilon$ with $\prod_{y : \varepsilon_y = 1} c_y$ a square in $F$.
-  In particular $[F(s) : F] \le 2^{\#s}$, with equality iff there are no relations; and adjoining
-  one further square root either doubles the degree or leaves it unchanged.
+  Let $F$ be a field of characteristic $\ne 2$ and $(x_i)_{i \in s}$ a finite family of square
+  roots of elements $r_i \in F^*$ inside an extension. Then
+  $[F(x_i : i \in s) : F] = 2^{\#s - \dim_{\FF_2} R(s)}$, where $R(s) \subseteq \FF_2^{s}$ is the
+  space of \emph{relations}: the $\varepsilon$ with $\prod_{i : \varepsilon_i = 1} r_i$ a square in
+  $F$. (The family need not be injective: a repeated root counts once in $\#s$ and once in
+  $R(s)$.) In particular $[F(x_i) : F] \le 2^{\#s}$, with equality iff there are no relations; and
+  adjoining one further square root either doubles the degree or leaves it unchanged.
 \end{lemma}
 \begin{proof}
   \leanok
@@ -54,22 +55,22 @@ them.
 \begin{lemma}[Relations among the shifted roots]
   \label{lem:relations}
   \uses{lem:multiquadratic}
-  \lean{rootRelations, mem_rootRelations, rootRelations_finrank_le,
-    rootRelations_finrank_reindex, multiquadraticRelations_finrank_eq_rootRelations,
+  \lean{rootRelations, mem_rootRelations, rootRelations_eq_bot_iff, rootRelations_finrank_le,
+    multiquadraticRelations_univ, multiquadraticRelations_finrank_eq_rootRelations,
     all_ones_mem_rootRelations, Function.ExtendByZero.linearMap_injective,
-    multiquadraticRelations_ycoord, multiquadraticRelations_insert_inf_ker_proj,
+    exists_mem_multiquadraticRelations_insert_iff, multiquadraticRelations_insert_inf_ker_proj,
     indicator_mem_multiquadraticRelations_iff}
   \leanok
-  For an injective family $(r_i)_{i \in \iota}$ of nonzero elements of $F$, the relation space
-  $R \subseteq \FF_2^{\iota}$ indexed by the family agrees with the relation space of its image
-  set, and $\dim R \le \#\iota$. The all-ones vector lies in $R$ if and only if $\prod_i r_i$ is
-  a square in $F$.
+  For a family $(r_i)_{i \in \iota}$ of nonzero elements of $F$, the relation space
+  $R \subseteq \FF_2^{\iota}$ of the full family is the space of relations of
+  Lemma~\ref{lem:multiquadratic} for $s = \iota$; it vanishes iff the classes of the $r_i$ in
+  $F^*/F^{*2}$ are linearly independent, and $\dim R \le \#\iota$. The all-ones vector lies in
+  $R$ if and only if $\prod_i r_i$ is a square in $F$.
 \end{lemma}
 \begin{proof}
   \uses{def:twoindep, lem:descent}
   \leanok
-  Reindexing along the bijection $\iota \to \mathrm{range}$, plus the definition of the relation
-  space.
+  Unfolding the definition of the relation space.
 \end{proof}
 
 \begin{lemma}[Invariants of a $2$-group]
