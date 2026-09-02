@@ -7,6 +7,7 @@ public import QuadraticIterates.ArchMath1992.Iterates
 public import QuadraticIterates.ArchMath1992.Main
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.Algebra.BigOperators
+public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots

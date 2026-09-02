@@ -5,6 +5,7 @@ public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.FieldTheory.Relrank
 
 import QuadraticIterates.Mathlib.Algebra.BigOperators
+import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 import QuadraticIterates.Mathlib.GroupTheory.PGroup
 
 /-!
@@ -92,17 +93,9 @@ noncomputable def sqClass (r : L) : SquareClasses L :=
 theorem sqClass_eq_zero_iff (r : L) : sqClass r = 0 ↔ IsSquare r := by
   rcases eq_or_ne r 0 with rfl | hr
   · simp
-  rw [sqClass, dif_neg hr,
-    show (0 : SquareClasses L) = Additive.ofMul 1 from rfl,
-    Additive.ofMul.apply_eq_iff_eq, QuotientGroup.eq_one_iff]
-  refine ⟨fun ⟨v, hv⟩ ↦ ?_, fun ⟨t, ht⟩ ↦ ?_⟩
-  · have hcoe := congrArg Units.val hv
-    simp only [powMonoidHom_apply, Units.val_pow_eq_pow_val, Units.val_mk0] at hcoe
-    exact ⟨(v : L), by rw [← hcoe]; ring⟩
-  · have ht0 : t ≠ 0 := fun h ↦ hr (by rw [ht, h, mul_zero])
-    refine ⟨Units.mk0 t ht0, ?_⟩
-    ext
-    simp [ht, pow_two]
+  rw [sqClass, dif_neg hr, show (0 : SquareClasses L) = Additive.ofMul 1 from rfl,
+    Additive.ofMul.apply_eq_iff_eq, QuotientGroup.eq_one_iff, Units.mem_range_powMonoidHom_two_iff,
+    Units.val_mk0]
 
 @[simp] theorem sqClass_one : sqClass (1 : L) = 0 := (sqClass_eq_zero_iff 1).mpr IsSquare.one
 
