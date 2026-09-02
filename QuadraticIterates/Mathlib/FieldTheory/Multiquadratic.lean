@@ -567,47 +567,20 @@ theorem multiquadratic_degree {L : Type*} [Field L] [DecidableEq L] [NeZero (2 :
     Module.finrank L (IntermediateField.adjoin L (s : Set E))
       = 2 ^ (s.card - Module.finrank (ZMod 2) (multiquadraticRelations s c)) := by
   classical
-  revert hs hc
   induction s using Finset.induction_on with
-  | empty => intro hs hc; simp
+  | empty => simp
   | insert y s' hys ih =>
-    intro hs hc
-    have hs' : ∀ x ∈ s', x ^ 2 = algebraMap L E (c x) := fun x hx ↦
-      hs x (Finset.mem_insert_of_mem hx)
+    have hs' : ∀ x ∈ s', x ^ 2 = algebraMap L E (c x) :=
+      fun x hx ↦ hs x (Finset.mem_insert_of_mem hx)
     have hc' : ∀ x ∈ s', c x ≠ 0 := fun x hx ↦ hc x (Finset.mem_insert_of_mem hx)
-    have ih' := ih hs' hc'
-    set K := IntermediateField.adjoin L (s' : Set E) with hK
-    have hdeg2 : Module.finrank (↥K) (IntermediateField.adjoin (↥K) ({y} : Set E))
-        = if IsSquare (algebraMap L (↥K) (c y)) then 1 else 2 :=
-      finrank_adjoin_sqrt_eq
-        (by rw [hs y (Finset.mem_insert_self y s'), ← IsScalarTower.algebraMap_apply L (↥K) E])
-    have hadjeq : IntermediateField.adjoin L ((insert y s' : Finset E) : Set E)
-        = IntermediateField.restrictScalars L (IntermediateField.adjoin (↥K) ({y} : Set E)) := by
-      rw [IntermediateField.restrictScalars_adjoin_eq_sup, hK,
-        Finset.coe_insert, Set.insert_eq, Set.union_comm, IntermediateField.adjoin_union]
-    have hle : K ≤ IntermediateField.restrictScalars L
-        (IntermediateField.adjoin (↥K) ({y} : Set E)) := by
-      rw [IntermediateField.restrictScalars_adjoin_eq_sup]; exact le_sup_left
-    have htower : Module.finrank L (IntermediateField.adjoin L ((insert y s' : Finset E) : Set E))
-        = Module.finrank L K
-          * Module.finrank (↥K) (IntermediateField.adjoin (↥K) ({y} : Set E)) := by
-      rw [hadjeq, ← IntermediateField.finrank_bot_mul_relfinrank hle,
-        IntermediateField.relfinrank_eq_finrank_of_le hle]
-      congr 1
-    have hVincr : Module.finrank (ZMod 2) (multiquadraticRelations (insert y s') c)
-        = Module.finrank (ZMod 2) (multiquadraticRelations s' c)
-          + (if IsSquare (algebraMap L (↥K) (c y)) then 1 else 0) :=
-      multiquadraticRelations_insert_finrank hys hs hc
-    have hVle : Module.finrank (ZMod 2) (multiquadraticRelations s' c) ≤ s'.card :=
-      multiquadraticRelations_finrank_le s' c
-    rw [htower, ih', hdeg2, hVincr, Finset.card_insert_of_notMem hys]
-    set d := Module.finrank (ZMod 2) (multiquadraticRelations s' c)
-    by_cases hsq : IsSquare (algebraMap L (↥K) (c y))
-    · simp only [hsq, if_true, mul_one]
-      congr 1
-      lia
-    · simp only [hsq, if_false, add_zero]
-      rw [show s'.card + 1 - d = (s'.card - d) + 1 by lia, pow_succ]
+    have hle := multiquadraticRelations_finrank_le s' c
+    rw [Finset.coe_insert, IntermediateField.finrank_adjoin_insert, ih hs' hc',
+      finrank_adjoin_sqrt_eq ((hs y (Finset.mem_insert_self y s')).trans
+        (IsScalarTower.algebraMap_apply L (IntermediateField.adjoin L (s' : Set E)) E (c y))),
+      multiquadraticRelations_insert_finrank hys hs hc, Finset.card_insert_of_notMem hys]
+    split_ifs
+    · rw [mul_one, Nat.add_sub_add_right]
+    · rw [add_zero, ← pow_succ, Nat.sub_add_comm hle]
 
 /-- The dimension of the relation space is invariant under reindexing the family by a
 bijection. -/
