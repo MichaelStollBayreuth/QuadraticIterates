@@ -467,49 +467,42 @@ theorem rootRelations_finrank_le {ι : Type*} [Fintype ι] {L : Type*} [Field L]
     Module.finrank (ZMod 2) (rootRelations r) ≤ Fintype.card ι := by
   simpa [Module.finrank_pi] using Submodule.finrank_le (rootRelations r)
 
+/-- `multiquadraticRelations s c` has the same `𝔽₂`-dimension as the relation space of the
+restricted family `c|_s`. -/
+theorem multiquadraticRelations_finrank_eq_rootRelations {L : Type*} [Field L] [DecidableEq L]
+    {E : Type*} (s : Finset E) (c : E → L) :
+    Module.finrank (ZMod 2) (multiquadraticRelations s c)
+      = Module.finrank (ZMod 2) (rootRelations fun x : ↥s ↦ c x.1) :=
+  (Submodule.equivMapOfInjective _
+    (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _).symm.finrank_eq
+
 /-- `multiquadraticRelations s c` has `𝔽₂`-dimension at most `|s|`. -/
 theorem multiquadraticRelations_finrank_le {L : Type*} [Field L] [DecidableEq L] {E : Type*}
-    [DecidableEq E] (s : Finset E) (c : E → L) :
+    (s : Finset E) (c : E → L) :
     Module.finrank (ZMod 2) (multiquadraticRelations s c) ≤ s.card := by
-  rw [multiquadraticRelations, (Submodule.equivMapOfInjective _
-    (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _).symm.finrank_eq,
-    ← Fintype.card_coe s]
+  rw [multiquadraticRelations_finrank_eq_rootRelations, ← Fintype.card_coe s]
   exact rootRelations_finrank_le _
 
-/-- `multiquadraticRelations s c` is finite-dimensional over `𝔽₂`. -/
-theorem multiquadraticRelations_finite {L : Type*} [Field L] [DecidableEq L] {E : Type*}
-    [DecidableEq E] (s : Finset E) (c : E → L) :
+instance {L : Type*} [Field L] [DecidableEq L] {E : Type*} (s : Finset E) (c : E → L) :
     Module.Finite (ZMod 2) (multiquadraticRelations s c) :=
   Module.Finite.equiv (Submodule.equivMapOfInjective _
     (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _)
 
-/-- Intersecting `V (insert y s')` with the hyperplane `ε y = 0` recovers `V s'` (equal
-`𝔽₂`-dimension). -/
-theorem multiquadraticRelations_ker_finrank {L : Type*} [Field L] [DecidableEq L] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
-    (hc : ∀ x ∈ insert y s', c x ≠ 0) (hc' : ∀ x ∈ s', c x ≠ 0) :
-    Module.finrank (ZMod 2)
-        (↥((multiquadraticRelations (insert y s') c : Submodule (ZMod 2) (E → ZMod 2))
-          ⊓ (LinearMap.ker (LinearMap.proj y : (E → ZMod 2) →ₗ[ZMod 2] ZMod 2)
-              : Submodule (ZMod 2) (E → ZMod 2))))
-      = Module.finrank (ZMod 2) (multiquadraticRelations s' c) := by
-  have heq : ((multiquadraticRelations (insert y s') c : Submodule (ZMod 2) (E → ZMod 2))
-        ⊓ (LinearMap.ker (LinearMap.proj y : (E → ZMod 2) →ₗ[ZMod 2] ZMod 2)))
+/-- Intersecting `V (insert y s')` with the hyperplane `ε y = 0` recovers `V s'`. -/
+theorem multiquadraticRelations_insert_inf_ker_proj {L : Type*} [Field L] [DecidableEq L]
+    {E : Type*} [DecidableEq E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
+    (hc : ∀ x ∈ insert y s', c x ≠ 0) :
+    multiquadraticRelations (insert y s') c ⊓ LinearMap.ker (LinearMap.proj y)
       = multiquadraticRelations s' c := by
-    ext ε
-    simp only [Submodule.mem_inf, LinearMap.mem_ker, LinearMap.proj_apply,
-      mem_multiquadraticRelations hc, mem_multiquadraticRelations hc']
-    constructor
-    · rintro ⟨⟨hεsupp, hεsq⟩, hεy⟩
-      refine ⟨fun x hx ↦ ?_, by simpa [Finset.filter_insert, hεy] using hεsq⟩
-      by_cases hxy : x = y
-      · rw [hxy]; exact hεy
-      · exact hεsupp x (by simp [Finset.mem_insert, hxy, hx])
-    · rintro ⟨hεsupp, hεsq⟩
-      have hεy : ε y = 0 := hεsupp y hys
-      refine ⟨⟨fun x hx ↦ hεsupp x (fun h ↦ hx (Finset.mem_insert_of_mem h)), ?_⟩, hεy⟩
-      simpa [Finset.filter_insert, hεy] using hεsq
-  rw [heq]
+  have hc' : ∀ x ∈ s', c x ≠ 0 := fun x hx ↦ hc x (Finset.mem_insert_of_mem hx)
+  ext ε
+  simp only [Submodule.mem_inf, LinearMap.mem_ker, LinearMap.proj_apply,
+    mem_multiquadraticRelations hc, mem_multiquadraticRelations hc']
+  refine ⟨fun ⟨⟨hsupp, hsq⟩, hy⟩ ↦ ⟨fun x hx ↦ ?_, ?_⟩,
+    fun ⟨hsupp, hsq⟩ ↦ ⟨⟨fun x hx ↦ hsupp x (mt Finset.mem_insert_of_mem hx), ?_⟩, hsupp y hys⟩⟩
+  · grind
+  · simpa [Finset.filter_insert, hy] using hsq
+  · simpa [Finset.filter_insert, hsupp y hys] using hsq
 
 /-- Some relation of `V (insert y s')` has `y`-coordinate `1` iff `c y` is a square in
 `L(s')`. -/
@@ -561,7 +554,7 @@ unchanged otherwise. -/
 theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [DecidableEq L]
     [NeZero (2 : L)] {E : Type*} [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E}
     (hys : y ∉ s') {c : E → L} (hs : ∀ x ∈ insert y s', x ^ 2 = algebraMap L E (c x))
-    (hc : ∀ x ∈ insert y s', c x ≠ 0) (hc' : ∀ x ∈ s', c x ≠ 0)
+    (hc : ∀ x ∈ insert y s', c x ≠ 0)
     [Decidable (IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y)))] :
     Module.finrank (ZMod 2) (multiquadraticRelations (insert y s') c)
       = Module.finrank (ZMod 2) (multiquadraticRelations s' c)
@@ -574,8 +567,6 @@ theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [DecidableE
     { toFun := fun v ↦ (v : E → ZMod 2) y
       map_add' := fun a b ↦ rfl
       map_smul' := fun r a ↦ rfl }
-  have : Module.Finite (ZMod 2) W :=
-    multiquadraticRelations_finite (insert y s') c
   have hrn := LinearMap.finrank_range_add_finrank_ker evy
   have hkermap : Submodule.map W.subtype (LinearMap.ker evy)
       = (W : Submodule (ZMod 2) (E → ZMod 2))
@@ -588,8 +579,8 @@ theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [DecidableE
     · rintro ⟨heW, hey⟩
       exact ⟨⟨e, heW⟩, by simpa [evy] using hey, rfl⟩
   have hker : Module.finrank (ZMod 2) (LinearMap.ker evy) = Module.finrank (ZMod 2) V0 := by
-    rw [← Submodule.finrank_map_subtype_eq W (LinearMap.ker evy), hkermap]
-    exact multiquadraticRelations_ker_finrank hys hc hc'
+    rw [← Submodule.finrank_map_subtype_eq W (LinearMap.ker evy), hkermap,
+      multiquadraticRelations_insert_inf_ker_proj hys hc]
   have hyiff : (∃ ε : E → ZMod 2, ε ∈ W ∧ ε y = 1) ↔ IsSquare (algebraMap L (↥K) (c y)) :=
     multiquadraticRelations_ycoord hys hs hc
   have hrange : Module.finrank (ZMod 2) (LinearMap.range evy)
@@ -619,7 +610,7 @@ theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [DecidableE
 /-- Degree of a multiquadratic extension: `[L(s) : L] = 2 ^ (|s| - dim V)`, where `V` is the
 `𝔽₂`-space of square relations among the radicands. -/
 theorem multiquadratic_degree {L : Type*} [Field L] [DecidableEq L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] {s : Finset E} {c : E → L}
+    [Field E] [Algebra L E] {s : Finset E} {c : E → L}
     (hs : ∀ x ∈ s, x ^ 2 = algebraMap L E (c x)) (hc : ∀ x ∈ s, c x ≠ 0) :
     Module.finrank L (IntermediateField.adjoin L (s : Set E))
       = 2 ^ (s.card - Module.finrank (ZMod 2) (multiquadraticRelations s c)) := by
@@ -654,7 +645,7 @@ theorem multiquadratic_degree {L : Type*} [Field L] [DecidableEq L] [NeZero (2 :
     have hVincr : Module.finrank (ZMod 2) (multiquadraticRelations (insert y s') c)
         = Module.finrank (ZMod 2) (multiquadraticRelations s' c)
           + (if IsSquare (algebraMap L (↥K) (c y)) then 1 else 0) :=
-      multiquadraticRelations_insert_finrank hys hs hc hc'
+      multiquadraticRelations_insert_finrank hys hs hc
     have hVle : Module.finrank (ZMod 2) (multiquadraticRelations s' c) ≤ s'.card :=
       multiquadraticRelations_finrank_le s' c
     rw [htower, ih', hdeg2, hVincr, Finset.card_insert_of_notMem hys]
@@ -695,15 +686,6 @@ theorem rootRelations_finrank_reindex {ι : Type*} [Fintype ι] {κ : Type*} [Fi
       rw [mem_rootRelations hr'] at hη
       simpa using hη
   rw [← hmap, LinearEquiv.finrank_map_eq]
-
-/-- `multiquadraticRelations s c` has the same `𝔽₂`-dimension as the relation space of the
-restricted family `c|_s`. -/
-theorem multiquadraticRelations_finrank_eq_rootRelations {L : Type*} [Field L] [DecidableEq L]
-    {E : Type*} [DecidableEq E] (s : Finset E) (c : E → L) :
-    Module.finrank (ZMod 2) (multiquadraticRelations s c)
-      = Module.finrank (ZMod 2) (rootRelations fun x : ↥s ↦ c x.1) :=
-  (Submodule.equivMapOfInjective _
-    (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _).symm.finrank_eq
 
 /-- Family form of `multiquadratic_degree`: for an injective family `x : ι → E` of square roots
 of nonzero radicands `r : ι → L`, the degree of `L(x i : i)` over `L` is
