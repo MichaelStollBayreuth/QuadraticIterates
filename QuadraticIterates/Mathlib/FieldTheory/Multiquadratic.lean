@@ -331,144 +331,67 @@ theorem mem_adjoin_simple_sq {F : Type*} [Field F] {E : Type*} [Field E] [Algebr
     Finset.coe_pair, Submodule.mem_span_pair]
   simp [Algebra.smul_def, eq_comm]
 
-/-- Induction step of `square_descent` when the new radical `y` already lies in `L(s')`: adjoining
-`y` changes nothing, so the descent set is unchanged up to `⊆ insert y s'`. -/
-private theorem square_descent_insert_of_mem {L : Type*} [Field L] {E : Type*} [Field E]
-    [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} {c : E → L}
-    (hs : ∀ z ∈ insert y s', z ^ 2 = algebraMap L E (c z)) (hc : ∀ z ∈ insert y s', c z ≠ 0)
-    (hyK : y ∈ IntermediateField.adjoin L (s' : Set E))
-    (ih : ∀ e : L, (∃ z ∈ IntermediateField.adjoin L (s' : Set E), z ^ 2 = algebraMap L E e)
-        ↔ ∃ t ⊆ s', IsSquare (e * ∏ i ∈ t, c i)) (d : L) :
-    (∃ z ∈ IntermediateField.adjoin (↥(IntermediateField.adjoin L (s' : Set E))) ({y} : Set E),
-        z ^ 2 = algebraMap L E d)
-      ↔ ∃ t ⊆ insert y s', IsSquare (d * ∏ i ∈ t, c i) := by
-  set K := IntermediateField.adjoin L (s' : Set E) with hK
-  have hmem (z : E) : z ∈ IntermediateField.adjoin (↥K) ({y} : Set E) ↔ z ∈ K := by
-    have hadj_eq : SetLike.coe (IntermediateField.adjoin (↥K) ({y} : Set E)) = SetLike.coe K := by
-      rw [show IntermediateField.adjoin (↥K) ({y} : Set E) = ⊥ from
-          IntermediateField.adjoin_simple_eq_bot_iff.mpr
-            (IntermediateField.mem_bot.mpr ⟨⟨y, hyK⟩, rfl⟩),
-        IntermediateField.coe_bot, hK,
-        IntermediateField.adjoin_eq_range_algebraMap_adjoin L (s' : Set E)]
-    simpa [SetLike.mem_coe] using
-      (show z ∈ (IntermediateField.adjoin (↥K) ({y} : Set E) : Set E) ↔ z ∈ (K : Set E)
-        by rw [hadj_eq])
-  have hgenK : ∀ i ∈ insert y s', i ∈ K := by
-    intro i hi
-    rcases Finset.mem_insert.mp hi with rfl | hi'
-    · exact hyK
-    · rw [hK]; exact IntermediateField.subset_adjoin L _ hi'
-  simp only [hmem]
-  refine ⟨fun hz ↦ (ih d).mp hz |>.imp fun t ⟨ht, hsq⟩ ↦
-    ⟨ht.trans (Finset.subset_insert y s'), hsq⟩, ?_⟩
-  rintro ⟨t, ht, r, hr⟩
-  set P : E := ∏ i ∈ t, i with hP
-  have hPK : P ∈ K := Subalgebra.prod_mem K.toSubalgebra fun i hi ↦ hgenK i (ht hi)
-  have hPsq : algebraMap L E (∏ i ∈ t, c i) = P ^ 2 := by
-    rw [map_prod, hP, ← Finset.prod_pow]
-    exact Finset.prod_congr rfl fun i hi ↦ (hs i (ht hi)).symm
-  have hPne : P ≠ 0 := by
-    rw [hP, Finset.prod_ne_zero_iff]
-    exact fun i hi hzero ↦ hc i (ht hi)
-      ((map_eq_zero (algebraMap L E)).mp (by rw [← hs i (ht hi), hzero]; ring))
-  refine ⟨algebraMap L E r / P, div_mem (IntermediateField.algebraMap_mem K r) hPK, ?_⟩
-  rw [div_pow, div_eq_iff (pow_ne_zero 2 hPne)]
-  rw [← hPsq, ← map_mul, ← map_pow, hr]; ring_nf
-
-/-- Induction step of `square_descent` when the new radical `y` is genuinely new (`y ∉ L(s')`):
-one degree-`2` step via `square_descent_step`, tracking whether `y` enters the descent set. -/
-private theorem square_descent_insert_of_notMem {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
-    (hy : y ^ 2 = algebraMap L E (c y)) (hyK : y ∉ IntermediateField.adjoin L (s' : Set E))
-    (hbridge : ∀ e : L, IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) e)
-        ↔ ∃ t ⊆ s', IsSquare (e * ∏ i ∈ t, c i)) (d : L) :
-    (∃ z ∈ IntermediateField.adjoin (↥(IntermediateField.adjoin L (s' : Set E))) ({y} : Set E),
-        z ^ 2 = algebraMap L E d)
-      ↔ ∃ t ⊆ insert y s', IsSquare (d * ∏ i ∈ t, c i) := by
-  set K := IntermediateField.adjoin L (s' : Set E) with hK
-  have : NeZero (2 : ↥K) := ⟨by
-    rw [← map_ofNat (algebraMap L ↥K) 2]
-    exact (map_ne_zero_iff _ (algebraMap L ↥K).injective).mpr two_ne_zero⟩
-  have hcyK : y ^ 2 = algebraMap (↥K) E (algebraMap L (↥K) (c y)) := by
-    rw [hy, ← IsScalarTower.algebraMap_apply L (↥K) E]
-  have hynotbot : y ∉ (⊥ : IntermediateField (↥K) E) := by
-    rw [IntermediateField.mem_bot]; rintro ⟨w, hw⟩; exact hyK (hw ▸ w.2)
-  have hstep := square_descent_step (L := ↥K) (E := E) hcyK hynotbot (algebraMap L (↥K) d)
-  have hLbridge : (∃ u v : ↥K, algebraMap (↥K) E (algebraMap L (↥K) d)
-        = (algebraMap (↥K) E u + algebraMap (↥K) E v * y) ^ 2)
-      ↔ (∃ z ∈ IntermediateField.adjoin (↥K) ({y} : Set E), z ^ 2 = algebraMap L E d) := by
-    rw [← IsScalarTower.algebraMap_apply L (↥K) E]
-    simp only [mem_adjoin_simple_sq hcyK]
-    exact ⟨fun ⟨u, v, huv⟩ ↦ ⟨_, ⟨u, v, rfl⟩, huv.symm⟩,
-      fun ⟨_, ⟨u, v, hz⟩, hz2⟩ ↦ ⟨u, v, (hz ▸ hz2).symm⟩⟩
-  rw [← hLbridge, hstep, ← map_mul, hbridge d, hbridge (d * c y)]
-  constructor
-  · rintro (⟨t, ht, hsq⟩ | ⟨t, ht, hsq⟩)
-    · exact ⟨t, ht.trans (Finset.subset_insert y s'), hsq⟩
-    · refine ⟨insert y t, Finset.insert_subset_insert y ht, ?_⟩
-      rw [Finset.prod_insert fun h ↦ hys (ht h)]; simpa [mul_assoc] using hsq
-  · rintro ⟨t, ht, hsq⟩
-    by_cases hyt : y ∈ t
-    · refine .inr ⟨t.erase y, fun a ha ↦ ?_, ?_⟩
-      · rcases Finset.mem_insert.mp (ht (Finset.mem_of_mem_erase ha)) with rfl | h
-        · exact absurd rfl (Finset.mem_erase.mp ha).1
-        · exact h
-      · rw [show ∏ i ∈ t, c i = c y * ∏ i ∈ t.erase y, c i from by
-          rw [← Finset.prod_insert (Finset.notMem_erase y t), Finset.insert_erase hyt]] at hsq
-        simpa [mul_assoc] using hsq
-    · refine .inl ⟨t, fun a ha ↦ ?_, hsq⟩
-      rcases Finset.mem_insert.mp (ht ha) with rfl | h
-      · exact absurd ha hyt
-      · exact h
+/-- If `d · ∏_{y ∈ t} c y` is a square in `L` for some `t ⊆ s`, then `d` has a square root in
+`L(s)`: divide the root by `∏_{y ∈ t} y`. -/
+theorem exists_sq_eq_algebraMap_of_isSquare_mul_prod {L : Type*} [Field L] {E : Type*} [Field E]
+    [Algebra L E] {s : Finset E} {c : E → L} (hs : ∀ y ∈ s, y ^ 2 = algebraMap L E (c y))
+    (hc : ∀ y ∈ s, c y ≠ 0) {d : L} {t : Finset E} (ht : t ⊆ s)
+    (hsq : IsSquare (d * ∏ y ∈ t, c y)) :
+    ∃ z ∈ IntermediateField.adjoin L (s : Set E), z ^ 2 = algebraMap L E d := by
+  obtain ⟨w, hw⟩ := hsq
+  have hP : (∏ y ∈ t, y) ^ 2 = algebraMap L E (∏ y ∈ t, c y) := by
+    rw [map_prod, ← Finset.prod_pow]
+    exact Finset.prod_congr rfl fun y hy ↦ hs y (ht hy)
+  have hcne : algebraMap L E (∏ y ∈ t, c y) ≠ 0 :=
+    (map_ne_zero _).mpr (Finset.prod_ne_zero_iff.mpr fun y hy ↦ hc y (ht hy))
+  refine ⟨algebraMap L E w / ∏ y ∈ t, y, div_mem (IntermediateField.algebraMap_mem _ _)
+    (prod_mem fun y hy ↦ IntermediateField.subset_adjoin L _ (ht hy)), ?_⟩
+  rw [div_pow, hP, div_eq_iff hcne, ← map_pow, ← map_mul, hw, sq]
 
 /-- Iterated square descent: some element of `L(s)` squares to `d` iff `d * ∏_{y ∈ t} c y` is a
 square in `L` for some subset `t ⊆ s`. -/
 theorem square_descent {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field E] [Algebra L E]
     {s : Finset E} {c : E → L} (hs : ∀ y ∈ s, y ^ 2 = algebraMap L E (c y))
     (hc : ∀ y ∈ s, c y ≠ 0) (d : L) :
-    (∃ z : E, z ∈ IntermediateField.adjoin L (s : Set E) ∧ z ^ 2 = algebraMap L E d)
-      ↔ (∃ t : Finset E, t ⊆ s ∧ IsSquare (d * ∏ y ∈ t, c y)) := by
+    (∃ z ∈ IntermediateField.adjoin L (s : Set E), z ^ 2 = algebraMap L E d)
+      ↔ ∃ t ⊆ s, IsSquare (d * ∏ y ∈ t, c y) := by
   classical
-  revert hs hc d
-  induction s using Finset.induction_on with
+  refine ⟨?_, fun ⟨t, ht, hsq⟩ ↦ exists_sq_eq_algebraMap_of_isSquare_mul_prod hs hc ht hsq⟩
+  induction s using Finset.induction_on generalizing d with
   | empty =>
-    intro hs hc d
-    simp only [Finset.coe_empty, IntermediateField.adjoin_empty]
-    constructor
-    · rintro ⟨z, hz, hz2⟩
-      rw [IntermediateField.mem_bot] at hz
-      obtain ⟨w, rfl⟩ := hz
-      refine ⟨∅, by simp, w, ?_⟩
-      apply (algebraMap L E).injective
-      rw [Finset.prod_empty, mul_one, ← hz2]; push_cast; ring
-    · rintro ⟨t, ht, hsq⟩
-      obtain rfl := Finset.subset_empty.mp ht
-      simp only [Finset.prod_empty, mul_one] at hsq
-      obtain ⟨w, hw⟩ := hsq
-      refine ⟨algebraMap L E w, IntermediateField.algebraMap_mem _ _, ?_⟩
-      rw [hw]; push_cast; ring
+    refine fun ⟨z, hz, hz2⟩ ↦ ?_
+    rw [Finset.coe_empty, IntermediateField.adjoin_empty, IntermediateField.mem_bot] at hz
+    obtain ⟨w, rfl⟩ := hz
+    refine ⟨∅, Finset.empty_subset _, w, (algebraMap L E).injective ?_⟩
+    simpa [sq] using hz2.symm
   | insert y s' hys ih =>
-    intro hs hc d
-    have hy : y ^ 2 = algebraMap L E (c y) := hs y (Finset.mem_insert_self y s')
-    have ih' := ih (fun z hz ↦ hs z (Finset.mem_insert_of_mem hz))
-      (fun z hz ↦ hc z (Finset.mem_insert_of_mem hz))
-    set K := IntermediateField.adjoin L (s' : Set E) with hK
-    have hset : (IntermediateField.adjoin L ((insert y s' : Finset E) : Set E) : Set E)
-        = (IntermediateField.adjoin (↥K) ({y} : Set E) : Set E) := by
-      have h2 : (IntermediateField.adjoin L ((s' : Set E) ∪ ({y} : Set E)) : Set E)
-          = (IntermediateField.adjoin (↥K) ({y} : Set E) : Set E) := by
-        rw [← IntermediateField.adjoin_adjoin_left L (s' : Set E) ({y} : Set E)]; rfl
-      rw [← h2]; congr 1; rw [Finset.coe_insert, Set.insert_eq, Set.union_comm]
-    have hmemK (z : E) : z ∈ IntermediateField.adjoin L ((insert y s' : Finset E) : Set E)
-        ↔ z ∈ IntermediateField.adjoin (↥K) ({y} : Set E) := by
-      rw [← SetLike.mem_coe, hset, SetLike.mem_coe]
-    simp only [hmemK]
+    refine fun ⟨z, hz, hz2⟩ ↦ ?_
+    have hs' : ∀ x ∈ s', x ^ 2 = algebraMap L E (c x) :=
+      fun x hx ↦ hs x (Finset.mem_insert_of_mem hx)
+    have hc' : ∀ x ∈ s', c x ≠ 0 := fun x hx ↦ hc x (Finset.mem_insert_of_mem hx)
+    set K := IntermediateField.adjoin L (s' : Set E)
+    rw [Finset.coe_insert] at hz
     by_cases hyK : y ∈ K
-    · exact square_descent_insert_of_mem hs hc hyK ih' d
-    · have hbridge (e : L) : IsSquare (algebraMap L (↥K) e)
-          ↔ ∃ t ⊆ s', IsSquare (e * ∏ y ∈ t, c y) :=
-        (isSquare_algebraMap_iff K e).trans (ih' e)
-      exact square_descent_insert_of_notMem hys hy hyK hbridge d
+    · obtain ⟨t, ht, hsq⟩ := ih hs' hc' d ⟨z, IntermediateField.adjoin_le_iff.mpr
+        (Set.insert_subset hyK (IntermediateField.subset_adjoin L _)) hz, hz2⟩
+      exact ⟨t, ht.trans (Finset.subset_insert y s'), hsq⟩
+    · have : NeZero (2 : K) := ⟨map_ofNat (algebraMap L K) 2 ▸ (map_ne_zero _).mpr two_ne_zero⟩
+      have hyK' : y ^ 2 = algebraMap K E (algebraMap L K (c y)) :=
+        (hs y (Finset.mem_insert_self y s')).trans (IsScalarTower.algebraMap_apply L K E (c y))
+      rw [IntermediateField.adjoin_insert, IntermediateField.mem_restrictScalars,
+        mem_adjoin_simple_sq hyK'] at hz
+      obtain ⟨u, v, rfl⟩ := hz
+      have hybot : y ∉ (⊥ : IntermediateField K E) := by
+        rwa [← IntermediateField.mem_restrictScalars L,
+          IntermediateField.restrictScalars_bot_eq_self]
+      rcases (square_descent_step hyK' hybot (algebraMap L K d)).mp
+        ⟨u, v, by rw [← IsScalarTower.algebraMap_apply, hz2]⟩ with h | h
+      · obtain ⟨t, ht, hsq⟩ := ih hs' hc' d ((isSquare_algebraMap_iff K d).mp h)
+        exact ⟨t, ht.trans (Finset.subset_insert y s'), hsq⟩
+      · rw [← map_mul] at h
+        obtain ⟨t, ht, hsq⟩ := ih hs' hc' (d * c y) ((isSquare_algebraMap_iff K _).mp h)
+        refine ⟨insert y t, Finset.insert_subset_insert y ht, ?_⟩
+        rwa [Finset.prod_insert fun h ↦ hys (ht h), ← mul_assoc]
 
 /-- The relation space of an `ι`-indexed family has `𝔽₂`-dimension at most `|ι|`. -/
 theorem rootRelations_finrank_le {ι : Type*} [Fintype ι] {L : Type*} [Field L] [DecidableEq L]
