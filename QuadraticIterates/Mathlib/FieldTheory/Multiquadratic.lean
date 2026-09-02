@@ -30,6 +30,20 @@ theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
   rw [adjoin.finrank ⟨_, hmonic, by simp [hc]⟩]
   simpa using Polynomial.natDegree_le_natDegree (minpoly.min L x hmonic (by simp [hc]))
 
+/-- Adjoining a square root `x` of an element of `L` to `L(t)` gives relative degree at most
+`2`. -/
+theorem relfinrank_adjoin_insert_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
+    {t : Set E} {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
+    (adjoin L t).relfinrank (adjoin L (insert x t)) ≤ 2 := by
+  have heq : adjoin L (insert x t) = restrictScalars L (adjoin (adjoin L t) {x}) := by
+    rw [Set.insert_eq, Set.union_comm, adjoin_union, ← restrictScalars_adjoin_eq_sup]
+  have hle : adjoin L t ≤ restrictScalars L (adjoin (adjoin L t) {x}) :=
+    heq ▸ adjoin.mono L _ _ (Set.subset_insert x t)
+  rw [heq, relfinrank_eq_finrank_of_le hle,
+    restrictScalars_injective L (extendScalars_restrictScalars hle)]
+  exact finrank_adjoin_sq_le (c := algebraMap L (adjoin L t) c)
+    (by rw [hc, IsScalarTower.algebraMap_apply L (adjoin L t) E c])
+
 /-- Adjoining a finite set of square roots (each squaring into `L`) gives degree at most
 `2 ^ |s|`. -/
 theorem finrank_adjoin_finset_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
@@ -40,37 +54,11 @@ theorem finrank_adjoin_finset_sq_le {L : Type*} [Field L] {E : Type*} [Field E] 
   | empty =>
     rw [Finset.coe_empty, Finset.card_empty, pow_zero, adjoin_empty, IntermediateField.finrank_bot]
   | insert x t hxt ih =>
-      have ihb := ih (fun y hy ↦ hs y (Finset.mem_insert_of_mem hy))
-      set A := adjoin L (t : Set E) with hA
-      set B := adjoin L ((insert x t : Finset E) : Set E) with hB
-      have hAB : A ≤ B :=
-        hA.symm ▸ hB.symm ▸ adjoin.mono L (t : Set E) ((insert x t : Finset E) : Set E)
-          (Finset.coe_subset.mpr (Finset.subset_insert x t))
-      obtain ⟨c, hc⟩ := hs x (Finset.mem_insert_self x t)
-      have hrel : A.relfinrank B ≤ 2 := by
-        have hBeq : B = restrictScalars L (adjoin (↥A) ({x} : Set E)) := by
-          rw [hB, Finset.coe_insert, Set.insert_eq, ← Set.union_comm, adjoin_union,
-            ← restrictScalars_adjoin_eq_sup L A ({x} : Set E), hA]
-        have hle : A ≤ restrictScalars L (adjoin (↥A) ({x} : Set E)) := hAB.trans_eq hBeq
-        rw [hBeq, relfinrank_eq_finrank_of_le hle,
-          restrictScalars_injective L (extendScalars_restrictScalars hle)]
-        exact finrank_adjoin_sq_le (c := algebraMap L (↥A) c) (by
-          rw [hc, IsScalarTower.algebraMap_apply L (↥A) E c])
-      calc Module.finrank L B
-          = Module.finrank L A * A.relfinrank B := (finrank_bot_mul_relfinrank hAB).symm
-        _ ≤ 2 ^ t.card * 2 := Nat.mul_le_mul ihb hrel
-        _ = 2 ^ (insert x t).card := by rw [Finset.card_insert_of_notMem hxt, pow_succ]
-
-/-- Relative degree is monotone in the top field: `[B : A] ≤ [C : A]` for `A ≤ B ≤ C` with `C/A`
-finite-dimensional. -/
-theorem relfinrank_mono {F : Type*} [Field F] {E : Type*} [Field E] [Algebra F E]
-    {A B C : IntermediateField F E} (hAB : A ≤ B) (hBC : B ≤ C)
-    [FiniteDimensional (↥A) (↥(extendScalars (hAB.trans hBC)))] :
-    A.relfinrank B ≤ A.relfinrank C := by
-  simpa [relfinrank_eq_finrank_of_le hAB, relfinrank_eq_finrank_of_le (hAB.trans hBC)] using
-    Submodule.finrank_mono (R := ↥A) (M := E) (s := (extendScalars hAB).toSubmodule)
-      (t := (extendScalars (hAB.trans hBC)).toSubmodule)
-      ((extendScalars_le_extendScalars_iff hAB (hAB.trans hBC)).mpr hBC)
+    obtain ⟨c, hc⟩ := hs x (Finset.mem_insert_self x t)
+    rw [Finset.coe_insert, ← finrank_bot_mul_relfinrank (adjoin.mono L _ _ (Set.subset_insert x _)),
+      Finset.card_insert_of_notMem hxt, pow_succ]
+    exact Nat.mul_le_mul (ih fun y hy ↦ hs y (Finset.mem_insert_of_mem hy))
+      (relfinrank_adjoin_insert_sq_le hc)
 
 end IntermediateField
 
