@@ -136,17 +136,9 @@ theorem isSquare_prod_iff_sum_sqClass_eq_zero {ι : Type*} {s : Finset ι} {r : 
 /-- `sqClass` linearises a product of `zpow`s: `[∏ rᵢ ^ eᵢ] = ∑ eᵢ • [rᵢ]`. -/
 theorem sqClass_prod_zpow {ι : Type*} {s : Finset ι} {r : ι → L} (e : ι → ℤ)
     (hr : ∀ i ∈ s, r i ≠ 0) :
-    sqClass (∏ i ∈ s, r i ^ e i) = ∑ i ∈ s, e i • sqClass (r i) := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert a t ha ih =>
-    rw [Finset.prod_insert ha, Finset.sum_insert ha,
-      sqClass_mul (zpow_ne_zero _ (hr a (Finset.mem_insert_self a t)))
-        (Finset.prod_ne_zero_iff.mpr fun i hi ↦
-          zpow_ne_zero _ (hr i (Finset.mem_insert_of_mem hi))),
-      sqClass_zpow,
-      ih fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)]
+    sqClass (∏ i ∈ s, r i ^ e i) = ∑ i ∈ s, e i • sqClass (r i) :=
+  (sqClass_prod fun i hi ↦ zpow_ne_zero _ (hr i hi)).trans <|
+    Finset.sum_congr rfl fun i _ ↦ sqClass_zpow (r i) (e i)
 
 /-- The `𝔽₂`-relation submodule of a finite family of radicands `r : ι → L`: the kernel of
 `ε ↦ ∑ ε i • [r i]` in `Lˣ/(Lˣ)²`. For nonzero radicands, `ε` is a relation iff
