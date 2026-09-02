@@ -273,69 +273,44 @@ iff some element of `K` squares to the image of `e` in `E`. -/
 theorem isSquare_algebraMap_iff {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     (K : IntermediateField L E) (e : L) :
     IsSquare (algebraMap L ↥K e) ↔ ∃ z ∈ K, z ^ 2 = algebraMap L E e := by
-  constructor
-  · rintro ⟨w, hw⟩
-    refine ⟨(w : E), w.2, ?_⟩
-    rw [IsScalarTower.algebraMap_apply L ↥K E, hw, map_mul, IntermediateField.algebraMap_apply]
-    ring
-  · rintro ⟨z, hz, hz2⟩
-    refine ⟨⟨z, hz⟩, ?_⟩
-    apply (algebraMap ↥K E).injective
-    rw [← IsScalarTower.algebraMap_apply L ↥K E, ← hz2]
-    push_cast
-    simp [pow_two]
+  refine ⟨fun ⟨w, hw⟩ ↦ ⟨w, w.2, ?_⟩, fun ⟨z, hz, hz2⟩ ↦ ⟨⟨z, hz⟩, Subtype.ext ?_⟩⟩
+  · simpa [sq] using congrArg Subtype.val hw.symm
+  · simpa [sq] using hz2.symm
 
 /-- If `w` is a square root of `algebraMap e` lying outside an intermediate field `K`, then `e`
 is not a square in `K`. -/
 theorem not_isSquare_algebraMap_of_sqrt_notMem {L : Type*} [Field L] {E : Type*} [Field E]
     [Algebra L E] {K : IntermediateField L E} {e : L} {w : E}
     (hw : w ^ 2 = algebraMap L E e) (hwK : w ∉ K) :
-    ¬ IsSquare (algebraMap L ↥K e) := by
-  rw [isSquare_algebraMap_iff]
-  rintro ⟨z, hzK, hz⟩
-  have hfac : (w - z) * (w + z) = 0 := by rw [mul_comm, ← sq_sub_sq, hw, hz, sub_self]
-  rcases mul_eq_zero.mp hfac with h | h
-  · exact hwK ((show w = z by linear_combination h) ▸ hzK)
-  · exact hwK ((show w = -z by linear_combination h) ▸ neg_mem hzK)
+    ¬ IsSquare (algebraMap L ↥K e) := fun h ↦ by
+  obtain ⟨z, hzK, hz⟩ := (isSquare_algebraMap_iff K e).mp h
+  rcases sq_eq_sq_iff_eq_or_eq_neg.mp (hw.trans hz.symm) with rfl | rfl
+  exacts [hwK hzK, hwK (neg_mem hzK)]
 
 /-- An element of the base field is a square in the bottom intermediate field iff it is a square
 in the base field. -/
 theorem isSquare_algebraMap_bot_iff {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     (x : L) :
     IsSquare (algebraMap L ↥(⊥ : IntermediateField L E) x) ↔ IsSquare x := by
-  rw [show algebraMap L ↥(⊥ : IntermediateField L E) x = (IntermediateField.botEquiv L E).symm x
-      from (IntermediateField.botEquiv_symm x).symm]
-  exact ⟨fun h ↦ by simpa using IsSquare.map (IntermediateField.botEquiv L E) h,
-    IsSquare.map (IntermediateField.botEquiv L E).symm⟩
+  rw [← IntermediateField.botEquiv_symm]
+  exact ⟨fun h ↦ by simpa using h.map (IntermediateField.botEquiv L E), fun h ↦ h.map _⟩
 
+open IntermediateField Polynomial in
 /-- An element of the simple extension `F(y)` with `y² ∈ F` is exactly an `F`-linear combination
 `u + v · y`. -/
 theorem mem_adjoin_simple_sq {F : Type*} [Field F] {E : Type*} [Field E] [Algebra F E] {y : E}
     {a : F} (hy : y ^ 2 = algebraMap F E a) {z : E} :
-    z ∈ IntermediateField.adjoin F {y}
-      ↔ ∃ u v : F, z = algebraMap F E u + algebraMap F E v * y := by
+    z ∈ F⟮y⟯ ↔ ∃ u v : F, z = algebraMap F E u + algebraMap F E v * y := by
   classical
-  refine ⟨fun hz ↦ ?_, fun ⟨u, v, hz⟩ ↦ hz ▸ add_mem (IntermediateField.algebraMap_mem _ _)
-    (mul_mem (IntermediateField.algebraMap_mem _ _) (IntermediateField.subset_adjoin _ _ rfl))⟩
-  set f : Polynomial F := Polynomial.X ^ 2 - Polynomial.C a with hf
-  have hfmonic : f.Monic := Polynomial.monic_X_pow_sub_C a two_ne_zero
-  have hfaeval : (Polynomial.aeval y) f = 0 := by
-    simp only [hf, map_sub, map_pow, Polynomial.aeval_X, Polynomial.aeval_C, hy, sub_self]
-  have hfdeg : f.natDegree = 2 := by rw [hf]; compute_degree!
-  have hspan := Submodule.span_range_natDegree_eq_adjoin hfmonic hfaeval
-  rw [hfdeg] at hspan
-  have hzsub : z ∈ Subalgebra.toSubmodule (Algebra.adjoin F {y}) :=
-    (IntermediateField.adjoin_simple_toSubalgebra_of_isAlgebraic
-      (IsIntegral.isAlgebraic ⟨f, hfmonic, hfaeval⟩)) ▸ hz
-  rw [← hspan] at hzsub
-  have himg : (Finset.image (fun x ↦ y ^ x) (Finset.range 2) : Finset E) = {(1 : E), y} := by
-    ext w
-    simp only [Finset.mem_image, Finset.mem_range, Finset.mem_insert, Finset.mem_singleton]
-    refine ⟨fun ⟨j, _, hj⟩ ↦ by interval_cases j <;> simp_all, fun h ↦ h.elim
-      (fun hw ↦ ⟨0, by norm_num, by simp [hw]⟩) fun hw ↦ ⟨1, by norm_num, by simp [hw]⟩⟩
-  rw [himg, Finset.coe_insert, Finset.coe_singleton, Submodule.mem_span_pair] at hzsub
-  obtain ⟨u, v, huv⟩ := hzsub
-  exact ⟨u, v, by rw [← huv]; simp [Algebra.smul_def]⟩
+  have hmonic : (X ^ 2 - C a).Monic := monic_X_pow_sub_C a two_ne_zero
+  have hroot : aeval y (X ^ 2 - C a) = 0 := by simp [hy]
+  rw [← mem_toSubalgebra,
+    adjoin_simple_toSubalgebra_of_isAlgebraic (IsIntegral.isAlgebraic ⟨_, hmonic, hroot⟩),
+    ← Subalgebra.mem_toSubmodule, ← Submodule.span_range_natDegree_eq_adjoin hmonic hroot,
+    natDegree_X_pow_sub_C, show Finset.image (y ^ ·) (Finset.range 2) = {1, y} by
+      simp [show Finset.range 2 = {0, 1} by decide],
+    Finset.coe_pair, Submodule.mem_span_pair]
+  simp [Algebra.smul_def, eq_comm]
 
 /-- Induction step of `square_descent` when the new radical `y` already lies in `L(s')`: adjoining
 `y` changes nothing, so the descent set is unchanged up to `⊆ insert y s'`. -/
