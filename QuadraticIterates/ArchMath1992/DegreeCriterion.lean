@@ -196,7 +196,7 @@ lemma finrank_splittingField_one (hsq : ¬IsSquare (-a : ℚ)) :
     · refine IntermediateField.adjoin_le_iff.mpr ?_
       rintro x rfl
       exact IntermediateField.subset_adjoin ℚ _ hβroot
-  rw [hadjeq, finrank_adjoin_sq_eq hβsq, if_neg hsq]
+  rw [hadjeq, finrank_adjoin_sqrt_eq hβsq, if_neg hsq]
 
 lemma degree_criterion_zero :
     (splittingField a 0).relfinrank (splittingField a 1) = 2 ^ 2 ^ 0 ↔

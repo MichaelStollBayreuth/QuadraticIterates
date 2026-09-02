@@ -231,7 +231,7 @@ end
 
 /-- Adjoining a square root of `c` gives degree `1` if `c` is already a square in `L`, and `2`
 otherwise. -/
-theorem finrank_adjoin_sq_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
+theorem finrank_adjoin_sqrt_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) [Decidable (IsSquare c)] :
     Module.finrank L (IntermediateField.adjoin L {x}) = if IsSquare c then 1 else 2 := by
   have hmem_iff : x ∈ (⊥ : IntermediateField L E) ↔ IsSquare c := by
@@ -685,7 +685,7 @@ theorem multiquadratic_degree {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
     set K := IntermediateField.adjoin L (s' : Set E) with hK
     have hdeg2 : Module.finrank (↥K) (IntermediateField.adjoin (↥K) ({y} : Set E))
         = if IsSquare (algebraMap L (↥K) (c y)) then 1 else 2 :=
-      finrank_adjoin_sq_eq
+      finrank_adjoin_sqrt_eq
         (by rw [hs y (Finset.mem_insert_self y s'), ← IsScalarTower.algebraMap_apply L (↥K) E])
     have hadjeq : IntermediateField.adjoin L ((insert y s' : Finset E) : Set E)
         = IntermediateField.restrictScalars L (IntermediateField.adjoin (↥K) ({y} : Set E)) := by
