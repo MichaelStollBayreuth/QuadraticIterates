@@ -26,9 +26,31 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 namespace IntermediateField
 
+variable {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
+
+/-- Adjoining `insert x S` to `L` is adjoining `x` to `L(S)`, viewed over `L`. -/
+theorem adjoin_insert (S : Set E) (x : E) :
+    adjoin L (insert x S) = ((adjoin L S)⟮x⟯).restrictScalars L := by
+  rw [adjoin_adjoin_left, Set.union_singleton]
+
+/-- The relative degree of `L(S, x)` over `L(S)` is the degree of `x` over `L(S)`. -/
+theorem relfinrank_adjoin_insert (S : Set E) (x : E) :
+    (adjoin L S).relfinrank (adjoin L (insert x S)) =
+      Module.finrank (adjoin L S) (adjoin L S)⟮x⟯ := by
+  have hle : adjoin L S ≤ ((adjoin L S)⟮x⟯).restrictScalars L := by
+    rw [← adjoin_insert]; exact adjoin.mono L _ _ (Set.subset_insert x S)
+  rw [adjoin_insert, relfinrank_eq_finrank_of_le hle,
+    restrictScalars_injective L (extendScalars_restrictScalars hle)]
+
+/-- Tower law for adjoining one more element: `[L(S, x) : L] = [L(S) : L] · [L(S)(x) : L(S)]`. -/
+theorem finrank_adjoin_insert (S : Set E) (x : E) :
+    Module.finrank L (adjoin L (insert x S)) =
+      Module.finrank L (adjoin L S) * Module.finrank (adjoin L S) (adjoin L S)⟮x⟯ := by
+  rw [← relfinrank_adjoin_insert,
+    finrank_bot_mul_relfinrank (adjoin.mono L _ _ (Set.subset_insert x S))]
+
 /-- Adjoining a single square root `x` (with `x² ∈ L`) to a field `L` gives degree at most `2`. -/
-theorem finrank_adjoin_sqrt_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
-    {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
+theorem finrank_adjoin_sqrt_le {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
     Module.finrank L (adjoin L {x}) ≤ 2 := by
   have hmonic := Polynomial.monic_X_pow_sub_C c two_ne_zero
   rw [adjoin.finrank ⟨_, hmonic, by simp [hc]⟩]
@@ -36,22 +58,16 @@ theorem finrank_adjoin_sqrt_le {L : Type*} [Field L] {E : Type*} [Field E] [Alge
 
 /-- Adjoining a square root `x` of an element of `L` to `L(t)` gives relative degree at most
 `2`. -/
-theorem relfinrank_adjoin_insert_sqrt_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
-    {t : Set E} {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
-    (adjoin L t).relfinrank (adjoin L (insert x t)) ≤ 2 := by
-  have heq : adjoin L (insert x t) = restrictScalars L (adjoin (adjoin L t) {x}) := by
-    rw [Set.insert_eq, Set.union_comm, adjoin_union, ← restrictScalars_adjoin_eq_sup]
-  have hle : adjoin L t ≤ restrictScalars L (adjoin (adjoin L t) {x}) :=
-    heq ▸ adjoin.mono L _ _ (Set.subset_insert x t)
-  rw [heq, relfinrank_eq_finrank_of_le hle,
-    restrictScalars_injective L (extendScalars_restrictScalars hle)]
-  exact finrank_adjoin_sqrt_le (c := algebraMap L (adjoin L t) c)
-    (by rw [hc, IsScalarTower.algebraMap_apply L (adjoin L t) E c])
+theorem relfinrank_adjoin_insert_sqrt_le {t : Set E} {x : E} {c : L}
+    (hc : x ^ 2 = algebraMap L E c) :
+    (adjoin L t).relfinrank (adjoin L (insert x t)) ≤ 2 :=
+  (relfinrank_adjoin_insert t x).trans_le <|
+    finrank_adjoin_sqrt_le (hc.trans (IsScalarTower.algebraMap_apply L (adjoin L t) E c))
 
 /-- Adjoining a finite set of square roots (each squaring into `L`) gives degree at most
 `2 ^ |s|`. -/
-theorem finrank_adjoin_finset_sqrt_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
-    {s : Finset E} (hs : ∀ x ∈ s, ∃ c : L, x ^ 2 = algebraMap L E c) :
+theorem finrank_adjoin_finset_sqrt_le {s : Finset E}
+    (hs : ∀ x ∈ s, ∃ c : L, x ^ 2 = algebraMap L E c) :
     Module.finrank L (adjoin L (s : Set E)) ≤ 2 ^ s.card := by
   classical
   induction s using Finset.induction_on with
