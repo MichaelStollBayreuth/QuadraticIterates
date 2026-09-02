@@ -95,13 +95,11 @@ theorem sqClass_eq_zero_iff (r : L) : sqClass r = 0 ↔ IsSquare r := by
   rw [sqClass, dif_neg hr,
     show (0 : SquareClasses L) = Additive.ofMul 1 from rfl,
     Additive.ofMul.apply_eq_iff_eq, QuotientGroup.eq_one_iff]
-  constructor
-  · rintro ⟨v, hv⟩
-    have hcoe := congrArg Units.val hv
+  refine ⟨fun ⟨v, hv⟩ ↦ ?_, fun ⟨t, ht⟩ ↦ ?_⟩
+  · have hcoe := congrArg Units.val hv
     simp only [powMonoidHom_apply, Units.val_pow_eq_pow_val, Units.val_mk0] at hcoe
     exact ⟨(v : L), by rw [← hcoe]; ring⟩
-  · rintro ⟨t, ht⟩
-    have ht0 : t ≠ 0 := fun h ↦ hr (by rw [ht, h, mul_zero])
+  · have ht0 : t ≠ 0 := fun h ↦ hr (by rw [ht, h, mul_zero])
     refine ⟨Units.mk0 t ht0, ?_⟩
     ext
     simp [ht, pow_two]
