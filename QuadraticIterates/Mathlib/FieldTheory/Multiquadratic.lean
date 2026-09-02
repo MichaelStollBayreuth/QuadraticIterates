@@ -233,6 +233,16 @@ theorem finrank_adjoin_sqrt_eq {L : Type*} [Field L] {E : Type*} [Field E] [Alge
   have : 0 < Module.finrank L L⟮x⟯ := Module.finrank_pos
   grind [finrank_adjoin_sqrt_le hc]
 
+/-- Adjoining a square root `w` of `c` doubles the degree when `c` is not a square in `L(S)`. -/
+theorem IntermediateField.finrank_adjoin_insert_of_not_isSquare {L : Type*} [Field L] {E : Type*}
+    [Field E] [Algebra L E] {S : Set E} {w : E} {c : L} (hw : w ^ 2 = algebraMap L E c)
+    (h : ¬ IsSquare (algebraMap L (adjoin L S) c)) :
+    Module.finrank L (adjoin L (insert w S)) = 2 * Module.finrank L (adjoin L S) := by
+  classical
+  rw [finrank_adjoin_insert,
+    finrank_adjoin_sqrt_eq (hw.trans (IsScalarTower.algebraMap_apply L (adjoin L S) E c)),
+    if_neg h, mul_comm]
+
 /-- If `p + q·x = 0` with `p, q ∈ L` and `q ≠ 0`, then `x` lies in the base field. -/
 theorem IntermediateField.mem_bot_of_add_mul_eq_zero {L : Type*} [Field L] {E : Type*} [Field E]
     [Algebra L E] {x : E} {p q : L} (hq : q ≠ 0) (h : algebraMap L E p + algebraMap L E q * x = 0) :
@@ -655,68 +665,6 @@ theorem multiquadratic_degree {L : Type*} [Field L] [DecidableEq L] [NeZero (2 :
       lia
     · simp only [hsq, if_false, add_zero]
       rw [show s'.card + 1 - d = (s'.card - d) + 1 by lia, pow_succ]
-
-/-- If a multiquadratic family `s` generates a field of maximal degree `2 ^ |s|` and `w` is a
-new square root whose radicand is not a square in `L(s)`, then adjoining `w` doubles the degree. -/
-theorem multiquadratic_degree_insert_of_maximal {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [Algebra L E] {s : Finset E} {w : E} (hws : w ∉ s) {c : E → L}
-    (hs : ∀ x ∈ s, x ^ 2 = algebraMap L E (c x)) (hsw : w ^ 2 = algebraMap L E (c w))
-    (hc : ∀ x ∈ s, c x ≠ 0) (hcw : c w ≠ 0)
-    (hmax : Module.finrank L (IntermediateField.adjoin L (s : Set E)) = 2 ^ s.card)
-    (hwnotsq : ¬ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s : Set E))) (c w))) :
-    Module.finrank L (IntermediateField.adjoin L (insert w (s : Set E))) = 2 ^ (s.card + 1) := by
-  classical
-  have hs' : ∀ x ∈ insert w s, x ^ 2 = algebraMap L E (c x) := fun x hx ↦ by
-    rcases Finset.mem_insert.mp hx with rfl | h; exacts [hsw, hs x h]
-  have hc' : ∀ x ∈ insert w s, c x ≠ 0 := fun x hx ↦ by
-    rcases Finset.mem_insert.mp hx with rfl | h; exacts [hcw, hc x h]
-  have hrels0 : Module.finrank (ZMod 2) (multiquadraticRelations s c) = 0 := by
-    have hdeg := multiquadratic_degree hs hc
-    rw [hmax] at hdeg
-    have hle := multiquadraticRelations_finrank_le s c
-    have hexp : s.card = s.card - Module.finrank (ZMod 2) (multiquadraticRelations s c) :=
-      Nat.pow_right_injective le_rfl hdeg
-    lia
-  have hins_fr : Module.finrank (ZMod 2) (multiquadraticRelations (insert w s) c) = 0 := by
-    rw [multiquadraticRelations_insert_finrank hws hs' hc' hc, hrels0, if_neg hwnotsq]
-  have hdeg := multiquadratic_degree hs' hc'
-  rw [Finset.coe_insert, hins_fr, Finset.card_insert_of_notMem hws] at hdeg
-  simpa using hdeg
-
-/-- Family form of `multiquadratic_degree_insert_of_maximal`: a maximal multiquadratic family
-`x` of size `n` (square roots of `v`) gains a new square root `w` whose radicand is not a square
-in `L(range x)`, doubling the degree. -/
-theorem multiquadratic_degree_insert_family {n : ℕ} {L : Type*} [Field L] [NeZero (2 : L)]
-    {E : Type*} [Field E] [Algebra L E] {x : Fin n → E} (hxinj : Function.Injective x)
-    {v : Fin n → L} (hx : ∀ i, x i ^ 2 = algebraMap L E (v i)) (hv : ∀ i, v i ≠ 0)
-    {w : E} (hw : w ∉ Set.range x) {c₀ : L} (hwc : w ^ 2 = algebraMap L E c₀) (hc₀ : c₀ ≠ 0)
-    (hmax : Module.finrank L (IntermediateField.adjoin L (Set.range x)) = 2 ^ n)
-    (hwnotsq : ¬ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (Set.range x))) c₀)) :
-    Module.finrank L (IntermediateField.adjoin L (insert w (Set.range x))) = 2 ^ (n + 1) := by
-  classical
-  set s : Finset E := Finset.univ.image x with hs
-  have hrange : (s : Set E) = Set.range x := by rw [hs]; simp [Finset.coe_image]
-  have hscard : s.card = n := by
-    rw [hs, Finset.card_image_of_injective _ hxinj, Finset.card_univ, Fintype.card_fin]
-  have hws : w ∉ s := by rw [← Finset.mem_coe, hrange]; exact hw
-  set cf0 : E → L := Function.extend x v 1
-  have hcf0 (i) : cf0 (x i) = v i := hxinj.extend_apply _ _ i
-  set cfw : E → L := Function.update cf0 w c₀ with hcfw
-  have hxw (i) : x i ≠ w := fun hi ↦ hw ⟨i, hi⟩
-  have hcfw_x (i) : cfw (x i) = v i := by rw [hcfw, Function.update_of_ne (hxw i), hcf0 i]
-  have hcfw_w : cfw w = c₀ := by rw [hcfw, Function.update_self]
-  have hs_sq : ∀ y ∈ s, y ^ 2 = algebraMap L E (cfw y) := by
-    intro y hy; obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp (hs ▸ hy); rw [hcfw_x]; exact hx i
-  have hs_ne : ∀ y ∈ s, cfw y ≠ 0 := by
-    intro y hy; obtain ⟨i, _, rfl⟩ := Finset.mem_image.mp (hs ▸ hy); rw [hcfw_x]; exact hv i
-  have hmax' : Module.finrank L (IntermediateField.adjoin L (s : Set E)) = 2 ^ s.card := by
-    rw [hrange, hscard]; exact hmax
-  have hwnotsq' :
-      ¬ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s : Set E))) (cfw w)) := by
-    rw [hrange, hcfw_w]; exact hwnotsq
-  have hdeg := multiquadratic_degree_insert_of_maximal hws hs_sq
-    (by rw [hcfw_w]; exact hwc) hs_ne (by rw [hcfw_w]; exact hc₀) hmax' hwnotsq'
-  rwa [hrange, hscard] at hdeg
 
 /-- The dimension of the relation space is invariant under reindexing the family by a
 bijection. -/

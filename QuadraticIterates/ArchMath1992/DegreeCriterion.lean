@@ -346,15 +346,15 @@ lemma finrank_adjoin_le_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃*
   obtain ⟨g, rfl⟩ := AlgEquiv.restrictNormalHom_surjective (splittingField a n) x
   exact DFunLike.congr_fun hφ g
 
-/-- If `Ω_n ≅ [C_2]^n` and the `c_i` are 2-independent with square roots `x i` in `K_n`, then for
-nonzero `c : ℚ`, the image of `c` in `K_n` is a square iff it is the square of some
+/-- If `Ω_n ≅ [C_2]^n` and the `c_i` are 2-independent with square roots `x i` in `K_n`, then the
+image of `c : ℚ` in `K_n` is a square iff it is the square of some
 `z ∈ IntermediateField.adjoin ℚ (Set.range x)`. -/
 theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
     (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)))
     {x : Fin n → ↥(splittingField a n)}
     (hx : ∀ i, x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ))
-    {c : ℚ} (hc : c ≠ 0) :
+    (c : ℚ) :
     IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       ∃ z ∈ IntermediateField.adjoin ℚ (Set.range x),
         z ^ 2 = algebraMap ℚ ↥(splittingField a n) c := by
@@ -362,16 +362,13 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
   refine ⟨fun hsq ↦ ?_, fun ⟨z, hzmem, hz2⟩ ↦ (isSquare_iff_exists_sq _).mpr ⟨z, hz2.symm⟩⟩
   obtain ⟨w, hw2⟩ := hsq.exists_sq
   replace hw2 := hw2.symm
-  have hxinj : Function.Injective x := hindep.sqrt_injective hx
   suffices hwM : w ∈ IntermediateField.adjoin ℚ (Set.range x) from ⟨w, hwM, hw2⟩
   by_contra hwnotM
-  have hwnotr : w ∉ Set.range x := fun hr ↦ hwnotM (IntermediateField.subset_adjoin ℚ _ hr)
-  have hnotsqM : ¬ IsSquare (algebraMap ℚ ↥(IntermediateField.adjoin ℚ (Set.range x)) c) :=
-    not_isSquare_algebraMap_of_sqrt_notMem hw2 hwnotM
   have hinsdeg : Module.finrank ℚ
-      (IntermediateField.adjoin ℚ (insert w (Set.range x))) = 2 ^ (n + 1) :=
-    multiquadratic_degree_insert_family hxinj hx hindep.1 hwnotr hw2 hc
-      (finrank_adjoin_range_eq_two_pow a hindep hx) hnotsqM
+      (IntermediateField.adjoin ℚ (insert w (Set.range x))) = 2 ^ (n + 1) := by
+    rw [IntermediateField.finrank_adjoin_insert_of_not_isSquare hw2
+      (not_isSquare_algebraMap_of_sqrt_notMem hw2 hwnotM),
+      finrank_adjoin_range_eq_two_pow a hindep hx, pow_succ']
   have hle : Module.finrank ℚ
       (IntermediateField.adjoin ℚ (insert w (Set.range x))) ≤ 2 ^ n := by
     have h := finrank_adjoin_le_two_pow a hiso (insert w (Finset.univ.image x)) (fun y hy ↦ by
@@ -420,7 +417,7 @@ lemma isSquare_algebraMap_cSeq (n : ℕ) (hnsq : ¬IsSquare (-a : ℚ)) (m : ℕ
 
 lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
-    (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ))) {c : ℚ} (hc : c ≠ 0) :
+    (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ))) (c : ℚ) :
     IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       ∃ S : Finset (Fin n), IsSquare (c * ∏ i ∈ S, (cSeq a ((i : ℕ) + 1) : ℚ)) := by
   classical
@@ -436,7 +433,7 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
   have hx2 (i) : x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ) := by
     rw [sq]
     exact (hx i).symm
-  rw [isSquare_algebraMap_iff_exists_sq_eq a hiso hindep hx2 hc]
+  rw [isSquare_algebraMap_iff_exists_sq_eq a hiso hindep hx2 c]
   have hxinj : Function.Injective x := hindep.sqrt_injective hx2
   obtain ⟨cf, hcf_eq, hs_sq, hs_ne, hprodS⟩ := exists_coeffs_of_sq_eq_algebraMap hindep.1 hxinj hx2
   set s : Finset ↥(splittingField a n) := Finset.univ.image x with hs
@@ -495,7 +492,7 @@ theorem kummer_extension_criterion {n : ℕ} (hiso : Nonempty (GaloisGroup a n �
     ¬IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       TwoIndependent (Fin.snoc (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) c) := by
   rw [twoIndependent_snoc_iff hindep hc,
-    isSquare_algebraMap_iff_exists_mul_prod a hiso hindep hc, not_exists]
+    isSquare_algebraMap_iff_exists_mul_prod a hiso hindep c, not_exists]
 
 end
 
