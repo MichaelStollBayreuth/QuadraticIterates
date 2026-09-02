@@ -197,35 +197,25 @@ theorem mem_multiquadraticRelations {s : Finset E} {c : E → L} (hc : ∀ x ∈
 
 end
 
+open IntermediateField in
 /-- Adjoining a square root of `c` gives degree `1` if `c` is already a square in `L`, and `2`
 otherwise. -/
 theorem finrank_adjoin_sqrt_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) [Decidable (IsSquare c)] :
-    Module.finrank L (IntermediateField.adjoin L {x}) = if IsSquare c then 1 else 2 := by
-  have hmem_iff : x ∈ (⊥ : IntermediateField L E) ↔ IsSquare c := by
-    refine ⟨fun hx ↦ ?_, fun hsq ↦ ?_⟩
-    · rw [IntermediateField.mem_bot] at hx
-      obtain ⟨y, hy⟩ := hx
-      exact ⟨y, (algebraMap L E).injective (by rw [map_mul, hy, ← hc]; ring)⟩
-    · obtain ⟨y, hy⟩ := hsq
-      have hfac : (x - algebraMap L E y) * (x + algebraMap L E y) = 0 := by
-        rw [hy, map_mul] at hc; linear_combination hc
-      rw [IntermediateField.mem_bot]
-      rcases mul_eq_zero.mp hfac with h1 | h2
-      · exact ⟨y, by linear_combination -h1⟩
-      · exact ⟨-y, by rw [map_neg]; linear_combination -h2⟩
-  have : FiniteDimensional L (IntermediateField.adjoin L {x}) :=
-    IntermediateField.adjoin.finiteDimensional ⟨Polynomial.X ^ 2 - Polynomial.C c,
-      Polynomial.monic_X_pow_sub_C c two_ne_zero, by
-        simp [hc]⟩
-  have hone_iff : Module.finrank L (IntermediateField.adjoin L {x}) = 1 ↔ IsSquare c := by
-    rw [IntermediateField.finrank_adjoin_simple_eq_one_iff, hmem_iff]
-  split_ifs with hsq
-  · rwa [hone_iff]
-  · have hle2 := IntermediateField.finrank_adjoin_sqrt_le hc
-    have hpos : 0 < Module.finrank L (IntermediateField.adjoin L {x}) := Module.finrank_pos
-    have hne1 := mt hone_iff.mp hsq
-    lia
+    Module.finrank L L⟮x⟯ = if IsSquare c then 1 else 2 := by
+  have hone_iff : Module.finrank L L⟮x⟯ = 1 ↔ IsSquare c := by
+    rw [finrank_adjoin_simple_eq_one_iff, mem_bot, IsSquare, Set.mem_range]
+    refine ⟨fun ⟨y, hy⟩ ↦ ⟨y, ?_⟩, fun ⟨r, hr⟩ ↦ ?_⟩
+    · rw [← hy, ← map_pow, pow_two, eq_comm] at hc
+      exact RingHom.injective (algebraMap L E) hc
+    · rw [hr, map_mul, ← pow_two, sq_eq_sq_iff_eq_or_eq_neg] at hc
+      rcases hc with hc | hc
+      · exact ⟨_, hc.symm⟩
+      · exact ⟨-r, by grind⟩
+  have : FiniteDimensional L L⟮x⟯ :=
+    adjoin.finiteDimensional ⟨_, Polynomial.monic_X_pow_sub_C c two_ne_zero, by simp [hc]⟩
+  have : 0 < Module.finrank L L⟮x⟯ := Module.finrank_pos
+  grind [finrank_adjoin_sqrt_le hc]
 
 /-- One-step square descent: over `L(x)` with `x² = c` and `x ∉ L`, the image of `d ∈ L` is a
 square iff `d` or `d · c` is a square in `L`. -/
@@ -897,4 +887,3 @@ lemma isGalois_adjoin_of_sq_eq_algebraMap [PerfectField F] {t : Finset E}
   exact IsGalois.mk
 
 end AdjoinSquareRoots
-
