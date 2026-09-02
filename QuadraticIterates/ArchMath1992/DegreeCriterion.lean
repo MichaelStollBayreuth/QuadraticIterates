@@ -276,8 +276,8 @@ lemma finrank_adjoin_le_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃*
     (ht : ∀ y ∈ t, ∃ q : ℚ, y ^ 2 = algebraMap ℚ ↥(splittingField a n) q) :
     Module.finrank ℚ (IntermediateField.adjoin ℚ (t : Set ↥(splittingField a n))) ≤ 2 ^ n := by
   set M := IntermediateField.adjoin ℚ (t : Set ↥(splittingField a n))
-  have hgalM : IsGalois ℚ ↥M := isGalois_adjoin_of_sq_eq_algebraMap ht
-  have hexp : ∀ τ : ↥M ≃ₐ[ℚ] ↥M, τ ^ 2 = 1 := algEquiv_adjoin_sq_eq_one ht
+  have hgalM : IsGalois ℚ ↥M := IntermediateField.isGalois_adjoin_of_sq_eq_algebraMap ht
+  have hexp : ∀ τ : ↥M ≃ₐ[ℚ] ↥M, τ ^ 2 = 1 := IntermediateField.algEquiv_adjoin_sq_eq_one ht
   have hinv (g : ↥M ≃ₐ[ℚ] ↥M) : g⁻¹ = g := (eq_inv_of_mul_eq_one_left (sq (a := g) ▸ hexp g)).symm
   rw [← IsGalois.card_aut_eq_finrank ℚ ↥M,
     elem_ab_card_hom (↥M ≃ₐ[ℚ] ↥M)
