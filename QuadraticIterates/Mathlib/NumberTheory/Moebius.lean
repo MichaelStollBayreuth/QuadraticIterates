@@ -140,7 +140,8 @@ theorem moebius_restricted_sum (m n : ℕ) (hm : 1 ≤ m) (hn : 1 ≤ n) (hmn : 
       rfl
   rw [hbij, Nat.sum_divisorsAntidiagonal (fun i j ↦ (μ i : ℤ)), classic N hN0]
   simp only [show (m * N = m) ↔ (N = 1) from
-    ⟨fun h ↦ Nat.eq_of_mul_eq_mul_left hm_pos (h.trans (by ring)), fun h ↦ by rw [h, mul_one]⟩]
+    ⟨fun h ↦ Nat.eq_of_mul_eq_mul_left hm_pos (h.trans (mul_one m).symm),
+      fun h ↦ by rw [h, mul_one]⟩]
 
 /-- For a level set `{d : k ≤ g d}` of a `gcd`-`min` function `g`, the antidiagonal Möbius transform
 of its indicator (in the second coordinate) over `n` is `0` or `1`; in particular nonnegative. -/

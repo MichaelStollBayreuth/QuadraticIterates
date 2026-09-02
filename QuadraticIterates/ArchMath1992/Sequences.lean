@@ -402,7 +402,7 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
     intro hdvd
     refine hpg ?_
     rw [← sub_sub_self (gammaSeq g ε (m + 1)) (g.eval 0)]
-    exact dvd_sub hdvd ((dvd_pow_self p (by lia : E + 1 ≠ 0)).trans hcm1)
+    exact dvd_sub hdvd ((dvd_pow_self p E.succ_ne_zero).trans hcm1)
   -- base of the periodicity: `p^{E+1} ∣ γ_{2+m} - γ_2`
   have hbase : p ^ (E + 1) ∣ gammaSeq g ε (2 + m) - gammaSeq g ε 2 := by
     rw [show 2 + m = (m + 1) + 1 by ring, gammaSeq_succ g ε (by lia),

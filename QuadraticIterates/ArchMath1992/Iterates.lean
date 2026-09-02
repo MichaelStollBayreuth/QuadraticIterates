@@ -139,7 +139,7 @@ theorem cSeq_gcd (a : ℤ) (m n : ℕ) : Int.gcd (cSeq a m) (cSeq a n) = (cSeq a
 `moebiusFactorR` API. -/
 theorem cSeq_associated_gcd (a : ℤ) (m n : ℕ) :
     Associated (gcd (cSeq a m) (cSeq a n)) (cSeq a (m.gcd n)) :=
-  gammaSeq_associated_gcd (evenPoly_X_sq_add_C a) (by norm_num) m n
+  gammaSeq_associated_gcd (evenPoly_X_sq_add_C a) neg_one_sq m n
 
 /-- `c_{k+1} = (-1)^{2^k} · f_k(a)`; in particular `c_{k+1} = f_k(a)` for `k ≥ 1`. -/
 theorem cSeq_succ_eq_neg_one_pow_mul_eval (a : ℤ) (k : ℕ) :
@@ -445,7 +445,7 @@ lemma relfinrank_succ_le (n : ℕ) :
           (IntermediateField.adjoin ↥(splittingField a n) (s : Set (AlgebraicClosure ℚ))) := by
         rw [relfinrank_succ_eq_finrank_adjoin a n g hg, hst]
     _ ≤ 2 ^ s.card := finrank_adjoin_finset_sq_le hsq
-    _ ≤ 2 ^ 2 ^ n := Nat.pow_le_pow_right (by norm_num) hcard
+    _ ≤ 2 ^ 2 ^ n := Nat.pow_le_pow_right two_pos hcard
 
 /-- Facts 1.0 (Kummer tower): `K_n ⊆ K_{n+1}`, the extension `K_{n+1}` is generated over `K_n` by
 roots of `f_{n+1}` whose squares lie in `K_n`, and `[K_{n+1} : K_n] ≤ 2^{2^n}`. -/
@@ -494,7 +494,7 @@ theorem embed_equiv (n : ℕ) :
       = Module.finrank ℚ ↥(splittingField a (n + 1)) :=
     IntermediateField.finrank_bot_mul_relfinrank (splittingField_le_succ a n)
   have hxle : Module.finrank ℚ ↥(splittingField a n) ≤ 2 ^ (2 ^ n - 1) := by
-    refine Nat.le_of_dvd (by positivity) ?_
+    refine Nat.le_of_dvd (Nat.two_pow_pos _) ?_
     have h := Subgroup.card_dvd_of_injective φn hφn
     rwa [card_galoisGroup_eq_finrank, card_wreathPower] at h
   have hrle := relfinrank_succ_le a n
@@ -508,7 +508,7 @@ theorem embed_equiv (n : ℕ) :
     card_galoisGroup_eq_finrank, card_galoisGroup_eq_finrank, card_wreathPower, card_wreathPower]
   refine ⟨fun hy ↦ ?_, fun ⟨hxeq, hreq⟩ ↦ ?_⟩
   · exact Nat.eq_and_eq_of_le_of_le_of_mul_eq_mul hxle hrle (by rw [htower, hy, hexp])
-      (by positivity) (by positivity)
+      (Nat.two_pow_pos _) (Nat.two_pow_pos _)
   · rw [← htower, hxeq, hreq, ← hexp]
 
 end

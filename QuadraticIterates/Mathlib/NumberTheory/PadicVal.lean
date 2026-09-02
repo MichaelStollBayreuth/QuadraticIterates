@@ -35,7 +35,7 @@ theorem factorization_int_eq_padicValInt (p : ℕ) [Fact p.Prime] {x : ℤ} (hx 
       = emultiplicity ((p : ℕ) : ℤ) x := by
     rw [factorization_eq_count,
       UniqueFactorizationMonoid.emultiplicity_eq_count_normalizedFactors hirr hx,
-      Int.normalize_of_nonneg (by positivity)]
+      Int.normalize_of_nonneg (Int.natCast_nonneg p)]
   have h2 : emultiplicity ((p : ℕ) : ℤ) x = emultiplicity p x.natAbs := by
     rw [emultiplicity_eq_emultiplicity_iff]
     intro n

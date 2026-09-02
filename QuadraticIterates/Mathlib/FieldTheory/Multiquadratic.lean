@@ -24,7 +24,7 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
     Module.finrank L (IntermediateField.adjoin L {x}) ≤ 2 := by
-  have hmonic := Polynomial.monic_X_pow_sub_C c (by norm_num : 2 ≠ 0)
+  have hmonic := Polynomial.monic_X_pow_sub_C c two_ne_zero
   rw [IntermediateField.adjoin.finrank ⟨_, hmonic, by simp [hc]⟩]
   simpa using Polynomial.natDegree_le_natDegree (minpoly.min L x hmonic (by simp [hc]))
 
@@ -266,7 +266,7 @@ theorem finrank_adjoin_sq_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
       · exact ⟨-y, by rw [map_neg]; linear_combination -h2⟩
   have : FiniteDimensional L (IntermediateField.adjoin L {x}) :=
     IntermediateField.adjoin.finiteDimensional ⟨Polynomial.X ^ 2 - Polynomial.C c,
-      Polynomial.monic_X_pow_sub_C c (by norm_num), by
+      Polynomial.monic_X_pow_sub_C c two_ne_zero, by
         simp [hc]⟩
   have hone_iff : Module.finrank L (IntermediateField.adjoin L {x}) = 1 ↔ IsSquare c := by
     rw [IntermediateField.finrank_adjoin_simple_eq_one_iff, hmem_iff]
@@ -313,7 +313,7 @@ theorem square_descent_step {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [
     · exact ⟨w, 0, by rw [hw]; push_cast; ring⟩
     · by_cases hc0 : c = 0
       · exfalso
-        exact hx ((pow_eq_zero_iff (n := 2) (by norm_num)).mp
+        exact hx ((pow_eq_zero_iff two_ne_zero).mp
           (by rw [hc, hc0, map_zero]) ▸ IntermediateField.zero_mem _)
       · refine ⟨0, w / c, ?_⟩
         have hd_eq : d = (w / c) ^ 2 * c := by field_simp [hc0]; simpa [pow_two] using hw
@@ -369,7 +369,7 @@ theorem mem_adjoin_simple_sq {F : Type*} [Field F] {E : Type*} [Field E] [Algebr
   refine ⟨fun hz ↦ ?_, fun ⟨u, v, hz⟩ ↦ hz ▸ add_mem (IntermediateField.algebraMap_mem _ _)
     (mul_mem (IntermediateField.algebraMap_mem _ _) (IntermediateField.subset_adjoin _ _ rfl))⟩
   set f : Polynomial F := Polynomial.X ^ 2 - Polynomial.C a with hf
-  have hfmonic : f.Monic := Polynomial.monic_X_pow_sub_C a (by norm_num)
+  have hfmonic : f.Monic := Polynomial.monic_X_pow_sub_C a two_ne_zero
   have hfaeval : (Polynomial.aeval y) f = 0 := by
     simp only [hf, map_sub, map_pow, Polynomial.aeval_X, Polynomial.aeval_C, hy, sub_self]
   have hfdeg : f.natDegree = 2 := by rw [hf]; compute_degree!
@@ -468,7 +468,7 @@ private theorem square_descent_insert_of_notMem {L : Type*} [Field L] [NeZero (2
     by_cases hyt : y ∈ t
     · refine .inr ⟨t.erase y, fun a ha ↦ ?_, ?_⟩
       · rcases Finset.mem_insert.mp (ht (Finset.mem_of_mem_erase ha)) with rfl | h
-        · exact absurd (Finset.mem_erase.mp ha).1 (by simp)
+        · exact absurd rfl (Finset.mem_erase.mp ha).1
         · exact h
       · rw [show ∏ i ∈ t, c i = c y * ∏ i ∈ t.erase y, c i from by
           rw [← Finset.prod_insert (Finset.notMem_erase y t), Finset.insert_erase hyt]] at hsq
@@ -574,7 +574,7 @@ theorem multiquadraticRelations_ker_finrank {L : Type*} [Field L] {E : Type*} [F
       · exact hεsupp x (by simp [Finset.mem_insert, hxy, hx])
     · rintro ⟨hεsupp, hεsq⟩
       have hεy : ε y = 0 := hεsupp y hys
-      refine ⟨⟨fun x hx ↦ hεsupp x (by simp [Finset.mem_insert] at hx; exact hx.2), ?_⟩, hεy⟩
+      refine ⟨⟨fun x hx ↦ hεsupp x (fun h ↦ hx (Finset.mem_insert_of_mem h)), ?_⟩, hεy⟩
       simpa [Finset.filter_insert, hεy] using hεsq
   rw [heq]
 
@@ -752,7 +752,7 @@ theorem multiquadratic_degree_insert_of_maximal {L : Type*} [Field L] [NeZero (2
     rw [hmax] at hdeg
     have hle := multiquadraticRelations_finrank_le s c
     have hexp : s.card = s.card - Module.finrank (ZMod 2) (multiquadraticRelations s c) :=
-      Nat.pow_right_injective (by norm_num) hdeg
+      Nat.pow_right_injective le_rfl hdeg
     lia
   have hins_fr : Module.finrank (ZMod 2) (multiquadraticRelations (insert w s) c) = 0 := by
     rw [multiquadraticRelations_insert_finrank hws hs' hc' hc, hrels0, if_neg hwnotsq]

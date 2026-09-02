@@ -57,7 +57,7 @@ to `X² + a`, `ε = -1`, in the form consumed by `moebiusFactorR_isRelPrime`. -/
 lemma cSeq_factorization_shape (ha : ¬IsSquare (-a : ℚ)) :
     ∀ q : ℤ, Prime q → normalize q = q →
       ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (cSeq a k) q = if m ∣ k then E else 0 :=
-  fun _ hq hqn ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) (by norm_num)
+  fun _ hq hqn ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq
     (cSeq_ne_zero' a ha) hq hqn
 
 /-- The image of `b_n` in `ℚ` is the Möbius product `∏_{ed = n} c_d^{μ(e)}` (Lemma 1.1 b): the

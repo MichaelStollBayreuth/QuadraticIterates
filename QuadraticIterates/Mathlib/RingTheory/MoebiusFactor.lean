@@ -109,9 +109,9 @@ lemma factorization_prod {ι : Type*} {s : Finset ι} {f : ι → R} (hf : ∀ i
   induction s using Finset.induction with
   | empty => simp
   | insert a s ha ih =>
-    rw [Finset.prod_insert ha, factorization_mul (hf a (by simp))
-        (Finset.prod_ne_zero_iff.mpr fun i hi ↦ hf i (by simp [hi])), Finsupp.add_apply,
-      Finset.sum_insert ha, ih fun i hi ↦ hf i (by simp [hi])]
+    rw [Finset.prod_insert ha, factorization_mul (hf a (Finset.mem_insert_self a s))
+        (Finset.prod_ne_zero_iff.mpr fun i hi ↦ hf i (Finset.mem_insert_of_mem hi)),
+      Finsupp.add_apply, Finset.sum_insert ha, ih fun i hi ↦ hf i (Finset.mem_insert_of_mem hi)]
 
 /-- The valuation gap `v_p(numProd) - v_p(denProd)` is the Möbius transform of `v_p ∘ c`. -/
 lemma factorization_numProd_sub_denProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) (n : ℕ) (p : R) :

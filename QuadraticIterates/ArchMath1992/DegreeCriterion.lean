@@ -172,14 +172,14 @@ variable (a : ℤ)
 lemma finrank_splittingField_one (hsq : ¬IsSquare (-a : ℚ)) :
     Module.finrank ℚ ↥(splittingField a 1) = 2 := by
   obtain ⟨β, hβ⟩ := IsAlgClosed.exists_pow_nat_eq
-    (-(algebraMap ℚ (AlgebraicClosure ℚ) (a : ℚ))) (n := 2) (by norm_num)
+    (-(algebraMap ℚ (AlgebraicClosure ℚ) (a : ℚ))) two_pos
   have hβsq : β ^ 2 = algebraMap ℚ (AlgebraicClosure ℚ) (-a : ℚ) := by rw [hβ, map_neg]
   have hpoly := map_iteratedPoly_one a
   have hβroot : β ∈ (fℚ[a, 1]).rootSet (AlgebraicClosure ℚ) := by
     rw [mem_rootSet', hpoly]
     refine ⟨?_, ?_⟩
     · rw [Polynomial.map_add, Polynomial.map_pow, map_X, map_C]
-      exact X_pow_add_C_ne_zero (by norm_num) _
+      exact X_pow_add_C_ne_zero two_pos _
     · simp [map_add, map_pow, aeval_X, hβ]
   have hadjeq : splittingField a 1 = IntermediateField.adjoin ℚ {β} := by
     apply le_antisymm
@@ -238,7 +238,7 @@ theorem degree_criterion {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
       isPretransitive_galoisGroup a n hirr
     have hrfd : (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n
         ↔ Module.finrank (ZMod 2) (rootRelations (rootShift a n)) = 0 := by
-      rw [relfinrank_succ_eq_pow a hn hirr, Nat.pow_right_inj (by norm_num : 1 < 2)]
+      rw [relfinrank_succ_eq_pow a hn hirr, Nat.pow_right_inj one_lt_two]
       lia
     have hallne : (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations (rootShift a n)
         ↔ rootRelations (rootShift a n) ≠ ⊥ := by

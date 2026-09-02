@@ -74,11 +74,11 @@ theorem factorization_eq_of_dvd_sub {p : S} (hp : Prime p) (hpn : normalize p = 
     (hcong : p ^ (E + 1) ∣ x - y) : factorization x p = E := by
   have hpEy : p ^ E ∣ y := (pow_dvd_iff_le_factorization hp hpn hy).mpr (by lia)
   have hpEx : p ^ E ∣ x := by
-    have h1 : p ^ E ∣ x - y := (pow_dvd_pow p (by lia : E ≤ E + 1)).trans hcong
+    have h1 : p ^ E ∣ x - y := (pow_dvd_pow p E.le_succ).trans hcong
     simpa using dvd_add h1 hpEy
   have hnotEx : ¬ p ^ (E + 1) ∣ x := fun hcon ↦ by
     have hyd : p ^ (E + 1) ∣ y := by
-      have hyeq : y = x - (x - y) := by ring
+      have hyeq : y = x - (x - y) := (sub_sub_self x y).symm
       rw [hyeq]; exact dvd_sub hcon hcong
     have := (pow_dvd_iff_le_factorization hp hpn hy).mp hyd
     lia
@@ -126,8 +126,8 @@ theorem factorization_periodic_shape {p : S} (hp : Prime p) (hpn : normalize p =
           (factorization_eq_zero_iff_not_dvd hp hpn (hne (n - m) hge1)).mp ihval
         rw [factorization_eq_zero_iff_not_dvd hp hpn (hne n hn)]
         refine fun hd ↦ hnpnm ?_
-        have hxnm : x (n - m) = x n - (x n - x (n - m)) := by ring
+        have hxnm : x (n - m) = x n - (x n - x (n - m)) := (sub_sub_self _ _).symm
         rw [hxnm]
-        exact dvd_sub hd (dvd_trans (dvd_pow_self p (by lia : E + 1 ≠ 0)) hcong)
+        exact dvd_sub hd (dvd_trans (dvd_pow_self p E.succ_ne_zero) hcong)
 
 end PeriodicShape

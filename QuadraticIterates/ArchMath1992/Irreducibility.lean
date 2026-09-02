@@ -157,7 +157,7 @@ theorem even_reducible_factorization {p : ℚ[X]} (hmonic : p.Monic)
   have hpw : p = C ((-1 : ℚ) ^ g.natDegree) * (g * g.comp (-X)) :=
     monic_eq_of_associated_mul_comp_neg_X hgMonic hmonic hassoc_p
   refine ⟨g, ?_, ?_⟩
-  · rw [hpw, natDegree_C_mul (pow_ne_zero g.natDegree (by norm_num : (-1 : ℚ) ≠ 0)),
+  · rw [hpw, natDegree_C_mul (neg_one_pow_ne_zero g.natDegree),
       natDegree_mul hgMonic.ne_zero (by rw [Ne, comp_neg_X_eq_zero_iff]; exact hgMonic.ne_zero),
       natDegree_comp]
     simp
@@ -256,7 +256,7 @@ private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
     IsSquare (cSeq a (j + 1) : ℚ) := by
   have hgnd : g.natDegree = 2 ^ j := by
     rw [(monic_iteratedPoly a (j + 1)).natDegree_map, natDegree_iteratedPoly] at hgdeg
-    have h2 : 2 ^ (j + 1) = 2 * 2 ^ j := by ring
+    have h2 : 2 ^ (j + 1) = 2 * 2 ^ j := pow_succ' 2 j
     lia
   have hsign : (-1 : ℚ) ^ g.natDegree = (if (j + 1 : ℕ) = 1 then -1 else 1) := by
     rw [hgnd]
@@ -378,7 +378,7 @@ lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} 
   have hevalZ : (iteratedPoly a n).eval a = 0 := mod_cast hroot
   have hpos : 0 < cSeq a (n + 1) := cSeq_pos a ha (by lia)
   rw [cSeq_succ_eq_neg_one_pow_mul_eval a n, hevalZ, mul_zero] at hpos
-  exact absurd hpos (by norm_num)
+  exact absurd hpos (lt_irrefl 0)
 
 lemma splittingField_one_eq_bot_of_isSquare (ha : IsSquare (-a : ℚ)) : splittingField a 1 = ⊥ := by
   obtain ⟨b, hb⟩ := ha
@@ -419,9 +419,9 @@ lemma not_isSquare_neg_of_finrank_eq {n : ℕ} (hn : 1 ≤ n)
     rw [hbot] at hb
     simpa [pow_one] using hb
   rw [htower, hmax] at hbound
-  have hexp : 2 ^ n - 1 ≤ 2 ^ n - 2 := (Nat.pow_le_pow_iff_right (by norm_num : 1 < 2)).mp hbound
+  have hexp : 2 ^ n - 1 ≤ 2 ^ n - 2 := (Nat.pow_le_pow_iff_right one_lt_two).mp hbound
   have h2n : 2 ≤ 2 ^ n := by
-    simpa [pow_one] using Nat.pow_le_pow_right (by norm_num : 1 ≤ 2) hn
+    simpa [pow_one] using Nat.pow_le_pow_right two_pos hn
   lia
 
 lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :

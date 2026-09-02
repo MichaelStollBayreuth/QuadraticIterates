@@ -80,9 +80,9 @@ theorem Polynomial.eq_expand_two_contract_of_comp_neg_X {R : Type*} [CommRing R]
     exact (mul_eq_zero.mp (by linear_combination hcoeff : (2 : R) * b.coeff n = 0)).resolve_left
       two_ne_zero
   ext n
-  rw [coeff_expand (by norm_num)]
+  rw [coeff_expand two_pos]
   by_cases hdvd : 2 ∣ n
-  · rw [if_pos hdvd, coeff_contract (by norm_num)]; congr 1; lia
+  · rw [if_pos hdvd, coeff_contract two_ne_zero]; congr 1; lia
   · rw [if_neg hdvd]; exact hoddzero n hdvd
 
 /-- An even polynomial over a domain of characteristic `≠ 2` is a polynomial in `X² + c`. -/
