@@ -190,7 +190,7 @@ lemma finrank_splittingField_one (hsq : ¬IsSquare (-a : ℚ)) :
     · refine IntermediateField.adjoin_le_iff.mpr ?_
       rintro x rfl
       exact IntermediateField.subset_adjoin ℚ _ hβroot
-  rw [hadjeq, finrank_adjoin_sqrt_eq hβsq, if_neg hsq]
+  rw [hadjeq, IntermediateField.finrank_adjoin_sqrt_eq hβsq, if_neg hsq]
 
 lemma degree_criterion_zero :
     (splittingField a 0).relfinrank (splittingField a 1) = 2 ^ 2 ^ 0 ↔
@@ -202,7 +202,7 @@ lemma degree_criterion_zero :
   have hsq_iff : IsSquare (algebraMap ℚ ↥(splittingField a 0) (cSeq a (0 + 1) : ℚ))
       ↔ IsSquare (-a : ℚ) := by
     rw [hK0bot, show (cSeq a (0 + 1) : ℚ) = -(a : ℚ) by norm_num]
-    exact isSquare_algebraMap_bot_iff _
+    exact IntermediateField.isSquare_algebraMap_bot_iff _
   rw [hrf, hsq_iff]
   by_cases hsq : IsSquare (-a : ℚ)
   · rw [splittingField_one_eq_bot_of_isSquare a hsq, IntermediateField.finrank_bot]
@@ -313,7 +313,7 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
   have hinsdeg : Module.finrank ℚ
       (IntermediateField.adjoin ℚ (insert w (Set.range x))) = 2 ^ (n + 1) := by
     rw [IntermediateField.finrank_adjoin_insert_of_not_isSquare hw2
-      (not_isSquare_algebraMap_of_sqrt_notMem hw2 hwnotM),
+      (IntermediateField.not_isSquare_algebraMap_of_sqrt_notMem hw2 hwnotM),
       finrank_adjoin_range_eq_two_pow a hindep hx, pow_succ']
   have hle : Module.finrank ℚ
       (IntermediateField.adjoin ℚ (insert w (Set.range x))) ≤ 2 ^ n := by
@@ -380,7 +380,7 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     rw [sq]
     exact (hx i).symm
   rw [isSquare_algebraMap_iff_exists_sq_eq a hiso hindep hx2 c, ← Set.image_univ,
-    ← Finset.coe_univ, square_descent (fun i _ ↦ hx2 i) (fun i _ ↦ hindep.1 i) c]
+    ← Finset.coe_univ, IntermediateField.square_descent (fun i _ ↦ hx2 i) (fun i _ ↦ hindep.1 i) c]
   exact exists_congr fun S ↦ and_iff_right (Finset.subset_univ S)
 
 lemma twoIndependent_snoc_iff {n : ℕ} {v : Fin n → ℚ} (hv : TwoIndependent v) {c : ℚ} (hc : c ≠ 0) :

@@ -17,7 +17,7 @@ them.
     IntermediateField.finrank_adjoin_insert,
     IntermediateField.finrank_adjoin_insert_of_not_isSquare,
     IntermediateField.finrank_adjoin_sqrt_le, IntermediateField.finrank_adjoin_finset_sqrt_le,
-    finrank_adjoin_sqrt_eq, multiquadraticRelations_finrank_le,
+    IntermediateField.finrank_adjoin_sqrt_eq, multiquadraticRelations_finrank_le,
     multiquadraticRelations_insert_finrank}
   \leanok
   Let $F$ be a field of characteristic $\ne 2$ and $(x_i)_{i \in s}$ a finite family of square
@@ -37,9 +37,11 @@ them.
 \begin{lemma}[Square descent]
   \label{lem:descent}
   \uses{def:twoindep}
-  \lean{square_descent, exists_sq_eq_algebraMap_of_isSquare_mul_prod, square_descent_step,
-    isSquare_algebraMap_iff,
-    not_isSquare_algebraMap_of_sqrt_notMem, isSquare_algebraMap_bot_iff, mem_adjoin_simple_sq,
+  \lean{IntermediateField.square_descent,
+    IntermediateField.exists_sq_eq_algebraMap_of_isSquare_mul_prod,
+    IntermediateField.square_descent_step, IntermediateField.isSquare_algebraMap_iff,
+    IntermediateField.not_isSquare_algebraMap_of_sqrt_notMem,
+    IntermediateField.isSquare_algebraMap_bot_iff, IntermediateField.mem_adjoin_sqrt_iff,
     sqClass_mul, sqClass_prod, sqClass_prod_zpow, sqClass_eq_zero_iff,
     isSquare_prod_iff_sum_sqClass_eq_zero}
   \leanok
