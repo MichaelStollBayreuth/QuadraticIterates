@@ -233,6 +233,14 @@ theorem finrank_adjoin_sqrt_eq {L : Type*} [Field L] {E : Type*} [Field E] [Alge
   have : 0 < Module.finrank L L⟮x⟯ := Module.finrank_pos
   grind [finrank_adjoin_sqrt_le hc]
 
+/-- If `p + q·x = 0` with `p, q ∈ L` and `q ≠ 0`, then `x` lies in the base field. -/
+theorem IntermediateField.mem_bot_of_add_mul_eq_zero {L : Type*} [Field L] {E : Type*} [Field E]
+    [Algebra L E] {x : E} {p q : L} (hq : q ≠ 0) (h : algebraMap L E p + algebraMap L E q * x = 0) :
+    x ∈ (⊥ : IntermediateField L E) := by
+  refine mem_bot.mpr ⟨-p / q, ?_⟩
+  rw [map_div₀, map_neg, div_eq_iff ((map_ne_zero _).mpr hq)]
+  linear_combination -h
+
 /-- One-step square descent: over `L(x)` with `x² = c` and `x ∉ L`, the image of `d ∈ L` is a
 square iff `d` or `d · c` is a square in `L`. -/
 theorem square_descent_step {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field E]
@@ -240,40 +248,25 @@ theorem square_descent_step {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [
     (hx : x ∉ (⊥ : IntermediateField L E)) (d : L) :
     (∃ u v : L, algebraMap L E d = (algebraMap L E u + algebraMap L E v * x) ^ 2)
       ↔ (IsSquare d ∨ IsSquare (d * c)) := by
-  have hli (p q : L) (hpq : algebraMap L E p + algebraMap L E q * x = 0) : p = 0 ∧ q = 0 := by
-    by_cases hq : q = 0
-    · subst hq
-      simp only [map_zero, zero_mul, add_zero] at hpq
-      exact ⟨(map_eq_zero _).mp hpq, rfl⟩
-    · refine absurd ?_ hx
-      have hqne : algebraMap L E q ≠ 0 := mt ((map_eq_zero (algebraMap L E)).mp ·) hq
-      rw [show x = algebraMap L E (-p / q) by
-        simpa [map_div₀, map_neg, eq_div_iff hqne] using (by linear_combination hpq)]
-      exact IntermediateField.algebraMap_mem _ _
-  constructor
-  · rintro ⟨u, v, huv⟩
-    have hexp : (algebraMap L E u + algebraMap L E v * x) ^ 2
-        = algebraMap L E (u ^ 2 + v ^ 2 * c) + algebraMap L E (2 * u * v) * x := by
-      simpa [map_ofNat] using (by linear_combination (algebraMap L E v * algebraMap L E v) * hc)
-    rw [hexp] at huv
-    obtain ⟨hd, huv0⟩ := hli (d - (u ^ 2 + v ^ 2 * c)) (-(2 * u * v)) (by
-      simpa [map_sub, map_neg] using
-        (by linear_combination huv : algebraMap L E d
-          - algebraMap L E (u ^ 2 + v ^ 2 * c) + (-(algebraMap L E (2 * u * v))) * x = 0))
-    have h2uv : (2 : L) * (u * v) = 0 := by linear_combination neg_eq_zero.mp huv0
-    have huv_zero : u * v = 0 := (mul_eq_zero.mp h2uv).resolve_left two_ne_zero
-    rcases mul_eq_zero.mp huv_zero with hu | hv
-    · subst hu; exact Or.inr ⟨v * c, by rw [sub_eq_zero.mp hd]; ring⟩
-    · subst hv; exact Or.inl ⟨u, by rw [sub_eq_zero.mp hd]; ring⟩
-  · rintro (⟨w, hw⟩ | ⟨w, hw⟩)
-    · exact ⟨w, 0, by rw [hw]; push_cast; ring⟩
-    · by_cases hc0 : c = 0
-      · exfalso
-        exact hx ((pow_eq_zero_iff two_ne_zero).mp
-          (by rw [hc, hc0, map_zero]) ▸ IntermediateField.zero_mem _)
-      · refine ⟨0, w / c, ?_⟩
-        have hd_eq : d = (w / c) ^ 2 * c := by field_simp [hc0]; simpa [pow_two] using hw
-        rw [hd_eq]; push_cast; rw [zero_add, mul_pow, hc]
+  refine ⟨fun ⟨u, v, huv⟩ ↦ ?_,
+    fun h ↦ h.elim (fun ⟨w, hw⟩ ↦ ⟨w, 0, by simp [hw, sq]⟩) fun ⟨w, hw⟩ ↦ ?_⟩
+  · have h : algebraMap L E (u ^ 2 + v ^ 2 * c - d) + algebraMap L E (2 * (u * v)) * x = 0 := by
+      simp only [map_add, map_sub, map_mul, map_pow, map_ofNat]
+      linear_combination -huv - (algebraMap L E v) ^ 2 * hc
+    have hq : 2 * (u * v) = 0 :=
+      by_contra fun hq ↦ hx (IntermediateField.mem_bot_of_add_mul_eq_zero hq h)
+    have hd : u ^ 2 + v ^ 2 * c - d = 0 := by
+      rwa [hq, map_zero, zero_mul, add_zero, map_eq_zero] at h
+    rcases (by simpa [two_ne_zero] using hq : u = 0 ∨ v = 0) with rfl | rfl
+    · exact .inr ⟨v * c, by grind⟩
+    · exact .inl ⟨u, by grind⟩
+  · have hc0 : c ≠ 0 := by
+      rintro rfl
+      exact hx ((pow_eq_zero_iff two_ne_zero).mp (hc.trans (map_zero _)) ▸ zero_mem _)
+    refine ⟨0, w / c, ?_⟩
+    rw [map_zero, zero_add, mul_pow, hc, ← map_pow, ← map_mul]
+    congr 1
+    grind
 
 /-- For an intermediate field `K` of `E/L` and `e : L`, the image of `e` in `K` is a square
 iff some element of `K` squares to the image of `e` in `E`. -/
