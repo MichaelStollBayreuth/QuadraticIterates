@@ -119,7 +119,12 @@ theorem sqClass_prod {ι : Type*} {s : Finset ι} {r : ι → L} (hr : ∀ i ∈
       ih fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)]
 
 /-- `sqClass` sends a `zpow` to a `ZMod 2`-scalar multiple (the class is written additively). -/
-theorem sqClass_zpow {x : L} (hx : x ≠ 0) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
+theorem sqClass_zpow (x : L) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
+  rcases eq_or_ne x 0 with rfl | hx
+  · rcases eq_or_ne k 0 with rfl | hk
+    · simp
+    · rw [zero_zpow k hk, sqClass_zero, show (0 : SquareClasses L) = Additive.ofMul 1 from rfl,
+        ← ofMul_zpow, one_zpow]
   rw [sqClass, sqClass, dif_neg (zpow_ne_zero k hx), dif_neg hx,
     show Units.mk0 (x ^ k) (zpow_ne_zero k hx) = (Units.mk0 x hx) ^ k from
       Units.ext (by push_cast; simp),
@@ -142,7 +147,7 @@ theorem sqClass_prod_zpow {ι : Type*} {s : Finset ι} {r : ι → L} (e : ι �
       sqClass_mul (zpow_ne_zero _ (hr a (Finset.mem_insert_self a t)))
         (Finset.prod_ne_zero_iff.mpr fun i hi ↦
           zpow_ne_zero _ (hr i (Finset.mem_insert_of_mem hi))),
-      sqClass_zpow (hr a (Finset.mem_insert_self a t)),
+      sqClass_zpow,
       ih fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)]
 
 /-- The `𝔽₂`-relation submodule of a finite family of radicands `r : ι → L`: the kernel of
