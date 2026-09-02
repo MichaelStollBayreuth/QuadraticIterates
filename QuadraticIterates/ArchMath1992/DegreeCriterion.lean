@@ -57,7 +57,8 @@ lemma rootShift_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n)
 
 /-- The relative degree `[K_{n+1} : K_n]` equals `2 ^ (2^n - d)`, where `d` is the `𝔽₂`-dimension
 of the multiquadratic relations among the shifted roots `β - a` of `f_n`. -/
-theorem relfinrank_succ_eq_pow {n : ℕ} (hn : 1 ≤ n) (hirr : Irreducible (fℚ[a, n])) :
+theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] {n : ℕ} (hn : 1 ≤ n)
+    (hirr : Irreducible (fℚ[a, n])) :
     (splittingField a n).relfinrank (splittingField a (n + 1))
       = 2 ^ (2 ^ n - Module.finrank (ZMod 2) (rootRelations (rootShift a n))) := by
   classical
@@ -221,6 +222,7 @@ is not a square in `K_n`. -/
 theorem degree_criterion {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
     (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n ↔
       ¬IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) := by
+  classical
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · exact degree_criterion_zero a
   · have hna : ¬IsSquare (-a : ℚ) := not_isSquare_neg_of_irreducible a hn hirr

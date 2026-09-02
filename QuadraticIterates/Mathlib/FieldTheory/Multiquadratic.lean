@@ -80,7 +80,8 @@ instance : Module (ZMod 2) (SquareClasses L) :=
       exact (QuotientGroup.eq_one_iff _).mpr ⟨u, rfl⟩
     simpa [two_nsmul, pow_two] using hsq
 
-open Classical in
+variable [DecidableEq L]
+
 /-- The class of a nonzero field element in `Lˣ/(Lˣ)²` (junk value `0` at `r = 0`). -/
 noncomputable def sqClass (r : L) : SquareClasses L :=
   if hr : r = 0 then 0 else Additive.ofMul (QuotientGroup.mk (Units.mk0 r hr))
@@ -172,7 +173,7 @@ end
 
 section
 
-variable {L : Type*} [Field L] {E : Type*} [DecidableEq E]
+variable {L : Type*} [Field L] [DecidableEq L] {E : Type*} [DecidableEq E]
 
 /-- Extension by zero from (the coercion of) a finite set `s`, as a `ZMod 2`-linear map. -/
 noncomputable def extendByZeroLM (s : Finset E) :
@@ -510,13 +511,14 @@ theorem square_descent {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field
       exact square_descent_insert_of_notMem hys hy hyK hbridge d
 
 /-- The relation space of an `ι`-indexed family has `𝔽₂`-dimension at most `|ι|`. -/
-theorem rootRelations_finrank_le {ι : Type*} [Fintype ι] {L : Type*} [Field L] (r : ι → L) :
+theorem rootRelations_finrank_le {ι : Type*} [Fintype ι] {L : Type*} [Field L] [DecidableEq L]
+    (r : ι → L) :
     Module.finrank (ZMod 2) (rootRelations r) ≤ Fintype.card ι := by
   simpa [Module.finrank_pi] using Submodule.finrank_le (rootRelations r)
 
 /-- `multiquadraticRelations s c` has `𝔽₂`-dimension at most `|s|`. -/
-theorem multiquadraticRelations_finrank_le {L : Type*} [Field L] {E : Type*} [DecidableEq E]
-    (s : Finset E) (c : E → L) :
+theorem multiquadraticRelations_finrank_le {L : Type*} [Field L] [DecidableEq L] {E : Type*}
+    [DecidableEq E] (s : Finset E) (c : E → L) :
     Module.finrank (ZMod 2) (multiquadraticRelations s c) ≤ s.card := by
   have hbr := (Submodule.equivMapOfInjective _ (extendByZeroLM_injective s)
     (rootRelations fun x : ↥(s : Set E) ↦ c x.1)).symm.finrank_eq
@@ -527,15 +529,15 @@ theorem multiquadraticRelations_finrank_le {L : Type*} [Field L] {E : Type*} [De
   exact rootRelations_finrank_le (fun x : ↥(s : Set E) ↦ c x.1)
 
 /-- `multiquadraticRelations s c` is finite-dimensional over `𝔽₂`. -/
-theorem multiquadraticRelations_finite {L : Type*} [Field L] {E : Type*} [DecidableEq E]
-    (s : Finset E) (c : E → L) :
+theorem multiquadraticRelations_finite {L : Type*} [Field L] [DecidableEq L] {E : Type*}
+    [DecidableEq E] (s : Finset E) (c : E → L) :
     Module.Finite (ZMod 2) (multiquadraticRelations s c) :=
   Module.Finite.equiv (Submodule.equivMapOfInjective _ (extendByZeroLM_injective s) _)
 
 /-- Intersecting `V (insert y s')` with the hyperplane `ε y = 0` recovers `V s'` (equal
 `𝔽₂`-dimension). -/
-theorem multiquadraticRelations_ker_finrank {L : Type*} [Field L] {E : Type*} [Field E]
-    [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
+theorem multiquadraticRelations_ker_finrank {L : Type*} [Field L] [DecidableEq L] {E : Type*}
+    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
     (hc : ∀ x ∈ insert y s', c x ≠ 0) (hc' : ∀ x ∈ s', c x ≠ 0) :
     Module.finrank (ZMod 2)
         (↥((multiquadraticRelations (insert y s') c : Submodule (ZMod 2) (E → ZMod 2))
@@ -562,9 +564,10 @@ theorem multiquadraticRelations_ker_finrank {L : Type*} [Field L] {E : Type*} [F
 
 /-- Some relation of `V (insert y s')` has `y`-coordinate `1` iff `c y` is a square in
 `L(s')`. -/
-theorem multiquadraticRelations_ycoord {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
-    (hs : ∀ x ∈ insert y s', x ^ 2 = algebraMap L E (c x)) (hc : ∀ x ∈ insert y s', c x ≠ 0) :
+theorem multiquadraticRelations_ycoord {L : Type*} [Field L] [DecidableEq L] [NeZero (2 : L)]
+    {E : Type*} [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s')
+    {c : E → L} (hs : ∀ x ∈ insert y s', x ^ 2 = algebraMap L E (c x))
+    (hc : ∀ x ∈ insert y s', c x ≠ 0) :
     (∃ ε : E → ZMod 2, ε ∈ multiquadraticRelations (insert y s') c ∧ ε y = 1)
       ↔ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y)) := by
   set K := IntermediateField.adjoin L (s' : Set E) with hK
@@ -606,9 +609,9 @@ theorem multiquadraticRelations_ycoord {L : Type*} [Field L] [NeZero (2 : L)] {E
 
 /-- Adjoining `y` raises `dim V` by `1` when `c y` is a square in `L(s')`, and leaves it
 unchanged otherwise. -/
-theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*}
-    [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E} (hys : y ∉ s') {c : E → L}
-    (hs : ∀ x ∈ insert y s', x ^ 2 = algebraMap L E (c x))
+theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [DecidableEq L]
+    [NeZero (2 : L)] {E : Type*} [Field E] [DecidableEq E] [Algebra L E] {s' : Finset E} {y : E}
+    (hys : y ∉ s') {c : E → L} (hs : ∀ x ∈ insert y s', x ^ 2 = algebraMap L E (c x))
     (hc : ∀ x ∈ insert y s', c x ≠ 0) (hc' : ∀ x ∈ s', c x ≠ 0)
     [Decidable (IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y)))] :
     Module.finrank (ZMod 2) (multiquadraticRelations (insert y s') c)
@@ -666,10 +669,9 @@ theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [NeZero (2 
 
 /-- Degree of a multiquadratic extension: `[L(s) : L] = 2 ^ (|s| - dim V)`, where `V` is the
 `𝔽₂`-space of square relations among the radicands. -/
-theorem multiquadratic_degree {L : Type*} [Field L] [NeZero (2 : L)] {E : Type*} [Field E]
-    [DecidableEq E] [Algebra L E] {s : Finset E} {c : E → L}
-    (hs : ∀ x ∈ s, x ^ 2 = algebraMap L E (c x))
-    (hc : ∀ x ∈ s, c x ≠ 0) :
+theorem multiquadratic_degree {L : Type*} [Field L] [DecidableEq L] [NeZero (2 : L)] {E : Type*}
+    [Field E] [DecidableEq E] [Algebra L E] {s : Finset E} {c : E → L}
+    (hs : ∀ x ∈ s, x ^ 2 = algebraMap L E (c x)) (hc : ∀ x ∈ s, c x ≠ 0) :
     Module.finrank L (IntermediateField.adjoin L (s : Set E))
       = 2 ^ (s.card - Module.finrank (ZMod 2) (multiquadraticRelations s c)) := by
   classical
@@ -780,8 +782,8 @@ theorem multiquadratic_degree_insert_family {n : ℕ} {L : Type*} [Field L] [NeZ
 /-- The dimension of the relation space is invariant under reindexing the family by a
 bijection. -/
 theorem rootRelations_finrank_reindex {ι : Type*} [Fintype ι] {κ : Type*} [Fintype κ]
-    {L : Type*} [Field L] (r : ι → L) (hr : ∀ i, r i ≠ 0) {r' : κ → L} (hr' : ∀ j, r' j ≠ 0)
-    (e : ι ≃ κ) (he : ∀ i, r' (e i) = r i) :
+    {L : Type*} [Field L] [DecidableEq L] (r : ι → L) (hr : ∀ i, r i ≠ 0) {r' : κ → L}
+    (hr' : ∀ j, r' j ≠ 0) (e : ι ≃ κ) (he : ∀ i, r' (e i) = r i) :
     Module.finrank (ZMod 2) (rootRelations r) = Module.finrank (ZMod 2) (rootRelations r') := by
   classical
   set φ := LinearEquiv.piCongrLeft' (ZMod 2) (fun _ : ι ↦ ZMod 2) e
@@ -809,8 +811,8 @@ theorem rootRelations_finrank_reindex {ι : Type*} [Fintype ι] {κ : Type*} [Fi
 
 /-- `multiquadraticRelations s c` has the same `𝔽₂`-dimension as the relation space of the
 restricted family `c|_s`. -/
-theorem multiquadraticRelations_finrank_eq_rootRelations {L : Type*} [Field L] {E : Type*}
-    [DecidableEq E] (s : Finset E) (c : E → L) :
+theorem multiquadraticRelations_finrank_eq_rootRelations {L : Type*} [Field L] [DecidableEq L]
+    {E : Type*} [DecidableEq E] (s : Finset E) (c : E → L) :
     Module.finrank (ZMod 2) (multiquadraticRelations s c)
       = Module.finrank (ZMod 2) (rootRelations fun x : ↥(s : Set E) ↦ c x.1) :=
   (Submodule.equivMapOfInjective _ (extendByZeroLM_injective s) _).symm.finrank_eq
@@ -818,9 +820,10 @@ theorem multiquadraticRelations_finrank_eq_rootRelations {L : Type*} [Field L] {
 /-- Family form of `multiquadratic_degree`: for an injective family `x : ι → E` of square roots
 of nonzero radicands `r : ι → L`, the degree of `L(x i : i)` over `L` is
 `2 ^ (|ι| - dim rootRelations r)`. -/
-theorem multiquadratic_degree_family {ι : Type*} [Fintype ι] {L : Type*} [Field L] [NeZero (2 : L)]
-    {E : Type*} [Field E] [Algebra L E] {x : ι → E} (hxinj : Function.Injective x)
-    {r : ι → L} (hx : ∀ i, x i ^ 2 = algebraMap L E (r i)) (hr : ∀ i, r i ≠ 0) :
+theorem multiquadratic_degree_family {ι : Type*} [Fintype ι] {L : Type*} [Field L] [DecidableEq L]
+    [NeZero (2 : L)] {E : Type*} [Field E] [Algebra L E] {x : ι → E}
+    (hxinj : Function.Injective x) {r : ι → L} (hx : ∀ i, x i ^ 2 = algebraMap L E (r i))
+    (hr : ∀ i, r i ≠ 0) :
     Module.finrank L (IntermediateField.adjoin L (Set.range x))
       = 2 ^ (Fintype.card ι - Module.finrank (ZMod 2) (rootRelations r)) := by
   classical
@@ -849,7 +852,7 @@ theorem multiquadratic_degree_family {ι : Type*} [Fintype ι] {L : Type*} [Fiel
 /-- If every `g ∈ G` acts on the radicands through a field automorphism, the relation space is
 invariant under the coordinate action. -/
 theorem rootRelations_invariant {G : Type*} [Group G] {ι : Type*} [Fintype ι] [MulAction G ι]
-    {L : Type*} [Field L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
+    {L : Type*} [Field L] [DecidableEq L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) :
     ∀ (g : G) (v : ι → ZMod 2), v ∈ rootRelations r → (fun i ↦ v (g⁻¹ • i)) ∈ rootRelations r := by
   classical
@@ -867,13 +870,13 @@ theorem rootRelations_invariant {G : Type*} [Group G] {ι : Type*} [Fintype ι] 
 nonzero relation space contains the all-ones vector. -/
 theorem rootRelations_all_ones {G : Type*} [Group G] [Finite G] (hG : IsPGroup 2 G)
     {ι : Type*} [Fintype ι] [Nonempty ι] [MulAction G ι] [MulAction.IsPretransitive G ι]
-    {L : Type*} [Field L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
+    {L : Type*} [Field L] [DecidableEq L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) (hne : rootRelations r ≠ ⊥) :
     (fun _ ↦ 1) ∈ rootRelations r :=
 invariant_submodule_all_ones hG (rootRelations r) (rootRelations_invariant hr hcompat) hne
 
 /-- The all-ones vector is a relation iff `∏ i, r i` is a square in `L`. -/
-theorem all_ones_mem_rootRelations {ι : Type*} [Fintype ι] {L : Type*} [Field L]
+theorem all_ones_mem_rootRelations {ι : Type*} [Fintype ι] {L : Type*} [Field L] [DecidableEq L]
     {r : ι → L} (hr : ∀ i, r i ≠ 0) :
     (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations r ↔ IsSquare (∏ i, r i) := by
   classical
