@@ -211,6 +211,15 @@ theorem mem_multiquadraticRelations {s : Finset E} {c : E → L} (hc : ∀ x ∈
     · simpa using Subtype.val_injective.extend_apply (fun y : ↥s ↦ ε y.1) 0 ⟨x, hx⟩
     · rw [hoff _ hx, hsupp x hx]
 
+/-- The indicator vector of `t ⊆ s` is a relation iff `∏_{x ∈ t} c x` is a square. -/
+theorem indicator_mem_multiquadraticRelations_iff {s t : Finset E} (hts : t ⊆ s) {c : E → L}
+    (hc : ∀ x ∈ s, c x ≠ 0) :
+    (t : Set E).indicator 1 ∈ multiquadraticRelations s c ↔ IsSquare (∏ x ∈ t, c x) := by
+  classical
+  rw [mem_multiquadraticRelations hc,
+    show s.filter _ = t from Finset.ext fun x ↦ by simpa [Set.indicator_apply] using @hts x]
+  exact and_iff_right fun x hx ↦ Set.indicator_of_notMem (mt (hts ·) hx) 1
+
 end
 
 open IntermediateField in
@@ -512,42 +521,17 @@ theorem multiquadraticRelations_ycoord {L : Type*} [Field L] [DecidableEq L] [Ne
     (hc : ∀ x ∈ insert y s', c x ≠ 0) :
     (∃ ε : E → ZMod 2, ε ∈ multiquadraticRelations (insert y s') c ∧ ε y = 1)
       ↔ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y)) := by
-  set K := IntermediateField.adjoin L (s' : Set E) with hK
-  have hKsq (e : L) : IsSquare (algebraMap L (↥K) e)
-      ↔ (∃ z ∈ IntermediateField.adjoin L (s' : Set E), z ^ 2 = algebraMap L E e) :=
-    isSquare_algebraMap_iff K e
-  have hbridge : IsSquare (algebraMap L (↥K) (c y)) ↔ ∃ t ⊆ s', IsSquare (c y * ∏ x ∈ t, c x) := by
-    rw [hKsq (c y), ← hK]
-    exact square_descent
-      (fun x hx ↦ hs x (Finset.mem_insert_of_mem hx))
-      (fun x hx ↦ hc x (Finset.mem_insert_of_mem hx)) (c y)
-  rw [hbridge]
-  constructor
-  · rintro ⟨ε, hεmem, hεy⟩
-    obtain ⟨hεsupp, hεsq⟩ := (mem_multiquadraticRelations hc).mp hεmem
+  rw [isSquare_algebraMap_iff, square_descent (fun x hx ↦ hs x (Finset.mem_insert_of_mem hx))
+    (fun x hx ↦ hc x (Finset.mem_insert_of_mem hx))]
+  refine ⟨fun ⟨ε, hε, hεy⟩ ↦ ?_, fun ⟨t, hts, hsq⟩ ↦ ?_⟩
+  · obtain ⟨-, hsq⟩ := (mem_multiquadraticRelations hc).mp hε
     refine ⟨s'.filter (fun x ↦ ε x = 1), Finset.filter_subset _ _, ?_⟩
-    simpa [Finset.filter_insert, if_pos hεy,
-      Finset.prod_insert (fun h ↦ hys (Finset.mem_of_mem_filter y h))] using hεsq
-  · rintro ⟨t, hts, hsq⟩
-    have hsub : insert y t ⊆ insert y s' := Finset.insert_subset_insert _ hts
-    refine ⟨fun x ↦ if x ∈ insert y t then 1 else 0,
-      (mem_multiquadraticRelations hc).mpr ⟨?_, ?_⟩, ?_⟩
-    · intro x hx
-      by_cases hmem : x ∈ insert y t
-      · exact absurd (hsub hmem) hx
-      · simp [hmem]
-    · have hfe : (insert y s').filter (fun x ↦ (if x ∈ insert y t then (1 : ZMod 2) else 0) = 1)
-          = insert y t := by
-        ext x; simp only [Finset.mem_filter]
-        constructor
-        · rintro ⟨hxins, hxval⟩
-          by_cases hmem : x ∈ insert y t
-          · exact hmem
-          · simp [hmem] at hxval
-        · intro hxit
-          exact ⟨hsub hxit, by simp [hxit]⟩
-      rw [hfe, Finset.prod_insert (fun h ↦ hys (hts h))]; exact hsq
-    · simp
+    simpa [Finset.filter_insert, hεy,
+      Finset.prod_insert fun h ↦ hys (Finset.mem_of_mem_filter y h)] using hsq
+  · refine ⟨((insert y t : Finset E) : Set E).indicator 1,
+      (indicator_mem_multiquadraticRelations_iff (Finset.insert_subset_insert y hts) hc).mpr ?_,
+      by simp⟩
+    rwa [Finset.prod_insert fun h ↦ hys (hts h)]
 
 /-- Adjoining `y` raises `dim V` by `1` when `c y` is a square in `L(s')`, and leaves it
 unchanged otherwise. -/
@@ -560,52 +544,20 @@ theorem multiquadraticRelations_insert_finrank {L : Type*} [Field L] [DecidableE
       = Module.finrank (ZMod 2) (multiquadraticRelations s' c)
         + (if IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y))
             then 1 else 0) := by
-  set K := IntermediateField.adjoin L (s' : Set E)
   set W := multiquadraticRelations (insert y s') c
-  set V0 := multiquadraticRelations s' c
-  let evy : W →ₗ[ZMod 2] ZMod 2 :=
-    { toFun := fun v ↦ (v : E → ZMod 2) y
-      map_add' := fun a b ↦ rfl
-      map_smul' := fun r a ↦ rfl }
+  let evy : W →ₗ[ZMod 2] ZMod 2 := (LinearMap.proj y).comp W.subtype
   have hrn := LinearMap.finrank_range_add_finrank_ker evy
-  have hkermap : Submodule.map W.subtype (LinearMap.ker evy)
-      = (W : Submodule (ZMod 2) (E → ZMod 2))
-        ⊓ (LinearMap.ker (LinearMap.proj y : (E → ZMod 2) →ₗ[ZMod 2] ZMod 2)) := by
-    ext e
-    simp only [Submodule.mem_map, Submodule.mem_inf, LinearMap.mem_ker]
-    constructor
-    · rintro ⟨v, hv, rfl⟩
-      exact ⟨v.2, by simpa [evy] using hv⟩
-    · rintro ⟨heW, hey⟩
-      exact ⟨⟨e, heW⟩, by simpa [evy] using hey, rfl⟩
-  have hker : Module.finrank (ZMod 2) (LinearMap.ker evy) = Module.finrank (ZMod 2) V0 := by
-    rw [← Submodule.finrank_map_subtype_eq W (LinearMap.ker evy), hkermap,
+  have hker : Module.finrank (ZMod 2) (LinearMap.ker evy)
+      = Module.finrank (ZMod 2) (multiquadraticRelations s' c) := by
+    rw [← Submodule.finrank_map_subtype_eq W, LinearMap.ker_comp, Submodule.map_comap_subtype,
       multiquadraticRelations_insert_inf_ker_proj hys hc]
-  have hyiff : (∃ ε : E → ZMod 2, ε ∈ W ∧ ε y = 1) ↔ IsSquare (algebraMap L (↥K) (c y)) :=
-    multiquadraticRelations_ycoord hys hs hc
-  have hrange : Module.finrank (ZMod 2) (LinearMap.range evy)
-      = (if IsSquare (algebraMap L (↥K) (c y)) then 1 else 0) := by
-    by_cases hsq : IsSquare (algebraMap L (↥K) (c y))
-    · simp only [hsq, if_true]
-      obtain ⟨ε, hεW, hεy⟩ := hyiff.mpr hsq
-      have hrangetop : LinearMap.range evy = ⊤ := by
-        rw [LinearMap.range_eq_top]
-        intro z
-        exact ⟨z • ⟨ε, hεW⟩, by simp [evy, hεy]⟩
-      rw [hrangetop, finrank_top]
-      simp [Module.finrank_self]
-    · simp only [hsq, if_false]
-      have hrangebot : LinearMap.range evy = ⊥ := by
-        rw [Submodule.eq_bot_iff]
-        intro z hz
-        obtain ⟨v, hv⟩ := hz
-        by_contra hzne
-        refine hsq (hyiff.mp ⟨(v : E → ZMod 2), v.2, ?_⟩)
-        have hz1 : z = 1 := by fin_cases z; exacts [absurd rfl hzne, rfl]
-        simpa [hz1, evy] using hv
-      rw [hrangebot, finrank_bot]
-  rw [hrange, hker] at hrn
-  split_ifs at hrn ⊢ <;> lia
+  have hone : (1 : ZMod 2) ∈ LinearMap.range evy
+      ↔ IsSquare (algebraMap L (↥(IntermediateField.adjoin L (s' : Set E))) (c y)) := by
+    rw [← multiquadraticRelations_ycoord hys hs hc]
+    simp [evy, W]
+  rcases Ideal.eq_bot_or_top (LinearMap.range evy) with h | h <;> rw [h] at hone hrn <;>
+    simp only [finrank_bot, finrank_top, Module.finrank_self, Submodule.mem_bot, Submodule.mem_top,
+      one_ne_zero, true_iff, false_iff] at hone hrn <;> grind
 
 /-- Degree of a multiquadratic extension: `[L(s) : L] = 2 ^ (|s| - dim V)`, where `V` is the
 `𝔽₂`-space of square relations among the radicands. -/
