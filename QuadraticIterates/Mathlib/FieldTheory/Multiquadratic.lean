@@ -93,9 +93,8 @@ noncomputable def sqClass (r : L) : SquareClasses L :=
 theorem sqClass_eq_zero_iff (r : L) : sqClass r = 0 ↔ IsSquare r := by
   rcases eq_or_ne r 0 with rfl | hr
   · simp
-  rw [sqClass, dif_neg hr, show (0 : SquareClasses L) = Additive.ofMul 1 from rfl,
-    Additive.ofMul.apply_eq_iff_eq, QuotientGroup.eq_one_iff, Units.mem_range_powMonoidHom_two_iff,
-    Units.val_mk0]
+  rw [sqClass, dif_neg hr, ← ofMul_one, Additive.ofMul.apply_eq_iff_eq, QuotientGroup.eq_one_iff,
+    Units.mem_range_powMonoidHom_two_iff, Units.val_mk0]
 
 @[simp] theorem sqClass_one : sqClass (1 : L) = 0 := (sqClass_eq_zero_iff 1).mpr IsSquare.one
 
@@ -123,8 +122,7 @@ theorem sqClass_zpow (x : L) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
   rcases eq_or_ne x 0 with rfl | hx
   · rcases eq_or_ne k 0 with rfl | hk
     · simp
-    · rw [zero_zpow k hk, sqClass_zero, show (0 : SquareClasses L) = Additive.ofMul 1 from rfl,
-        ← ofMul_zpow, one_zpow]
+    · rw [zero_zpow k hk, sqClass_zero, ← ofMul_one, ← ofMul_zpow, one_zpow]
   rw [sqClass, sqClass, dif_neg (zpow_ne_zero k hx), dif_neg hx,
     show Units.mk0 (x ^ k) (zpow_ne_zero k hx) = (Units.mk0 x hx) ^ k from
       Units.ext (by push_cast; simp),
