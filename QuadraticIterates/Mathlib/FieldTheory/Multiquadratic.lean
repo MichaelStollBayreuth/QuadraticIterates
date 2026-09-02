@@ -23,7 +23,7 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 namespace IntermediateField
 
 /-- Adjoining a single square root `x` (with `x² ∈ L`) to a field `L` gives degree at most `2`. -/
-theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
+theorem finrank_adjoin_sqrt_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
     Module.finrank L (adjoin L {x}) ≤ 2 := by
   have hmonic := Polynomial.monic_X_pow_sub_C c two_ne_zero
@@ -32,7 +32,7 @@ theorem finrank_adjoin_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
 
 /-- Adjoining a square root `x` of an element of `L` to `L(t)` gives relative degree at most
 `2`. -/
-theorem relfinrank_adjoin_insert_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
+theorem relfinrank_adjoin_insert_sqrt_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     {t : Set E} {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
     (adjoin L t).relfinrank (adjoin L (insert x t)) ≤ 2 := by
   have heq : adjoin L (insert x t) = restrictScalars L (adjoin (adjoin L t) {x}) := by
@@ -41,12 +41,12 @@ theorem relfinrank_adjoin_insert_sq_le {L : Type*} [Field L] {E : Type*} [Field 
     heq ▸ adjoin.mono L _ _ (Set.subset_insert x t)
   rw [heq, relfinrank_eq_finrank_of_le hle,
     restrictScalars_injective L (extendScalars_restrictScalars hle)]
-  exact finrank_adjoin_sq_le (c := algebraMap L (adjoin L t) c)
+  exact finrank_adjoin_sqrt_le (c := algebraMap L (adjoin L t) c)
     (by rw [hc, IsScalarTower.algebraMap_apply L (adjoin L t) E c])
 
 /-- Adjoining a finite set of square roots (each squaring into `L`) gives degree at most
 `2 ^ |s|`. -/
-theorem finrank_adjoin_finset_sq_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
+theorem finrank_adjoin_finset_sqrt_le {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
     {s : Finset E} (hs : ∀ x ∈ s, ∃ c : L, x ^ 2 = algebraMap L E c) :
     Module.finrank L (adjoin L (s : Set E)) ≤ 2 ^ s.card := by
   classical
@@ -58,7 +58,7 @@ theorem finrank_adjoin_finset_sq_le {L : Type*} [Field L] {E : Type*} [Field E] 
     rw [Finset.coe_insert, ← finrank_bot_mul_relfinrank (adjoin.mono L _ _ (Set.subset_insert x _)),
       Finset.card_insert_of_notMem hxt, pow_succ]
     exact Nat.mul_le_mul (ih fun y hy ↦ hs y (Finset.mem_insert_of_mem hy))
-      (relfinrank_adjoin_insert_sq_le hc)
+      (relfinrank_adjoin_insert_sqrt_le hc)
 
 end IntermediateField
 
@@ -254,7 +254,7 @@ theorem finrank_adjoin_sq_eq {L : Type*} [Field L] {E : Type*} [Field E] [Algebr
     rw [IntermediateField.finrank_adjoin_simple_eq_one_iff, hmem_iff]
   split_ifs with hsq
   · rwa [hone_iff]
-  · have hle2 := IntermediateField.finrank_adjoin_sq_le hc
+  · have hle2 := IntermediateField.finrank_adjoin_sqrt_le hc
     have hpos : 0 < Module.finrank L (IntermediateField.adjoin L {x}) := Module.finrank_pos
     have hne1 := mt hone_iff.mp hsq
     lia

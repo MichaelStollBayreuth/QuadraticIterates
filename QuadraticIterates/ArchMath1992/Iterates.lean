@@ -444,7 +444,7 @@ lemma relfinrank_succ_le (n : ℕ) :
       = Module.finrank ↥(splittingField a n)
           (IntermediateField.adjoin ↥(splittingField a n) (s : Set (AlgebraicClosure ℚ))) := by
         rw [relfinrank_succ_eq_finrank_adjoin a n g hg, hst]
-    _ ≤ 2 ^ s.card := IntermediateField.finrank_adjoin_finset_sq_le hsq
+    _ ≤ 2 ^ s.card := IntermediateField.finrank_adjoin_finset_sqrt_le hsq
     _ ≤ 2 ^ 2 ^ n := Nat.pow_le_pow_right two_pos hcard
 
 /-- Facts 1.0 (Kummer tower): `K_n ⊆ K_{n+1}`, the extension `K_{n+1}` is generated over `K_n` by
