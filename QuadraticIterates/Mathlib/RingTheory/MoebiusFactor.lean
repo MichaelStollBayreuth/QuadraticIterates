@@ -291,7 +291,7 @@ theorem factorization_moebiusFactorR_shape {c : ℕ → R} (hc : ∀ d ≥ 1, c 
         rw [hshape x.2 (hpos x hx), Nat.cast_ite, Nat.cast_zero]),
       Finset.sum_mul_ite_const n.divisorsAntidiagonal]
     by_cases hMn : m ∣ n
-    · grind [moebius_restricted_sum m n hm hn hMn]
+    · grind [moebius_restricted_sum m n hm hn]
     · have hempty : (n.divisorsAntidiagonal.filter (fun x ↦ m ∣ x.2)) = ∅ := by
         refine Finset.filter_eq_empty_iff.mpr fun x hx ↦ ?_
         rw [Nat.mem_divisorsAntidiagonal] at hx
