@@ -196,8 +196,8 @@ private theorem card_hom_c2 :
   rw [Nat.card_monoidHom_multiplicative_zmod_two (by decide), Nat.card_congr Multiplicative.toAdd,
     Nat.card_zmod]
 
-/-- `#([C_2]^n →* C_2) = 2^n`: the maximal elementary-abelian 2-quotient of the `n`-fold iterated
-wreath power of `C_2` has `𝔽₂`-dimension `n`. -/
+/-- `#([C₂]ⁿ →* C₂) = 2^n`: the maximal elementary-abelian 2-quotient of the `n`-fold iterated
+wreath power of `C₂` has `𝔽₂`-dimension `n`. -/
 theorem wreath_max_elem_ab (n : ℕ) :
     Nat.card (IteratedWreathProduct (Multiplicative (ZMod 2)) n →* Multiplicative (ZMod 2))
       = 2 ^ n := by

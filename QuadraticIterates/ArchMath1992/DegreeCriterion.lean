@@ -13,10 +13,10 @@ import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 
 /-!
-# The degree criterion `[K_{n+1} : K_n] = 2^(2^n)`
+# The degree criterion `[K_{n+1} : K_n] = 2^{2^n}`
 
 `K_{n+1}` is generated over `K_n` by square roots of the shifted roots `β - a` of `f_n`, so
-`[K_{n+1} : K_n] = 2^(2^n - d)` with `d` the `𝔽₂`-dimension of the space of multiplicative
+`[K_{n+1} : K_n] = 2^{2^n - d}` with `d` the `𝔽₂`-dimension of the space of multiplicative
 relations among them. That space vanishes exactly when `c_{n+1} = ∏_β (β - a)` is not a square
 in `K_n` (Lemma 1.6), and when `Ω_n ≅ [C₂]ⁿ` the rationals that are squares in `K_n` are
 determined by `c_1, …, c_n` (Lemma 1.5).
@@ -27,10 +27,10 @@ determined by `c_1, …, c_n` (Lemma 1.5).
 
 ## Main statements
 
-* `relfinrank_succ_eq_pow`: `[K_{n+1} : K_n] = 2^(2^n - dim rootRelations (rootShift a n))`.
+* `relfinrank_succ_eq_pow`: `[K_{n+1} : K_n] = 2^{2^n - dim rootRelations (rootShift a n)}`.
 * `prod_rootShift_eq_cSeq`, `isSquare_algebraMap_cSeq`: the norm identity `∏_β (β - a) = c_{n+1}`
   in `K_n`; hence `c_1, …, c_n` are squares in `K_n`.
-* `degree_criterion` (Lemma 1.6): `[K_{n+1} : K_n] = 2^(2^n)` iff `c_{n+1}` is not a square in
+* `degree_criterion` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a square in
   `K_n`, through `rootRelations_rootShift_eq_bot_iff`.
 * `kummer_extension_criterion` (Lemma 1.5): if `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent,
   a rational `c` is a non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent.
@@ -146,7 +146,7 @@ lemma rootRelations_rootShift_eq_bot_iff [DecidableEq (AlgebraicClosure ℚ)]
   rw [hbot, Submodule.mem_bot] at hmem
   exact congrFun hmem (Classical.arbitrary _)
 
-/-- Lemma 1.6: `[K_{n+1} : K_n] = 2^(2^n)` iff `c_{n+1}` is not a square in `K_n`, by
+/-- Lemma 1.6: `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a square in `K_n`, by
 `relfinrank_succ_eq_pow` and `rootRelations_rootShift_eq_bot_iff`. -/
 theorem degree_criterion (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n ↔

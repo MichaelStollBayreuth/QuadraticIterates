@@ -78,7 +78,7 @@ lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn
 /-! ### Theorem (Section 1) -/
 
 /-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on
-`n`: `Ω_{n+1} ≅ [C₂]ⁿ⁺¹` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^(2^n)`
+`n`: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
 (`nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that `c_{n+1}` is not a
 square in `K_n` (`degree_criterion`, Lemma 1.6), and given `Ω_n ≅ [C₂]ⁿ` this means that
 `c_1, …, c_{n+1}` are 2-independent (`kummer_extension_criterion`, Lemma 1.5). -/

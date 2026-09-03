@@ -169,7 +169,7 @@ instance splittingField.instIsGalois (a : ℤ) (n : ℕ) : IsGalois ℚ ↥(spli
 /-- The Galois group `Ω_n = Gal(f_n/ℚ)` of the `n`-th iterate, via Mathlib's `Polynomial.Gal`. -/
 noncomputable abbrev GaloisGroup (a : ℤ) (n : ℕ) : Type := fℚ[a, n].Gal
 
-/-- The `n`-fold iterated regular wreath product `[C_2]^n` of `C_2 = Multiplicative (ZMod 2)`, via
+/-- The `n`-fold iterated regular wreath product `[C₂]ⁿ` of `C₂ = Multiplicative (ZMod 2)`, via
 Mathlib's `IteratedWreathProduct`. -/
 abbrev WreathPower (n : ℕ) : Type := IteratedWreathProduct (Multiplicative (ZMod 2)) n
 
@@ -470,7 +470,7 @@ theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
     (Gal.galActionHom_restrict F (AlgebraicClosure ℚ) (φ ^ 2 ^ n) β).trans
       (pow_two_pow_apply_root a φ β.2)
 
-/-- Odoni's embedding theorem: `Ω_n` embeds into `[C_2]^n`, being a `2`-group acting faithfully on
+/-- Odoni's embedding theorem: `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group acting faithfully on
 the at most `2 ^ n` roots of `f_n`. -/
 theorem odoni_embedding (n : ℕ) : ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
   (isPGroup_galoisGroup a n).exists_injective_monoidHom_iteratedWreathProduct
@@ -480,11 +480,11 @@ theorem odoni_embedding (n : ℕ) : ∃ φ : GaloisGroup a n →* WreathPower n,
 
 /-! ### Lemma 1.4: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}` -/
 
-/-- `[C_2]^n` is built from `1 + 2 + ⋯ + 2^{n-1} = 2^n - 1` copies of `C_2`. -/
+/-- `[C₂]ⁿ` is built from `1 + 2 + ⋯ + 2^{n-1} = 2^n - 1` copies of `C₂`. -/
 lemma card_wreathPower (n : ℕ) : Nat.card (WreathPower n) = 2 ^ (2 ^ n - 1) := by
   simp [IteratedWreathProduct.card, Nat.card_eq_fintype_card, Nat.geomSum_eq le_rfl]
 
-/-- `#[C_2]^{n+1} = #[C_2]^n · 2^{2^n}`. -/
+/-- `#[C₂]^{n+1} = #[C₂]ⁿ · 2^{2^n}`. -/
 lemma card_wreathPower_succ (n : ℕ) :
     Nat.card (WreathPower (n + 1)) = Nat.card (WreathPower n) * 2 ^ 2 ^ n := by
   rw [card_wreathPower, card_wreathPower, ← pow_add, pow_succ]
@@ -497,16 +497,16 @@ lemma card_galoisGroup_eq_finrank (n : ℕ) :
   (Nat.card_congr (AlgEquiv.autCongr (IsSplittingField.algEquiv _ fℚ[a, n]).symm).toEquiv).trans
     (IsGalois.card_aut_eq_finrank ℚ _)
 
-/-- `Ω_n ≅ [C_2]^n` iff `K_n` has the maximal possible degree `2^(2^n - 1)` over `ℚ`, since `Ω_n`
-embeds into `[C_2]^n` (`odoni_embedding`) and `#Ω_n = [K_n : ℚ]`. -/
+/-- `Ω_n ≅ [C₂]ⁿ` iff `K_n` has the maximal possible degree `2^{2^n - 1}` over `ℚ`, since `Ω_n`
+embeds into `[C₂]ⁿ` (`odoni_embedding`) and `#Ω_n = [K_n : ℚ]`. -/
 theorem nonempty_mulEquiv_iff_finrank_eq (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1) := by
   obtain ⟨φ, hφ⟩ := odoni_embedding a n
   rw [φ.nonempty_mulEquiv_iff_card_eq hφ, card_galoisGroup_eq_finrank, card_wreathPower]
 
-/-- Lemma 1.4: `Ω_{n+1} ≅ [C_2]^{n+1}` iff `Ω_n ≅ [C_2]^n` and `[K_{n+1} : K_n] = 2^{2^n}`. Both
-`#Ω_n ≤ #[C_2]^n` (by `odoni_embedding`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`, and the products of the
+/-- Lemma 1.4: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`. Both
+`#Ω_n ≤ #[C₂]ⁿ` (by `odoni_embedding`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`, and the products of the
 two sides agree iff both factors do. -/
 theorem nonempty_mulEquiv_succ_iff (n : ℕ) :
     Nonempty (GaloisGroup a (n + 1) ≃* WreathPower (n + 1)) ↔
