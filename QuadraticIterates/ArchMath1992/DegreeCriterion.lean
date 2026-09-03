@@ -10,7 +10,6 @@ public import QuadraticIterates.ArchMath1992.Iterates
 import Mathlib.Data.FunLike.Fintype
 import Mathlib.Data.Rat.Sqrt
 import QuadraticIterates.ArchMath1992.Irreducibility
-import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
 import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 

@@ -7,7 +7,6 @@ module
 
 public import QuadraticIterates.ArchMath1992.Iterates
 
-import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
 
