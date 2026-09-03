@@ -202,6 +202,10 @@ theorem gammaSeq_associated_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) (n
   | 1 => simpa using associated_unit_mul_left (g.eval 0) ε (IsUnit.of_pow_eq_one hε two_ne_zero)
   | (_ + 2) => rw [gammaSeq_eq_gammaSeq_one hg hε (by lia)]
 
+/-- For a unit `ε`, `γ_1 = ε · g(0)` is associated to `g(0)`. -/
+lemma gammaSeq_one_associated {ε : R} (hε : IsUnit ε) : Associated (gammaSeq g ε 1) (g.eval 0) :=
+  associated_unit_mul_left _ _ hε
+
 end
 
 /-! ### The `γ`-sequence over a commutative ring -/
@@ -260,6 +264,22 @@ lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 
   calc p ^ (E + 1) ∣ p ^ (2 * E) := pow_dvd_pow p (by lia)
     _ ∣ gammaSeq g ε n ^ 2 := by rw [two_mul, pow_add, sq]; exact mul_dvd_mul hpE hpE
     _ ∣ gammaSeq g ε (n + 1) - g.eval 0 := sq_dvd_gammaSeq_succ_sub hg ε hn
+
+/-- A divisor `q` of `γ_{m+1} - g(0)` is a period divisor of `γ` from index `2` on, i.e.
+`q ∣ γ_{n+m} - γ_n` for all `n ≥ 2` (for even `g` and `ε² = 1`, so that `γ_1² = g(0)²`). -/
+lemma gammaSeq_period_of_dvd_succ_sub_eval_zero (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
+    {m : ℕ} {q : R} (hq : q ∣ gammaSeq g ε (m + 1) - g.eval 0) :
+    ∀ n ≥ 2, q ∣ gammaSeq g ε (n + m) - gammaSeq g ε n := by
+  refine gammaSeq_period g one_le_two ?_
+  rw [show 2 + m = m + 1 + 1 by ring, gammaSeq_succ g ε (by lia), show (2 : ℕ) = 1 + 1 from rfl,
+    gammaSeq_succ g ε le_rfl]
+  refine hg.dvd_eval_sub ?_
+  have hsq : gammaSeq g ε (m + 1) ^ 2 - gammaSeq g ε 1 ^ 2
+      = (gammaSeq g ε (m + 1) - g.eval 0) * (gammaSeq g ε (m + 1) + g.eval 0) := by
+    rw [gammaSeq_one]
+    linear_combination (-(g.eval 0) ^ 2) * hε
+  rw [hsq]
+  exact hq.mul_right _
 
 /-- If `γ_k + γ_{2k} = 0`, then `γ_{lk} = γ_{2k}` for all `l ≥ 2` (over any ring, for even `g`):
 `γ` is constant on positive multiples of `k` past the first. -/
@@ -375,14 +395,9 @@ lemma factorization_gammaSeq_of_dvd_eval_zero (hg : EvenPoly g) {ε : R} (hε : 
     (hpg : p ∣ g.eval 0) {n : ℕ} (hn : 1 ≤ n) :
     factorization (gammaSeq g ε n) p = factorization (g.eval 0) p := by
   have hg0 : g.eval 0 ≠ 0 := fun h ↦ hne 1 le_rfl (by rw [gammaSeq_one, h, mul_zero])
-  have hεu : IsUnit ε := IsUnit.of_pow_eq_one hε two_ne_zero
   have hv1 := (one_le_factorization_iff_dvd hp hpn hg0).mpr hpg
   induction n, hn using Nat.le_induction with
-  | base =>
-    have hassoc : Associated (gammaSeq g ε 1) (g.eval 0) := by
-      rw [gammaSeq_one]
-      exact associated_unit_mul_left (g.eval 0) ε hεu
-    rw [factorization_eq_count, hassoc.normalizedFactors_eq, ← factorization_eq_count]
+  | base => rw [(gammaSeq_one_associated (IsUnit.of_pow_eq_one hε two_ne_zero)).factorization_eq]
   | succ k hk ih =>
     refine factorization_eq_of_dvd_sub hp hpn (hne (k + 1) (by lia)) hg0 rfl ?_
     exact pow_succ_dvd_gammaSeq_succ_sub hg hk hv1
@@ -396,39 +411,24 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
     ∃ m ≥ 1, ∃ E : ℕ, ∀ n ≥ 1,
       factorization (gammaSeq g ε n) p = if m ∣ n then E else 0 := by
   classical
-  have hεu : IsUnit ε := IsUnit.of_pow_eq_one hε two_ne_zero
-  obtain ⟨m, hm1, hpm, hmin⟩ :
-      ∃ m : ℕ, 1 ≤ m ∧ p ∣ gammaSeq g ε m ∧ ∀ k < m, 1 ≤ k → ¬ p ∣ gammaSeq g ε k :=
-    ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
-      fun _ hk h1 hd ↦ Nat.find_min hex hk ⟨h1, hd⟩⟩
-  have hm1' : m ≠ 1 := by
-    rintro rfl
-    rw [gammaSeq_one] at hpm
-    exact hpg ((hp.dvd_mul.mp hpm).resolve_left fun h ↦ hp.not_isUnit (isUnit_of_dvd_unit h hεu))
-  have hm2 : 2 ≤ m := by lia
+  obtain ⟨m, ⟨hm1, hpm⟩, hmin⟩ : ∃ m, (1 ≤ m ∧ p ∣ gammaSeq g ε m) ∧
+      ∀ k < m, ¬(1 ≤ k ∧ p ∣ gammaSeq g ε k) :=
+    ⟨Nat.find hex, Nat.find_spec hex, fun _ hk ↦ Nat.find_min hex hk⟩
+  have hm2 : 2 ≤ m := by
+    have : m ≠ 1 := by
+      rintro rfl
+      exact hpg ((gammaSeq_one_associated
+        (IsUnit.of_pow_eq_one hε two_ne_zero)).dvd_iff_dvd_right.mp hpm)
+    lia
   set E := factorization (gammaSeq g ε m) p with hE
   have hE1 := (one_le_factorization_iff_dvd hp hpn (hne m hm1)).mpr hpm
-  have hpEm : p ^ E ∣ gammaSeq g ε m := (pow_dvd_iff_le_factorization hp hpn (hne m hm1)).mpr le_rfl
   -- `p^{E+1} ∣ γ_{m+1} - g(0)` via `γ_m² ∣ γ_{m+1} - g(0)`
-  have hcm1 := pow_succ_dvd_gammaSeq_succ_sub hg hm1 hE1 hpEm
-  have hpncm1 : ¬ p ∣ gammaSeq g ε (m + 1) := by
-    intro hdvd
-    refine hpg ?_
-    rw [← sub_sub_self (gammaSeq g ε (m + 1)) (g.eval 0)]
-    exact dvd_sub hdvd ((dvd_pow_self p E.succ_ne_zero).trans hcm1)
-  -- base of the periodicity: `p^{E+1} ∣ γ_{2+m} - γ_2`
-  have hbase : p ^ (E + 1) ∣ gammaSeq g ε (2 + m) - gammaSeq g ε 2 := by
-    rw [show 2 + m = (m + 1) + 1 by ring, gammaSeq_succ g ε (by lia),
-      show (2 : ℕ) = 1 + 1 from rfl, gammaSeq_succ g ε le_rfl]
-    refine hg.dvd_eval_sub ?_
-    have hsq : gammaSeq g ε (m + 1) ^ 2 - gammaSeq g ε 1 ^ 2
-        = (gammaSeq g ε (m + 1) - g.eval 0) * (gammaSeq g ε (m + 1) + g.eval 0) := by
-      rw [gammaSeq_one]
-      linear_combination (-(g.eval 0) ^ 2) * hε
-    rw [hsq]
-    exact hcm1.mul_right _
-  exact ⟨m, hm1, E, factorization_periodic_shape hp hpn hm2 hne hE.symm hmin hpncm1
-    (gammaSeq_period g (by lia) hbase)⟩
+  have hcm1 := pow_succ_dvd_gammaSeq_succ_sub hg hm1 hE1
+    ((pow_dvd_iff_le_factorization hp hpn (hne m hm1)).mpr le_rfl)
+  exact ⟨m, hm1, E, factorization_periodic_shape hp hpn hm2 hne hE.symm
+    (fun k hk h1 hd ↦ hmin k hk ⟨h1, hd⟩)
+    (fun hdvd ↦ hpg ((dvd_sub_right hdvd).mp ((dvd_pow_self p E.succ_ne_zero).trans hcm1)))
+    (gammaSeq_period_of_dvd_succ_sub_eval_zero hg hε hcm1)⟩
 
 /-- **Constant-valuation shape of the `γ`-sequence over a UFD** (for even `g`, `ε² = 1`, `γ`
 nowhere zero): for each normalized prime `p`, the valuation `v_p(γ_n)` equals a constant `E`

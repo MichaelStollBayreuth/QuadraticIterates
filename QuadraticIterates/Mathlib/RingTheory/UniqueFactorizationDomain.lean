@@ -43,6 +43,10 @@ lemma emultiplicity_eq_factorization {p x : R} (hp : Prime p) (hpn : normalize p
   rw [factorization_eq_count, emultiplicity_eq_count_normalizedFactors hp.irreducible hx, hpn]
 
 /-- `p ^ k ∣ x` iff `k` is at most the multiplicity of a normalized prime `p` in `x ≠ 0`. -/
+lemma _root_.Associated.factorization_eq {a b : R} (h : Associated a b) :
+    factorization a = factorization b :=
+  congrArg Multiset.toFinsupp h.normalizedFactors_eq
+
 lemma pow_dvd_iff_le_factorization {p x : R} (hp : Prime p) (hpn : normalize p = p) (hx : x ≠ 0)
     {k : ℕ} : p ^ k ∣ x ↔ k ≤ factorization x p := by
   rw [pow_dvd_iff_le_emultiplicity, emultiplicity_eq_factorization hp hpn hx, Nat.cast_le]
