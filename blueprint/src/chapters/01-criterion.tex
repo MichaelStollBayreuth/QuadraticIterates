@@ -40,6 +40,7 @@ simple
   \label{lem:1.1}
   \uses{def:cseq, def:bseq}
   \lean{QuadraticIterates.cSeq_pos, QuadraticIterates.abs_le_cSeq,
+    QuadraticIterates.abs_le_abs_cSeq,
     QuadraticIterates.cSeq_gcd, QuadraticIterates.cSeq_associated_gcd,
     QuadraticIterates.intCast_bSeq, QuadraticIterates.cSeq_eq_prod_bSeq,
     QuadraticIterates.isCoprime_bSeq, QuadraticIterates.bSeq_ne_zero,
@@ -120,7 +121,7 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
   \uses{lem:1.2}
   \lean{QuadraticIterates.irreducible_iteratedPoly_of_pos,
     QuadraticIterates.irreducible_iteratedPoly, QuadraticIterates.not_isSquare_cSeq,
-    QuadraticIterates.not_isSquare_neg_of_irreducible}
+    QuadraticIterates.not_isSquare_neg_of_irreducible, Int.not_isSquare_of_sq_lt_of_lt_sq}
   \leanok
   All $f_n$ are irreducible over $\QQ$.
 \end{corollary}

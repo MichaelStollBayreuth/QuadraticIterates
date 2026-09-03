@@ -9,6 +9,7 @@ public import QuadraticIterates.ArchMath1992.Iterates
 
 import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
+import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Multiset
 import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
@@ -44,25 +45,57 @@ private lemma ne_neg_one_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a �
 
 /-! ### Even factorizations and non-square `c_n` -/
 
-lemma abs_le_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : |a| ≤ cSeq a n := by
-  have ha1 := ne_neg_one_of_not_isSquare_neg a ha
+private lemma abs_le_sq_add_of_abs_le_abs {a d : ℤ} (ha : a ≠ -1) (h : |a| ≤ |d|) :
+    |a| ≤ d ^ 2 + a := by
+  rcases le_or_gt 0 a with ha0 | ha0
+  · rw [abs_of_nonneg ha0]
+    exact le_add_of_nonneg_left (sq_nonneg d)
+  · rw [abs_of_neg ha0] at h ⊢
+    have ha2 : a ≤ -2 := by lia
+    nlinarith [sq_abs d, mul_le_mul h h (by lia) (abs_nonneg d)]
+
+private lemma not_isSquare_sq_add_of_abs_le_abs {a d : ℤ} (ha0 : a ≠ 0) (ha1 : a ≠ -1)
+    (h : |a| ≤ |d|) : ¬IsSquare (d ^ 2 + a) := by
+  rcases lt_or_gt_of_ne ha0 with ha | ha
+  · rw [abs_of_neg ha] at h
+    have ha2 : a ≤ -2 := by lia
+    exact Int.not_isSquare_of_sq_lt_of_lt_sq (e := |d| - 1) (by nlinarith [sq_abs d])
+      (by nlinarith [sq_abs d])
+  · rw [abs_of_pos ha] at h
+    exact Int.not_isSquare_of_sq_lt_of_lt_sq (e := |d|) (by nlinarith [sq_abs d])
+      (by nlinarith [sq_abs d])
+
+/-- `|c_n| ≥ |a|` for all `n ≥ 1` (the observation in the proof of Corollary 1.3). -/
+theorem abs_le_abs_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : |a| ≤ |cSeq a n| := by
   induction n, hn using Nat.le_induction with
-  | base =>
-    rw [cSeq_two]
-    rcases abs_cases a with ⟨he, hs⟩ | ⟨he, hs⟩
-    · nlinarith
-    · nlinarith [show a ≤ -2 by lia]
+  | base => simp
   | succ k hk ih =>
-    rw [cSeq_succ a (by lia)]
-    rcases abs_cases a with ⟨he, hs⟩ | ⟨he, hs⟩
-    · nlinarith [sq_nonneg (cSeq a k)]
-    · nlinarith [show a ≤ -2 by lia, sq_nonneg (cSeq a k + a)]
+    rw [cSeq_succ a hk]
+    exact (abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg a ha) ih).trans
+      (le_abs_self _)
+
+/-- `c_n ≥ |a|` for all `n ≥ 2`. -/
+theorem abs_le_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : |a| ≤ cSeq a n := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
+  rw [cSeq_succ a (by lia)]
+  exact abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg a ha)
+    (abs_le_abs_cSeq a ha (by lia))
 
 /-- Lemma 1.1 a): `c_n > 0` for all `n ≥ 2`. -/
-theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSeq a n := by
-  have h := abs_le_cSeq a ha hn
-  have h0 : 0 < |a| := abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha)
-  lia
+theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSeq a n :=
+  (abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha)).trans_le (abs_le_cSeq a ha hn)
+
+/-- No `c_n` (`n ≥ 1`) is a rational square: `c_{n+1} = c_n² + a` lies strictly between two
+consecutive squares because `|c_n| ≥ |a|`, and `c_1 = -a` is not a square by assumption. -/
+theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {k : ℕ} (hk : 1 ≤ k) :
+    ¬IsSquare (cSeq a k : ℚ) := by
+  rw [Rat.isSquare_intCast_iff]
+  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : k ≠ 0)
+  rcases Nat.eq_zero_or_pos j with rfl | hj
+  · simpa [← Rat.isSquare_intCast_iff] using ha
+  · rw [cSeq_succ a hj]
+    exact not_isSquare_sq_add_of_abs_le_abs (ne_zero_of_not_isSquare_neg a ha)
+      (ne_neg_one_of_not_isSquare_neg a ha) (abs_le_abs_cSeq a ha hj)
 
 lemma map_iteratedPoly_comp_neg_X (k : ℕ) : (fℚ[a, k + 1]).comp (-X) = fℚ[a, k + 1] := by
   rw [iteratedPoly_succ_comp, comp_assoc, X_sq_add_C_comp_neg_X]
@@ -297,45 +330,6 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
   obtain ⟨g, hgdeg, hgeq⟩ := even_reducible_factorization
     (monic_iteratedPoly (a : ℚ) (j + 1)) (map_iteratedPoly_comp_neg_X a j) hjred hnoeven
   exact h (j + 1) (by lia) (by lia) (isSquare_cSeq_of_even_factorization a hgdeg hgeq)
-
-/-- An integer strictly between the consecutive squares `e ^ 2` and `(e + 1) ^ 2` is not a
-square. -/
-private lemma not_isSquare_of_sq_lt_of_lt_sq {e m : ℤ} (h1 : e ^ 2 < m)
-    (h2 : m < (e + 1) ^ 2) : ¬IsSquare m := by
-  have he : 0 ≤ e := by nlinarith
-  rintro ⟨r, rfl⟩
-  have hm : |r| ^ 2 = r * r := by rw [sq_abs]; ring
-  have hgt : e < |r| := lt_of_pow_lt_pow_left₀ 2 (abs_nonneg r) (by rwa [hm])
-  have hlt : |r| < e + 1 := lt_of_pow_lt_pow_left₀ 2 (by positivity) (by rwa [hm])
-  lia
-
-lemma not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {k : ℕ} (hk : 1 ≤ k) :
-    ¬IsSquare (cSeq a k : ℚ) := by
-  have ha0 := ne_zero_of_not_isSquare_neg a ha
-  rcases Nat.lt_or_ge k 2 with hk2 | hk2
-  · obtain rfl : k = 1 := by lia
-    simpa using ha
-  · rw [Rat.isSquare_intCast_iff]
-    obtain ⟨j, rfl⟩ : ∃ j, k = j + 2 := ⟨k - 2, by lia⟩
-    rw [cSeq_succ a (by lia)]
-    set d := cSeq a (j + 1) with hd
-    have hdabs : |a| ≤ |d| := by
-      rcases Nat.eq_zero_or_pos j with rfl | hj
-      · simp [hd, abs_neg]
-      · have hge : |a| ≤ cSeq a (j + 1) := abs_le_cSeq a ha (by lia)
-        rw [← hd] at hge
-        exact hge.trans (le_abs_self d)
-    rcases lt_or_ge a 0 with haneg | hapos
-    · rw [abs_of_neg haneg] at hdabs
-      have hD2 : (2 : ℤ) ≤ |d| := by
-        have ha1 := ne_neg_one_of_not_isSquare_neg a ha
-        lia
-      exact not_isSquare_of_sq_lt_of_lt_sq (e := |d| - 1)
-        (by nlinarith [sq_abs d]) (by nlinarith [sq_abs d])
-    · rw [abs_of_nonneg hapos] at hdabs
-      have ha1 : 1 ≤ a := by lia
-      exact not_isSquare_of_sq_lt_of_lt_sq (e := |d|)
-        (by nlinarith [sq_abs d]) (by nlinarith [sq_abs d])
 
 /-- Corollary 1.3: all `f_n` (`n ≥ 1`) are irreducible over `ℚ`. -/
 theorem irreducible_iteratedPoly_of_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :

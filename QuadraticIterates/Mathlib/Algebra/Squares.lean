@@ -68,6 +68,17 @@ theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
 
+/-- An integer strictly between the consecutive squares `e ^ 2` and `(e + 1) ^ 2` is not a
+square. -/
+theorem Int.not_isSquare_of_sq_lt_of_lt_sq {e m : ℤ} (h1 : e ^ 2 < m) (h2 : m < (e + 1) ^ 2) :
+    ¬IsSquare m := by
+  rintro ⟨r, rfl⟩
+  rw [← sq] at h1 h2
+  have h1' := sq_lt_sq.mp h1
+  have h2' := (sq_lt_sq.mp h2).trans_le (abs_add_le e 1)
+  rw [abs_one] at h2'
+  lia
+
 open Function in
 /-- If a family `f` is pairwise coprime on a finite set `S` and `∏_{i ∈ S} f i` is a square, then
 `|f i|` is a square for every `i ∈ S`. -/
