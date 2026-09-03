@@ -233,31 +233,32 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) 
     simp only [abs_cSeq_eq_gammaSeq_mul_abs a ha]
   exact_mod_cast hQ
 
+/-- In each of the three cases of the Section 3 theorem, `-a` is not a square in `ℚ`. -/
+lemma not_isSquare_neg_of_cases
+    (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
+    ¬IsSquare (-a : ℚ) := by
+  have : ¬IsSquare (-a) := by grind [not_isSquare_of_neg]
+  exact mod_cast this
+
+/-- Lemma 2.2 applied to the `c`-sequence: in each of the three cases of the Section 3 theorem,
+no `|b_n|` with `n ≥ 2` is a square. Case a) gives `g(0) = 1`, `g(1) ≡ 2 mod 4` for the rescaled
+polynomial `g = normPoly a`, cases b) and c) give `g(1) ≡ 3 mod 4`. -/
+theorem not_isSquare_abs_bSeq
+    (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a)))
+    {n : ℕ} (hn : 2 ≤ n) : ¬IsSquare |bSeq a n| := by
+  have ha := not_isSquare_neg_of_cases a hcase
+  rw [abs_bSeq_eq_betaSeq a ha hn, ← Rat.isSquare_intCast_iff]
+  refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a)
+    (Int.sign_sq_of_ne_zero (ne_zero_of_not_isSquare_neg a ha)) (gammaSeq_normPoly_pos a ha) ?_ n hn
+  grind [eval_normPoly, Int.sign_eq_one_of_pos, Int.sign_eq_neg_one_of_neg, abs_of_pos, abs_of_neg]
+
 /-- Section 3, main result: if `a > 0` and `a ≡ 1 or 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is
 not a square, then `Gal(f_n/ℚ) ≅ [C_2]^n` for all `n ≥ 1`. -/
 theorem section3_main
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) := by
-  intro n hn
-  have ha : ¬IsSquare (-a : ℚ) := by
-    obtain hpos | hnsq : 0 < a ∨ ¬IsSquare (-a) := by grind
-    · exact not_isSquare_of_neg (mod_cast neg_neg_of_pos hpos)
-    · exact fun hsq ↦ hnsq (Rat.isSquare_intCast_iff.mp (by push_cast; exact hsq))
-  have ha0 := ne_zero_of_not_isSquare_neg a ha
-  refine section1_squarefree a ha n fun k hk2 _ ↦ ?_
-  rw [abs_bSeq_eq_betaSeq a ha hk2]
-  rw [← Rat.isSquare_intCast_iff]
-  refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
-    (gammaSeq_normPoly_pos a ha) ?_ k hk2
-  have hg0 : (normPoly a).eval 0 = a.sign := by simp
-  have hg1 : (normPoly a).eval 1 = |a| + a.sign := by simp
-  rcases hcase with ⟨hpos, hmod⟩ | ⟨hpos, hmod⟩ | ⟨hneg, hmod, -⟩
-  · exact .inl ⟨by rw [hg0, Int.sign_eq_one_of_pos hpos],
-      by rw [hg1, abs_of_pos hpos, Int.sign_eq_one_of_pos hpos]; lia⟩
-  · exact .inr ⟨hg0 ▸ Int.sign_sq_of_ne_zero ha0,
-      by rw [hg1, abs_of_pos hpos, Int.sign_eq_one_of_pos hpos]; lia⟩
-  · exact .inr ⟨hg0 ▸ Int.sign_sq_of_ne_zero ha0,
-      by rw [hg1, abs_of_neg hneg, Int.sign_eq_neg_one_of_neg hneg]; lia⟩
+    ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) := fun n _ ↦
+  section1_squarefree a (not_isSquare_neg_of_cases a hcase) n fun _ hk2 _ ↦
+    not_isSquare_abs_bSeq a hcase hk2
 
 end
 

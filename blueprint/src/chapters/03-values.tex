@@ -27,7 +27,8 @@ We combine the results of Chapters~1 and~2 to get the following.
 \begin{theorem}[Section 3]
   \label{thm:section3}
   \uses{def:normpoly, def:galois, def:wreath}
-  \lean{QuadraticIterates.section3_main}
+  \lean{QuadraticIterates.section3_main, QuadraticIterates.not_isSquare_abs_bSeq,
+    QuadraticIterates.not_isSquare_neg_of_cases}
   \leanok
   If $a \in \ZZ$ has one of the following properties:
   \begin{enumerate}
@@ -52,7 +53,10 @@ We combine the results of Chapters~1 and~2 to get the following.
   \texttt{(0 < a $\wedge$ a \% 4 = 1) $\vee$ (0 < a $\wedge$ a \% 4 = 2) $\vee$
   (a < 0 $\wedge$ a \% 4 = 0 $\wedge$ $\neg$IsSquare (-a))}. In case b) the value $g(1) =
   |a| + 1 \equiv 3 \bmod 4$, and in case c) $g(1) = |a| - 1 \equiv 3 \bmod 4$; case a) satisfies
-  hypothesis a) of Lemma~\ref{lem:2.2} and the other two hypothesis b).}
+  hypothesis a) of Lemma~\ref{lem:2.2} and the other two hypothesis b). The formal proof follows
+  the paper's sentences: \lname{not\_isSquare\_neg\_of\_cases} (in all cases $-a$ is not a
+  square), \lname{not\_isSquare\_abs\_bSeq} (Lemma~\ref{lem:2.2} for $g$, so no $|b_n|$ with
+  $n \ge 2$ is a square), and part 2) of Theorem~\ref{thm:section1}.}
 \end{proof}
 
 \section*{Concluding remarks}
