@@ -40,11 +40,10 @@ variable (a : ℤ)
 /-! ### The numbers `c_n`: size, positivity and non-squareness -/
 
 /-- If `-a` is not a rational square then `a ≠ 0`, since `-0` is. -/
-lemma ne_zero_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a ≠ 0 := by
-  rintro rfl; exact ha (by simp)
+lemma ne_zero_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a ≠ 0 := fun h ↦ ha (by simp [h])
 
-private lemma ne_neg_one_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a ≠ -1 := by
-  rintro rfl; exact ha (by norm_num)
+private lemma ne_neg_one_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a ≠ -1 :=
+  fun h ↦ ha (by simp [h])
 
 private lemma abs_le_sq_add_of_abs_le_abs {a d : ℤ} (ha : a ≠ -1) (h : |a| ≤ |d|) :
     |a| ≤ d ^ 2 + a := by
@@ -90,20 +89,19 @@ theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSe
 consecutive squares because `|c_n| ≥ |a|`, and `c_1 = -a` is not a square by assumption. -/
 theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {k : ℕ} (hk : 1 ≤ k) :
     ¬IsSquare (cSeq a k : ℚ) := by
-  rw [Rat.isSquare_intCast_iff]
   obtain ⟨j, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : k ≠ 0)
   rcases Nat.eq_zero_or_pos j with rfl | hj
-  · simpa [← Rat.isSquare_intCast_iff] using ha
-  · rw [cSeq_succ a hj]
+  · simpa using ha
+  · rw [Rat.isSquare_intCast_iff, cSeq_succ a hj]
     exact not_isSquare_sq_add_of_abs_le_abs (ne_zero_of_not_isSquare_neg a ha)
       (ne_neg_one_of_not_isSquare_neg a ha) (abs_le_abs_cSeq a ha hj)
 
 /-! ### Irreducibility of the iterates -/
 
-/-- If `f_{j+1}` factors over `ℚ` as `C ((-1)^{deg g}) * f_{j+1} = g * g(-X)` with
+/-- If `f_{j+1}` factors over `ℚ` as `g * g(-X) = C ((-1)^{deg g}) * f_{j+1}` with
 `deg f_{j+1} = 2 · deg g`, then evaluation at `0` exhibits `c_{j+1}` as a square in `ℚ`. -/
 private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
-    (hgdeg : 2 * g.natDegree = (fℚ[a, j + 1]).natDegree)
+    (hgdeg : 2 * g.natDegree = fℚ[a, j + 1].natDegree)
     (hgeq : g * g.comp (-X) = C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1]) :
     IsSquare (cSeq a (j + 1) : ℚ) := by
   have hgnd : g.natDegree = 2 ^ j := by
@@ -123,9 +121,7 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ}
   | succ n ih =>
     have hn := h (n + 1) n.succ_pos le_rfl
     have hF0 : fℚ[a, n].eval (a : ℚ) ≠ 0 := fun h0 ↦ hn (by
-      have : (iteratedPoly a n).eval a = 0 := by
-        exact_mod_cast (intCast_eval_iteratedPoly (S := ℚ) a a n).trans h0
-      simp [cSeq_succ_eq_neg_one_pow_mul_eval, this])
+      simp [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, eval_zero_iteratedPoly_succ, h0])
     have hirr := ih fun k hk hkn ↦ h k hk (hkn.trans n.le_succ)
     by_contra hred
     obtain ⟨g, hgdeg, hgeq⟩ :=
@@ -143,34 +139,28 @@ theorem irreducible_iteratedPoly (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) : Irredu
 nontrivially, so irreducibility of any `f_n` with `n ≥ 1` implies that `-a` is not a square.
 This recovers the standing assumption of the paper from the irreducibility hypothesis of
 Lemma 1.6. -/
-theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreducible (fℚ[a, n])) :
+theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreducible fℚ[a, n]) :
     ¬IsSquare (-a : ℚ) := by
   intro ⟨r, hr⟩
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by lia : n ≠ 0)
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   have hfac : fℚ[a, m + 1] = (fℚ[a, m] - C r) * (fℚ[a, m] + C r) := by
     rw [iteratedPoly_succ, show (a : ℚ) = -(r * r) by linear_combination -hr, map_neg, map_mul]
     ring
-  have hdeg : (fℚ[a, m]).natDegree = 2 ^ m := natDegree_iteratedPoly _ m
-  rcases hirr.isUnit_or_isUnit hfac with hu | hu
-  · exact not_isUnit_of_natDegree_pos _ (by rw [natDegree_sub_C, hdeg]; positivity) hu
-  · exact not_isUnit_of_natDegree_pos _ (by rw [natDegree_add_C, hdeg]; positivity) hu
+  have hdeg : fℚ[a, m].natDegree = 2 ^ m := natDegree_iteratedPoly _ m
+  exact (hirr.isUnit_or_isUnit hfac).elim (not_isUnit_of_natDegree_pos _ (by simp [hdeg]))
+    (not_isUnit_of_natDegree_pos _ (by simp [hdeg]))
 
 lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n)
-    {β : AlgebraicClosure ℚ} (hβ : β ∈ (fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :
+    {β : AlgebraicClosure ℚ} (hβ : β ∈ fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
     β - (a : AlgebraicClosure ℚ) ≠ 0 := by
   intro hzero
-  have hβa : β = (a : AlgebraicClosure ℚ) := sub_eq_zero.mp hzero
-  have hroot : (aeval (a : AlgebraicClosure ℚ)) (fℚ[a, n]) = 0 :=
-    hβa ▸ aeval_eq_zero_of_mem_rootSet hβ
-  rw [aeval_intCast_iteratedPoly] at hroot
-  have hevalZ : (iteratedPoly a n).eval a = 0 := mod_cast hroot
-  have hpos : 0 < cSeq a (n + 1) := cSeq_pos a ha (by lia)
-  rw [cSeq_succ_eq_neg_one_pow_mul_eval a n, hevalZ, mul_zero] at hpos
-  exact absurd hpos (lt_irrefl 0)
+  have hroot := aeval_eq_zero_of_mem_rootSet hβ
+  rw [sub_eq_zero.mp hzero, aeval_intCast_iteratedPoly, Int.cast_eq_zero] at hroot
+  exact (cSeq_pos a ha (n := n + 1) (by lia)).ne'
+    (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
 
-lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
-    Fintype.card ↑((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
-      = 2 ^ n := by
+lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible fℚ[a, n]) :
+    Fintype.card ↑(fℚ[a, n].rootSet (AlgebraicClosure ℚ)) = 2 ^ n := by
   simpa [natDegree_iteratedPoly] using
     card_rootSet_eq_natDegree hirr.separable (IsAlgClosed.splits _)
 
