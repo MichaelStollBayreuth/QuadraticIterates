@@ -203,10 +203,11 @@ theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     rwa [show (∏ i ∈ S, (bSeq a ((i : ℕ) + 1) : ℚ))
         = ((∏ i ∈ S, bSeq a ((i : ℕ) + 1) : ℤ) : ℚ) by push_cast; rfl,
       Rat.isSquare_intCast_iff] at hsq
-  have heach := Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime
-    (fun i : Fin n ↦ bSeq a ((i : ℕ) + 1)) S
-    (fun i _ j _ hij ↦ isCoprime_bSeq a ha (by lia) (by lia) fun hcon ↦ hij (Fin.ext (by lia)))
-    hsq_int
+  have heach (j : Fin n) (hjS : j ∈ S) : IsSquare |bSeq a ((j : ℕ) + 1)| :=
+    Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime
+      (fun i : Fin n ↦ bSeq a ((i : ℕ) + 1)) S
+      (fun i _ j _ hij ↦ isCoprime_bSeq a ha (by lia) (by lia) fun hcon ↦ hij (Fin.ext (by lia)))
+      hsq_int hjS
   obtain ⟨i0, hi0⟩ := hS
   by_cases hexists : ∃ j ∈ S, 1 ≤ (j : ℕ)
   · obtain ⟨j, hjS, hj1⟩ := hexists
@@ -284,7 +285,7 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) :
       rw [abs_zpow, ← Int.cast_abs, abs_cSeq_eq_gammaSeq_mul_abs a ha x.2 hx2]
       push_cast
       exact mul_zpow ..
-    rw [Finset.prod_congr rfl hfac, Finset.prod_mul_distrib, prod_zpow_eq_zpow_sum haQ,
+    rw [Finset.prod_congr rfl hfac, Finset.prod_mul_distrib, Finset.prod_zpow_eq_zpow_sum₀ haQ,
       moebius_antidiag_sum_zero n hn]
     simp
   exact_mod_cast hQ

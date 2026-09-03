@@ -544,9 +544,6 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε =
       (fun h ↦ ⟨h, Finset.disjoint_left.mp hdisj h⟩)
       (fun h ↦ ⟨fun h' ↦ Finset.disjoint_left.mp hdisj h' h, h⟩)
   have hα_unit : IsUnit α := ZMod.isUnit_intCast_of_isCoprime_of_dvd_add hmcop hmdvd
-  have hQne : Q ≠ 0 := Finset.prod_ne_zero_iff.mpr fun t ht ↦
-    hγ (k * t) (one_le_mul hkpos
-      (Nat.pos_of_mem_divisors (hunion ▸ Finset.mem_union_right _ ht)))
   have hPnegQ : (P : ZMod m) = -(Q : ZMod m) := by
     rw [hPmod, hQmod, hcard]
     rcases hone with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> simp [h1, h2]
@@ -554,7 +551,7 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε =
     rw [hQmod]
     exact (hα_unit.pow _).mul (by split_ifs; exacts [isUnit_one.neg, isUnit_one])
   rw [hβ]
-  exact fun hsq ↦ hmnsq (ZMod.isSquare_neg_one_of_isSquare_div hQne hPnegQ hQunit hsq)
+  exact fun hsq ↦ hmnsq (ZMod.isSquare_neg_one_of_isSquare_div hPnegQ hQunit hsq)
 
 /-- The `ZMod 4` specialization of `gammaSeq_add_succ_eq_three` via `intCast_gammaSeq`. -/
 lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)
