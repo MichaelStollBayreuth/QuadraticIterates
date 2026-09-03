@@ -563,25 +563,24 @@ invariant under the coordinate action. -/
 theorem rootRelations_invariant {G : Type*} [Group G] {ι : Type*} [Fintype ι] [MulAction G ι]
     {L : Type*} [Field L] [DecidableEq L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) (g : G) {v : ι → ZMod 2}
-    (hv : v ∈ rootRelations r) : (fun i ↦ v (g⁻¹ • i)) ∈ rootRelations r := by
+    (hv : v ∈ rootRelations r) : (fun i ↦ v (g • i)) ∈ rootRelations r := by
   classical
-  obtain ⟨φ, hφ⟩ := hcompat g
+  obtain ⟨φ, hφ⟩ := hcompat g⁻¹
   rw [mem_rootRelations hr] at hv ⊢
-  have : ∏ i with v (g⁻¹ • i) = 1, r i = φ (∏ j with v j = 1, r j) := by
+  have : ∏ i with v (g • i) = 1, r i = φ (∏ j with v j = 1, r j) := by
     rw [map_prod]
-    exact (Finset.prod_equiv (MulAction.toPerm g) (fun j ↦ by simp) fun j _ ↦ hφ j).symm
+    exact (Finset.prod_equiv (MulAction.toPerm g⁻¹) (fun j ↦ by simp) fun j _ ↦ hφ j).symm
   rw [this]
   exact hv.map φ
 
-/-- For a finite `2`-group acting pretransitively with automorphism-compatible radicands, a
-nonzero relation space contains the all-ones vector. -/
-theorem rootRelations_all_ones {G : Type*} [Group G] [Finite G] (hG : IsPGroup 2 G)
-    {ι : Type*} [Fintype ι] [Nonempty ι] [MulAction G ι] [MulAction.IsPretransitive G ι]
+/-- For a `2`-group acting pretransitively with automorphism-compatible radicands, a nonzero
+relation space contains the all-ones vector. -/
+theorem rootRelations_all_ones {G : Type*} [Group G] (hG : IsPGroup 2 G)
+    {ι : Type*} [Fintype ι] [MulAction G ι] [MulAction.IsPretransitive G ι]
     {L : Type*} [Field L] [DecidableEq L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) (hne : rootRelations r ≠ ⊥) :
     (fun _ ↦ 1) ∈ rootRelations r :=
-  invariant_submodule_all_ones hG (rootRelations r)
-    (fun g _ hv ↦ rootRelations_invariant hr hcompat g hv) hne
+  invariant_submodule_all_ones hG (fun g _ hv ↦ rootRelations_invariant hr hcompat g hv) hne
 
 /-- The all-ones vector is a relation iff `∏ i, r i` is a square in `L`. -/
 theorem all_ones_mem_rootRelations {ι : Type*} [Fintype ι] {L : Type*} [Field L] [DecidableEq L]

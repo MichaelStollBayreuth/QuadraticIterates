@@ -75,23 +75,24 @@ them.
   Unfolding the definition of the relation space.
 \end{proof}
 
-\begin{lemma}[Invariants of a $2$-group]
+\begin{lemma}[Invariants of a $p$-group]
   \label{lem:invariant}
   \uses{lem:relations}
-  \lean{fixed_points_nontrivial, invariant_submodule_all_ones, rootRelations_invariant,
-    rootRelations_all_ones}
+  \lean{IsPGroup.exists_ne_zero_mem_fixedPoints_of_smul_mem, invariant_submodule_all_ones,
+    rootRelations_invariant, rootRelations_all_ones}
   \leanok
-  If a finite $2$-group $G$ acts on a nontrivial $\FF_2$-vector space $M$, then $M^G \ne 0$. If
-  moreover $M \subseteq \FF_2^{\iota}$ is a submodule stable under a \emph{transitive} action of
-  $G$ on $\iota$ permuting coordinates, then $M \ne 0$ implies that the all-ones vector lies in
-  $M$.
+  Let a $p$-group $G$ act on an $\FF_p$-vector space $M$, and let $V \subseteq M$ be a finite
+  nonzero $G$-stable subspace. Then $V^G \ne 0$. If moreover $M = \FF_p^{\iota}$ and $G$ acts by
+  permuting the coordinates \emph{transitively}, then the all-ones vector lies in $V$.
+  (We use this with $p = 2$.)
 \end{lemma}
 \begin{proof}
   \leanok
-  For the first statement, $\#M$ is a power of $2$, and $\#M \equiv \#M^G \bmod 2$ by Mathlib's
-  \lname{IsPGroup.card\_modEq\_card\_fixedPoints}; hence $\#M^G > 1$.
+  For the first statement, $\#V$ is a power of $p$, and $\#V \equiv \#V^G \bmod p$ by Mathlib's
+  \lname{IsPGroup.card\_modEq\_card\_fixedPoints}; since $0 \in V^G$, this gives $\#V^G > 1$
+  (Mathlib's \lname{IsPGroup.exists\_fixed\_point\_of\_prime\_dvd\_card\_of\_fixed\_point}).
   For the second, a nonzero invariant vector has constant coordinates along the orbits of $G$ on
-  $\iota$, and there is only one orbit.
+  $\iota$, and there is only one orbit; scaling makes the constant equal to $1$.
 \end{proof}
 
 \section{Wreath products}
