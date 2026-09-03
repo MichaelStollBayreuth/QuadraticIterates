@@ -10,6 +10,7 @@ public import Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 
+import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Fintype.Basic
 import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 import QuadraticIterates.Mathlib.GroupTheory.Card
@@ -42,6 +43,8 @@ the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 
   `[K_{n+1} : K_n] = 2^{2^n}`.
 * `twoIndependent_iff_linearIndependent`: a family is 2-independent iff its classes in
   `Lˣ/(Lˣ)²` are `𝔽₂`-linearly independent.
+* `twoIndependent_iff_of_pairwise_isCoprime`: a pairwise coprime family of integers is
+  2-independent iff none of its members is a square and at most one of their negatives is.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -281,6 +284,30 @@ theorem twoIndependent_snoc_iff [CommMonoid M] {n : ℕ} (v : Fin n → M) (c : 
   · obtain ⟨S, rfl | rfl⟩ := Fin.exists_eq_map_castSuccEmb_or_insert_last T
     · exact hprod S ▸ hv S (Finset.map_nonempty.mp hT)
     · simpa [Finset.prod_insert, Fin.snoc_last, hprod] using hc S
+
+/-- A family of integers is 2-independent iff it is so in `ℚ`. -/
+theorem twoIndependent_intCast_iff (f : ι → ℤ) :
+    TwoIndependent (fun i ↦ (f i : ℚ)) ↔ TwoIndependent f :=
+  forall_congr' fun _ ↦ imp_congr_right fun _ ↦
+    not_congr (by rw [← Int.cast_prod, Rat.isSquare_intCast_iff])
+
+open Function in
+/-- A pairwise coprime family of integers is 2-independent iff none of its members is a square and
+at most one of their negatives is. -/
+theorem twoIndependent_iff_of_pairwise_isCoprime {f : ι → ℤ} (hf : Pairwise (IsCoprime on f)) :
+    TwoIndependent f ↔ (∀ i, ¬IsSquare (f i)) ∧ {i | IsSquare (-f i)}.Subsingleton := by
+  classical
+  refine ⟨fun h ↦ ⟨h.not_isSquare, fun i hi j hj ↦ by_contra fun hij ↦
+    h {i, j} (Finset.insert_nonempty _ _) ?_⟩, fun ⟨hsq, hsub⟩ S hS hprod ↦ ?_⟩
+  · rw [Finset.prod_pair hij, ← neg_mul_neg]
+    exact IsSquare.mul hi hj
+  · have hneg (i : ι) (hi : i ∈ S) : IsSquare (-f i) :=
+      (isSquare_abs_iff.mp (Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime f S
+        (hf.set_pairwise _) hprod hi)).resolve_left (hsq i)
+    obtain ⟨i, hi⟩ := hS
+    rw [Finset.eq_singleton_iff_nonempty_unique_mem.mpr ⟨⟨i, hi⟩, fun j hj ↦
+      hsub (hneg j hj) (hneg i hi)⟩, Finset.prod_singleton] at hprod
+    exact hsq i hprod
 
 /-- A family in a field `L` is 2-independent iff the family of its classes in `Lˣ/(Lˣ)²` is
 `𝔽₂`-linearly independent. -/

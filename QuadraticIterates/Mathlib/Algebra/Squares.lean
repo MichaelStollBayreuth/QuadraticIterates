@@ -79,6 +79,14 @@ theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
   have h2' := (sq_lt_sq.mp h2).trans_le (by simpa using abs_add_le e 1)
   lia
 
+/-- `|x|` is a square iff `x` or `-x` is. -/
+theorem isSquare_abs_iff {α : Type*} [Ring α] [LinearOrder α] [IsOrderedRing α] {x : α} :
+    IsSquare |x| ↔ IsSquare x ∨ IsSquare (-x) :=
+  ⟨fun h ↦ (abs_choice x).elim (fun e ↦ .inl ((congrArg IsSquare e).mp h))
+    fun e ↦ .inr ((congrArg IsSquare e).mp h),
+    fun h ↦ h.elim (fun h ↦ (congrArg IsSquare (abs_of_nonneg h.nonneg)).mpr h) fun h ↦
+      (congrArg IsSquare (abs_of_nonpos (neg_nonneg.mp h.nonneg))).mpr h⟩
+
 open Function in
 /-- If a family `f` is pairwise coprime on a finite set `S` and `∏_{i ∈ S} f i` is a square, then
 `|f i|` is a square for every `i ∈ S`. -/

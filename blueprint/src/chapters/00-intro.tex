@@ -123,7 +123,9 @@ $|b_n|$ is not a square when $2 \le n \le 5 \cdot 10^7$.
     QuadraticIterates.TwoIndependent.not_isSquare,
     QuadraticIterates.twoIndependent_iff_linearIndependent,
     QuadraticIterates.TwoIndependent.of_snoc, QuadraticIterates.twoIndependent_snoc_iff,
-    Fin.exists_eq_map_castSuccEmb_or_insert_last, sqClass}
+    Fin.exists_eq_map_castSuccEmb_or_insert_last, sqClass,
+    QuadraticIterates.twoIndependent_intCast_iff,
+    QuadraticIterates.twoIndependent_iff_of_pairwise_isCoprime}
   \leanok
   Nonzero rational numbers $a_1, \dots, a_n$ are called \emph{$2$-independent} if their residue
   classes in the $\FF_2$-vector space $\QQ^*/(\QQ^*)^2$ are linearly independent.
@@ -132,6 +134,9 @@ $|b_n|$ is not a square when $2 \le n \le 5 \cdot 10^7$.
   commutative monoid; that all $a_i$ are nonzero is then a consequence, $0$ being a square
   (\lname{TwoIndependent.ne\_zero}). The translation into linear independence of the classes
   $\texttt{sqClass}(a_i)$ in $L^*/(L^*)^2$, for any field $L$, is
-  \lname{twoIndependent\_iff\_linearIndependent}. The families of the paper are indexed by
-  \texttt{Fin n}, and $c_1, \dots, c_n$ appears as the family $i \mapsto c_{i+1}$.}
+  \lname{twoIndependent\_iff\_linearIndependent}; a pairwise coprime family of integers is
+  $2$-independent iff none of its members is a square and at most one of their negatives is
+  (\lname{twoIndependent\_iff\_of\_pairwise\_isCoprime}, the criterion behind part 2) of
+  Theorem~\ref{thm:section1}). The families of the paper are indexed by \texttt{Fin n}, and
+  $c_1, \dots, c_n$ appears as the family $i \mapsto c_{i+1}$.}
 \end{definition}

@@ -151,34 +151,21 @@ theorem section1_equiv (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   tfae_finish
 
 /-- Theorem (Section 1), part 2: if none of `|b_2|, …, |b_n|` is a square in `ℚ`, then `Ω_n ≅
-[C_2]^n`. -/
+[C_2]^n`. By pairwise coprimality, the `b_k` are 2-independent as soon as no `b_k` and at most one
+`-b_k` is a square; `-b_1 = a` is the only candidate, since `b_1 = -a` is not a square. -/
 theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     (h : ∀ k ≥ 2, k ≤ n → ¬IsSquare |bSeq a k|) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
-  refine ((section1_equiv a ha n).out 2 0).mp ?_
-  intro S hS hsq
-  have hsq_int : IsSquare (∏ i ∈ S, bSeq a ((i : ℕ) + 1)) := by
-    rwa [show (∏ i ∈ S, (bSeq a ((i : ℕ) + 1) : ℚ))
-        = ((∏ i ∈ S, bSeq a ((i : ℕ) + 1) : ℤ) : ℚ) by push_cast; rfl,
-      Rat.isSquare_intCast_iff] at hsq
-  have heach (j : Fin n) (hjS : j ∈ S) : IsSquare |bSeq a ((j : ℕ) + 1)| :=
-    Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime
-      (fun i : Fin n ↦ bSeq a ((i : ℕ) + 1)) S
-      (fun i _ j _ hij ↦ isCoprime_bSeq a ha (by lia) (by lia) fun hcon ↦ hij (Fin.ext (by lia)))
-      hsq_int hjS
-  obtain ⟨i0, hi0⟩ := hS
-  by_cases hexists : ∃ j ∈ S, 1 ≤ (j : ℕ)
-  · obtain ⟨j, hjS, hj1⟩ := hexists
-    exact h ((j : ℕ) + 1) (by lia) (by have := j.2; lia) (heach j hjS)
-  · push Not at hexists
-    have hi0z : (i0 : ℕ) = 0 := by have := hexists i0 hi0; lia
-    have hSeq : S = {i0} := Finset.eq_singleton_iff_nonempty_unique_mem.mpr
-      ⟨⟨i0, hi0⟩, fun x hx ↦ Fin.ext (by have h1 := hexists x hx; have h2 := hi0z; lia)⟩
-    rw [hSeq, Finset.prod_singleton] at hsq
-    refine absurd ?_ ha
-    have hb1eq : bSeq a ((i0 : ℕ) + 1) = -a := by rw [hi0z, zero_add, bSeq_one]
-    rw [hb1eq] at hsq
-    exact_mod_cast hsq
+  have hzero (i : Fin n) (hi : IsSquare (-bSeq a ((i : ℕ) + 1))) : (i : ℕ) = 0 :=
+    Nat.eq_zero_of_not_pos fun hi0 ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inr hi))
+  refine ((section1_equiv a ha n).out 2 0).mp ((twoIndependent_intCast_iff _).mpr
+    ((twoIndependent_iff_of_pairwise_isCoprime fun i j hij ↦
+      isCoprime_bSeq a ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)).mpr
+        ⟨fun i ↦ ?_, fun i hi j hj ↦ Fin.ext ((hzero i hi).trans (hzero j hj).symm)⟩))
+  rcases eq_or_ne (i : ℕ) 0 with hi | hi
+  · rw [hi, zero_add, bSeq_one]
+    exact fun hsq ↦ ha (mod_cast hsq)
+  · exact fun hsq ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inl hsq))
 
 /-- `γ_1 = sgn(a) · g(0) = sgn(a)² = 1` for the rescaled polynomial `g = normPoly a`. -/
 lemma gammaSeq_normPoly_one (ha0 : a ≠ 0) : gammaSeq (normPoly a) a.sign 1 = 1 := by
