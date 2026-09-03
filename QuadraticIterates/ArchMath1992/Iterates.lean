@@ -79,6 +79,20 @@ lemma iteratedPoly_add {R : Type*} [CommSemiring R] (a : R) (m n : ℕ) :
     rw [show m + (k + 1) = (m + k) + 1 from rfl, iteratedPoly_succ_comp, ih, comp_assoc,
       ← iteratedPoly_succ_comp]
 
+lemma monic_iteratedPoly {R : Type*} [CommSemiring R] [Nontrivial R] (a : R) (n : ℕ) :
+    (iteratedPoly a n).Monic := by
+  induction n with
+  | zero => exact monic_X
+  | succ k ih =>
+    rw [iteratedPoly_succ_comp]
+    exact ih.comp (monic_X_pow_add_C a two_ne_zero) (by simp)
+
+lemma natDegree_iteratedPoly {R : Type*} [CommSemiring R] [NoZeroDivisors R] [Nontrivial R]
+    (a : R) (n : ℕ) : (iteratedPoly a n).natDegree = 2 ^ n := by
+  induction n with
+  | zero => simp
+  | succ k ih => rw [iteratedPoly_succ_comp, natDegree_comp, ih, natDegree_X_pow_add_C, pow_succ]
+
 /-- `fℚ[a, n]` denotes the `n`-th iterate `f_n = iteratedPoly a n`, viewed in `ℚ[X]`. -/
 scoped notation "fℚ[" a ", " n "]" => map (Int.castRingHom ℚ) (iteratedPoly a n)
 
@@ -227,12 +241,6 @@ variable (a : ℤ)
 
 /-! ### Degrees, roots and the Galois group of the iterates over `ℚ` -/
 
-lemma natDegree_iteratedPoly (n : ℕ) : (iteratedPoly a n).natDegree = 2 ^ n := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    rw [iteratedPoly_succ, natDegree_add_C, natDegree_pow, ih, pow_succ']
-
 lemma map_iteratedPoly_succ_eq_sq_add (k : ℕ) : fℚ[a, k + 1] = (fℚ[a, k]) ^ 2 + C (a : ℚ) := by
   simp [iteratedPoly_succ]
 
@@ -242,31 +250,22 @@ lemma map_iteratedPoly_one : fℚ[a, 1] = X ^ 2 + C (a : ℚ) := by
 lemma map_iteratedPoly_succ (k : ℕ) : fℚ[a, k + 1] = (fℚ[a, k]).comp (X ^ 2 + C (a : ℚ)) := by
   rw [map_iteratedPoly, map_iteratedPoly, iteratedPoly_succ_comp]; rfl
 
-lemma monic_iteratedPoly (n : ℕ) : (iteratedPoly a n).Monic := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    rw [iteratedPoly_succ]
-    have hpow : (iteratedPoly a k ^ 2).Monic := ih.pow 2
-    refine hpow.add_of_left <| degree_C_le.trans_lt ?_
-    refine natDegree_pos_iff_degree_pos.mp ?_
-    rw [natDegree_pow, natDegree_iteratedPoly]
-    positivity
+lemma monic_map_iteratedPoly (n : ℕ) : (fℚ[a, n]).Monic := by
+  rw [map_iteratedPoly]; exact monic_iteratedPoly _ n
+
+lemma natDegree_map_iteratedPoly (n : ℕ) : (fℚ[a, n]).natDegree = 2 ^ n := by
+  rw [map_iteratedPoly, natDegree_iteratedPoly]
 
 lemma ncard_rootSet_iteratedPoly_le (n : ℕ) :
-    (((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)).ncard) ≤ 2 ^ n :=
-  (ncard_rootSet_le _ _).trans_eq
-    (by rw [(monic_iteratedPoly a n).natDegree_map, natDegree_iteratedPoly])
+    ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)).ncard ≤ 2 ^ n :=
+  (ncard_rootSet_le _ _).trans_eq (natDegree_map_iteratedPoly a n)
 
 lemma mem_rootSet_iteratedPoly_succ (n : ℕ) (β : AlgebraicClosure ℚ) :
     β ∈ (fℚ[a, n + 1]).rootSet (AlgebraicClosure ℚ) ↔
     β ^ 2 + (a : AlgebraicClosure ℚ) ∈ (fℚ[a, n]).rootSet (AlgebraicClosure ℚ) := by
-  apply (mem_rootSet_of_injective (x := β) (algebraMap ℚ (AlgebraicClosure ℚ)).injective
-    ((monic_iteratedPoly a (n + 1)).map (Int.castRingHom ℚ)).ne_zero).trans
-  simpa [map_iteratedPoly_succ a n, aeval_comp] using
-    (mem_rootSet_of_injective (x := β ^ 2 + (a : AlgebraicClosure ℚ))
-      (algebraMap ℚ (AlgebraicClosure ℚ)).injective
-      ((monic_iteratedPoly a n).map (Int.castRingHom ℚ)).ne_zero).symm
+  rw [mem_rootSet, mem_rootSet, and_iff_right (monic_map_iteratedPoly a _).ne_zero,
+    and_iff_right (monic_map_iteratedPoly a _).ne_zero, map_iteratedPoly_succ, aeval_comp]
+  simp
 
 /-- Any `ℚ`-automorphism of `ℚ̄` raised to the power `2 ^ m` fixes every root of `f_m`. -/
 theorem pow_two_pow_apply_root (ϕ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)
