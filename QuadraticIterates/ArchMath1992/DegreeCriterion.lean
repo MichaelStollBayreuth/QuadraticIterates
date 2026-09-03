@@ -235,14 +235,13 @@ theorem degree_criterion {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
         ↔ Module.finrank (ZMod 2) (rootRelations (rootShift a n)) = 0 := by
       rw [relfinrank_succ_eq_pow a hn hirr, Nat.pow_right_inj one_lt_two]
       lia
-    have hallne : (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations (rootShift a n)
-        ↔ rootRelations (rootShift a n) ≠ ⊥ := by
+    have hallne : 1 ∈ rootRelations (rootShift a n) ↔ rootRelations (rootShift a n) ≠ ⊥ := by
       refine ⟨fun hmem hbot ↦ one_ne_zero (α := ZMod 2) ?_,
         fun hbot ↦ rootRelations_all_ones (isPGroup_galoisGroup a n) hrne ?_ hbot⟩
       · rw [hbot, Submodule.mem_bot] at hmem
         exact congrFun hmem (Classical.arbitrary _)
       · exact exists_ringEquiv_radicand_smul a (rootShift a n) fun _ ↦ rfl
-    have hallsq : (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations (rootShift a n)
+    have hallsq : 1 ∈ rootRelations (rootShift a n)
         ↔ IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) :=
       (all_ones_mem_rootRelations hrne).trans
         (by rw [prod_radicand_eq_cSeq a hirr (rootShift a n) fun _ ↦ rfl])

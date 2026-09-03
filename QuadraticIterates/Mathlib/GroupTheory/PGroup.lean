@@ -71,12 +71,12 @@ on the coordinates `ι` contains the all-ones vector. -/
 theorem invariant_submodule_all_ones {p : ℕ} [Fact p.Prime] {G : Type*} [Group G]
     (hG : IsPGroup p G) {ι : Type*} [Finite ι] [MulAction G ι] [IsPretransitive G ι]
     {V : Submodule (ZMod p) (ι → ZMod p)} (hV : ∀ (g : G), ∀ v ∈ V, (fun i ↦ v (g • i)) ∈ V)
-    (hne : V ≠ ⊥) : (fun _ ↦ 1) ∈ V := by
+    (hne : V ≠ ⊥) : 1 ∈ V := by
   obtain ⟨w, hwV, hwne, hwfix⟩ := hG.domMulAct.exists_ne_zero_mem_fixedPoints_of_smul_mem
     (fun g v hv ↦ hV (DomMulAct.mk.symm g) v hv) hne
   obtain ⟨i₀⟩ : Nonempty ι := not_isEmpty_iff.mp fun _ ↦ hne Submodule.eq_bot_of_subsingleton
   obtain ⟨b, rfl⟩ : ∃ b, w = fun _ ↦ b := ⟨w i₀, funext fun i ↦
     apply_eq_apply_of_forall_smul_eq (fun g i ↦ congrFun (hwfix (DomMulAct.mk g)) i) i i₀⟩
   have hb : b ≠ 0 := fun h ↦ hwne (funext fun _ ↦ h)
-  exact (funext fun _ ↦ (inv_mul_cancel₀ hb).symm : (fun _ ↦ 1) = b⁻¹ • fun _ ↦ b) ▸
+  exact (funext fun _ ↦ (inv_mul_cancel₀ hb).symm : (1 : ι → ZMod p) = b⁻¹ • fun _ ↦ b) ▸
     V.smul_mem b⁻¹ hwV

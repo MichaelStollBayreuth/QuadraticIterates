@@ -579,12 +579,11 @@ theorem rootRelations_all_ones {G : Type*} [Group G] (hG : IsPGroup 2 G)
     {ι : Type*} [Fintype ι] [MulAction G ι] [MulAction.IsPretransitive G ι]
     {L : Type*} [Field L] [DecidableEq L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) (hne : rootRelations r ≠ ⊥) :
-    (fun _ ↦ 1) ∈ rootRelations r :=
+    1 ∈ rootRelations r :=
   invariant_submodule_all_ones hG (fun g _ hv ↦ rootRelations_invariant hr hcompat g hv) hne
 
 /-- The all-ones vector is a relation iff `∏ i, r i` is a square in `L`. -/
 theorem all_ones_mem_rootRelations {ι : Type*} [Fintype ι] {L : Type*} [Field L] [DecidableEq L]
     {r : ι → L} (hr : ∀ i, r i ≠ 0) :
-    (fun _ ↦ (1 : ZMod 2)) ∈ rootRelations r ↔ IsSquare (∏ i, r i) := by
-  classical
-  rw [mem_rootRelations hr, Finset.filter_true_of_mem (fun i _ ↦ rfl)]
+    1 ∈ rootRelations r ↔ IsSquare (∏ i, r i) := by
+  simp [mem_rootRelations hr]
