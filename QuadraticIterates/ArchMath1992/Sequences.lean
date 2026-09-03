@@ -256,13 +256,11 @@ variable {R : Type*} [CommRing R] (g : R[X])
 /-- The `ε = 1` sequence satisfies the translation congruence `γ_m ∣ γ_{m+j} - γ_j`. -/
 private lemma gammaSeq_one_dvd_sub (m j : ℕ) :
     gammaSeq g 1 m ∣ gammaSeq g 1 (m + j) - gammaSeq g 1 j := by
-  have step (k l : ℕ) : gammaSeq g 1 k - gammaSeq g 1 l ∣
-      gammaSeq g 1 (k + 1) - gammaSeq g 1 (l + 1) := by
-    rw [gammaSeq_one_succ, gammaSeq_one_succ]
-    exact sub_dvd_eval_sub _ _ g
   induction j with
   | zero => simp
-  | succ j ih => exact ih.trans (step (m + j) j)
+  | succ j ih =>
+    rw [← add_assoc, gammaSeq_one_succ, gammaSeq_one_succ]
+    exact ih.trans (sub_dvd_eval_sub _ _ g)
 
 variable {g}
 
@@ -284,8 +282,7 @@ lemma gammaSeq_period {ε : R} {m n₀ : ℕ} (hn₀ : 1 ≤ n₀) {q : R}
   induction n, hn using Nat.le_induction with
   | base => exact hbase
   | succ n hn ih =>
-    rw [show n + 1 + m = (n + m) + 1 by ring, gammaSeq_succ g ε (by lia),
-      gammaSeq_succ g ε (by lia)]
+    rw [Nat.add_right_comm, gammaSeq_succ g ε (by lia), gammaSeq_succ g ε (by lia)]
     exact ih.trans (sub_dvd_eval_sub _ _ g)
 
 /-- For even `g`, `γ_n ^ 2` divides `γ_{n+1} - g(0)` (`n ≥ 1`). -/
@@ -370,7 +367,7 @@ theorem isUnit_prod_gammaSeq_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 �
     (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) (hu : IsUnit (gammaSeq g ε (2 * k)))
     {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit (∏ t ∈ S, gammaSeq g ε (k * t)) := by
   rw [prod_gammaSeq_mul_eq hg hk hzero hS]
-  exact (hu.pow _).mul (by split_ifs; exacts [isUnit_one.neg, isUnit_one])
+  exact (hu.pow _).mul (by split_ifs <;> simp)
 
 /-- For even `g`, `γ_n + γ_{n+1}` divides `γ_{n+j} - γ_{n+1}` for all `j ≥ 1` (`n ≥ 1`): modulo
 `γ_n + γ_{n+1}` one has `g(γ_{n+1}) ≡ g(-γ_n) = γ_{n+1}`, so the sequence is constant from index
@@ -436,8 +433,7 @@ supported on the multiples of the minimal such index `m`, with constant value. -
 private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
     (hne : ∀ k ≥ 1, gammaSeq g ε k ≠ 0) {p : R} (hp : Prime p) (hpn : normalize p = p)
     (hpg : ¬p ∣ g.eval 0) (hex : ∃ k : ℕ, 1 ≤ k ∧ p ∣ gammaSeq g ε k) :
-    ∃ m ≥ 1, ∃ E : ℕ, ∀ n ≥ 1,
-      factorization (gammaSeq g ε n) p = if m ∣ n then E else 0 := by
+    ∃ m ≥ 1, ∃ E : ℕ, ∀ n ≥ 1, factorization (gammaSeq g ε n) p = if m ∣ n then E else 0 := by
   classical
   obtain ⟨m, ⟨hm1, hpm⟩, hmin⟩ : ∃ m, (1 ≤ m ∧ p ∣ gammaSeq g ε m) ∧
       ∀ k < m, ¬(1 ≤ k ∧ p ∣ gammaSeq g ε k) :=
@@ -463,17 +459,14 @@ nowhere zero): for each normalized prime `p`, the valuation `v_p(γ_n)` equals a
 on the multiples of some index `m ≥ 1` and vanishes elsewhere. -/
 theorem factorization_gammaSeq_shape (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
     (hne : ∀ k ≥ 1, gammaSeq g ε k ≠ 0) {p : R} (hp : Prime p) (hpn : normalize p = p) :
-    ∃ m ≥ 1, ∃ E : ℕ, ∀ n ≥ 1,
-      factorization (gammaSeq g ε n) p = if m ∣ n then E else 0 := by
+    ∃ m ≥ 1, ∃ E : ℕ, ∀ n ≥ 1, factorization (gammaSeq g ε n) p = if m ∣ n then E else 0 := by
   by_cases hpg : p ∣ g.eval 0
   · exact ⟨1, le_rfl, factorization (g.eval 0) p, fun n hn ↦ by
-      rw [if_pos (one_dvd n)]
-      exact factorization_gammaSeq_of_dvd_eval_zero hg hε hne hp hpn hpg hn⟩
+      simpa using factorization_gammaSeq_of_dvd_eval_zero hg hε hne hp hpn hpg hn⟩
   · by_cases hex : ∃ k : ℕ, 1 ≤ k ∧ p ∣ gammaSeq g ε k
     · exact factorization_gammaSeq_shape_of_exists hg hε hne hp hpn hpg hex
     · exact ⟨1, le_rfl, 0, fun n hn ↦ by
-        rw [if_pos (one_dvd n), factorization_eq_zero_iff_not_dvd hp hpn (hne n hn)]
-        exact fun hd ↦ hex ⟨n, hn, hd⟩⟩
+        simpa [factorization_eq_zero_iff_not_dvd hp hpn (hne n hn)] using fun hd ↦ hex ⟨n, hn, hd⟩⟩
 
 end
 
