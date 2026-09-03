@@ -244,9 +244,7 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
     QuadraticIterates.rootShift_ne_zero, QuadraticIterates.prod_radicand_eq_cSeq,
     QuadraticIterates.prod_aroots_sub_eq_cSeq,
     QuadraticIterates.isPretransitive_galoisGroup,
-    QuadraticIterates.exists_ringEquiv_radicand_smul,
-    QuadraticIterates.degree_criterion_zero,
-    QuadraticIterates.finrank_splittingField_one}
+    QuadraticIterates.exists_ringEquiv_radicand_smul}
   \leanok
   For all $n$: $[K_{n+1} : K_n] = 2^{2^n} \iff c_{n+1}$ is not a square in $K_n$.
 \end{lemma}
@@ -272,11 +270,13 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
   From the above it is clear that the left hand side is equivalent to
   $(1, \dots, 1) \notin V$, whereas $(1, \dots, 1) \in V$ means that
   $\prod_j (\alpha_j - a) = c_{n+1}$ is a square in $K_n$.
-  \formalnote{The hypothesis used is that $f_n$ is irreducible, which by
-  Corollary~\ref{cor:1.3} holds under the standing assumption on $a$; the paper instead argues
-  under the maximality hypothesis $[K_n : \QQ] = 2^{2^n - 1}$, which is strictly stronger. The
-  degenerate case $n = 0$ is included ($K_1 = \QQ(\sqrt{-a})$ has degree $2$ over $\QQ$ exactly
-  when $-a$ is not a square). $V$ is \texttt{rootRelations} of the family
+  \formalnote{The formal statement is proved from the standing assumption on $a$ alone and is
+  uniform in $n$, the degenerate case $n = 0$ included: $K_0 = \QQ$, the only root of $f_0 = X$
+  is $0$, and $K_1 = \QQ(\sqrt{-a})$ has degree $2$ because $-a$ is not a square. For $n \ge 1$
+  the assumption is equivalent to the irreducibility of $f_n$ (Corollary~\ref{cor:1.3} and
+  \lname{not\_isSquare\_neg\_of\_irreducible}), which is what the argument uses; the paper
+  instead argues under the maximality hypothesis $[K_n : \QQ] = 2^{2^n - 1}$, which is strictly
+  stronger. $V$ is \texttt{rootRelations} of the family
   $\beta \mapsto \beta - a$ of shifted roots (\texttt{rootShift}); that this family consists of
   nonzero elements is where $c_{n+1} \neq 0$ enters. The identity
   $\prod_j (\alpha_j - a) = c_{n+1}$ is proved by evaluating the monic split $f_n$ at $a$

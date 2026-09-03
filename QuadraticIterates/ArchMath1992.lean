@@ -66,9 +66,10 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 
 ## Implementation notes
 
-`QuadraticIterates.degree_criterion` (Lemma 1.6) is proved from the hypothesis that `f_n` is
-irreducible, which is weaker than the paper's maximality hypothesis
-`[K_n : ℚ] = 2 ^ (2 ^ n - 1)`.
+`QuadraticIterates.degree_criterion` (Lemma 1.6) is proved from the standing assumption that
+`-a` is not a rational square alone, without the paper's maximality hypothesis
+`[K_n : ℚ] = 2 ^ (2 ^ n - 1)`; for `n ≥ 1` that assumption is equivalent to the irreducibility
+of `f_n`.
 
 All declarations live in the `QuadraticIterates` namespace. The development is split over
 `QuadraticIterates/ArchMath1992/`: `Sequences` (the `γ`- and `β`-sequences over general rings and

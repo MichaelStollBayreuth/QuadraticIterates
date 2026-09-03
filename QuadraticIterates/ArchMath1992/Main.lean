@@ -41,13 +41,6 @@ variable (a : ℤ)
 
 /-! ### The integer factors `b_n` -/
 
-lemma cSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : cSeq a n ≠ 0 := by
-  rcases Nat.lt_or_ge n 2 with h1 | h2
-  · obtain rfl : n = 1 := by lia
-    have ha0 := ne_zero_of_not_isSquare_neg a ha
-    simpa using ha0
-  · exact (cSeq_pos a ha h2).ne'
-
 /-- `cSeq_ne_zero` in the `∀ d ≥ 1` form the `moebiusFactorR` API consumes. -/
 private lemma cSeq_ne_zero' (ha : ¬IsSquare (-a : ℚ)) : ∀ d ≥ 1, cSeq a d ≠ 0 :=
   fun _ ↦ cSeq_ne_zero a ha
@@ -124,10 +117,10 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     rw [hsnoc, nonempty_mulEquiv_succ_iff a n]
     refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun hsnocindep ↦ ?_⟩
     · exact (kummer_extension_criterion a hiso (ih.mp hiso) _).mp
-        ((degree_criterion a (irreducible_iteratedPoly a ha n)).mp hrel)
+        ((degree_criterion a ha n).mp hrel)
     · have hindep := TwoIndependent.of_snoc hsnocindep
       have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr hindep
-      exact ⟨hiso, (degree_criterion a (irreducible_iteratedPoly a ha n)).mpr
+      exact ⟨hiso, (degree_criterion a ha n).mpr
         ((kummer_extension_criterion a hiso hindep _).mpr hsnocindep)⟩
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/

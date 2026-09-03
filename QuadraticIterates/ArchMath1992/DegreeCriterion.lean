@@ -50,19 +50,18 @@ noncomputable def rootShift (a : ℤ) (n : ℕ) (β : (fℚ[a, n]).rootSet (Alge
     (rootShift a n β : AlgebraicClosure ℚ)
       = (β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ) := rfl
 
-lemma rootShift_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n)
+lemma rootShift_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ}
     (β : (fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) : rootShift a n β ≠ 0 := by
   rw [ne_eq, Subtype.ext_iff, coe_rootShift]
-  simpa using sub_intCast_ne_zero_of_mem_rootSet a ha hn β.2
+  simpa using sub_intCast_ne_zero_of_mem_rootSet a ha β.2
 
 /-- The relative degree `[K_{n+1} : K_n]` equals `2 ^ (2^n - d)`, where `d` is the `𝔽₂`-dimension
 of the multiquadratic relations among the shifted roots `β - a` of `f_n`. -/
-theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] {n : ℕ} (hn : 1 ≤ n)
-    (hirr : Irreducible (fℚ[a, n])) :
+theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] (ha : ¬IsSquare (-a : ℚ))
+    (n : ℕ) :
     (splittingField a n).relfinrank (splittingField a (n + 1))
       = 2 ^ (2 ^ n - Module.finrank (ZMod 2) (rootRelations (rootShift a n))) := by
   classical
-  have hnsq : ¬IsSquare (-a : ℚ) := not_isSquare_neg_of_irreducible a hn hirr
   choose g hg using exists_sq_eq_sub a
   set x : ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) → AlgebraicClosure ℚ := fun β ↦ g β
   have hx (β) :
@@ -71,8 +70,8 @@ theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] {n : ℕ} (h
   have hset : g '' ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
       = Set.range x := Set.image_eq_range g _
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg, hset,
-    multiquadratic_degree_family hx (rootShift_ne_zero a hnsq hn),
-    card_rootSet_iteratedPoly a hirr]
+    multiquadratic_degree_family hx (rootShift_ne_zero a ha),
+    card_rootSet_iteratedPoly a (irreducible_iteratedPoly a ha n)]
 
 lemma exists_ringEquiv_radicand_smul {n : ℕ}
     (r : ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
@@ -158,89 +157,41 @@ variable (a : ℤ)
 
 /-! ### The degree criterion and the Kummer extension criterion -/
 
-/-- If `-a` is not a rational square, `K_1 = ℚ(√(-a))` has degree `2` over `ℚ`. -/
-lemma finrank_splittingField_one (hsq : ¬IsSquare (-a : ℚ)) :
-    Module.finrank ℚ ↥(splittingField a 1) = 2 := by
-  obtain ⟨β, hβ⟩ := IsAlgClosed.exists_pow_nat_eq
-    (-(algebraMap ℚ (AlgebraicClosure ℚ) (a : ℚ))) two_pos
-  have hβsq : β ^ 2 = algebraMap ℚ (AlgebraicClosure ℚ) (-a : ℚ) := by rw [hβ, map_neg]
-  have hpoly := iteratedPoly_one (a : ℚ)
-  have hβroot : β ∈ (fℚ[a, 1]).rootSet (AlgebraicClosure ℚ) := by
-    rw [mem_rootSet', hpoly]
-    refine ⟨?_, ?_⟩
-    · rw [Polynomial.map_add, Polynomial.map_pow, map_X, map_C]
-      exact X_pow_add_C_ne_zero two_pos _
-    · simp [map_add, map_pow, aeval_X, hβ]
-  have hadjeq : splittingField a 1 = IntermediateField.adjoin ℚ {β} := by
-    apply le_antisymm
-    · refine IntermediateField.adjoin_le_iff.mpr fun x hx ↦ ?_
-      rw [mem_rootSet', hpoly] at hx
-      obtain ⟨-, hx2⟩ := hx
-      simp only [map_add, map_pow, aeval_X, aeval_C] at hx2
-      have hβmem : β ∈ IntermediateField.adjoin ℚ ({β} : Set (AlgebraicClosure ℚ)) :=
-        IntermediateField.subset_adjoin ℚ _ rfl
-      rcases sq_eq_sq_iff_eq_or_eq_neg.mp
-        (show x ^ 2 = β ^ 2 by linear_combination hx2 - hβ) with rfl | rfl
-      · exact hβmem
-      · exact neg_mem hβmem
-    · refine IntermediateField.adjoin_le_iff.mpr ?_
-      rintro x rfl
-      exact IntermediateField.subset_adjoin ℚ _ hβroot
-  rw [hadjeq, IntermediateField.finrank_adjoin_sqrt_eq hβsq, if_neg hsq]
-
-lemma degree_criterion_zero :
-    (splittingField a 0).relfinrank (splittingField a 1) = 2 ^ 2 ^ 0 ↔
-      ¬IsSquare (algebraMap ℚ ↥(splittingField a 0) (cSeq a (0 + 1) : ℚ)) := by
-  have hK0bot := splittingField_zero_eq_bot a
-  have hrf : (splittingField a 0).relfinrank (splittingField a 1)
-      = Module.finrank ℚ ↥(splittingField a 1) := by
-    rw [hK0bot, IntermediateField.relfinrank_bot_left]
-  have hsq_iff : IsSquare (algebraMap ℚ ↥(splittingField a 0) (cSeq a (0 + 1) : ℚ))
-      ↔ IsSquare (-a : ℚ) := by
-    rw [hK0bot, show (cSeq a (0 + 1) : ℚ) = -(a : ℚ) by norm_num]
-    exact IntermediateField.isSquare_algebraMap_bot_iff _
-  rw [hrf, hsq_iff]
-  by_cases hsq : IsSquare (-a : ℚ)
-  · rw [splittingField_one_eq_bot_of_isSquare_neg a hsq, IntermediateField.finrank_bot]
-    simp [hsq]
-  · simp only [hsq, not_false_iff, iff_true, pow_zero, pow_one]
-    exact finrank_splittingField_one a hsq
-
-/-- Lemma 1.6: if `f_n` is irreducible over `ℚ`, then `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}`
-is not a square in `K_n`. -/
-theorem degree_criterion {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
+/-- Lemma 1.6: `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a square in `K_n`. The relation
+space of the shifted roots is nonzero iff it contains the all-ones vector, `Ω_n` being a 2-group
+acting transitively on the roots, and that vector is a relation iff `∏ (β - a) = c_{n+1}` is a
+square in `K_n`. -/
+theorem degree_criterion (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n ↔
       ¬IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) := by
   classical
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · exact degree_criterion_zero a
-  · have hna : ¬IsSquare (-a : ℚ) := not_isSquare_neg_of_irreducible a hn hirr
-    have hrne := rootShift_ne_zero a hna hn
-    have hcard := card_rootSet_iteratedPoly a hirr
-    have : Nonempty ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :=
-      Fintype.card_pos_iff.mp (by rw [hcard]; positivity)
-    have hdle : Module.finrank (ZMod 2) (rootRelations (rootShift a n)) ≤ 2 ^ n := by
-      rw [← hcard]
-      exact rootRelations_finrank_le _
-    have : MulAction.IsPretransitive (GaloisGroup a n)
-        ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :=
-      isPretransitive_galoisGroup a n hirr
-    have hrfd : (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n
-        ↔ Module.finrank (ZMod 2) (rootRelations (rootShift a n)) = 0 := by
-      rw [relfinrank_succ_eq_pow a hn hirr, Nat.pow_right_inj one_lt_two]
-      lia
-    have hallne : 1 ∈ rootRelations (rootShift a n) ↔ rootRelations (rootShift a n) ≠ ⊥ := by
-      refine ⟨fun hmem hbot ↦ one_ne_zero (α := ZMod 2) ?_,
-        fun hbot ↦ rootRelations_all_ones (isPGroup_galoisGroup a n) hrne ?_ hbot⟩
-      · rw [hbot, Submodule.mem_bot] at hmem
-        exact congrFun hmem (Classical.arbitrary _)
-      · exact exists_ringEquiv_radicand_smul a (rootShift a n) fun _ ↦ rfl
-    have hallsq : 1 ∈ rootRelations (rootShift a n)
-        ↔ IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) :=
-      (all_ones_mem_rootRelations hrne).trans
-        (by rw [prod_radicand_eq_cSeq a hirr (rootShift a n) fun _ ↦ rfl])
-    rw [hrfd, Submodule.finrank_eq_zero, ← not_iff_not]
-    simpa using hallne.symm.trans hallsq
+  have hirr := irreducible_iteratedPoly a ha n
+  have hrne := rootShift_ne_zero a ha (n := n)
+  have hcard := card_rootSet_iteratedPoly a hirr
+  have : Nonempty ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :=
+    Fintype.card_pos_iff.mp (by rw [hcard]; positivity)
+  have hdle : Module.finrank (ZMod 2) (rootRelations (rootShift a n)) ≤ 2 ^ n := by
+    rw [← hcard]
+    exact rootRelations_finrank_le _
+  have : MulAction.IsPretransitive (GaloisGroup a n)
+      ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :=
+    isPretransitive_galoisGroup a n hirr
+  have hrfd : (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n
+      ↔ Module.finrank (ZMod 2) (rootRelations (rootShift a n)) = 0 := by
+    rw [relfinrank_succ_eq_pow a ha n, Nat.pow_right_inj one_lt_two]
+    lia
+  have hallne : 1 ∈ rootRelations (rootShift a n) ↔ rootRelations (rootShift a n) ≠ ⊥ := by
+    refine ⟨fun hmem hbot ↦ one_ne_zero (α := ZMod 2) ?_,
+      fun hbot ↦ rootRelations_all_ones (isPGroup_galoisGroup a n) hrne ?_ hbot⟩
+    · rw [hbot, Submodule.mem_bot] at hmem
+      exact congrFun hmem (Classical.arbitrary _)
+    · exact exists_ringEquiv_radicand_smul a (rootShift a n) fun _ ↦ rfl
+  have hallsq : 1 ∈ rootRelations (rootShift a n)
+      ↔ IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) :=
+    (all_ones_mem_rootRelations hrne).trans
+      (by rw [prod_radicand_eq_cSeq a hirr (rootShift a n) fun _ ↦ rfl])
+  rw [hrfd, Submodule.finrank_eq_zero, ← not_iff_not]
+  simpa using hallne.symm.trans hallsq
 
 lemma finrank_eq_of_nonempty_mulEquiv {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n)) :
