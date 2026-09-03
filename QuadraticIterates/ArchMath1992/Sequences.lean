@@ -38,8 +38,70 @@ open Polynomial
 
 namespace QuadraticIterates
 
-/-! ### The sequences `γ` and `β`, and even polynomials -/
+/-! ### Even polynomials -/
 
+section EvenPoly
+
+variable {R : Type*} [CommSemiring R]
+
+/-- `g` is an even polynomial (`g ∈ R[X²]`): `g = Polynomial.expand R 2 h` for some `h`. -/
+def EvenPoly (g : R[X]) : Prop := ∃ h : R[X], g = expand R 2 h
+
+namespace EvenPoly
+
+variable {g : R[X]}
+
+/-- An even polynomial takes equal values at points with equal squares. -/
+theorem eval_congr (hg : EvenPoly g) {x y : R} (h : x ^ 2 = y ^ 2) : g.eval x = g.eval y := by
+  obtain ⟨h', rfl⟩ := hg
+  rw [expand_eval, expand_eval, h]
+
+/-- Being an even polynomial is preserved by ring homomorphisms. -/
+theorem map {S : Type*} [CommSemiring S] (hg : EvenPoly g) (φ : R →+* S) : EvenPoly (g.map φ) := by
+  obtain ⟨h, rfl⟩ := hg
+  exact ⟨h.map φ, by rw [map_expand]⟩
+
+end EvenPoly
+
+end EvenPoly
+
+section EvenPoly
+
+variable {R : Type*} [CommRing R] {g : R[X]}
+
+namespace EvenPoly
+
+/-- An even polynomial defines an even evaluation function. -/
+theorem eval_neg (hg : EvenPoly g) (y : R) : g.eval (-y) = g.eval y := hg.eval_congr (neg_sq y)
+
+/-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
+lemma iterate_eval_neg (hg : EvenPoly g) {k : ℕ} (hk : 1 ≤ k) (y : R) :
+    (g.eval ·)^[k] (-y) = (g.eval ·)^[k] y := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
+  rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
+
+lemma dvd_eval_sub (hg : EvenPoly g) {N a b : R} (h : N ∣ a ^ 2 - b ^ 2) :
+    N ∣ g.eval a - g.eval b := by
+  obtain ⟨h', rfl⟩ := hg
+  rw [expand_eval, expand_eval]
+  exact h.trans (sub_dvd_eval_sub (a ^ 2) (b ^ 2) h')
+
+/-- An even polynomial is fixed by `X ↦ -X`. -/
+lemma comp_neg_X (hg : EvenPoly g) : g.comp (-X) = g := by
+  obtain ⟨h, rfl⟩ := hg
+  exact expand_two_comp_neg_X h
+
+end EvenPoly
+
+/-- Over a domain of characteristic `≠ 2` the converse holds too, so the two notions of evenness
+this file uses — membership in `R[X²]` and invariance under `X ↦ -X` — agree. -/
+lemma evenPoly_iff_comp_neg_X [NoZeroDivisors R] [NeZero (2 : R)] :
+    EvenPoly g ↔ g.comp (-X) = g :=
+  ⟨EvenPoly.comp_neg_X, fun h ↦ ⟨contract 2 g, eq_expand_two_contract_of_comp_neg_X h⟩⟩
+
+end EvenPoly
+
+/-! ### The sequences `γ` and `β` -/
 
 /-- The iteration sequence `γ_n` of `g ∈ R[X]` with sign choice `ε`: `γ_1 = ε · g(0)`, `γ_{n+1} =
 g(γ_n)`; the value at index `0` is `0` (chosen so that over `ℤ`, `γ` is a strong divisibility
@@ -57,50 +119,6 @@ noncomputable def betaSeq {R : Type*} [CommRing R] [IsDomain R] (g : R[X]) (ε :
 
 lemma betaSeq_eq_moebiusFactorR {R : Type*} [CommRing R] [IsDomain R] (g : R[X]) (ε : R) (n : ℕ) :
     betaSeq g ε n = moebiusFactorR (gammaSeq g ε) n := rfl
-
-/-- `g` is an even polynomial (`g ∈ R[X²]`): `g = Polynomial.expand R 2 h` for some `h`. -/
-def EvenPoly {R : Type*} [CommSemiring R] (g : R[X]) : Prop := ∃ h : R[X], g = expand R 2 h
-
-/-- An even polynomial takes equal values at points with equal squares. -/
-theorem EvenPoly.eval_congr {R : Type*} [CommSemiring R] {g : R[X]} (hg : EvenPoly g)
-    {x y : R} (h : x ^ 2 = y ^ 2) : g.eval x = g.eval y := by
-  obtain ⟨h', rfl⟩ := hg
-  rw [expand_eval, expand_eval, h]
-
-/-- An even polynomial defines an even evaluation function. -/
-theorem EvenPoly.eval_neg {R : Type*} [CommRing R] {g : R[X]} (hg : EvenPoly g) (y : R) :
-    g.eval (-y) = g.eval y := hg.eval_congr (neg_sq y)
-
-/-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
-lemma EvenPoly.iterate_eval_neg {R : Type*} [CommRing R] {g : R[X]} (hg : EvenPoly g) {k : ℕ}
-    (hk : 1 ≤ k) (y : R) : (g.eval ·)^[k] (-y) = (g.eval ·)^[k] y := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
-  rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
-
-/-- Being an even polynomial is preserved by ring homomorphisms. -/
-theorem EvenPoly.map {R S : Type*} [CommSemiring R] [CommSemiring S] {g : R[X]}
-    (hg : EvenPoly g) (φ : R →+* S) : EvenPoly (g.map φ) := by
-  obtain ⟨h, rfl⟩ := hg
-  exact ⟨h.map φ, by rw [map_expand]⟩
-
-lemma EvenPoly.dvd_eval_sub {R : Type*} [CommRing R] {g : R[X]} (hg : EvenPoly g)
-    {N a b : R} (h : N ∣ a ^ 2 - b ^ 2) : N ∣ g.eval a - g.eval b := by
-  obtain ⟨h', rfl⟩ := hg
-  rw [expand_eval, expand_eval]
-  exact h.trans (sub_dvd_eval_sub (a ^ 2) (b ^ 2) h')
-
-/-- An even polynomial is fixed by `X ↦ -X`. -/
-lemma EvenPoly.comp_neg_X {R : Type*} [CommRing R] {g : R[X]} (hg : EvenPoly g) :
-    g.comp (-X) = g := by
-  obtain ⟨h, rfl⟩ := hg
-  exact expand_two_comp_neg_X h
-
-/-- Over a domain of characteristic `≠ 2` the converse holds too, so the two notions of evenness
-this file uses — membership in `R[X²]` and invariance under `X ↦ -X` — agree. -/
-lemma evenPoly_iff_comp_neg_X {R : Type*} [CommRing R] [NoZeroDivisors R] [NeZero (2 : R)]
-    {g : R[X]} : EvenPoly g ↔ g.comp (-X) = g :=
-  ⟨EvenPoly.comp_neg_X, fun h ↦ ⟨contract 2 g, eq_expand_two_contract_of_comp_neg_X h⟩⟩
-
 
 /-! ### The `γ`-sequence over a commutative semiring -/
 
