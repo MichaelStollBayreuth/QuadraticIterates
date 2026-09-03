@@ -73,81 +73,53 @@ theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] (ha : ¬IsSq
     multiquadratic_degree_family hx (rootShift_ne_zero a ha),
     card_rootSet_iteratedPoly a (irreducible_iteratedPoly a ha n)]
 
-lemma exists_ringEquiv_radicand_smul {n : ℕ}
-    (r : ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
-        → ↥(splittingField a n))
-    (hr : ∀ β, (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (r β))
-      = (β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ)) (σ : GaloisGroup a n) :
-    ∃ φ : (↥(splittingField a n)) ≃+* (↥(splittingField a n)), ∀ β, φ (r β) = r (σ • β) := by
-  obtain ⟨ϕ, rfl⟩ := Gal.restrict_surjective (fℚ[a, n]) (AlgebraicClosure ℚ) σ
-  refine ⟨(ϕ.restrictNormal (splittingField a n)).toRingEquiv, fun β ↦ ?_⟩
-  apply (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)).injective
-  have hσβ : (((Gal.restrict (fℚ[a, n]) (AlgebraicClosure ℚ)) ϕ • β :
-      ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))) :
-        AlgebraicClosure ℚ) = ϕ (β : AlgebraicClosure ℚ) :=
-    Gal.restrict_smul ϕ β
-  have hcomm : algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)
-      ((ϕ.restrictNormal (splittingField a n)).toRingEquiv (r β))
-      = ϕ (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (r β)) :=
-    AlgEquiv.restrictNormal_commutes ϕ (splittingField a n) (r β)
-  rw [hcomm, hr β, hr _, hσβ, map_sub, map_intCast]
+/-- Every element of `Ω_n` acts on the shifted roots `β - a ∈ K_n` through a ring automorphism of
+`K_n`: the restriction of any extension of it to `ℚ̄`. -/
+lemma exists_ringEquiv_rootShift_smul (n : ℕ) (σ : GaloisGroup a n) :
+    ∃ φ : ↥(splittingField a n) ≃+* ↥(splittingField a n),
+      ∀ β, φ (rootShift a n β) = rootShift a n (σ • β) := by
+  obtain ⟨ϕ, rfl⟩ := Gal.restrict_surjective fℚ[a, n] (AlgebraicClosure ℚ) σ
+  refine ⟨(ϕ.restrictNormal (splittingField a n)).toRingEquiv, fun β ↦ Subtype.ext ?_⟩
+  have hcomm : ((ϕ.restrictNormal (splittingField a n)).toRingEquiv (rootShift a n β) :
+      AlgebraicClosure ℚ) = ϕ (rootShift a n β) :=
+    AlgEquiv.restrictNormal_commutes ϕ (splittingField a n) (rootShift a n β)
+  rw [hcomm, coe_rootShift, coe_rootShift, map_sub, map_intCast, Gal.restrict_smul]
 
 lemma isPretransitive_galoisGroup (n : ℕ) (hirr : Irreducible (fℚ[a, n])) :
     MulAction.IsPretransitive (GaloisGroup a n)
       ↑((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :=
   Gal.galAction_isPretransitive (fℚ[a, n]) (AlgebraicClosure ℚ) hirr
 
+/-- The norm identity `∏ (α - a) = c_{n+1}` over the roots `α` of `f_n` (with multiplicity), by
+evaluating the monic split `f_n` at `a`. -/
 lemma prod_aroots_sub_eq_cSeq (n : ℕ) :
-    (Multiset.map (fun α ↦ α - (a : AlgebraicClosure ℚ))
-        ((fℚ[a, n]).aroots (AlgebraicClosure ℚ))).prod
+    ((fℚ[a, n].aroots (AlgebraicClosure ℚ)).map (· - (a : AlgebraicClosure ℚ))).prod
       = (cSeq a (n + 1) : AlgebraicClosure ℚ) := by
-  set F := fℚ[a, n] with hF
-  have hmonic : F.Monic := monic_iteratedPoly _ n
-  have hsplits : (F.map (algebraMap ℚ (AlgebraicClosure ℚ))).Splits := IsAlgClosed.splits _
-  have hcard : (F.aroots (AlgebraicClosure ℚ)).card = 2 ^ n := by
-    rw [aroots_def, ← hsplits.natDegree_eq_card_roots, hmonic.natDegree_map, hF,
+  have hsplits : (fℚ[a, n].map (algebraMap ℚ (AlgebraicClosure ℚ))).Splits :=
+    IsAlgClosed.splits _
+  have hcard : (fℚ[a, n].aroots (AlgebraicClosure ℚ)).card = 2 ^ n := by
+    rw [aroots_def, ← hsplits.natDegree_eq_card_roots, (monic_iteratedPoly _ n).natDegree_map,
       natDegree_iteratedPoly]
-  calc (Multiset.map (fun α ↦ α - (a : AlgebraicClosure ℚ))
-          (F.aroots (AlgebraicClosure ℚ))).prod
-      = (((F.aroots (AlgebraicClosure ℚ)).map
-          (fun α ↦ (a : AlgebraicClosure ℚ) - α)).map (fun x ↦ -x)).prod := by
-        rw [Multiset.map_map]
-        exact congrArg _ (Multiset.map_congr rfl fun α _ ↦ by simp)
-    _ = (-1 : AlgebraicClosure ℚ) ^ (F.aroots (AlgebraicClosure ℚ)).card
-          * ((F.aroots (AlgebraicClosure ℚ)).map
-              (fun α ↦ (a : AlgebraicClosure ℚ) - α)).prod := by
-        rw [Multiset.prod_map_neg, Multiset.card_map]
-    _ = (-1 : AlgebraicClosure ℚ) ^ 2 ^ n
-          * (aeval (a : AlgebraicClosure ℚ)) F := by
-        rw [hcard, ← hsplits.aeval_eq_prod_aroots_of_monic hmonic (a : AlgebraicClosure ℚ)]
-    _ = (-1 : AlgebraicClosure ℚ) ^ 2 ^ n
-          * (((iteratedPoly a n).eval a : ℤ) : AlgebraicClosure ℚ) := by
-        rw [hF, aeval_intCast_iteratedPoly]
-    _ = (cSeq a (n + 1) : AlgebraicClosure ℚ) := by
-        rw [cSeq_succ_eq_neg_one_pow_mul_eval a n]
-        push_cast
-        ring
+  rw [cSeq_succ_eq_neg_one_pow_mul_eval, Int.cast_mul, Int.cast_pow, Int.cast_neg, Int.cast_one,
+    ← aeval_intCast_iteratedPoly, hsplits.aeval_eq_prod_aroots_of_monic (monic_iteratedPoly _ n),
+    ← hcard, ← Multiset.card_map (fun α ↦ (a : AlgebraicClosure ℚ) - α), ← Multiset.prod_map_neg,
+    Multiset.map_map]
+  exact congrArg _ (Multiset.map_congr rfl fun _ _ ↦ (neg_sub _ _).symm)
 
-lemma prod_radicand_eq_cSeq {n : ℕ} (hirr : Irreducible (fℚ[a, n]))
-    (r : ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
-        → ↥(splittingField a n))
-    (hr : ∀ β, (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (r β))
-      = (β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ)) :
-    ∏ β, r β = algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ) := by
-  classical
-  apply (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)).injective
-  have hnodup : ((fℚ[a, n]).aroots (AlgebraicClosure ℚ)).Nodup := nodup_roots hirr.separable.map
-  have hleft : algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (∏ β, r β)
-      = ∏ β : ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)),
-          ((β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ)) := by
-    rw [map_prod]
-    exact Finset.prod_congr rfl fun β _ ↦ hr β
-  have hright : algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)
-      (algebraMap ℚ (↥(splittingField a n)) (cSeq a (n + 1) : ℚ))
+/-- The norm identity over the root set: `∏_β (β - a) = c_{n+1}` for the `2^n` distinct roots `β`
+of `f_n` in `ℚ̄`. -/
+lemma prod_rootSet_sub_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
+    ∏ β : fℚ[a, n].rootSet (AlgebraicClosure ℚ), ((β : AlgebraicClosure ℚ) - a)
       = (cSeq a (n + 1) : AlgebraicClosure ℚ) := by
-    simp
-  rw [hleft, prod_rootSet_eq_prod_aroots hnodup (· - (a : AlgebraicClosure ℚ)), hright]
+  rw [prod_rootSet_eq_prod_aroots (nodup_roots (irreducible_iteratedPoly a ha n).separable.map)
+    (· - (a : AlgebraicClosure ℚ))]
   exact prod_aroots_sub_eq_cSeq a n
+
+/-- The product of the shifted roots `β - a` of `f_n` is `c_{n+1}`, as elements of `K_n`. -/
+lemma prod_rootShift_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
+    ∏ β, rootShift a n β = algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ) := by
+  refine (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)).injective ?_
+  simpa [map_prod] using prod_rootSet_sub_eq_cSeq a ha n
 
 end
 
@@ -185,11 +157,11 @@ theorem degree_criterion (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       fun hbot ↦ rootRelations_all_ones (isPGroup_galoisGroup a n) hrne ?_ hbot⟩
     · rw [hbot, Submodule.mem_bot] at hmem
       exact congrFun hmem (Classical.arbitrary _)
-    · exact exists_ringEquiv_radicand_smul a (rootShift a n) fun _ ↦ rfl
+    · exact exists_ringEquiv_rootShift_smul a n
   have hallsq : 1 ∈ rootRelations (rootShift a n)
       ↔ IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) :=
     (all_ones_mem_rootRelations hrne).trans
-      (by rw [prod_radicand_eq_cSeq a hirr (rootShift a n) fun _ ↦ rfl])
+      (by rw [prod_rootShift_eq_cSeq a ha n])
   rw [hrfd, Submodule.finrank_eq_zero, ← not_iff_not]
   simpa using hallne.symm.trans hallsq
 
@@ -267,38 +239,16 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
   rw [hinsdeg] at hle
   exact absurd hle (by simp [pow_succ])
 
-lemma isSquare_algebraMap_cSeq (n : ℕ) (hnsq : ¬IsSquare (-a : ℚ)) (m : ℕ) (hm1 : 1 ≤ m)
-    (hmn : m ≤ n) :
-    IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a m : ℚ)) := by
-  classical
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by lia : m ≠ 0)
-  have hmono : splittingField a (k + 1) ≤ splittingField a n := splittingField_mono a hmn
-  have hinj := (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)).injective
-  have hsqrt (β : ↥((fℚ[a, k]).rootSet (AlgebraicClosure ℚ))) :
-      ∃ γ : ↥(splittingField a n),
-        (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) γ) ^ 2
-          = (β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ) := by
-    obtain ⟨δ, hδ⟩ := exists_sq_eq_sub a β
-    have hroot : δ ∈ (fℚ[a, k + 1]).rootSet (AlgebraicClosure ℚ) :=
-      (mem_rootSet_iteratedPoly_succ a k δ).mpr (by simp [hδ, sub_add_cancel, β.2])
-    exact ⟨⟨δ, hmono (IntermediateField.subset_adjoin ℚ _ hroot)⟩, hδ⟩
-  choose w hw using hsqrt
-  have hnodup : ((fℚ[a, k]).aroots (AlgebraicClosure ℚ)).Nodup :=
-    nodup_roots (irreducible_iteratedPoly a hnsq k).separable.map
-  refine ⟨∏ β, w β, hinj ?_⟩
-  have hlhs : algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)
-      ((algebraMap ℚ (↥(splittingField a n))) (cSeq a (k + 1) : ℚ))
-      = (cSeq a (k + 1) : AlgebraicClosure ℚ) := by
-    simp
-  rw [hlhs, map_mul, map_prod]
-  have hsplit : (∏ β, algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (w β))
-        * (∏ β, algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (w β))
-      = ∏ β : ↥((fℚ[a, k]).rootSet (AlgebraicClosure ℚ)),
-          ((β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ)) := by
-    rw [← Finset.prod_mul_distrib]
-    exact Finset.prod_congr rfl fun β _ ↦ by rw [← sq, hw β]
-  rw [hsplit, prod_rootSet_eq_prod_aroots hnodup (· - (a : AlgebraicClosure ℚ))]
-  exact (prod_aroots_sub_eq_cSeq a k).symm
+/-- `c_1, …, c_n` are squares in `K_n`: `c_{k+1} = ∏_β (β - a)` over the roots `β` of `f_k`, and
+each `β - a` is the square of a root of `f_{k+1}`, which lies in `K_{k+1} ⊆ K_n`. -/
+lemma isSquare_algebraMap_cSeq (ha : ¬IsSquare (-a : ℚ)) {k n : ℕ} (hkn : k < n) :
+    IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (k + 1) : ℚ)) := by
+  choose g hg using exists_sq_eq_sub a
+  refine (IntermediateField.isSquare_algebraMap_iff _ _).mpr
+    ⟨∏ β : fℚ[a, k].rootSet (AlgebraicClosure ℚ), g β, prod_mem fun β _ ↦ splittingField_mono a hkn
+      (IntermediateField.subset_adjoin ℚ _ (mem_rootSet_succ_of_sq_eq_sub a β.2 (hg β))), ?_⟩
+  rw [← Finset.prod_pow, map_intCast, ← prod_rootSet_sub_eq_cSeq a ha k]
+  exact Finset.prod_congr rfl fun β _ ↦ hg β
 
 lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
@@ -312,8 +262,7 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     rcases Nat.eq_zero_or_pos n with rfl | hnpos
     · exact absurd i.2 (by simp)
     · have hnsq : ¬IsSquare (-a : ℚ) := not_isSquare_neg_of_finrank_eq a hnpos hmax
-      simpa using isSquare_algebraMap_cSeq a n hnsq ((i : ℕ) + 1) (by lia)
-        (by have := i.2; lia)
+      exact isSquare_algebraMap_cSeq a hnsq i.2
   choose x hx using hroot
   have hx2 (i) : x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ) := by
     rw [sq]
