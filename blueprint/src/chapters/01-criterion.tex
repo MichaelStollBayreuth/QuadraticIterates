@@ -117,7 +117,20 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
   because divisibility descends along composition with $X^2 + c$
   (\lname{Polynomial.comp\_dvd\_comp\_iff}); the pairing of the
   irreducible factors under $X \mapsto -X$ is a fixed-point-free involution argument on the
-  multiset of normalized factors (Lemma~\ref{lem:involution}).}
+  multiset of normalized factors (Lemma~\ref{lem:involution}).
+
+  An alternative route, not taken so far but worth recording: Mathlib's Capelli criterion
+  \lname{Polynomial.irreducible\_comp} says that $F \circ g$ is irreducible whenever $F$ and $g$
+  are monic, $F$ is irreducible, and $g - \alpha$ is irreducible over $\QQ(\alpha)$ for a root
+  $\alpha$ of $F$. For $F = f_n$ and $g = X^2 + a$ the last condition says that $\alpha - a$ is
+  not a square in $\QQ(\alpha)$, which follows from $c_{n+1}$ not being a square in $\QQ$: over
+  the roots $\alpha_i$ of $f_n$ one has
+  $N_{\QQ(\alpha)/\QQ}(\alpha - a) = \prod_i (\alpha_i - a) = (-1)^{2^n} f_n(a) = c_{n+1}$,
+  and a square has a square norm. This would replace the even-divisor argument together with the
+  general lemmas behind it (\lname{Polynomial.comp\_dvd\_comp\_iff},
+  \lname{exists\_normalizedFactors\_eq\_add\_map},
+  \lname{Polynomial.Monic.exists\_mul\_comp\_neg\_X\_eq\_of\_not\_irreducible}) by a norm
+  computation, at the price of departing from the proof in the paper.}
 \end{proof}
 
 \begin{corollary}
