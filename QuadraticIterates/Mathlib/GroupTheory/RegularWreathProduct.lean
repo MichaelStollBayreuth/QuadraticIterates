@@ -11,7 +11,11 @@ import Mathlib.LinearAlgebra.Dimension.Free
 import Mathlib.LinearAlgebra.Dual.Basis
 
 /-!
-# Homomorphisms from wreath products to abelian groups
+# Embeddings into, and homomorphisms out of, iterated wreath products
+
+A `p`-group of permutations of at most `p ^ n` points embeds into the `n`-fold iterated wreath
+product of a group of order `p`, the Sylow `p`-subgroup of the symmetric group on `p ^ n` points
+(`IsPGroup.exists_injective_monoidHom_iteratedWreathProduct`).
 
 A homomorphism from `D ≀ᵣ Q` to a commutative group `A` is the same as a pair of homomorphisms
 `D →* A` and `Q →* A` (`RegularWreathProduct.homEquiv`), so
@@ -21,6 +25,7 @@ abelian `2`-quotient of the `n`-fold iterated wreath power of `C₂` has order `
 
 ## Main statements
 
+* `IsPGroup.exists_injective_monoidHom_iteratedWreathProduct`: the embedding above.
 * `RegularWreathProduct.homEquiv`: `(D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A)` for commutative `A`.
 * `RegularWreathProduct.card_hom`, `IteratedWreathProduct.card_hom`: the resulting counts.
 * `Nat.card_monoidHom_multiplicative_zmod`: `#(H →* Multiplicative (ZMod p)) = #H` for a finite
@@ -124,6 +129,30 @@ theorem card_hom [Finite Q] : Nat.card (D ≀ᵣ Q →* A) = Nat.card (D →* A)
 end CommGroup
 
 end RegularWreathProduct
+
+/-- A `p`-group of permutations of at most `p ^ n` points embeds into the `n`-fold iterated wreath
+product of any group `H` of order `p`: it lies in a Sylow `p`-subgroup of the symmetric group on
+`p ^ n` points, which is that wreath product (`Sylow.mulEquivIteratedWreathProduct`). The
+permutation group is given as a group `G` with an injective homomorphism into `Equiv.Perm X`. -/
+theorem IsPGroup.exists_injective_monoidHom_iteratedWreathProduct {p : ℕ} [Fact p.Prime]
+    {G : Type*} [Group G] (hG : IsPGroup p G) {X : Type*} [Finite X] {f : G →* Equiv.Perm X}
+    (hf : Function.Injective f) {n : ℕ} (hX : Nat.card X ≤ p ^ n) (H : Type*) [Group H] [Finite H]
+    (hH : Nat.card H = p) : ∃ φ : G →* IteratedWreathProduct H n, Function.Injective φ := by
+  classical
+  have := Fintype.ofFinite X
+  have := Fintype.ofFinite H
+  have hcard : Fintype.card X ≤ Fintype.card (Fin n → H) := by
+    rwa [← Nat.card_eq_fintype_card, ← Nat.card_eq_fintype_card, Nat.card_fun, Nat.card_fin, hH]
+  obtain ⟨emb⟩ := Function.Embedding.nonempty_of_card_le hcard
+  set Θ := (Equiv.Perm.extendDomainHom (Equiv.ofInjective emb emb.injective)).comp f
+  have hΘinj : Function.Injective ⇑Θ :=
+    (Equiv.Perm.extendDomainHom_injective (Equiv.ofInjective emb emb.injective)).comp hf
+  obtain ⟨Q, hQ⟩ := IsPGroup.exists_le_sylow (hG.of_equiv (MonoidHom.ofInjective hΘinj))
+  let e := Sylow.mulEquivIteratedWreathProduct p n (Fin n → H)
+    (by rw [Nat.card_fun, Nat.card_fin, hH]) H hH Q
+  exact ⟨e.toMonoidHom.comp ((Subgroup.inclusion hQ).comp Θ.rangeRestrict),
+    e.injective.comp ((Subgroup.inclusion_injective hQ).comp
+      (Θ.rangeRestrict_injective_iff.mpr hΘinj))⟩
 
 /-- `#(IteratedWreathProduct D n →* A) = #(D →* A) ^ n` for a finite group `D` and a commutative
 group `A`. -/

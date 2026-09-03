@@ -101,17 +101,20 @@ them.
 \begin{lemma}[Sylow $2$-subgroups of symmetric groups]
   \label{lem:sylowwreath}
   \lean{Sylow.mulEquivIteratedWreathProduct, IteratedWreathProduct.card,
+    IsPGroup.exists_injective_monoidHom_iteratedWreathProduct,
     MonoidHom.nonempty_mulEquiv_iff_card_eq}
   \leanok
   A Sylow $2$-subgroup of the symmetric group on $2^n$ letters is isomorphic to $\Ct{n}$, which
-  has order $2^{2^n - 1}$. Consequently, an injective homomorphism between finite groups of equal
-  order is an isomorphism, which is how ``$\Om_n \cong \Ct{n}$'' is obtained from an embedding
-  plus a degree count.
+  has order $2^{2^n - 1}$; hence a $2$-group of permutations of at most $2^n$ points embeds into
+  $\Ct{n}$. Moreover, an injective homomorphism between finite groups of equal order is an
+  isomorphism, which is how ``$\Om_n \cong \Ct{n}$'' is obtained from an embedding plus a degree
+  count.
 \end{lemma}
 \begin{proof}
   \leanok
-  Both statements are in Mathlib (\texttt{Sylow.mulEquivIteratedWreathProduct}); the last one is
-  elementary.
+  The first statement is in Mathlib (\texttt{Sylow.mulEquivIteratedWreathProduct}); the second
+  follows by extending the action to $2^n$ points and passing to a Sylow subgroup, and the last
+  one is elementary.
 \end{proof}
 
 \begin{lemma}[The abelian quotient of $\Ct{n}$]

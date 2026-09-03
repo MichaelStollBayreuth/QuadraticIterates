@@ -13,6 +13,7 @@ public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 import QuadraticIterates.Mathlib.Algebra.BigOperators
 import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 import QuadraticIterates.Mathlib.GroupTheory.Card
+import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 
 /-!
 # The iterates of `X² + a`, their splitting fields and Galois groups
@@ -301,32 +302,14 @@ theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
   exact (Gal.galActionHom_restrict F (AlgebraicClosure ℚ) (ϕ ^ 2 ^ n) β).trans
     (pow_two_pow_apply_root a ϕ β.2)
 
-/-- Odoni's embedding theorem: `Ω_n` embeds into `[C_2]^n`. -/
+/-- Odoni's embedding theorem: `Ω_n` embeds into `[C_2]^n`, being a `2`-group acting faithfully on
+the at most `2 ^ n` roots of `f_n`. -/
 theorem odoni_embedding (n : ℕ) :
-    ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ := by
-  set F := fℚ[a, n]
-  set E := AlgebraicClosure ℚ
-  have hcard_le : Fintype.card ↥(F.rootSet E)
-      ≤ Fintype.card (Fin n → Multiplicative (ZMod 2)) := by
-    rw [show Fintype.card (Fin n → Multiplicative (ZMod 2)) = 2 ^ n by
-      rw [Fintype.card_fun, Fintype.card_multiplicative, ZMod.card, Fintype.card_fin]]
-    calc Fintype.card ↥(F.rootSet E) = (F.rootSet E).ncard := by
-          rw [Set.ncard_eq_toFinset_card', Set.toFinset_card]
-      _ ≤ 2 ^ n := ncard_rootSet_iteratedPoly_le a n
-  obtain ⟨emb⟩ := Function.Embedding.nonempty_of_card_le hcard_le
-  set Θ := (Equiv.Perm.extendDomainHom (Equiv.ofInjective emb emb.injective)).comp
-    (Gal.galActionHom F E)
-  have hΘinj : Function.Injective ⇑Θ :=
-    (Equiv.Perm.extendDomainHom_injective (Equiv.ofInjective emb emb.injective)).comp
-      (Gal.galActionHom_injective F E)
-  obtain ⟨Q, hQ⟩ := IsPGroup.exists_le_sylow
-    ((isPGroup_galoisGroup a n).of_equiv (MonoidHom.ofInjective hΘinj))
-  let e := Sylow.mulEquivIteratedWreathProduct 2 n (Fin n → Multiplicative (ZMod 2))
-    (by simp [Nat.card_eq_fintype_card]) (Multiplicative (ZMod 2))
-    (by simp [Nat.card_eq_fintype_card]) Q
-  exact ⟨e.toMonoidHom.comp ((Subgroup.inclusion hQ).comp Θ.rangeRestrict),
-    e.injective.comp ((Subgroup.inclusion_injective hQ).comp
-      (Θ.rangeRestrict_injective_iff.mpr hΘinj))⟩
+    ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
+  (isPGroup_galoisGroup a n).exists_injective_monoidHom_iteratedWreathProduct
+    (Gal.galActionHom_injective (fℚ[a, n]) (AlgebraicClosure ℚ))
+    ((Nat.card_coe_set_eq _).trans_le (ncard_rootSet_iteratedPoly_le a n))
+    (Multiplicative (ZMod 2)) (by simp [Nat.card_eq_fintype_card])
 
 /-- Every element of `ℚ̄` has a square root after subtracting `a`; the square roots of the
 `α - a` for `α` a root of `f_n` are what generates `K_{n+1}` over `K_n`. -/
