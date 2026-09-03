@@ -8,7 +8,6 @@ module
 public import QuadraticIterates.ArchMath1992.Iterates
 public import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 
-import Mathlib.Data.Rat.Sqrt
 import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
