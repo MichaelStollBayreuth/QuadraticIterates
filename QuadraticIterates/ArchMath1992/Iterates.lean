@@ -302,6 +302,12 @@ lemma mem_rootSet_iteratedPoly_succ (n : ℕ) (β : AlgebraicClosure ℚ) :
     mem_rootSet_of_ne (monic_iteratedPoly (a : ℚ) _).ne_zero, iteratedPoly_succ_comp, aeval_comp]
   simp
 
+/-- A square root `β` of `α - a`, for `α` a root of `f_n`, is a root of `f_{n+1}`. -/
+lemma mem_rootSet_succ_of_sq_eq_sub {n : ℕ} {α β : AlgebraicClosure ℚ}
+    (hα : α ∈ fℚ[a, n].rootSet (AlgebraicClosure ℚ)) (hβ : β ^ 2 = α - a) :
+    β ∈ fℚ[a, n + 1].rootSet (AlgebraicClosure ℚ) :=
+  (mem_rootSet_iteratedPoly_succ a n β).mpr (by rwa [hβ, sub_add_cancel])
+
 /-! ### The tower of splitting fields `K_n ⊆ K_{n+1}` -/
 
 /-- Every element of `ℚ̄` has a square root after subtracting `a`; the square roots of the
@@ -316,8 +322,7 @@ lemma splittingField_le_succ (n : ℕ) : splittingField a n ≤ splittingField a
   obtain ⟨β, hβ⟩ := exists_sq_eq_sub a α
   rw [← sub_add_cancel α (a : AlgebraicClosure ℚ), ← hβ]
   exact add_mem (pow_mem (IntermediateField.subset_adjoin ℚ _
-    ((mem_rootSet_iteratedPoly_succ a n β).mpr (by rwa [hβ, sub_add_cancel]))) 2)
-    (IntermediateField.intCast_mem _ a)
+    (mem_rootSet_succ_of_sq_eq_sub a hα hβ)) 2) (IntermediateField.intCast_mem _ a)
 
 lemma splittingField_mono {m n : ℕ} (hmn : m ≤ n) : splittingField a m ≤ splittingField a n :=
   monotone_nat_of_le_succ (splittingField_le_succ a) hmn
@@ -345,8 +350,7 @@ theorem splittingField_succ_eq_sup_adjoin (n : ℕ) (g : AlgebraicClosure ℚ �
     · exact h ▸ hgmem
     · exact h ▸ neg_mem hgmem
   · intro x ⟨α, hα, hx⟩
-    exact hx ▸ IntermediateField.subset_adjoin ℚ _
-      ((mem_rootSet_iteratedPoly_succ a n (g α)).mpr (by rwa [hg α, sub_add_cancel]))
+    exact hx ▸ IntermediateField.subset_adjoin ℚ _ (mem_rootSet_succ_of_sq_eq_sub a hα (hg α))
 
 /-- The square of a root of `f_{n+1}` lies in `K_n`: `K_n ⊆ K_{n+1}` is a `2`-Kummer extension. -/
 lemma sq_mem_splittingField_of_mem_rootSet_succ {n : ℕ} {β : AlgebraicClosure ℚ}
