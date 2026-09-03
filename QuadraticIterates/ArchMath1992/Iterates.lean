@@ -205,7 +205,7 @@ theorem twoIndependent_iff_linearIndependent {n : ℕ} (v : Fin n → ℚ) :
     refine hsq (Finset.univ.filter fun j ↦ g j = 1)
       ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ i, hg1⟩⟩ ?_
     rw [isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hv0 i),
-      ← sum_zmod_two_smul_eq_sum_filter (fun i ↦ sqClass (v i)) g, hg]
+      ← Finset.sum_zmod_two_smul_eq_sum_filter (fun i ↦ sqClass (v i)) g, hg]
   · have hne (i) : sqClass (v i) ≠ 0 := fun hi ↦ by
       have h := H (fun j ↦ if j = i then 1 else 0) ?_ i
       · simp at h
@@ -218,7 +218,7 @@ theorem twoIndependent_iff_linearIndependent {n : ℕ} (v : Fin n → ℚ) :
       ext j
       by_cases hj : j ∈ S <;> simp [hj, zero_ne_one (α := ZMod 2)]
     have hg : ∑ j, (if j ∈ S then (1 : ZMod 2) else 0) • sqClass (v j) = 0 := by
-      rw [sum_zmod_two_smul_eq_sum_filter (fun j ↦ sqClass (v j)), hfilt]
+      rw [Finset.sum_zmod_two_smul_eq_sum_filter (fun j ↦ sqClass (v j)), hfilt]
       exact (isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hv0 i)).mp hsqS
     exact absurd (H _ hg i) (by simp [hiS])
 

@@ -372,7 +372,7 @@ theorem mem_rootRelations {ι : Type*} [Fintype ι] {r : ι → L} (hr : ∀ i, 
     {ε : ι → ZMod 2} :
     ε ∈ rootRelations r ↔ IsSquare (∏ i with ε i = 1, r i) := by
   rw [rootRelations, LinearMap.mem_ker, Fintype.linearCombination_apply,
-    sum_zmod_two_smul_eq_sum_filter (fun i ↦ sqClass (r i)) ε,
+    Finset.sum_zmod_two_smul_eq_sum_filter (fun i ↦ sqClass (r i)) ε,
     ← isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hr i)]
 
 /-- There are no nontrivial root relations iff the classes `[r i]` are `𝔽₂`-linearly
