@@ -16,5 +16,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; an upstreaming candidate for Mathl
 
 @[expose] public section
 
+/-- The sign of a nonzero integer is a unit of `ℤ`, hence squares to `1`. -/
 theorem Int.sign_sq_of_ne_zero {a : ℤ} (ha : a ≠ 0) : a.sign ^ 2 = 1 :=
   isUnit_sq (isUnit_iff_natAbs_eq.mpr (natAbs_sign_of_ne_zero ha))

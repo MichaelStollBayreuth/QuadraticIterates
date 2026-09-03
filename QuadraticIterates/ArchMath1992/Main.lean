@@ -17,7 +17,8 @@ import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
 # The main theorems
 
 The integer factors `b_n` of the `c`-sequence (Lemma 1.1 b), the two parts of the Section 1
-theorem and the Section 3 theorem of the paper.
+theorem, the `γ`- and `β`-sequences of the rescaled polynomial `normPoly a`, and the Section 3
+theorem of the paper.
 
 ## Main statements
 
@@ -48,11 +49,10 @@ variable (a : ℤ)
 
 /-- The constant-valuation shape for `c`: the specialization of `factorization_gammaSeq_shape`
 to `X² + a`, `ε = -1`, in the form consumed by `moebiusFactorR_isRelPrime`. -/
-lemma cSeq_factorization_shape (ha : ¬IsSquare (-a : ℚ)) :
+lemma factorization_cSeq_shape (ha : ¬IsSquare (-a : ℚ)) :
     ∀ q : ℤ, Prime q → normalize q = q →
       ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (cSeq a k) q = if m ∣ k then E else 0 :=
-  fun _ hq hqn ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq
-    (cSeq_ne_zero a ha) hq hqn
+  fun _ ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq (cSeq_ne_zero a ha)
 
 /-- Lemma 1.1 b): the Möbius product `∏_{ed = n} c_d^{μ(e)}` is the integer `b_n`, since `c` is a
 strong divisibility sequence. -/
@@ -73,14 +73,15 @@ each prime is supported on a single index, so no prime divides two distinct fact
 lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n)
     (hmn : m ≠ n) : IsCoprime (bSeq a m) (bSeq a n) :=
   (moebiusFactorR_isRelPrime (cSeq_ne_zero a ha) (cSeq_associated_gcd a)
-    (cSeq_factorization_shape a ha) m n hm hn hmn).isCoprime
+    (factorization_cSeq_shape a ha) m n hm hn hmn).isCoprime
 
 /-! ### Theorem (Section 1) -/
 
 /-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on
-`n`: `Ω_{n+1} ≅ [C₂]ⁿ⁺¹` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^(2^n)` (Lemma 1.4), the
-degree condition says that `c_{n+1}` is not a square in `K_n` (Lemma 1.6), and given
-`Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent (Lemma 1.5). -/
+`n`: `Ω_{n+1} ≅ [C₂]ⁿ⁺¹` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^(2^n)`
+(`nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that `c_{n+1}` is not a
+square in `K_n` (`degree_criterion`, Lemma 1.6), and given `Ω_n ≅ [C₂]ⁿ` this means that
+`c_1, …, c_{n+1}` are 2-independent (`kummer_extension_criterion`, Lemma 1.5). -/
 theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
@@ -99,25 +100,21 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/
 lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (cSeq a m : ℚ) = ∑ d ∈ m.divisors, sqClass (bSeq a d : ℚ) := by
-  rw [show (cSeq a m : ℚ) = ∏ d ∈ m.divisors, (bSeq a d : ℚ) from
-      mod_cast cSeq_eq_prod_bSeq a ha hm,
-    sqClass_prod fun d hd ↦ mod_cast bSeq_ne_zero a ha (Nat.pos_of_mem_divisors hd)]
+  rw [cSeq_eq_prod_bSeq a ha hm, Int.cast_prod]
+  exact sqClass_prod fun d hd ↦ mod_cast bSeq_ne_zero a ha (Nat.pos_of_mem_divisors hd)
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `b_m` is the Möbius-weighted sum of the classes of the `c_d`. -/
 lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (bSeq a m : ℚ) = ∑ x ∈ m.divisorsAntidiagonal, (μ x.1) • sqClass (cSeq a x.2 : ℚ) := by
-  rw [intCast_bSeq a ha hm, moebiusFactorK_eq_prod]
-  simp only [eq_intCast]
-  rw [sqClass_prod_zpow _ fun x hx ↦
-    mod_cast ne_zero_of_mem_divisorsAntidiagonal (cSeq_ne_zero a ha) hx]
+  simp only [intCast_bSeq a ha hm, moebiusFactorK_eq_prod, eq_intCast]
+  exact sqClass_prod_zpow _ fun x hx ↦
+    mod_cast ne_zero_of_mem_divisorsAntidiagonal (cSeq_ne_zero a ha) hx
 
 /-- `F d` is a value of `fun i : Fin n ↦ F (i + 1)` whenever `d ∣ i + 1` for some `i : Fin n`. -/
 private lemma mem_range_of_dvd {α : Type*} (F : ℕ → α) {n : ℕ} {i : Fin n} {d : ℕ}
-    (hd : d ∣ (i : ℕ) + 1) : F d ∈ Set.range (fun j : Fin n ↦ F ((j : ℕ) + 1)) :=
+    (hd : d ∣ (i : ℕ) + 1) : F d ∈ Set.range fun j : Fin n ↦ F ((j : ℕ) + 1) :=
   have h1 := Nat.pos_of_dvd_of_pos hd i.1.succ_pos
-  have h2 := Nat.le_of_dvd i.1.succ_pos hd
-  have := i.2
-  ⟨⟨d - 1, by lia⟩, by simp [Nat.sub_add_cancel h1]⟩
+  ⟨⟨d - 1, by have := Nat.le_of_dvd i.1.succ_pos hd; lia⟩, by simp [Nat.sub_add_cancel h1]⟩
 
 /-- Section 1, `(b) ↔ (c)`: `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are 2-independent,
 since their classes in `ℚˣ/(ℚˣ)²` span the same `𝔽₂`-subspace (Möbius inversion in both
@@ -125,7 +122,7 @@ directions). -/
 theorem section1_b_iff_c (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) ↔
       TwoIndependent (fun i : Fin n ↦ (bSeq a ((i : ℕ) + 1) : ℚ)) := by
-  rw [twoIndependent_iff_linearIndependent, twoIndependent_iff_linearIndependent]
+  simp only [twoIndependent_iff_linearIndependent]
   refine linearIndependent_iff_of_span_range_eq (le_antisymm ?_ ?_) <;>
     rw [Submodule.span_le, Set.range_subset_iff] <;> intro i
   · rw [SetLike.mem_coe, sqClass_cSeq_eq_sum_divisors a ha i.1.succ_pos]
@@ -146,7 +143,7 @@ theorem section1_equiv (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   tfae_have 2 ↔ 3 := section1_b_iff_c a ha n
   tfae_finish
 
-/-- Theorem (Section 1), part 2: if none of `|b_2|, …, |b_n|` is a square in `ℚ`, then
+/-- Theorem (Section 1), part 2: if none of `|b_2|, …, |b_n|` is a square, then
 `Ω_n ≅ [C₂]ⁿ`. By pairwise coprimality, the `b_k` are 2-independent as soon as no `b_k` and at
 most one `-b_k` is a square; `-b_1 = a` is the only candidate, since `b_1 = -a` is not a square. -/
 theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
@@ -159,8 +156,7 @@ theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
       isCoprime_bSeq a ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)).mpr
         ⟨fun i ↦ ?_, fun i hi j hj ↦ Fin.ext ((hzero i hi).trans (hzero j hj).symm)⟩))
   rcases eq_or_ne (i : ℕ) 0 with hi | hi
-  · rw [hi, zero_add, bSeq_one]
-    exact fun hsq ↦ ha (mod_cast hsq)
+  · rwa [hi, zero_add, bSeq_one, ← Rat.isSquare_intCast_iff, Int.cast_neg]
   · exact fun hsq ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inl hsq))
 
 /-! ### The `γ`-sequence of the rescaled polynomial -/
@@ -172,9 +168,9 @@ lemma gammaSeq_normPoly_one (ha0 : a ≠ 0) : gammaSeq (normPoly a) a.sign 1 = 1
 /-- The `γ`-sequence of the rescaled polynomial `normPoly a` is `|c_n| / |a|`: substituting
 `x ↦ |a| x` turns the recursion `c_{n+1} = c_n² + a` into the `γ`-recursion of `normPoly a`.
 (At `n = 0` both sides vanish.) -/
-theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (d : ℕ) :
-    |cSeq a d| = gammaSeq (normPoly a) a.sign d * |a| := by
-  induction d with
+theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
+    |cSeq a n| = gammaSeq (normPoly a) a.sign n * |a| := by
+  induction n with
   | zero => simp
   | succ k ih =>
     rcases k with _ | k
@@ -185,24 +181,22 @@ theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (d : ℕ) :
 
 /-- The `γ`-sequence of `normPoly a` is positive, as `c_n ≠ 0` for `n ≥ 1`. -/
 lemma gammaSeq_normPoly_pos (ha : ¬IsSquare (-a : ℚ)) :
-    ∀ d ≥ 1, 0 < gammaSeq (normPoly a) a.sign d := fun d hd ↦
+    ∀ n ≥ 1, 0 < gammaSeq (normPoly a) a.sign n := fun n hn ↦
   (mul_pos_iff_of_pos_right (abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha))).mp
-    (abs_cSeq_eq_gammaSeq_mul_abs a ha d ▸ abs_pos.mpr (cSeq_ne_zero a ha d hd))
+    (abs_cSeq_eq_gammaSeq_mul_abs a ha n ▸ abs_pos.mpr (cSeq_ne_zero a ha n hn))
 
 /-- `|b_n| = β_n` for `n ≥ 2`, `β` the `β`-sequence of the rescaled polynomial `normPoly a`: both
 are Möbius products, of `|c_d| = γ_d · |a|` and of `γ_d`, and the factors `|a|` cancel because the
 exponents `μ(n/d)` sum to zero. -/
-lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) :
+theorem abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) :
     |bSeq a n| = betaSeq (normPoly a) a.sign n := by
   have ha0 := ne_zero_of_not_isSquare_neg a ha
-  have hQ : ((|bSeq a n| : ℤ) : ℚ) = ((betaSeq (normPoly a) a.sign n : ℤ) : ℚ) := by
-    rw [Int.cast_abs, intCast_bSeq a ha (by lia), abs_moebiusFactorK,
-      intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
-        (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') (by lia),
-      ← moebiusFactorK_mul_const (gammaSeq (normPoly a) a.sign)
-        (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
-    simp only [abs_cSeq_eq_gammaSeq_mul_abs a ha]
-  exact_mod_cast hQ
+  rw [← Int.cast_inj (α := ℚ), Int.cast_abs, intCast_bSeq a ha (by lia), abs_moebiusFactorK,
+    intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
+      (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') (by lia),
+    ← moebiusFactorK_mul_const (gammaSeq (normPoly a) a.sign)
+      (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
+  simp only [abs_cSeq_eq_gammaSeq_mul_abs a ha]
 
 /-! ### Theorem (Section 3) -/
 
@@ -210,7 +204,7 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) 
 lemma not_isSquare_neg_of_cases
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
     ¬IsSquare (-a : ℚ) :=
-  mod_cast (show ¬IsSquare (-a) by grind [not_isSquare_of_neg])
+  mod_cast show ¬IsSquare (-a) by grind [not_isSquare_of_neg]
 
 /-- Lemma 2.2 applied to the `c`-sequence: in each of the three cases of the Section 3 theorem,
 no `|b_n|` with `n ≥ 2` is a square. Case a) gives `g(0) = 1`, `g(1) ≡ 2 mod 4` for the rescaled

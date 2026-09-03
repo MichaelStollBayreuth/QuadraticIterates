@@ -300,7 +300,7 @@ theorem twoIndependent_iff_of_pairwise_isCoprime {f : ι → ℤ} (hf : Pairwise
   refine ⟨fun h ↦ ⟨h.not_isSquare, fun i hi j hj ↦ by_contra fun hij ↦
     h {i, j} (Finset.insert_nonempty _ _) ?_⟩, fun ⟨hsq, hsub⟩ S hS hprod ↦ ?_⟩
   · rw [Finset.prod_pair hij, ← neg_mul_neg]
-    exact IsSquare.mul hi hj
+    exact hi.mul hj
   · have hneg (i : ι) (hi : i ∈ S) : IsSquare (-f i) :=
       (isSquare_abs_iff.mp (Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime f S
         (hf.set_pairwise _) hprod hi)).resolve_left (hsq i)

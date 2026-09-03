@@ -82,8 +82,8 @@ theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
 /-- `|x|` is a square iff `x` or `-x` is. -/
 theorem isSquare_abs_iff {α : Type*} [Ring α] [LinearOrder α] [IsOrderedRing α] {x : α} :
     IsSquare |x| ↔ IsSquare x ∨ IsSquare (-x) :=
-  ⟨fun h ↦ (abs_choice x).elim (fun e ↦ .inl ((congrArg IsSquare e).mp h))
-    fun e ↦ .inr ((congrArg IsSquare e).mp h),
+  ⟨fun h ↦ (abs_choice x).imp (fun e ↦ (congrArg IsSquare e).mp h)
+      fun e ↦ (congrArg IsSquare e).mp h,
     fun h ↦ h.elim (fun h ↦ (congrArg IsSquare (abs_of_nonneg h.nonneg)).mpr h) fun h ↦
       (congrArg IsSquare (abs_of_nonpos (neg_nonneg.mp h.nonneg))).mpr h⟩
 

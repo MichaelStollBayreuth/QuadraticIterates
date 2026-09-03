@@ -18,9 +18,8 @@ polynomials*, Arch. Math. 59 (1992), 239-244; an upstreaming candidate for Mathl
 
 /-- A product of powers of a fixed nonzero base with integer exponents collapses to a single
 power. -/
-theorem Finset.prod_zpow_eq_zpow_sum₀ {ι G : Type*} [CommGroupWithZero G] {x : G} (hx : x ≠ 0)
-    (s : Finset ι) (e : ι → ℤ) : ∏ i ∈ s, x ^ e i = x ^ (∑ i ∈ s, e i) := by
-  classical
-  induction s using Finset.induction with
+theorem Finset.prod_zpow_eq_zpow_sum₀ {ι G₀ : Type*} [CommGroupWithZero G₀] {x : G₀} (hx : x ≠ 0)
+    (s : Finset ι) (f : ι → ℤ) : ∏ i ∈ s, x ^ f i = x ^ (∑ i ∈ s, f i) := by
+  induction s using Finset.cons_induction with
   | empty => simp
-  | insert a t ha ih => rw [prod_insert ha, sum_insert ha, ih, zpow_add₀ hx]
+  | cons a t ha ih => rw [prod_cons, sum_cons, ih, zpow_add₀ hx]
