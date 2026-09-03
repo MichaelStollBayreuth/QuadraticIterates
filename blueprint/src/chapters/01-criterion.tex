@@ -195,7 +195,6 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
     QuadraticIterates.isSquare_algebraMap_iff_exists_mul_prod,
     QuadraticIterates.isSquare_algebraMap_iff_exists_sq_eq,
     QuadraticIterates.finrank_adjoin_range_eq_two_pow,
-    QuadraticIterates.finrank_adjoin_le_two_pow,
     QuadraticIterates.card_monoidHom_eq_two_pow,
     QuadraticIterates.isSquare_algebraMap_cSeq,
     QuadraticIterates.twoIndependent_snoc_iff}
@@ -224,8 +223,9 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   Lemma~\ref{lem:multiquadratic}). For the upper bound, any subfield of $K_n$ generated over
   $\QQ$ by square roots of rationals is Galois with elementary abelian group, so its degree is
   bounded by $\#\Hom(\Om_n, C_2) = 2^n$ (Lemma~\ref{lem:wreathab}). Hence a square root of $c$
-  lying in $K_n$ already lies in $\QQ(\sqrt{c_1}, \dots, \sqrt{c_n})$, and the multiquadratic
-  descent lemma (Lemma~\ref{lem:descent}) turns that into the statement that $c$ times a
+  lying in $K_n$ already lies in the maximal such subfield $\QQ(\sqrt{c_1}, \dots, \sqrt{c_n})$
+  (\lname{IntermediateField.mem\_adjoin\_of\_sq\_eq\_algebraMap\_of\_card\_le}), and the
+  multiquadratic descent lemma (Lemma~\ref{lem:descent}) turns that into the statement that $c$ times a
   subproduct of the $c_i$ is a square in $\QQ$ --- which is exactly the failure of
   $2$-independence of $c_1, \dots, c_n, c$. The hypothesis $c \ne 0$ is not needed for the formal
   statement: for $c = 0$ both sides are false.}
