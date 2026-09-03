@@ -129,6 +129,11 @@ lemma intCast_eval_iteratedPoly {S : Type*} [CommRing S] (a x : ℤ) (n : ℕ) :
     (((iteratedPoly a n).eval x : ℤ) : S) = (iteratedPoly (a : S) n).eval (x : S) :=
   map_eval_iteratedPoly a (Int.castRingHom S) x n
 
+/-- The iterates `f_{n+1}` (`n ≥ 0`) are even: `f_{n+1}(-X) = f_{n+1}`. -/
+lemma iteratedPoly_succ_comp_neg_X {R : Type*} [CommRing R] (a : R) (n : ℕ) :
+    (iteratedPoly a (n + 1)).comp (-X) = iteratedPoly a (n + 1) := by
+  simp [iteratedPoly_succ_comp, comp_assoc]
+
 /-! ### Splitting fields, Galois groups and wreath powers -/
 
 /-- `fℚ[a, n]` denotes the `n`-th iterate `f_n` of `X² + a` over `ℚ`, `iteratedPoly (a : ℚ) n`. -/
@@ -374,6 +379,50 @@ theorem relfinrank_succ_le (n : ℕ) :
   intro x ⟨α, hα, hx⟩
   exact ⟨⟨α - a, sub_mem (IntermediateField.subset_adjoin ℚ _ hα)
     (IntermediateField.intCast_mem _ a)⟩, hx ▸ hg α⟩
+
+lemma splittingField_one_eq_bot_of_isSquare (ha : IsSquare (-a : ℚ)) : splittingField a 1 = ⊥ := by
+  obtain ⟨b, hb⟩ := ha
+  refine IntermediateField.adjoin_eq_bot_iff.mpr fun β hβ ↦ ?_
+  have haeval : (aeval β) (X ^ 2 + C (a : ℚ)) = 0 := by
+    simpa [iteratedPoly_one] using aeval_eq_zero_of_mem_rootSet hβ
+  have hsq : β ^ 2 = (algebraMap ℚ (AlgebraicClosure ℚ) b) ^ 2 := by
+    have hneg : β ^ 2 = -(algebraMap ℚ (AlgebraicClosure ℚ) (a : ℚ)) := by
+      simp only [map_add, map_pow, aeval_X, aeval_C] at haeval
+      linear_combination haeval
+    rw [hneg, ← map_neg, hb, map_mul, sq]
+  rw [SetLike.mem_coe, IntermediateField.mem_bot]
+  rcases sq_eq_sq_iff_eq_or_eq_neg.mp hsq with h | h
+  · exact ⟨b, h.symm⟩
+  · exact ⟨-b, by rw [map_neg]; exact h.symm⟩
+
+lemma relfinrank_le_two_pow {m n : ℕ} (hmn : m ≤ n) :
+    (splittingField a m).relfinrank (splittingField a n) ≤ 2 ^ (2 ^ n - 2 ^ m) := by
+  induction n, hmn using Nat.le_induction with
+  | base => simp [IntermediateField.relfinrank_self]
+  | succ k hk ih =>
+    rw [← IntermediateField.relfinrank_mul_relfinrank (splittingField_mono a hk)
+      (splittingField_le_succ a k)]
+    refine (Nat.mul_le_mul ih (relfinrank_succ_le a k)).trans ?_
+    rw [← pow_add, ← Nat.sub_add_comm (Nat.pow_le_pow_right Nat.zero_lt_two hk), pow_succ, mul_two]
+
+lemma not_isSquare_neg_of_finrank_eq {n : ℕ} (hn : 1 ≤ n)
+    (hmax : Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1)) :
+    ¬IsSquare (-a : ℚ) := by
+  intro ha
+  have hbot : splittingField a 1 = ⊥ := splittingField_one_eq_bot_of_isSquare a ha
+  have hle : splittingField a 1 ≤ splittingField a n := splittingField_mono a hn
+  have htower := IntermediateField.finrank_bot_mul_relfinrank hle
+  rw [hbot, IntermediateField.finrank_bot, one_mul] at htower
+  have hbound : (⊥ : IntermediateField ℚ (AlgebraicClosure ℚ)).relfinrank (splittingField a n)
+      ≤ 2 ^ (2 ^ n - 2) := by
+    have hb := relfinrank_le_two_pow a hn
+    rw [hbot] at hb
+    simpa [pow_one] using hb
+  rw [htower, hmax] at hbound
+  have hexp : 2 ^ n - 1 ≤ 2 ^ n - 2 := (Nat.pow_le_pow_iff_right one_lt_two).mp hbound
+  have h2n : 2 ≤ 2 ^ n := by
+    simpa [pow_one] using Nat.pow_le_pow_right two_pos hn
+  lia
 
 /-! ### Odoni's embedding `Ω_n ↪ [C₂]ⁿ` -/
 
