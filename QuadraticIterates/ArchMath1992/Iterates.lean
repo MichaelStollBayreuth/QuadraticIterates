@@ -10,6 +10,7 @@ public import Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 
+import QuadraticIterates.Mathlib.Data.Fintype.Basic
 import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 import QuadraticIterates.Mathlib.GroupTheory.Card
 import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
@@ -268,6 +269,22 @@ theorem TwoIndependent.of_snoc [CommMonoid M] {n : ℕ} {v : Fin n → M} {c : M
     TwoIndependent v := fun S hS ↦ by
   simpa [Fin.snoc_castSucc, Finset.prod_map S Fin.castSuccEmb (Fin.snoc v c)] using
     h (S.map Fin.castSuccEmb) hS.map
+
+/-- `Fin.snoc v c` is 2-independent iff `v` is and `c` times no subproduct of `v` is a square. -/
+theorem twoIndependent_snoc_iff [CommMonoid M] {n : ℕ} (v : Fin n → M) (c : M) :
+    TwoIndependent (Fin.snoc v c) ↔
+      TwoIndependent v ∧ ∀ S : Finset (Fin n), ¬IsSquare (c * ∏ i ∈ S, v i) := by
+  have hprod (S : Finset (Fin n)) :
+      ∏ i ∈ S.map Fin.castSuccEmb, Fin.snoc v c i = ∏ i ∈ S, v i := by
+    simp [Fin.snoc_castSucc]
+  refine ⟨fun h ↦ ⟨h.of_snoc, fun S ↦ ?_⟩, fun ⟨hv, hc⟩ T hT ↦ ?_⟩
+  · simpa [Finset.prod_insert, hprod S, Fin.snoc_last] using
+      h (insert (Fin.last n) (S.map Fin.castSuccEmb)) (Finset.insert_nonempty _ _)
+  · obtain ⟨S, rfl | rfl⟩ := Fin.exists_eq_map_castSuccEmb_or_insert_last T
+    · rw [hprod]
+      exact hv S (Finset.map_nonempty.mp hT)
+    · rw [Finset.prod_insert (by simp), Fin.snoc_last, hprod]
+      exact hc S
 
 /-- A family in a field `L` is 2-independent iff the family of its classes in `Lˣ/(Lˣ)²` is
 `𝔽₂`-linearly independent. -/

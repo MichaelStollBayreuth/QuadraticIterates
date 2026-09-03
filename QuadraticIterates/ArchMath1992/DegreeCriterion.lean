@@ -230,41 +230,13 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     IntermediateField.square_descent (fun i _ ↦ hx2 i) (fun i _ ↦ hindep.ne_zero i) c]
   exact exists_congr fun S ↦ and_iff_right (Finset.subset_univ S)
 
-lemma twoIndependent_snoc_iff {n : ℕ} {v : Fin n → ℚ} (hv : TwoIndependent v) (c : ℚ) :
-    TwoIndependent (Fin.snoc v c) ↔
-      ∀ S : Finset (Fin n), ¬IsSquare (c * ∏ i ∈ S, v i) := by
-  have hprod_no (S : Finset (Fin n)) :
-      ∏ i ∈ S.map Fin.castSuccEmb, Fin.snoc v c i = ∏ i ∈ S, v i := by
-    simp [Fin.snoc_castSucc]
-  have hprod_yes (S : Finset (Fin n)) :
-      ∏ i ∈ insert (Fin.last n) (S.map Fin.castSuccEmb), Fin.snoc v c i
-        = c * ∏ i ∈ S, v i := by
-    simp [Fin.snoc_last, hprod_no S]
-  have hdecomp (T : Finset (Fin (n + 1))) :
-      ∃ S : Finset (Fin n),
-        (Fin.last n ∉ T → T = S.map Fin.castSuccEmb) ∧
-        (Fin.last n ∈ T → T = insert (Fin.last n) (S.map Fin.castSuccEmb)) := by
-    refine ⟨Finset.univ.filter (fun i : Fin n ↦ i.castSucc ∈ T), ?_, ?_⟩ <;>
-      · intro hlast
-        ext x
-        rcases Fin.eq_castSucc_or_eq_last x with ⟨j, rfl⟩ | rfl <;> simp [hlast]
-  refine ⟨fun hsnocsq S ↦ ?_, fun hcS T hT ↦ ?_⟩
-  · simpa [hprod_yes S] using
-      hsnocsq (insert (Fin.last n) (S.map Fin.castSuccEmb)) (Finset.insert_nonempty _ _)
-  · obtain ⟨S, hno, hyes⟩ := hdecomp T
-    by_cases hlast : Fin.last n ∈ T
-    · rw [hyes hlast, hprod_yes S]
-      exact hcS S
-    · rw [hno hlast, hprod_no S]
-      exact hv S ((Finset.map_nonempty (f := Fin.castSuccEmb)).mp (hno hlast ▸ hT))
-
 /-- Lemma 1.5: if `Ω_n ≅ [C_2]^n` and `c_1, …, c_n` are 2-independent, then `c ∈ ℚ` is a
 non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent (for `c = 0` both sides fail). -/
 theorem kummer_extension_criterion {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
     (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ))) (c : ℚ) :
     ¬IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       TwoIndependent (Fin.snoc (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) c) := by
-  rw [twoIndependent_snoc_iff hindep c,
+  rw [twoIndependent_snoc_iff, and_iff_right hindep,
     isSquare_algebraMap_iff_exists_mul_prod a hiso hindep c, not_exists]
 
 end
