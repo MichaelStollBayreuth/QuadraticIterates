@@ -135,7 +135,7 @@ alignment:
       module: "QuadraticIterates.ArchMath1992.Iterates"
       status: "proved"
     - source: "Lemma 1.4"
-      lean: "embed_equiv"
+      lean: "nonempty_mulEquiv_succ_iff"
       module: "QuadraticIterates.ArchMath1992.Iterates"
       status: "proved"
     - source: "Lemma 1.5"

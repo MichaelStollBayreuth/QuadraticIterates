@@ -23,7 +23,8 @@ The iterates `f_n` of `f = X² + a`, the splitting field `K_n` of `f_n` over `�
 the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 2-independence of
 families of rationals. The main results here are Odoni's embedding `Ω_n ↪ [C₂]ⁿ`
 (`odoni_embedding`), the Kummer tower `K_n ⊆ K_{n+1}` with `[K_{n+1} : K_n] ≤ 2^{2^n}`
-(`splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le`), and Lemma 1.4 (`embed_equiv`).
+(`splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le`), and Lemma 1.4
+(`nonempty_mulEquiv_succ_iff`).
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -403,42 +404,36 @@ lemma card_wreathPower (n : ℕ) : Nat.card (WreathPower n) = 2 ^ (2 ^ n - 1) :=
     Nat.geomSum_eq le_rfl]
   norm_num
 
+/-- `#[C_2]^{n+1} = #[C_2]^n · 2^{2^n}`. -/
+lemma card_wreathPower_succ (n : ℕ) :
+    Nat.card (WreathPower (n + 1)) = Nat.card (WreathPower n) * 2 ^ 2 ^ n := by
+  rw [card_wreathPower, card_wreathPower, ← pow_add]
+  congr 1
+  have := Nat.one_le_two_pow (n := n)
+  rw [pow_succ]
+  lia
+
 lemma card_galoisGroup_eq_finrank (n : ℕ) :
     Nat.card (GaloisGroup a n) = Module.finrank ℚ (splittingField a n) :=
   (Nat.card_congr (AlgEquiv.autCongr (IsSplittingField.algEquiv _ (fℚ[a, n])).symm).toEquiv).trans
     (IsGalois.card_aut_eq_finrank ℚ _)
 
-/-- Lemma 1.4: `Ω_n` embeds into `[C_2]^n`, and `Ω_{n+1} ≅ [C_2]^{n+1}` iff `Ω_n ≅ [C_2]^n` and
-`[K_{n+1} : K_n] = 2^{2^n}`. -/
-theorem embed_equiv (n : ℕ) :
-    (∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ) ∧
-    (Nonempty (GaloisGroup a (n + 1) ≃* WreathPower (n + 1)) ↔
+/-- Lemma 1.4: `Ω_{n+1} ≅ [C_2]^{n+1}` iff `Ω_n ≅ [C_2]^n` and `[K_{n+1} : K_n] = 2^{2^n}`. Both
+`#Ω_n ≤ #[C_2]^n` (by `odoni_embedding`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`, and the products of the
+two sides agree iff both factors do. -/
+theorem nonempty_mulEquiv_succ_iff (n : ℕ) :
+    Nonempty (GaloisGroup a (n + 1) ≃* WreathPower (n + 1)) ↔
       Nonempty (GaloisGroup a n ≃* WreathPower n) ∧
-        (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n) := by
+        (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n := by
   obtain ⟨φn, hφn⟩ := odoni_embedding a n
   obtain ⟨φn1, hφn1⟩ := odoni_embedding a (n + 1)
-  refine ⟨⟨φn, hφn⟩, ?_⟩
-  have htower : Module.finrank ℚ ↥(splittingField a n)
-        * (splittingField a n).relfinrank (splittingField a (n + 1))
-      = Module.finrank ℚ ↥(splittingField a (n + 1)) :=
-    IntermediateField.finrank_bot_mul_relfinrank (splittingField_le_succ a n)
-  have hxle : Module.finrank ℚ ↥(splittingField a n) ≤ 2 ^ (2 ^ n - 1) := by
-    refine Nat.le_of_dvd (Nat.two_pow_pos _) ?_
-    have h := Subgroup.card_dvd_of_injective φn hφn
-    rwa [card_galoisGroup_eq_finrank, card_wreathPower] at h
-  have hrle := relfinrank_succ_le a n
-  have hexp : 2 ^ (2 ^ (n + 1) - 1) = 2 ^ (2 ^ n - 1) * 2 ^ 2 ^ n := by
-    rw [← pow_add]
-    congr 1
-    have := Nat.one_le_two_pow (n := n)
-    rw [pow_succ]
-    lia
   rw [φn1.nonempty_mulEquiv_iff_card_eq hφn1, φn.nonempty_mulEquiv_iff_card_eq hφn,
-    card_galoisGroup_eq_finrank, card_galoisGroup_eq_finrank, card_wreathPower, card_wreathPower]
-  refine ⟨fun hy ↦ ?_, fun ⟨hxeq, hreq⟩ ↦ ?_⟩
-  · exact (mul_eq_mul_iff_eq_and_eq_of_pos hxle hrle Module.finrank_pos (Nat.two_pow_pos _)).mp
-      (by rw [htower, hy, hexp])
-  · rw [← htower, hxeq, hreq, ← hexp]
+    card_wreathPower_succ, card_galoisGroup_eq_finrank a (n + 1),
+    ← IntermediateField.finrank_bot_mul_relfinrank (splittingField_le_succ a n),
+    ← card_galoisGroup_eq_finrank]
+  exact mul_eq_mul_iff_eq_and_eq_of_pos
+    (Nat.le_of_dvd Nat.card_pos (Subgroup.card_dvd_of_injective φn hφn)) (relfinrank_succ_le a n)
+    Nat.card_pos (Nat.two_pow_pos _)
 
 end
 

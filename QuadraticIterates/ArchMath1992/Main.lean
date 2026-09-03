@@ -121,7 +121,7 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       rcases Fin.eq_castSucc_or_eq_last i with ⟨j, rfl⟩ | rfl
       · simp [Fin.snoc_castSucc]
       · simp [Fin.snoc_last]
-    rw [hsnoc, (embed_equiv a n).2]
+    rw [hsnoc, nonempty_mulEquiv_succ_iff a n]
     refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun hsnocindep ↦ ?_⟩
     · exact (kummer_extension_criterion a hiso (ih.mp hiso) _).mp
         ((degree_criterion a (irreducible_iteratedPoly a ha n)).mp hrel)
