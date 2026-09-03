@@ -302,6 +302,28 @@ theorem prod_gammaSeq_mul_eq (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
   · rw [mul_one, if_pos rfl, mul_neg, mul_one, hγk_neg]
   · rw [if_neg h, mul_one, mul_comm k t, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)]
 
+/-- If `γ_k + γ_{2k} = 0`, then for disjoint sets `Sp`, `Sm` of positive indices of the same
+size, one of which contains `1`, `∏_{t ∈ Sp} γ_{kt} = -∏_{t ∈ Sm} γ_{kt}` (over any ring, for
+even `g`): both products are `±γ_{2k}^{#Sp}`, and the index `1` decides the sign. -/
+theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
+    (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) {Sp Sm : Finset ℕ}
+    (hdisj : Disjoint Sp Sm) (hcard : Sp.card = Sm.card) (hS : ∀ t ∈ Sp ∪ Sm, 1 ≤ t)
+    (h1 : 1 ∈ Sp ∪ Sm) :
+    ∏ t ∈ Sp, gammaSeq g ε (k * t) = -∏ t ∈ Sm, gammaSeq g ε (k * t) := by
+  rw [prod_gammaSeq_mul_eq hg hk hzero fun t ht ↦ hS t (Finset.mem_union_left _ ht),
+    prod_gammaSeq_mul_eq hg hk hzero fun t ht ↦ hS t (Finset.mem_union_right _ ht), hcard]
+  rcases Finset.mem_union.mp h1 with h | h
+  · simp [h, Finset.disjoint_left.mp hdisj h]
+  · simp [h, Finset.disjoint_right.mp hdisj h]
+
+/-- If `γ_k + γ_{2k} = 0` and `γ_{2k}` is a unit, then `∏_{t ∈ S} γ_{kt}` is a unit for every set
+`S` of positive indices (over any ring, for even `g`). -/
+theorem isUnit_prod_gammaSeq_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
+    (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) (hu : IsUnit (gammaSeq g ε (2 * k)))
+    {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit (∏ t ∈ S, gammaSeq g ε (k * t)) := by
+  rw [prod_gammaSeq_mul_eq hg hk hzero hS]
+  exact (hu.pow _).mul (by split_ifs; exacts [isUnit_one.neg, isUnit_one])
+
 /-- For even `g`, `γ_n + γ_{n+1}` divides `γ_{n+j} - γ_{n+1}` for all `j ≥ 1` (`n ≥ 1`): modulo
 `γ_n + γ_{n+1}` one has `g(γ_{n+1}) ≡ g(-γ_n) = γ_{n+1}`, so the sequence is constant from index
 `n + 1` on. -/
@@ -456,28 +478,13 @@ lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     ((betaSeq g ε n : ℤ) : ℚ) = moebiusFactorK (gammaSeq g ε) n :=
   algebraMap_moebiusFactorR hγ (gammaSeq_associated_gcd hg hε) n hn
 
-/-- The `ZMod m` specialization of `prod_gammaSeq_mul_eq` via `intCast_gammaSeq`. -/
-private lemma prod_gammaSeq_mul_cast_eq (hg : EvenPoly g) {ε : ℤ} {k : ℕ} (hk : 1 ≤ k) {m : ℕ}
-    (hdvd : (m : ℤ) ∣ gammaSeq g ε k + gammaSeq g ε (2 * k))
-    {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) :
-    ((∏ t ∈ S, gammaSeq g ε (k * t) : ℤ) : ZMod m)
-      = ((gammaSeq g ε (2 * k) : ℤ) : ZMod m) ^ S.card * (if 1 ∈ S then -1 else 1) := by
-  have hz : gammaSeq (g.map (Int.castRingHom (ZMod m))) (ε : ZMod m) k
-      + gammaSeq (g.map (Int.castRingHom (ZMod m))) (ε : ZMod m) (2 * k) = 0 := by
-    rw [← intCast_gammaSeq, ← intCast_gammaSeq, ← Int.cast_add,
-      ZMod.intCast_zmod_eq_zero_iff_dvd]; exact_mod_cast hdvd
-  rw [Int.cast_prod, intCast_gammaSeq,
-    Finset.prod_congr rfl fun t _ ↦ intCast_gammaSeq g ε (ZMod m) (k * t),
-    prod_gammaSeq_mul_eq (hg.map _) hk hz hS]
-
-/-- Lemma 2.1: if for each `n ≥ 1` some `m` divides `γ_n + γ_{2n}`, is prime to `γ_n`, and `-1` is
-not a square mod `m`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
+/-- Lemma 2.1: if for each `n ≥ 1` the modulus `m n` divides `γ_n + γ_{2n}`, is prime to `γ_n`,
+and `-1` is not a square mod `m n`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
 theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
-    (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0)
-    (hm : ∀ n ≥ 1, ∃ m : ℕ,
-      (m : ℤ) ∣ gammaSeq g ε n + gammaSeq g ε (2 * n) ∧
-      IsCoprime (m : ℤ) (gammaSeq g ε n) ∧
-      ¬IsSquare (-1 : ZMod m)) :
+    (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) {m : ℕ → ℕ}
+    (hdvd : ∀ n ≥ 1, (m n : ℤ) ∣ gammaSeq g ε n + gammaSeq g ε (2 * n))
+    (hcop : ∀ n ≥ 1, IsCoprime (m n : ℤ) (gammaSeq g ε n))
+    (hnsq : ∀ n ≥ 1, ¬IsSquare (-1 : ZMod (m n))) :
     ∀ n ≥ 2, ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
   intro n hn2
   set n' := UniqueFactorizationMonoid.radical n
@@ -485,39 +492,23 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
   rw [mul_comm] at hk
   have hn'1 : 1 < n' := Nat.one_lt_radical_iff.mpr (by lia)
   have hkpos : 1 ≤ k := by grind
-  obtain ⟨m, hmdvd, hmcop, hmnsq⟩ := hm k hkpos
   obtain ⟨Sp, Sm, hdisj, hunion, hcard, hSp, hSm⟩ :=
     moebius_sign_partition n' hn'1 UniqueFactorizationMonoid.squarefree_radical
-  set P : ℤ := ∏ t ∈ Sp, gammaSeq g ε (k * t) with hP
-  set Q : ℤ := ∏ t ∈ Sm, gammaSeq g ε (k * t) with hQ
-  have hβ : ((betaSeq g ε n : ℤ) : ℚ) = (P : ℚ) / (Q : ℚ) := by
-    rw [intCast_betaSeq hg hε hγ (by lia), moebiusFactorK_eq_prod]
-    simp only [eq_intCast]
-    rw [prod_pow_moebius_eq_div n k n' (by lia) rfl hk
-        (fun d ↦ ((gammaSeq g ε d : ℤ) : ℚ)) hdisj hunion hSp hSm,
-      hP, hQ]
-    push_cast
-    ring
-  set α : ZMod m := ((gammaSeq g ε (2 * k) : ℤ) : ZMod m)
-  have hPmod : (P : ZMod m) = α ^ Sp.card * (if 1 ∈ Sp then -1 else 1) :=
-    prod_gammaSeq_mul_cast_eq hg hkpos hmdvd fun t ht ↦ Nat.pos_of_mem_divisors
-      (hunion ▸ Finset.mem_union_left Sm ht : t ∈ n'.divisors)
-  have hQmod : (Q : ZMod m) = α ^ Sm.card * (if 1 ∈ Sm then -1 else 1) :=
-    prod_gammaSeq_mul_cast_eq hg hkpos hmdvd fun t ht ↦ Nat.pos_of_mem_divisors
-      (hunion ▸ Finset.mem_union_right Sp ht : t ∈ n'.divisors)
-  have hone : (1 ∈ Sp ∧ 1 ∉ Sm) ∨ (1 ∉ Sp ∧ 1 ∈ Sm) :=
-    (Finset.mem_union.mp (hunion ▸ Nat.one_mem_divisors.mpr (by lia) : (1 : ℕ) ∈ Sp ∪ Sm)).imp
-      (fun h ↦ ⟨h, Finset.disjoint_left.mp hdisj h⟩)
-      (fun h ↦ ⟨fun h' ↦ Finset.disjoint_left.mp hdisj h' h, h⟩)
-  have hα_unit : IsUnit α := ZMod.isUnit_intCast_of_isCoprime_of_dvd_add hmcop hmdvd
-  have hPnegQ : (P : ZMod m) = -(Q : ZMod m) := by
-    rw [hPmod, hQmod, hcard]
-    rcases hone with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> simp [h1, h2]
-  have hQunit : IsUnit (Q : ZMod m) := by
-    rw [hQmod]
-    exact (hα_unit.pow _).mul (by split_ifs; exacts [isUnit_one.neg, isUnit_one])
-  rw [hβ]
-  exact fun hsq ↦ hmnsq (ZMod.isSquare_neg_one_of_isSquare_div hPnegQ hQunit hsq)
+  have hS (t : ℕ) (ht : t ∈ Sp ∪ Sm) : 1 ≤ t := Nat.pos_of_mem_divisors (hunion ▸ ht)
+  have h1 : 1 ∈ Sp ∪ Sm := hunion ▸ Nat.one_mem_divisors.mpr (by lia)
+  rw [intCast_betaSeq hg hε hγ (by lia), moebiusFactorK_eq_prod]
+  simp only [eq_intCast]
+  rw [prod_pow_moebius_eq_div n k n' (by lia) rfl hk (fun d ↦ ((gammaSeq g ε d : ℤ) : ℚ)) hdisj
+    hunion hSp hSm, ← Int.cast_prod, ← Int.cast_prod]
+  -- the two products are `P ≡ -Q` with `Q` a unit modulo `m k`, computed in `ZMod (m k)`
+  have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ (m k)).mpr (hdvd k hkpos)
+  have hu := ZMod.isUnit_intCast_of_isCoprime_of_dvd_add (hcop k hkpos) (hdvd k hkpos)
+  simp only [Int.cast_add, intCast_gammaSeq] at hz hu
+  refine fun hsq ↦ hnsq k hkpos (ZMod.isSquare_neg_one_of_isSquare_div ?_ ?_ hsq) <;>
+    simp only [Int.cast_prod, intCast_gammaSeq]
+  · exact prod_gammaSeq_mul_eq_neg_prod (hg.map _) hkpos hz hdisj hcard hS h1
+  · exact isUnit_prod_gammaSeq_mul (hg.map _) hkpos hz hu fun t ht ↦
+      hS t (Finset.mem_union_right _ ht)
 
 /-- The `ZMod 4` specialization of `gammaSeq_add_succ_eq_three` via `intCast_gammaSeq`. -/
 lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)
@@ -556,12 +547,16 @@ theorem not_isSquare_betaSeq_of_pos (hg : EvenPoly g) {ε : ℤ}
     ∀ n ≥ 2, ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
   have h0u : IsUnit (g.eval 0) :=
     hcase.elim (fun h ↦ h.1 ▸ isUnit_one) fun h ↦ IsUnit.of_pow_eq_one h.1 two_ne_zero
-  refine not_isSquare_betaSeq hg hε (fun n hn ↦ (hpos n hn).ne') fun n hn ↦ ?_
+  have hdtn (n : ℕ) (hn : 1 ≤ n) : ((gammaSeq g ε n + gammaSeq g ε (n + 1)).toNat : ℤ)
+      = gammaSeq g ε n + gammaSeq g ε (n + 1) :=
+    Int.toNat_of_nonneg (add_pos (hpos n hn) (hpos (n + 1) (by lia))).le
+  refine not_isSquare_betaSeq hg hε (fun n hn ↦ (hpos n hn).ne')
+    (m := fun n ↦ (gammaSeq g ε n + gammaSeq g ε (n + 1)).toNat)
+    (fun n hn ↦ by rw [hdtn n hn]; exact gammaSeq_add_succ_dvd hg ε hn)
+    (fun n hn ↦ by rw [hdtn n hn]; exact isCoprime_gammaSeq_add_succ g ε hn h0u) fun n hn ↦ ?_
   set D : ℤ := gammaSeq g ε n + gammaSeq g ε (n + 1) with hD
   have hDpos : 0 < D := add_pos (hpos n hn) (hpos (n + 1) (by lia))
-  have hdtn : (D.toNat : ℤ) = D := Int.toNat_of_nonneg hDpos.le
-  refine ⟨D.toNat, by rw [hdtn]; exact gammaSeq_add_succ_dvd hg ε hn,
-    by rw [hdtn]; exact isCoprime_gammaSeq_add_succ g ε hn h0u, ?_⟩
+  have hdtn : (D.toNat : ℤ) = D := hdtn n hn
   rcases hcase with ⟨h0, h1⟩ | ⟨h0, h1⟩
   · obtain rfl : ε = 1 := by
       have hp1 := hpos 1 le_rfl
