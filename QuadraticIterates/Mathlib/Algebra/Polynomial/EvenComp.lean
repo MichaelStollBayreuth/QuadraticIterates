@@ -3,7 +3,6 @@ module
 public import Mathlib.Algebra.GCDMonoid.Basic
 public import Mathlib.Algebra.Polynomial.Expand
 
-import Mathlib.Algebra.Polynomial.FieldDivision
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
@@ -41,10 +40,9 @@ variable {R : Type*} [CommRing R]
   simp only [add_comp, pow_comp, X_comp, C_comp]
   ring
 
-/-- `X ↦ -X` preserves being associated. -/
-lemma _root_.Associated.comp_neg_X {p q : R[X]} (h : Associated p q) :
-    Associated (p.comp (-X)) (q.comp (-X)) :=
-  h.map (algEquivAevalNegX (R := R)).toMulEquiv.toMonoidHom
+/-- `X ↦ -X` preserves the degree. -/
+@[simp] theorem natDegree_comp_neg_X (p : R[X]) : (p.comp (-X)).natDegree = p.natDegree :=
+  natDegree_eq_of_degree_eq degree_comp_neg_X
 
 /-- Over a domain, a polynomial whose reflection is merely *associated* to it is fixed by
 `X ↦ -X` up to a sign. -/
@@ -104,9 +102,7 @@ private theorem Monic.eq_C_neg_one_pow_mul_of_associated {g p : K[X]} (hg : g.Mo
     (h : Associated p (g * g.comp (-X))) : p = C ((-1) ^ g.natDegree) * (g * g.comp (-X)) := by
   refine eq_of_monic_of_associated hp ?_ (h.trans (associated_unit_mul_left _ _
     (isUnit_C.mpr (isUnit_one.neg.pow _))).symm)
-  convert hg.mul hg.neg_one_pow_natDegree_mul_comp_neg_X using 1
-  rw [map_pow, map_neg, map_one]
-  ring
+  simpa [mul_left_comm] using hg.mul hg.neg_one_pow_natDegree_mul_comp_neg_X
 
 -- The pairing of the irreducible factors of an even polynomial without nontrivial even divisors
 -- under `X ↦ -X`, as an instance of `exists_normalizedFactors_eq_add_map`.
@@ -115,12 +111,9 @@ private theorem exists_normalizedFactors_eq_add_map_normalize_comp_neg_X [Decida
     (h : ∀ d : K[X], d ∣ p → Associated (d.comp (-X)) d → IsUnit d ∨ Associated d p) :
     ∃ N : Multiset K[X], UniqueFactorizationMonoid.normalizedFactors p =
       N + N.map fun q ↦ normalize (q.comp (-X)) := by
-  classical
-  set σ : K[X] ≃* K[X] := (algEquivAevalNegX (R := K)).toRingEquiv.toMulEquiv with hσdef
-  have hσ (q : K[X]) : σ q = q.comp (-X) := by
-    rw [hσdef]
-    exact (algEquivAevalNegX_apply q).trans comp_eq_aeval.symm
-  simpa only [hσ] using exists_normalizedFactors_eq_add_map (σ := σ)
+  set σ : K[X] ≃* K[X] := (algEquivAevalNegX (R := K)).toMulEquiv
+  have hσ (q : K[X]) : σ q = q.comp (-X) := comp_eq_aeval.symm
+  simpa only [hσ] using exists_normalizedFactors_eq_add_map σ
     (fun q ↦ by rw [hσ, hσ, comp_neg_X_comp_neg_X]) hp0 (by rw [hσ, heven]; exact .refl p) hirr
     (by simpa only [hσ] using h)
 
@@ -139,8 +132,8 @@ theorem Monic.exists_mul_comp_neg_X_eq_of_not_irreducible {p : K[X]} (hp : p.Mon
       ((Polynomial.mem_normalizedFactors_iff hp.ne_zero).mp
         (hN ▸ Multiset.mem_add.mpr (.inl hq))).2.1
   have hτ : (N.map fun q ↦ normalize (q.comp (-X))).prod = normalize (N.prod.comp (-X)) := by
-    rw [multiset_prod_comp, ← coe_normalizeHom, map_multiset_prod normalizeHom, Multiset.map_map]
-    rfl
+    rw [multiset_prod_comp, ← coe_normalizeHom, map_multiset_prod normalizeHom, Multiset.map_map,
+      Function.comp_def]
   have hassoc : Associated p (N.prod * N.prod.comp (-X)) := by
     have h1 := UniqueFactorizationMonoid.prod_normalizedFactors hp.ne_zero
     rw [hN, Multiset.prod_add, hτ] at h1
@@ -148,9 +141,8 @@ theorem Monic.exists_mul_comp_neg_X_eq_of_not_irreducible {p : K[X]} (hp : p.Mon
   have hpw := hg.eq_C_neg_one_pow_mul_of_associated hp hassoc
   refine ⟨N.prod, ?_, ?_⟩
   · rw [hpw, natDegree_C_mul (isUnit_one.neg.pow _).ne_zero, Polynomial.natDegree_mul hg.ne_zero
-      (comp_neg_X_eq_zero_iff.not.mpr hg.ne_zero), natDegree_comp, two_mul]
-    simp
-  · rw [hpw, ← mul_assoc, ← C_mul, ← mul_pow, neg_one_mul, neg_neg, one_pow, C_1, one_mul]
+      (comp_neg_X_eq_zero_iff.not.mpr hg.ne_zero), natDegree_comp_neg_X, two_mul]
+  · simp [hpw, ← mul_assoc, ← mul_pow]
 
 /-- For irreducible `F`, every even divisor (`d(-X) = d`) of `F ∘ (X² + c)` is trivial — a unit
 or associated to `F ∘ (X² + c)` — since it is `e ∘ (X² + c)` for a divisor `e` of `F`. -/
@@ -159,9 +151,8 @@ theorem _root_.Irreducible.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq [Ne
     (hd : d ∣ F.comp (X ^ 2 + C c)) (heven : d.comp (-X) = d) :
     IsUnit d ∨ Associated d (F.comp (X ^ 2 + C c)) := by
   obtain ⟨e, rfl⟩ := even_eq_comp_X_sq_add_C c d heven
-  rw [comp_dvd_comp_iff (by rw [natDegree_X_pow_add_C]; exact two_pos), hF.dvd_iff] at hd
-  exact hd.imp (fun hu ↦ by simpa only [comp_eq_aeval] using hu.map (aeval (X ^ 2 + C c)))
-    fun h ↦ by simpa only [comp_eq_aeval] using h.symm.map (aeval (X ^ 2 + C c))
+  rw [comp_dvd_comp_iff (by simp), hF.dvd_iff] at hd
+  exact hd.imp (·.map (compRingHom (X ^ 2 + C c))) (·.symm.map (compRingHom (X ^ 2 + C c)))
 
 /-- Variant of `Irreducible.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq` for divisors that
 are even only up to associates: if `F` is irreducible and `F(c) ≠ 0`, then any divisor `d` of
@@ -177,11 +168,10 @@ theorem _root_.Irreducible.isUnit_or_associated_of_dvd_comp_of_associated_comp_n
   · exact hF.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq hd heven
   · have hd0 : d.eval 0 = 0 := by
       have h1 : d.eval 0 = -d.eval 0 := by simpa using congrArg (eval 0) hodd
-      exact (mul_eq_zero.mp (by linear_combination h1 : (2 : K) * d.eval 0 = 0)).resolve_left
-        two_ne_zero
+      grind [two_ne_zero]
     have h2 := eval_dvd (x := (0 : K)) hd
     rw [hd0, zero_dvd_iff] at h2
-    exact (h0 h2).elim
+    exact absurd h2 h0
 
 end Field
 

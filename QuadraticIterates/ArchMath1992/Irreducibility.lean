@@ -19,9 +19,10 @@ being irreducible, has no nontrivial even divisor, so a factorization of it woul
 `g · g(-X) = ± f_{n+1}` (`Polynomial.Monic.exists_mul_comp_neg_X_eq_of_not_irreducible`) and
 exhibit `c_{n+1} = ± f_{n+1}(0)` as a square. Since `|c_n| ≥ |a|` places `c_{n+1} = c_n² + a`
 strictly between consecutive squares, no `c_n` is a square when `-a` is not one, and every `f_n`
-is irreducible (Corollary 1.3, `irreducible_iteratedPoly`). The consequences for the roots of `f_n`
-needed by the degree criterion (`card_rootSet_iteratedPoly`, `sub_intCast_ne_zero_of_mem_rootSet`)
-close the file.
+is irreducible (Corollary 1.3, `irreducible_iteratedPoly`); conversely, irreducibility of a single
+`f_n` with `n ≥ 1` already forces `-a` to be a non-square (`not_isSquare_neg_of_irreducible`). The
+consequences for the roots of `f_n` needed by the degree criterion
+(`sub_intCast_ne_zero_of_mem_rootSet`, `card_rootSet_iteratedPoly`) close the file.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -45,34 +46,28 @@ lemma ne_zero_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a ≠ 0 := fun 
 private lemma ne_neg_one_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a ≠ -1 :=
   fun h ↦ ha (by simp [h])
 
-private lemma abs_le_sq_add_of_abs_le_abs {a d : ℤ} (ha : a ≠ -1) (h : |a| ≤ |d|) :
-    |a| ≤ d ^ 2 + a := by
-  rcases le_or_gt 0 a with ha0 | ha0
-  · rw [abs_of_nonneg ha0]
-    exact le_add_of_nonneg_left (sq_nonneg d)
-  · rw [abs_of_neg ha0] at h ⊢
-    have ha2 : a ≤ -2 := by lia
-    nlinarith [sq_abs d, mul_le_mul h h (by lia) (abs_nonneg d)]
+private lemma abs_le_sq_add_of_abs_le_abs {b d : ℤ} (hb : b ≠ -1) (h : |b| ≤ |d|) :
+    |b| ≤ d ^ 2 + b := by
+  rcases abs_cases b with ⟨he, -⟩ | ⟨he, hb0⟩ <;> rw [he] at h ⊢
+  · nlinarith [sq_nonneg d]
+  · nlinarith [sq_abs d, mul_le_mul h h (by lia) (abs_nonneg d), (by lia : b ≤ -2)]
 
-private lemma not_isSquare_sq_add_of_abs_le_abs {a d : ℤ} (ha0 : a ≠ 0) (ha1 : a ≠ -1)
-    (h : |a| ≤ |d|) : ¬IsSquare (d ^ 2 + a) := by
-  rcases lt_or_gt_of_ne ha0 with ha | ha
-  · rw [abs_of_neg ha] at h
-    have ha2 : a ≤ -2 := by lia
-    exact Int.not_isSquare_of_sq_lt_of_lt_sq (e := |d| - 1) (by nlinarith [sq_abs d])
-      (by nlinarith [sq_abs d])
-  · rw [abs_of_pos ha] at h
-    exact Int.not_isSquare_of_sq_lt_of_lt_sq (e := |d|) (by nlinarith [sq_abs d])
-      (by nlinarith [sq_abs d])
+private lemma not_isSquare_sq_add_of_abs_le_abs {b d : ℤ} (hb0 : b ≠ 0) (hb1 : b ≠ -1)
+    (h : |b| ≤ |d|) : ¬IsSquare (d ^ 2 + b) := by
+  rcases lt_or_gt_of_ne hb0 with hb | hb
+  · rw [abs_of_neg hb] at h
+    have hb2 : b ≤ -2 := by lia
+    refine Int.not_isSquare_of_sq_lt_of_lt_sq (|d| - 1) ?_ ?_ <;> nlinarith [sq_abs d]
+  · rw [abs_of_pos hb] at h
+    refine Int.not_isSquare_of_sq_lt_of_lt_sq |d| ?_ ?_ <;> nlinarith [sq_abs d]
 
 /-- `|c_n| ≥ |a|` for all `n ≥ 1` (the observation in the proof of Corollary 1.3). -/
 theorem abs_le_abs_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : |a| ≤ |cSeq a n| := by
   induction n, hn using Nat.le_induction with
   | base => simp
   | succ k hk ih =>
-    rw [cSeq_succ a hk]
-    exact (abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg a ha) ih).trans
-      (le_abs_self _)
+    exact cSeq_succ a hk ▸
+      (abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg a ha) ih).trans (le_abs_self _)
 
 /-- `c_n ≥ |a|` for all `n ≥ 2`. -/
 theorem abs_le_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : |a| ≤ cSeq a n := by
@@ -87,14 +82,14 @@ theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSe
 
 /-- No `c_n` (`n ≥ 1`) is a rational square: `c_{n+1} = c_n² + a` lies strictly between two
 consecutive squares because `|c_n| ≥ |a|`, and `c_1 = -a` is not a square by assumption. -/
-theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {k : ℕ} (hk : 1 ≤ k) :
-    ¬IsSquare (cSeq a k : ℚ) := by
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : k ≠ 0)
-  rcases Nat.eq_zero_or_pos j with rfl | hj
+theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
+    ¬IsSquare (cSeq a n : ℚ) := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
+  rcases Nat.eq_zero_or_pos m with rfl | hm
   · simpa using ha
-  · rw [Rat.isSquare_intCast_iff, cSeq_succ a hj]
+  · rw [Rat.isSquare_intCast_iff, cSeq_succ a hm]
     exact not_isSquare_sq_add_of_abs_le_abs (ne_zero_of_not_isSquare_neg a ha)
-      (ne_neg_one_of_not_isSquare_neg a ha) (abs_le_abs_cSeq a ha hj)
+      (ne_neg_one_of_not_isSquare_neg a ha) (abs_le_abs_cSeq a ha hm)
 
 /-! ### Irreducibility of the iterates -/
 
@@ -104,9 +99,7 @@ private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
     (hgdeg : 2 * g.natDegree = fℚ[a, j + 1].natDegree)
     (hgeq : g * g.comp (-X) = C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1]) :
     IsSquare (cSeq a (j + 1) : ℚ) := by
-  have hgnd : g.natDegree = 2 ^ j := by
-    rw [natDegree_iteratedPoly, pow_succ'] at hgdeg
-    lia
+  have hgnd : g.natDegree = 2 ^ j := by grind [natDegree_iteratedPoly]
   have heval := congrArg (eval 0) hgeq
   simp only [eval_mul, eval_C, eval_comp, eval_neg, eval_X, neg_zero] at heval
   exact ⟨g.eval 0, by rw [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]; exact heval.symm⟩
@@ -144,11 +137,12 @@ theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreduc
   intro ⟨r, hr⟩
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   have hfac : fℚ[a, m + 1] = (fℚ[a, m] - C r) * (fℚ[a, m] + C r) := by
-    rw [iteratedPoly_succ, show (a : ℚ) = -(r * r) by linear_combination -hr, map_neg, map_mul]
+    rw [iteratedPoly_succ, neg_eq_iff_eq_neg.mp hr, map_neg, map_mul]
     ring
-  have hdeg : fℚ[a, m].natDegree = 2 ^ m := natDegree_iteratedPoly _ m
-  exact (hirr.isUnit_or_isUnit hfac).elim (not_isUnit_of_natDegree_pos _ (by simp [hdeg]))
-    (not_isUnit_of_natDegree_pos _ (by simp [hdeg]))
+  refine (hirr.isUnit_or_isUnit hfac).elim ?_ ?_ <;>
+    exact not_isUnit_of_natDegree_pos _ (by simp [natDegree_iteratedPoly])
+
+/-! ### Consequences for the roots of `f_n` -/
 
 /-- `a` is not a root of `f_n` (`n ≥ 1`), because `f_n(a) = ± c_{n+1} ≠ 0`: the shifted roots
 `β - a` of `f_n`, whose square roots generate `K_{n+1}` over `K_n`, are nonzero. -/

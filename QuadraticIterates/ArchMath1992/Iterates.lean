@@ -34,7 +34,8 @@ the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 
 
 * `splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le` (Facts 1.0):
   `K_{n+1} = K_n(√(α - a) : α root of f_n)`, hence `[K_{n+1} : K_n] ≤ 2^{2^n}` and, along the
-  tower, `[K_n : K_m] ≤ 2^{2^n - 2^m}` (`relfinrank_le_two_pow`).
+  tower, `[K_n : K_m] ≤ 2^{2^n - 2^m}` (`relfinrank_le_two_pow`); so the maximal degree
+  `[K_n : ℚ] = 2^{2^n - 1}` forces `-a` to be a non-square (`not_isSquare_neg_of_finrank_eq`).
 * `odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group
   (`isPGroup_galoisGroup`) acting faithfully on the at most `2^n` roots of `f_n`.
 * `nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and
@@ -106,8 +107,7 @@ lemma iteratedPoly_add (m n : ℕ) :
 /-- `f_{n+1}(0) = f_n(a)`. -/
 lemma eval_zero_iteratedPoly_succ (n : ℕ) :
     (iteratedPoly a (n + 1)).eval 0 = (iteratedPoly a n).eval a := by
-  rw [iteratedPoly_succ_comp, eval_comp]
-  simp
+  simp [iteratedPoly_succ_comp, eval_comp]
 
 lemma monic_iteratedPoly [Nontrivial R] (n : ℕ) : (iteratedPoly a n).Monic := by
   induction n with
@@ -130,7 +130,8 @@ lemma intCast_eval_iteratedPoly {S : Type*} [CommRing S] (a x : ℤ) (n : ℕ) :
     (((iteratedPoly a n).eval x : ℤ) : S) = (iteratedPoly (a : S) n).eval (x : S) :=
   map_eval_iteratedPoly a (Int.castRingHom S) x n
 
-/-- The iterates `f_{n+1}` (`n ≥ 0`) are even: `f_{n+1}(-X) = f_{n+1}`. -/
+/-- The iterates `f_n` with `n ≥ 1` are even, `f_{n+1}(-X) = f_{n+1}`, because
+`f_{n+1} = f_n ∘ (X² + a)`. -/
 lemma iteratedPoly_succ_comp_neg_X {R : Type*} [CommRing R] (a : R) (n : ℕ) :
     (iteratedPoly a (n + 1)).comp (-X) = iteratedPoly a (n + 1) := by
   simp [iteratedPoly_succ_comp, comp_assoc]
@@ -200,7 +201,7 @@ theorem cSeq_associated_gcd (a : ℤ) (m n : ℕ) :
 
 /-- `c_{k+1} = (-1)^{2^k} · f_k(a)`; in particular `c_{k+1} = f_k(a)` for `k ≥ 1`. -/
 theorem cSeq_succ_eq_neg_one_pow_mul_eval (a : ℤ) (k : ℕ) :
-    cSeq a (k + 1) = (-1 : ℤ) ^ 2 ^ k * (iteratedPoly a k).eval a := by
+    cSeq a (k + 1) = (-1) ^ 2 ^ k * (iteratedPoly a k).eval a := by
   induction k with
   | zero => simp [cSeq_one]
   | succ i ih =>
@@ -382,7 +383,8 @@ theorem relfinrank_succ_le (n : ℕ) :
     (IntermediateField.intCast_mem _ a)⟩, hx ▸ hg α⟩
 
 /-- If `-a` is a rational square, then `K_1 = ℚ(√(-a))` is `ℚ` itself. -/
-lemma splittingField_one_eq_bot_of_isSquare (ha : IsSquare (-a : ℚ)) : splittingField a 1 = ⊥ := by
+lemma splittingField_one_eq_bot_of_isSquare_neg (ha : IsSquare (-a : ℚ)) :
+    splittingField a 1 = ⊥ := by
   obtain ⟨b, hb⟩ := ha
   refine IntermediateField.adjoin_eq_bot_iff.mpr fun β hβ ↦ ?_
   have hsq : β ^ 2 = (algebraMap ℚ (AlgebraicClosure ℚ) b) ^ 2 := by
@@ -391,8 +393,7 @@ lemma splittingField_one_eq_bot_of_isSquare (ha : IsSquare (-a : ℚ)) : splitti
     rw [← map_pow, sq b, ← hb, map_neg]
     linear_combination this
   rw [SetLike.mem_coe, IntermediateField.mem_bot]
-  exact (sq_eq_sq_iff_eq_or_eq_neg.mp hsq).elim (fun h ↦ ⟨b, h.symm⟩)
-    fun h ↦ ⟨-b, by rw [map_neg, h]⟩
+  exact (sq_eq_sq_iff_eq_or_eq_neg.mp hsq).elim (fun h ↦ ⟨b, h.symm⟩) fun h ↦ ⟨-b, by simp [h]⟩
 
 /-- `[K_n : K_m] ≤ 2^(2^n - 2^m)` for `m ≤ n`, by multiplying the bounds `relfinrank_succ_le`
 along the tower. -/
@@ -414,8 +415,8 @@ lemma not_isSquare_neg_of_finrank_eq {n : ℕ} (hn : 1 ≤ n)
   intro ha
   have hb := relfinrank_le_two_pow a hn
   rw [← IntermediateField.finrank_bot_mul_relfinrank (splittingField_mono a hn),
-    splittingField_one_eq_bot_of_isSquare a ha, IntermediateField.finrank_bot, one_mul] at hmax
-  rw [splittingField_one_eq_bot_of_isSquare a ha, hmax, pow_one,
+    splittingField_one_eq_bot_of_isSquare_neg a ha, IntermediateField.finrank_bot, one_mul] at hmax
+  rw [splittingField_one_eq_bot_of_isSquare_neg a ha, hmax, pow_one,
     Nat.pow_le_pow_iff_right one_lt_two] at hb
   have h2n : 2 ≤ 2 ^ n := Nat.le_self_pow (by lia) 2
   lia

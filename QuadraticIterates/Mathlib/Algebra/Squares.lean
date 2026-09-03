@@ -70,13 +70,13 @@ theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSqu
 
 /-- An integer strictly between the consecutive squares `e ^ 2` and `(e + 1) ^ 2` is not a
 square. -/
-theorem Int.not_isSquare_of_sq_lt_of_lt_sq {e m : ℤ} (h1 : e ^ 2 < m) (h2 : m < (e + 1) ^ 2) :
+theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
+    (h2 : m < (e + 1) ^ 2) :
     ¬IsSquare m := by
   rintro ⟨r, rfl⟩
   rw [← sq] at h1 h2
   have h1' := sq_lt_sq.mp h1
-  have h2' := (sq_lt_sq.mp h2).trans_le (abs_add_le e 1)
-  rw [abs_one] at h2'
+  have h2' := (sq_lt_sq.mp h2).trans_le (by simpa using abs_add_le e 1)
   lia
 
 open Function in

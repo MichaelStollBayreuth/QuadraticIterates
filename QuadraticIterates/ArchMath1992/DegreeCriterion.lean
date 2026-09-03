@@ -204,7 +204,7 @@ lemma degree_criterion_zero :
     exact IntermediateField.isSquare_algebraMap_bot_iff _
   rw [hrf, hsq_iff]
   by_cases hsq : IsSquare (-a : ℚ)
-  · rw [splittingField_one_eq_bot_of_isSquare a hsq, IntermediateField.finrank_bot]
+  · rw [splittingField_one_eq_bot_of_isSquare_neg a hsq, IntermediateField.finrank_bot]
     simp [hsq]
   · simp only [hsq, not_false_iff, iff_true, pow_zero, pow_one]
     exact finrank_splittingField_one a hsq
