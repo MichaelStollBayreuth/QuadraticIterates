@@ -115,7 +115,9 @@ them.
 
 \begin{lemma}[The abelian quotient of $\Ct{n}$]
   \label{lem:wreathab}
-  \lean{wreath_max_elem_ab, RegularWreathProduct.card_hom, elem_ab_card_hom,
+  \lean{wreath_max_elem_ab, IteratedWreathProduct.card_hom, RegularWreathProduct.card_hom,
+    RegularWreathProduct.homEquiv, Nat.card_monoidHom_multiplicative_zmod_two,
+    Nat.card_monoidHom_multiplicative_zmod, Nat.card_addMonoidHom_zmod,
     IntermediateField.isGalois_adjoin_of_sq_eq_algebraMap,
     IntermediateField.algEquiv_adjoin_sq_eq_one, AlgEquiv.apply_eq_or_eq_neg_of_sq_eq_algebraMap}
   \leanok
@@ -126,11 +128,13 @@ them.
 \end{lemma}
 \begin{proof}
   \leanok
-  For a regular wreath product $A \wr B$ the homomorphisms to an abelian group of exponent $2$
-  factor through the coinvariants of the base, giving
-  $\#\Hom(A \wr B, C_2) = \#\Hom(A, C_2) \cdot \#\Hom(B, C_2)$; induction on $n$ then gives
-  $2^n$. The statement about elementary abelian groups is the identity $\#G = \#\Hom(G, C_2)$
-  for such $G$.
+  For a regular wreath product $D \wr Q$ and an abelian group $A$, a homomorphism $D \wr Q \to A$
+  is the same as a pair of homomorphisms $D \to A$ and $Q \to A$ (on the base group $D^Q$ it
+  takes the same values on all coordinates, since these are conjugate under $Q$), giving
+  $\#\Hom(D \wr Q, A) = \#\Hom(D, A) \cdot \#\Hom(Q, A)$; induction on $n$ then gives
+  $\#\Hom(\Ct{n}, C_2) = \#\Hom(C_2, C_2)^n = 2^n$. The statement about elementary abelian
+  groups is the identity $\#G = \#\Hom(G, C_p)$ for a finite $\FF_p$-vector space $G$, i.e.\
+  $\dim G^{\vee} = \dim G$ (for $p = 2$, commutativity follows from the exponent).
 \end{proof}
 
 \section{Möbius quotients of a strong divisibility sequence}

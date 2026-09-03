@@ -276,11 +276,8 @@ lemma finrank_adjoin_le_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃*
     Module.finrank ℚ (IntermediateField.adjoin ℚ (t : Set ↥(splittingField a n))) ≤ 2 ^ n := by
   set M := IntermediateField.adjoin ℚ (t : Set ↥(splittingField a n))
   have hgalM : IsGalois ℚ ↥M := IntermediateField.isGalois_adjoin_of_sq_eq_algebraMap ht
-  have hexp : ∀ τ : ↥M ≃ₐ[ℚ] ↥M, τ ^ 2 = 1 := IntermediateField.algEquiv_adjoin_sq_eq_one ht
-  have hinv (g : ↥M ≃ₐ[ℚ] ↥M) : g⁻¹ = g := (eq_inv_of_mul_eq_one_left (sq (a := g) ▸ hexp g)).symm
-  rw [← IsGalois.card_aut_eq_finrank ℚ ↥M,
-    elem_ab_card_hom (↥M ≃ₐ[ℚ] ↥M)
-      (fun σ τ ↦ by simpa [hinv] using ((hinv (σ * τ)).symm.trans (mul_inv_rev σ τ))) hexp]
+  rw [← IsGalois.card_aut_eq_finrank ℚ ↥M, ← Nat.card_monoidHom_multiplicative_zmod_two
+    (IntermediateField.algEquiv_adjoin_sq_eq_one ht)]
   have hfin : Finite ((↥(splittingField a n) ≃ₐ[ℚ] ↥(splittingField a n)) →*
       Multiplicative (ZMod 2)) := DFunLike.finite _
   refine le_trans (Nat.card_le_card_of_injective
