@@ -226,6 +226,9 @@ private lemma sign_eq_one_or_neg_one (ha0 : a ≠ 0) : a.sign = 1 ∨ a.sign = -
   (Int.sign_trichotomy a).elim Or.inl
     fun h ↦ h.elim (fun h0 ↦ (ha0 (Int.eq_zero_of_sign_eq_zero h0)).elim) Or.inr
 
+private lemma sign_sq_eq_one (ha0 : a ≠ 0) : a.sign ^ 2 = 1 :=
+  Int.isUnit_sq (Int.isUnit_iff.mpr (sign_eq_one_or_neg_one a ha0))
+
 /-- Induction core of `abs_cSeq_eq_gammaSeq_mul_abs`: for `d ≥ 2`, `γ_d · |a| = c_d`. -/
 private lemma gammaSeq_mul_abs_eq_cSeq (hsignabs : a.sign * |a| = a)
     (hγ1 : gammaSeq (normPoly a) a.sign 1 = 1) {d : ℕ} (hd : 2 ≤ d) :
@@ -273,7 +276,7 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) :
   intro n hn
   have hQ : ((|bSeq a n| : ℤ) : ℚ) = ((betaSeq (normPoly a) a.sign n : ℤ) : ℚ) := by
     rw [Int.cast_abs, intCast_bSeq a ha (by lia),
-      intCast_betaSeq (evenPoly_normPoly a) (sign_eq_one_or_neg_one a ha0)
+      intCast_betaSeq (evenPoly_normPoly a) (sign_sq_eq_one a ha0)
         (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') n (by lia),
       moebiusFactor_eq_prod, moebiusFactor_eq_prod, Finset.abs_prod]
     have hfac : ∀ x ∈ n.divisorsAntidiagonal,
@@ -304,16 +307,16 @@ theorem section3_main
   refine section1_squarefree a ha n fun k hk2 _ ↦ ?_
   rw [abs_bSeq_eq_betaSeq a ha k hk2]
   rw [← Rat.isSquare_intCast_iff]
-  refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a) (sign_eq_one_or_neg_one a ha0)
+  refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a) (sign_sq_eq_one a ha0)
     (gammaSeq_normPoly_pos a ha) ?_ k hk2
   have hg0 : (normPoly a).eval 0 = a.sign := by simp
   have hg1 : (normPoly a).eval 1 = |a| + a.sign := by simp
   rcases hcase with ⟨hpos, hmod⟩ | ⟨hpos, hmod⟩ | ⟨hneg, hmod, -⟩
   · exact .inl ⟨by rw [hg0, Int.sign_eq_one_of_pos hpos],
       by rw [hg1, abs_of_pos hpos, Int.sign_eq_one_of_pos hpos]; lia⟩
-  · exact .inr ⟨.inl (by rw [hg0, Int.sign_eq_one_of_pos hpos]),
+  · exact .inr ⟨hg0 ▸ sign_sq_eq_one a ha0,
       by rw [hg1, abs_of_pos hpos, Int.sign_eq_one_of_pos hpos]; lia⟩
-  · exact .inr ⟨.inr (by rw [hg0, Int.sign_eq_neg_one_of_neg hneg]),
+  · exact .inr ⟨hg0 ▸ sign_sq_eq_one a ha0,
       by rw [hg1, abs_of_neg hneg, Int.sign_eq_neg_one_of_neg hneg]; lia⟩
 
 end

@@ -132,7 +132,7 @@ lemma cSeq_two (a : ℤ) : cSeq a 2 = a ^ 2 + a := by rw [cSeq_succ a le_rfl, cS
 
 /-- **Strong divisibility** for the `c`-sequence: `gcd (c_m) (c_n) = |c_{gcd m n}|`. -/
 theorem cSeq_gcd (a : ℤ) (m n : ℕ) : Int.gcd (cSeq a m) (cSeq a n) = (cSeq a (m.gcd n)).natAbs :=
-  gammaSeq_gcd (evenPoly_X_sq_add_C a) (.inr rfl) m n
+  gammaSeq_gcd (evenPoly_X_sq_add_C a) neg_one_sq m n
 
 /-- Strong divisibility of the `c`-sequence in the `Associated`-of-`gcd` form consumed by the
 `moebiusFactorR` API. -/

@@ -478,15 +478,14 @@ variable {g}
 
 /-- **Strong divisibility** over `ℤ`, for even `g` and `ε = ±1`:
 `gcd (γ_m) (γ_n) = |γ_{gcd m n}|`. -/
-theorem gammaSeq_gcd (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε = -1) (m n : ℕ) :
+theorem gammaSeq_gcd (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1) (m n : ℕ) :
     Int.gcd (gammaSeq g ε m) (gammaSeq g ε n) = (gammaSeq g ε (m.gcd n)).natAbs := by
-  have hε2 : ε ^ 2 = 1 := by rcases hε with rfl | rfl <;> norm_num
-  have h := Int.associated_iff_natAbs.mp (gammaSeq_associated_gcd hg hε2 m n)
+  have h := Int.associated_iff_natAbs.mp (gammaSeq_associated_gcd hg hε m n)
   rw [← h, ← Int.coe_gcd, Int.natAbs_natCast]
 
 /-- The image of `β_n` in `ℚ` is the Möbius product `∏_{ed = n} γ_d^{μ(e)}` (for even `g`,
 `ε = ±1`, and `γ` nowhere zero on positive indices). -/
-lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε = -1)
+lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     (hγ : ∀ k ≥ 1, gammaSeq g ε k ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
     ((betaSeq g ε n : ℤ) : ℚ) = moebiusFactor (gammaSeq g ε) n :=
   intCast_moebiusFactorR hγ (gammaSeq_gcd hg hε) hn
@@ -507,7 +506,7 @@ private lemma prod_gammaSeq_mul_cast_eq (hg : EvenPoly g) {ε : ℤ} {k : ℕ} (
 
 /-- Lemma 2.1: if for each `n ≥ 1` some `m` divides `γ_n + γ_{2n}`, is prime to `γ_n`, and `-1` is
 not a square mod `m`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
-theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε = -1)
+theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0)
     (hm : ∀ n ≥ 1, ∃ m : ℕ,
       (m : ℤ) ∣ gammaSeq g ε n + gammaSeq g ε (2 * n) ∧
@@ -567,8 +566,8 @@ lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)
 /-- The `ZMod 8` specialization of `gammaSeq_add_succ_eq_two_mul_eval_one` via
 `intCast_gammaSeq`; the mod-4 hypothesis on `g(1)` transfers through the canonical map
 `ZMod 8 → ZMod 4`. -/
-lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε = 1 ∨ ε = -1)
-    (h0 : g.eval 0 = 1 ∨ g.eval 0 = -1) (h1 : ((g.eval 1 : ℤ) : ZMod 4) = 3) :
+lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
+    (h0 : g.eval 0 ^ 2 = 1) (h1 : ((g.eval 1 : ℤ) : ZMod 4) = 3) :
     ∀ n ≥ 2, ((gammaSeq g ε n + gammaSeq g ε (n + 1) : ℤ) : ZMod 8) = 6 := by
   have hfiber : ∀ x : ZMod 8, ZMod.castHom (by norm_num : (4 : ℕ) ∣ 8) (ZMod 4) x = 3 →
       x ^ 2 = 1 ∧ 2 * x = 6 := by decide
@@ -576,9 +575,8 @@ lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε
   intro n hn
   push_cast
   rw [intCast_gammaSeq g ε (ZMod 8) n, intCast_gammaSeq g ε (ZMod 8) (n + 1),
-    gammaSeq_add_succ_eq_two_mul_eval_one (hg.map _)
-      (by rcases hε with rfl | rfl <;> decide)
-      (by rw [eval_zero_map]; rcases h0 with h0' | h0' <;> rw [h0'] <;> decide)
+    gammaSeq_add_succ_eq_two_mul_eval_one (hg.map _) (by rw [← Int.cast_pow, hε, Int.cast_one])
+      (by rw [eval_zero_map, eq_intCast, ← Int.cast_pow, h0, Int.cast_one])
       (by rw [eval_one_map, eq_intCast]; exact hsq1) n hn,
     eval_one_map, eq_intCast]
   exact h2x
@@ -586,24 +584,22 @@ lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε
 /-- Lemma 2.2: if all `γ_n > 0` and either `g(0) = 1, g(1) ≡ 2 mod 4`, or `g(0) = ±1, g(1) ≡ 3 mod
 4`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
 theorem not_isSquare_betaSeq_of_pos (hg : EvenPoly g) {ε : ℤ}
-    (hε : ε = 1 ∨ ε = -1) (hpos : ∀ n ≥ 1, 0 < gammaSeq g ε n)
-    (hcase : (g.eval 0 = 1 ∧ g.eval 1 % 4 = 2) ∨
-      ((g.eval 0 = 1 ∨ g.eval 0 = -1) ∧ g.eval 1 % 4 = 3)) :
+    (hε : ε ^ 2 = 1) (hpos : ∀ n ≥ 1, 0 < gammaSeq g ε n)
+    (hcase : (g.eval 0 = 1 ∧ g.eval 1 % 4 = 2) ∨ (g.eval 0 ^ 2 = 1 ∧ g.eval 1 % 4 = 3)) :
     ∀ n ≥ 2, ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
-  have heval0 : g.eval 0 = 1 ∨ g.eval 0 = -1 := by
-    rcases hcase with ⟨h0, -⟩ | ⟨h0, -⟩
-    exacts [.inl h0, h0]
+  have h0u : IsUnit (g.eval 0) :=
+    hcase.elim (fun h ↦ h.1 ▸ isUnit_one) fun h ↦ IsUnit.of_pow_eq_one h.1 two_ne_zero
   refine not_isSquare_betaSeq hg hε (fun n hn ↦ (hpos n hn).ne') fun n hn ↦ ?_
   set D : ℤ := gammaSeq g ε n + gammaSeq g ε (n + 1) with hD
   have hDpos : 0 < D := add_pos (hpos n hn) (hpos (n + 1) (by lia))
   have hdtn : (D.toNat : ℤ) = D := Int.toNat_of_nonneg hDpos.le
   refine ⟨D.toNat, by rw [hdtn]; exact gammaSeq_add_succ_dvd hg ε hn,
-    by rw [hdtn]; exact isCoprime_gammaSeq_add_succ g ε hn (Int.isUnit_iff.mpr heval0), ?_⟩
+    by rw [hdtn]; exact isCoprime_gammaSeq_add_succ g ε hn h0u, ?_⟩
   rcases hcase with ⟨h0, h1⟩ | ⟨h0, h1⟩
   · obtain rfl : ε = 1 := by
       have hp1 := hpos 1 le_rfl
       rw [gammaSeq_one, h0, mul_one] at hp1
-      rcases hε with rfl | rfl
+      rcases sq_eq_one_iff.mp hε with rfl | rfl
       · rfl
       · exact absurd hp1 (by decide)
     refine ZMod.not_isSquare_neg_one_of_dvd dvd_rfl ?_
@@ -617,7 +613,8 @@ theorem not_isSquare_betaSeq_of_pos (hg : EvenPoly g) {ε : ℤ}
       have hγ1 : gammaSeq g ε 1 = 1 := by
         have hp1 := hpos 1 le_rfl
         rw [gammaSeq_one] at hp1 ⊢
-        rcases hε with rfl | rfl <;> rcases h0 with h0' | h0' <;> rw [h0'] at hp1 ⊢ <;> lia
+        rcases sq_eq_one_iff.mp hε with rfl | rfl <;> rcases sq_eq_one_iff.mp h0 with h0' | h0' <;>
+          rw [h0'] at hp1 ⊢ <;> lia
       have hγ2 : gammaSeq g ε 2 = g.eval 1 := by
         rw [gammaSeq_succ g ε le_rfl, hγ1]
       exact ZMod.not_isSquare_neg_one_of_four_dvd
@@ -625,7 +622,7 @@ theorem not_isSquare_betaSeq_of_pos (hg : EvenPoly g) {ε : ℤ}
     · have h1' : ((g.eval 1 : ℤ) : ZMod 4) = 3 :=
         (ZMod.intCast_eq_intCast_iff' (g.eval 1) 3 4).mpr (by lia)
       have hmod8 : D % 8 = 6 := by
-        have hcast := gammaSeq_add_succ_zmod_eight_eq_six hg hε heval0 h1' n hn2
+        have hcast := gammaSeq_add_succ_zmod_eight_eq_six hg hε h0 h1' n hn2
         have := ((ZMod.intCast_eq_intCast_iff D 6 8).mp (mod_cast hcast)).dvd
         omega
       exact ZMod.not_isSquare_neg_one_of_dvd
