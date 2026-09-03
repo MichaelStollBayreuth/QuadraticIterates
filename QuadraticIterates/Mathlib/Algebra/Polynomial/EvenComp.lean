@@ -4,12 +4,14 @@ public import Mathlib.Algebra.GCDMonoid.Basic
 public import Mathlib.Algebra.Polynomial.Expand
 
 import Mathlib.Tactic.LinearCombination
+import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 
 /-!
 # Even polynomials as polynomials in `X² + c`
 
 An even polynomial (one fixed by `X ↦ -X`) over a domain of characteristic `≠ 2` is a polynomial
-in `X² + c`.
+in `X² + c`. Consequently, for an irreducible `F` over a field of characteristic `≠ 2`, every even
+divisor of `F ∘ (X² + c)` is trivial.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -94,6 +96,37 @@ theorem even_eq_comp_X_sq_add_C (c : R) (b : R[X]) (hb : b.comp (-X) = b) :
   ⟨(contract 2 b).comp (X - C c), by
     rw [comp_assoc, show (X - C c : R[X]).comp (X ^ 2 + C c) = X ^ 2 by simp,
       ← expand_eq_comp_X_pow, ← eq_expand_two_contract_of_comp_neg_X hb]⟩
+
+/-- For irreducible `F`, every even divisor (`d(-X) = d`) of `F ∘ (X² + c)` is trivial — a unit
+or associated to `F ∘ (X² + c)` — since it is `e ∘ (X² + c)` for a divisor `e` of `F`. -/
+theorem _root_.Irreducible.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq {K : Type*} [Field K]
+    [NeZero (2 : K)] {F : K[X]} (hF : Irreducible F) {c : K} {d : K[X]}
+    (hd : d ∣ F.comp (X ^ 2 + C c)) (heven : d.comp (-X) = d) :
+    IsUnit d ∨ Associated d (F.comp (X ^ 2 + C c)) := by
+  obtain ⟨e, rfl⟩ := even_eq_comp_X_sq_add_C c d heven
+  rw [comp_dvd_comp_iff (by rw [natDegree_X_pow_add_C]; exact two_pos), hF.dvd_iff] at hd
+  exact hd.imp (fun hu ↦ by simpa only [comp_eq_aeval] using hu.map (aeval (X ^ 2 + C c)))
+    fun h ↦ by simpa only [comp_eq_aeval] using h.symm.map (aeval (X ^ 2 + C c))
+
+/-- Variant of `Irreducible.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq` for divisors that
+are even only up to associates: if `F` is irreducible and `F(c) ≠ 0`, then any divisor `d` of
+`F ∘ (X² + c)` with `d(-X)` associated to `d` is a unit or associated to `F ∘ (X² + c)`. (Without
+`F(c) ≠ 0` the odd divisor `X` of `F ∘ (X² + c)` would be a counterexample.) -/
+theorem _root_.Irreducible.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X {K : Type*}
+    [Field K] [NeZero (2 : K)] {F : K[X]} (hF : Irreducible F) {c : K} (hc : F.eval c ≠ 0)
+    {d : K[X]} (hd : d ∣ F.comp (X ^ 2 + C c)) (hassoc : Associated (d.comp (-X)) d) :
+    IsUnit d ∨ Associated d (F.comp (X ^ 2 + C c)) := by
+  have h0 : (F.comp (X ^ 2 + C c)).eval 0 ≠ 0 := by simpa using hc
+  rcases comp_neg_X_eq_or_eq_neg_of_associated
+    (ne_zero_of_dvd_ne_zero (fun h ↦ h0 (by simp [h])) hd) hassoc with heven | hodd
+  · exact hF.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq hd heven
+  · have hd0 : d.eval 0 = 0 := by
+      have h1 : d.eval 0 = -d.eval 0 := by simpa using congrArg (eval 0) hodd
+      exact (mul_eq_zero.mp (by linear_combination h1 : (2 : K) * d.eval 0 = 0)).resolve_left
+        two_ne_zero
+    have h2 := eval_dvd (x := (0 : K)) hd
+    rw [hd0, zero_dvd_iff] at h2
+    exact (h0 h2).elim
 
 end NeZero
 

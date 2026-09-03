@@ -12,6 +12,7 @@ public import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
+public import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Multiset

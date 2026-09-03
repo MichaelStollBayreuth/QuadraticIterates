@@ -266,16 +266,18 @@ them.
     Polynomial.expand_two_comp_neg_X, Polynomial.X_sq_add_C_comp_neg_X,
     Polynomial.comp_neg_X_eq_or_eq_neg_of_associated, Associated.comp_neg_X,
     Polynomial.normalize_normalize_comp_neg_X, Polynomial.expand_contract_of_forall_coeff_eq_zero,
-    Polynomial.coeff_eq_zero_of_comp_neg_X_eq_of_not_two_dvd}
+    Polynomial.coeff_eq_zero_of_comp_neg_X_eq_of_not_two_dvd, Polynomial.comp_dvd_comp_iff}
   \leanok
   Over a domain of characteristic $\ne 2$, a polynomial fixed by $X \mapsto -X$ is a polynomial
   in $X^2$, hence in $X^2 + c$ for any $c$. A polynomial merely \emph{associated} to its
-  reflection satisfies $p(-X) = p$ or $p(-X) = -p$.
+  reflection satisfies $p(-X) = p$ or $p(-X) = -p$. Over a field, $p \circ r \dvd q \circ r$
+  implies $p \dvd q$ for every nonconstant $r$.
 \end{lemma}
 \begin{proof}
   \leanok
   The odd coefficients vanish because $2 \ne 0$; for the second statement, the unit relating $p$
-  to $p(-X)$ is a constant squaring to $1$.
+  to $p(-X)$ is a constant squaring to $1$. For the last statement, the remainder of $q$ modulo
+  $p$, composed with $r$, is divisible by $p \circ r$ but has smaller degree, so it vanishes.
 \end{proof}
 
 \begin{lemma}[Pairing the irreducible factors]

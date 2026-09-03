@@ -89,8 +89,8 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
   \uses{def:cseq, def:iterates}
   \lean{QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq,
     QuadraticIterates.even_reducible_factorization,
-    QuadraticIterates.isUnit_or_associated_of_dvd_comp,
-    QuadraticIterates.isUnit_or_associated_of_dvd_comp_of_associated,
+    Irreducible.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq,
+    Irreducible.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X,
     QuadraticIterates.map_iteratedPoly_comp_neg_X}
   \leanok
   If none of $c_1, c_2, \dots, c_n$ is a square in $\QQ$, then $f_n$ is irreducible in $\QQ[X]$.
@@ -111,7 +111,9 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
   the sign relating $c_m$ to $f_m(0)$ (\lname{cSeq\_succ\_eq\_neg\_one\_pow\_mul\_eval\_zero}).
   ``No nontrivial even divisor'' is proved in the sharper form needed here: any divisor of
   $F \circ (X^2 + c)$ that is even \emph{up to associates} is a unit or an associate of the whole
-  polynomial (\lname{isUnit\_or\_associated\_of\_dvd\_comp\_of\_associated}); the pairing of the
+  polynomial (\lname{Irreducible.isUnit\_or\_associated\_of\_dvd\_comp\_of\_associated\_comp\_neg\_X}),
+  because divisibility descends along composition with $X^2 + c$
+  (\lname{Polynomial.comp\_dvd\_comp\_iff}); the pairing of the
   irreducible factors under $X \mapsto -X$ is a fixed-point-free involution argument on the
   multiset of normalized factors (Lemma~\ref{lem:involution}).}
 \end{proof}

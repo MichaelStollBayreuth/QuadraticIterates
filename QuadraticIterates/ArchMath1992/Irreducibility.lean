@@ -199,65 +199,6 @@ theorem even_reducible_factorization {p : ℚ[X]} (hmonic : p.Monic)
         rw [← mul_pow, neg_mul_neg, one_mul, one_pow],
       map_one, one_mul]
 
-/-- For irreducible `F`, every even divisor (`d(-X) = d`) of `F ∘ (X² + c)` is trivial — a unit
-or associated to `F ∘ (X² + c)` — since it descends to a divisor of `F`. -/
-theorem isUnit_or_associated_of_dvd_comp (c : ℚ) {F : ℚ[X]} (hF : Irreducible F)
-    (d : ℚ[X]) (hd : d ∣ F.comp (X ^ 2 + C c)) (heven : d.comp (-X) = d) :
-    IsUnit d ∨ Associated d (F.comp (X ^ 2 + C c)) := by
-  set P : ℚ[X] := X ^ 2 + C c with hPdef
-  have hPdeg : P.natDegree = 2 := natDegree_X_pow_add_C
-  have hPeven : P.comp (-X) = P := X_sq_add_C_comp_neg_X _
-  have hcompne (q : ℚ[X]) (hq0 : q ≠ 0) : q.comp P ≠ 0 := fun hc ↦ by
-    rcases comp_eq_zero_iff.mp hc with h | ⟨-, hPc⟩
-    · exact hq0 h
-    · rw [hPc, natDegree_C] at hPdeg
-      norm_num at hPdeg
-  obtain ⟨e, hde⟩ := even_eq_comp_X_sq_add_C c d heven
-  rw [← hPdef] at hde
-  rw [hde] at hd ⊢
-  obtain ⟨h, hh⟩ := hd
-  have hheven : h.comp (-X) = h := by
-    have h1 : (F.comp P).comp (-X) = F.comp P := by
-      rw [comp_assoc, hPeven]
-    have h2 : (e.comp P * h).comp (-X) = (e.comp P) * (h.comp (-X)) := by
-      rw [mul_comp, comp_assoc, hPeven]
-    rw [hh, h2] at h1
-    refine mul_left_cancel₀ (hcompne e fun he0 ↦ ?_) h1
-    exact hcompne F hF.ne_zero (by rw [hh, he0, zero_comp, zero_mul])
-  obtain ⟨h', rfl⟩ := even_eq_comp_X_sq_add_C c h hheven
-  rw [← hPdef] at hh
-  have hFeh : F = e * h' := by
-    by_contra hne
-    exact hcompne _ (sub_ne_zero.mpr hne)
-      (by rw [sub_comp, mul_comp, hh, sub_self])
-  rcases hF.isUnit_or_isUnit hFeh with hu | hu
-  · exact .inl (by simpa [comp_eq_aeval] using hu.map (aeval P))
-  · refine .inr ?_
-    have hh'unit : IsUnit (h'.comp P) := by
-      simpa [comp_eq_aeval] using hu.map (aeval P)
-    rw [hh]
-    exact associated_mul_unit_right (e.comp P) (h'.comp P) hh'unit
-
-/-- Variant of `isUnit_or_associated_of_dvd_comp` for divisors that are even only up to
-associates: if `F` is irreducible and the constant term of `F ∘ (X² + c)` is nonzero, then any
-divisor `d` of `F ∘ (X² + c)` with `d(-X)` associated to `d` is a unit or associated to it. -/
-theorem isUnit_or_associated_of_dvd_comp_of_associated (c : ℚ) {F : ℚ[X]} (hF : Irreducible F)
-    (hval0 : (F.comp (X ^ 2 + C c)).eval 0 ≠ 0)
-    (d : ℚ[X]) (hd : d ∣ F.comp (X ^ 2 + C c)) (hassoc : Associated (d.comp (-X)) d) :
-    IsUnit d ∨ Associated d (F.comp (X ^ 2 + C c)) := by
-  have hd0 : d ≠ 0 := by
-    rintro rfl
-    rw [zero_dvd_iff] at hd
-    exact hval0 (by rw [hd]; simp)
-  rcases comp_neg_X_eq_or_eq_neg_of_associated hd0 hassoc with heven | hodd
-  · exact isUnit_or_associated_of_dvd_comp c hF d hd heven
-  · have hd00 : d.eval 0 = 0 := by
-      have hev : d.eval 0 = -(d.eval 0) := by
-        simpa using congrArg (eval (0 : ℚ)) hodd
-      linarith
-    obtain ⟨w, hw⟩ := (X_dvd_iff.mpr (by rw [coeff_zero_eq_eval_zero]; exact hd00)).trans hd
-    exact absurd (by rw [hw]; simp) hval0
-
 end
 
 section
@@ -298,9 +239,9 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
     (by rw [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, hzero, mul_zero]; exact .zero)
   have hnoeven : ∀ d : ℚ[X], d ∣ fℚ[a, j + 1] → Associated (d.comp (-X)) d →
       IsUnit d ∨ Associated d (fℚ[a, j + 1]) := by
-    have hcomp := iteratedPoly_succ_comp (a : ℚ) j
-    rw [hcomp]
-    exact isUnit_or_associated_of_dvd_comp_of_associated (a : ℚ) hFj_irr (hcomp ▸ hval0)
+    rw [iteratedPoly_succ_comp]
+    exact fun _ ↦ hFj_irr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X
+      (by rwa [eval_zero_iteratedPoly_succ] at hval0)
   obtain ⟨g, hgdeg, hgeq⟩ := even_reducible_factorization
     (monic_iteratedPoly (a : ℚ) (j + 1)) (map_iteratedPoly_comp_neg_X a j) hjred hnoeven
   exact h (j + 1) (by lia) (by lia) (isSquare_cSeq_of_even_factorization a hgdeg hgeq)
