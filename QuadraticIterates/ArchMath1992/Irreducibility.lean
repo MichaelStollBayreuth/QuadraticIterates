@@ -65,7 +65,7 @@ theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSe
   lia
 
 lemma map_iteratedPoly_comp_neg_X (k : ℕ) : (fℚ[a, k + 1]).comp (-X) = fℚ[a, k + 1] := by
-  rw [map_iteratedPoly_succ, comp_assoc, X_sq_add_C_comp_neg_X]
+  rw [map_iteratedPoly_succ_comp, comp_assoc, X_sq_add_C_comp_neg_X]
 
 /-- A monic `p` associated to `g * g(-X)` with `g` monic equals `(-1)^(deg g) · g · g(-X)`. -/
 private theorem monic_eq_of_associated_mul_comp_neg_X {g p : ℚ[X]}
@@ -291,7 +291,7 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
     exact ⟨0, by ring⟩
   have hnoeven : ∀ d : ℚ[X], d ∣ fℚ[a, j + 1] → Associated (d.comp (-X)) d →
       IsUnit d ∨ Associated d (fℚ[a, j + 1]) := by
-    have hcomp := map_iteratedPoly_succ a j
+    have hcomp := map_iteratedPoly_succ_comp a j
     rw [hcomp]
     exact isUnit_or_associated_of_dvd_comp_of_associated (a : ℚ) hFj_irr (hcomp ▸ hval0)
   obtain ⟨g, hgdeg, hgeq⟩ := even_reducible_factorization
