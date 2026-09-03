@@ -54,6 +54,16 @@ theorem ZMod.not_isSquare_neg_one_of_dvd {m d : ℕ} (hdm : d ∣ m) (hd : d % 4
     Nat.eq_sq_add_sq_of_isSquare_mod_neg_one (ZMod.isSquare_neg_one_of_dvd hdm hsq)
   exact Nat.not_sq_add_sq_modEq_three x y hd
 
+/-- If `m ≡ 3 mod 4`, then `-1` is not a square in `ZMod m`. -/
+theorem ZMod.not_isSquare_neg_one_of_emod_four_eq_three {m : ℕ} (hm : m % 4 = 3) :
+    ¬IsSquare (-1 : ZMod m) :=
+  not_isSquare_neg_one_of_dvd dvd_rfl hm
+
+/-- If `m ≡ 6 mod 8`, then `-1` is not a square in `ZMod m`, as `m / 2 ≡ 3 mod 4` divides `m`. -/
+theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6) :
+    ¬IsSquare (-1 : ZMod m) :=
+  not_isSquare_neg_one_of_dvd (Nat.div_dvd_of_dvd (show 2 ∣ m by omega)) (by omega)
+
 /-- If `4 ∣ m`, then `-1` is not a square in `ZMod m`. -/
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
