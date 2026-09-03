@@ -131,7 +131,8 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
 \begin{proof}
   \leanok
   \uses{lem:1.1}
-  The proof of Lemma~\ref{lem:1.1}~a) shows $|c_n| \ge |a|$ for all $n \ge 1$. Hence we have if
+  The proof of Lemma~\ref{lem:1.1}~a) shows $|c_n| \ge |a|$ for all $n \ge 1$
+  (\lname{abs\_le\_abs\_cSeq}). Hence we have if
   $a > 0$: $c_n^2 < c_n^2 + a = c_{n+1} < (c_n + 1)^2$, so $c_{n+1}$ is not a square; if
   $a < -1$: $(c_n - 1)^2 < c_n^2 + a = c_{n+1} \le c_n^2$, so $c_{n+1}$ is not a square. Since
   $c_1 = -a$ is not a square either, Lemma~\ref{lem:1.2} applies.

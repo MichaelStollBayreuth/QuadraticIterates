@@ -49,6 +49,9 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 * `QuadraticIterates.section3_main` (Section 3): if `a > 0` with `a ≡ 1, 2 mod 4`, or `a < 0`,
   `a ≡ 0 mod 4` and `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`;
 * `QuadraticIterates.odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`;
+* `QuadraticIterates.irreducible_iteratedPoly` (Corollary 1.3): every `f_n` is irreducible over
+  `ℚ`; by Lemma 1.2 (`QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`) this
+  only needs that no `c_k` with `k ≤ n` is a rational square;
 * `QuadraticIterates.nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff
   `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`;
 * `QuadraticIterates.degree_criterion` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is

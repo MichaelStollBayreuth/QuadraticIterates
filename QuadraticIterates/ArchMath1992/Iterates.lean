@@ -33,7 +33,8 @@ the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 
 ## Main statements
 
 * `splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le` (Facts 1.0):
-  `K_{n+1} = K_n(√(α - a) : α root of f_n)`, hence `[K_{n+1} : K_n] ≤ 2^{2^n}`.
+  `K_{n+1} = K_n(√(α - a) : α root of f_n)`, hence `[K_{n+1} : K_n] ≤ 2^{2^n}` and, along the
+  tower, `[K_n : K_m] ≤ 2^{2^n - 2^m}` (`relfinrank_le_two_pow`).
 * `odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group
   (`isPGroup_galoisGroup`) acting faithfully on the at most `2^n` roots of `f_n`.
 * `nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and
@@ -380,6 +381,7 @@ theorem relfinrank_succ_le (n : ℕ) :
   exact ⟨⟨α - a, sub_mem (IntermediateField.subset_adjoin ℚ _ hα)
     (IntermediateField.intCast_mem _ a)⟩, hx ▸ hg α⟩
 
+/-- If `-a` is a rational square, then `K_1 = ℚ(√(-a))` is `ℚ` itself. -/
 lemma splittingField_one_eq_bot_of_isSquare (ha : IsSquare (-a : ℚ)) : splittingField a 1 = ⊥ := by
   obtain ⟨b, hb⟩ := ha
   refine IntermediateField.adjoin_eq_bot_iff.mpr fun β hβ ↦ ?_
@@ -392,6 +394,8 @@ lemma splittingField_one_eq_bot_of_isSquare (ha : IsSquare (-a : ℚ)) : splitti
   exact (sq_eq_sq_iff_eq_or_eq_neg.mp hsq).elim (fun h ↦ ⟨b, h.symm⟩)
     fun h ↦ ⟨-b, by rw [map_neg, h]⟩
 
+/-- `[K_n : K_m] ≤ 2^(2^n - 2^m)` for `m ≤ n`, by multiplying the bounds `relfinrank_succ_le`
+along the tower. -/
 lemma relfinrank_le_two_pow {m n : ℕ} (hmn : m ≤ n) :
     (splittingField a m).relfinrank (splittingField a n) ≤ 2 ^ (2 ^ n - 2 ^ m) := by
   induction n, hmn using Nat.le_induction with
@@ -402,6 +406,8 @@ lemma relfinrank_le_two_pow {m n : ℕ} (hmn : m ≤ n) :
     refine (Nat.mul_le_mul ih (relfinrank_succ_le a k)).trans ?_
     rw [← pow_add, ← Nat.sub_add_comm (Nat.pow_le_pow_right Nat.zero_lt_two hk), pow_succ, mul_two]
 
+/-- The maximal degree `[K_n : ℚ] = 2^(2^n - 1)` for some `n ≥ 1` forces `-a` to be a non-square:
+otherwise `K_1 = ℚ` and `[K_n : ℚ] = [K_n : K_1] ≤ 2^(2^n - 2)`. -/
 lemma not_isSquare_neg_of_finrank_eq {n : ℕ} (hn : 1 ≤ n)
     (hmax : Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1)) :
     ¬IsSquare (-a : ℚ) := by

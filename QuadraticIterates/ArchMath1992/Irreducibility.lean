@@ -150,6 +150,8 @@ theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreduc
   exact (hirr.isUnit_or_isUnit hfac).elim (not_isUnit_of_natDegree_pos _ (by simp [hdeg]))
     (not_isUnit_of_natDegree_pos _ (by simp [hdeg]))
 
+/-- `a` is not a root of `f_n` (`n ≥ 1`), because `f_n(a) = ± c_{n+1} ≠ 0`: the shifted roots
+`β - a` of `f_n`, whose square roots generate `K_{n+1}` over `K_n`, are nonzero. -/
 lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n)
     {β : AlgebraicClosure ℚ} (hβ : β ∈ fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
     β - (a : AlgebraicClosure ℚ) ≠ 0 := by
@@ -159,6 +161,7 @@ lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} 
   exact (cSeq_pos a ha (n := n + 1) (by lia)).ne'
     (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
 
+/-- An irreducible `f_n` is separable, so it has exactly `2^n = deg f_n` roots in `ℚ̄`. -/
 lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible fℚ[a, n]) :
     Fintype.card ↑(fℚ[a, n].rootSet (AlgebraicClosure ℚ)) = 2 ^ n := by
   simpa [natDegree_iteratedPoly] using
