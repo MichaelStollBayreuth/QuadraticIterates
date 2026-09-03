@@ -9,12 +9,13 @@ We combine the results of Chapters~1 and~2 to get the following.
   \lean{QuadraticIterates.normPoly, QuadraticIterates.eval_normPoly,
     QuadraticIterates.evenPoly_normPoly, QuadraticIterates.evenPoly_X_sq_add_C,
     QuadraticIterates.evenPoly_C_mul_X_sq_add_C,
-    QuadraticIterates.abs_cSeq_eq_gammaSeq_mul_abs,
-    QuadraticIterates.gammaSeq_normPoly_pos, QuadraticIterates.abs_bSeq_eq_betaSeq}
+    QuadraticIterates.gammaSeq_normPoly_one, QuadraticIterates.abs_cSeq_eq_gammaSeq_mul_abs,
+    QuadraticIterates.gammaSeq_normPoly_pos, QuadraticIterates.abs_bSeq_eq_betaSeq,
+    Int.sign_sq_of_ne_zero}
   \leanok
   $g := |a|\,X^2 + \sgn(a)$, an even polynomial with $\gamma_1 = \sgn(a)\,g(0) = 1$. Its
-  iteration sequence satisfies $\gamma_n \cdot |a| = |c_n|$ for all $n \ge 1$; in particular all
-  $\gamma_n$ are positive, and $\beta_n = |b_n|$ for $n \ge 2$.
+  iteration sequence satisfies $\gamma_n \cdot |a| = |c_n|$ for all $n$ (both sides vanish at
+  $n = 0$); in particular $\gamma_n > 0$ for $n \ge 1$, and $\beta_n = |b_n|$ for $n \ge 2$.
   \formalnote{Substituting $x \mapsto |a|\,x$ turns the recursion $c_{n+1} = c_n^2 + a$ into the
   $\gamma$-recursion of $g$, which is why the rescaled polynomial is introduced: $X^2 + a$ itself
   does not have a positive iteration sequence when $a < 0$, and positivity is what

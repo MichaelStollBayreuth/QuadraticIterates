@@ -13,6 +13,7 @@ import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 import QuadraticIterates.ArchMath1992.DegreeCriterion
 import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.Squares
+import QuadraticIterates.Mathlib.Data.Int.Order.Units
 import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
@@ -195,52 +196,29 @@ theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     rw [hb1eq] at hsq
     exact_mod_cast hsq
 
-private lemma sign_eq_one_or_neg_one (ha0 : a ≠ 0) : a.sign = 1 ∨ a.sign = -1 :=
-  (Int.sign_trichotomy a).elim Or.inl
-    fun h ↦ h.elim (fun h0 ↦ (ha0 (Int.eq_zero_of_sign_eq_zero h0)).elim) Or.inr
+/-- `γ_1 = sgn(a) · g(0) = sgn(a)² = 1` for the rescaled polynomial `g = normPoly a`. -/
+lemma gammaSeq_normPoly_one (ha0 : a ≠ 0) : gammaSeq (normPoly a) a.sign 1 = 1 := by
+  simp [← sq, Int.sign_sq_of_ne_zero ha0]
 
-private lemma sign_sq_eq_one (ha0 : a ≠ 0) : a.sign ^ 2 = 1 :=
-  Int.isUnit_sq (Int.isUnit_iff.mpr (sign_eq_one_or_neg_one a ha0))
-
-/-- Induction core of `abs_cSeq_eq_gammaSeq_mul_abs`: for `d ≥ 2`, `γ_d · |a| = c_d`. -/
-private lemma gammaSeq_mul_abs_eq_cSeq (hsignabs : a.sign * |a| = a)
-    (hγ1 : gammaSeq (normPoly a) a.sign 1 = 1) {d : ℕ} (hd : 2 ≤ d) :
-    gammaSeq (normPoly a) a.sign d * |a| = cSeq a d := by
+/-- The `γ`-sequence of the rescaled polynomial `normPoly a` is `|c_n| / |a|`: substituting
+`x ↦ |a| x` turns the recursion `c_{n+1} = c_n² + a` into the `γ`-recursion of `normPoly a`.
+(At `n = 0` both sides vanish.) -/
+theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (d : ℕ) :
+    |cSeq a d| = gammaSeq (normPoly a) a.sign d * |a| := by
   induction d with
-  | zero => lia
+  | zero => simp
   | succ k ih =>
-    rcases Nat.lt_or_ge k 2 with hk | hk
-    · obtain rfl : k = 1 := by lia
-      rw [gammaSeq_succ _ a.sign le_rfl, hγ1, eval_normPoly, cSeq_two]
-      linear_combination sq_abs a + hsignabs
-    · rw [gammaSeq_succ _ a.sign (by lia), eval_normPoly, cSeq_succ a (by lia), add_mul, hsignabs,
-        show |a| * gammaSeq (normPoly a) a.sign k ^ 2 * |a|
-          = (gammaSeq (normPoly a) a.sign k * |a|) ^ 2 by ring, ih hk]
+    rcases k with _ | k
+    · simp [gammaSeq_normPoly_one a (ne_zero_of_not_isSquare_neg a ha)]
+    · rw [abs_of_pos (cSeq_pos a ha (by lia)), cSeq_succ a k.succ_pos, ← sq_abs (cSeq a _), ih,
+        gammaSeq_succ _ _ k.succ_pos, eval_normPoly]
+      linear_combination -Int.sign_mul_abs a
 
-lemma abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) :
-    ∀ d ≥ 1, |cSeq a d| = gammaSeq (normPoly a) a.sign d * |a| := by
-  have ha0 := ne_zero_of_not_isSquare_neg a ha
-  have hγ1 : gammaSeq (normPoly a) a.sign 1 = 1 := by
-    rw [gammaSeq_one, eval_normPoly]
-    rcases sign_eq_one_or_neg_one a ha0 with h | h <;> rw [h] <;> norm_num
-  intro d hd
-  rcases Nat.lt_or_ge d 2 with hd2 | hd2
-  · obtain rfl : d = 1 := by lia
-    rw [hγ1, cSeq_one, abs_neg, one_mul]
-  · rw [abs_of_pos (cSeq_pos a ha hd2)]
-    exact (gammaSeq_mul_abs_eq_cSeq a (Int.sign_mul_abs a) hγ1 hd2).symm
-
+/-- The `γ`-sequence of `normPoly a` is positive, as `c_n ≠ 0` for `n ≥ 1`. -/
 lemma gammaSeq_normPoly_pos (ha : ¬IsSquare (-a : ℚ)) :
-    ∀ d ≥ 1, 0 < gammaSeq (normPoly a) a.sign d := by
-  have habs_pos : 0 < |a| := abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha)
-  intro d hd
-  have hcabs_pos : 0 < |cSeq a d| := by
-    rcases eq_or_lt_of_le hd with h1 | h2
-    · rw [← h1]
-      simpa using habs_pos
-    · exact abs_pos.mpr (cSeq_pos a ha h2).ne'
-  exact (mul_pos_iff_of_pos_right habs_pos).mp
-    (abs_cSeq_eq_gammaSeq_mul_abs a ha d hd ▸ hcabs_pos)
+    ∀ d ≥ 1, 0 < gammaSeq (normPoly a) a.sign d := fun d hd ↦
+  (mul_pos_iff_of_pos_right (abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha))).mp
+    (abs_cSeq_eq_gammaSeq_mul_abs a ha d ▸ abs_pos.mpr (cSeq_ne_zero a ha d hd))
 
 lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) :
     ∀ n ≥ 2, |bSeq a n| = betaSeq (normPoly a) a.sign n := by
@@ -249,7 +227,7 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) :
   intro n hn
   have hQ : ((|bSeq a n| : ℤ) : ℚ) = ((betaSeq (normPoly a) a.sign n : ℤ) : ℚ) := by
     rw [Int.cast_abs, intCast_bSeq a ha (by lia),
-      intCast_betaSeq (evenPoly_normPoly a) (sign_sq_eq_one a ha0)
+      intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
         (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') (by lia),
       moebiusFactorK_eq_prod, moebiusFactorK_eq_prod, Finset.abs_prod]
     simp only [eq_intCast]
@@ -257,9 +235,8 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) :
         |(cSeq a x.2 : ℚ) ^ (μ x.1)|
           = ((gammaSeq (normPoly a) a.sign x.2 : ℤ) : ℚ) ^ (μ x.1)
             * ((|a| : ℤ) : ℚ) ^ (μ x.1) := by
-      intro x hx
-      have hx2 : 1 ≤ x.2 := Nat.pos_of_ne_zero (Nat.right_ne_zero_of_mem_divisorsAntidiagonal hx)
-      rw [abs_zpow, ← Int.cast_abs, abs_cSeq_eq_gammaSeq_mul_abs a ha x.2 hx2]
+      intro x _
+      rw [abs_zpow, ← Int.cast_abs, abs_cSeq_eq_gammaSeq_mul_abs a ha x.2]
       push_cast
       exact mul_zpow ..
     rw [Finset.prod_congr rfl hfac, Finset.prod_mul_distrib, Finset.prod_zpow_eq_zpow_sum₀ haQ,
@@ -281,16 +258,16 @@ theorem section3_main
   refine section1_squarefree a ha n fun k hk2 _ ↦ ?_
   rw [abs_bSeq_eq_betaSeq a ha k hk2]
   rw [← Rat.isSquare_intCast_iff]
-  refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a) (sign_sq_eq_one a ha0)
+  refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
     (gammaSeq_normPoly_pos a ha) ?_ k hk2
   have hg0 : (normPoly a).eval 0 = a.sign := by simp
   have hg1 : (normPoly a).eval 1 = |a| + a.sign := by simp
   rcases hcase with ⟨hpos, hmod⟩ | ⟨hpos, hmod⟩ | ⟨hneg, hmod, -⟩
   · exact .inl ⟨by rw [hg0, Int.sign_eq_one_of_pos hpos],
       by rw [hg1, abs_of_pos hpos, Int.sign_eq_one_of_pos hpos]; lia⟩
-  · exact .inr ⟨hg0 ▸ sign_sq_eq_one a ha0,
+  · exact .inr ⟨hg0 ▸ Int.sign_sq_of_ne_zero ha0,
       by rw [hg1, abs_of_pos hpos, Int.sign_eq_one_of_pos hpos]; lia⟩
-  · exact .inr ⟨hg0 ▸ sign_sq_eq_one a ha0,
+  · exact .inr ⟨hg0 ▸ Int.sign_sq_of_ne_zero ha0,
       by rw [hg1, abs_of_neg hneg, Int.sign_eq_neg_one_of_neg hneg]; lia⟩
 
 end

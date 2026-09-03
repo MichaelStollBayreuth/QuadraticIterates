@@ -15,6 +15,7 @@ public import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Fintype.Basic
+public import QuadraticIterates.Mathlib.Data.Int.Order.Units
 public import QuadraticIterates.Mathlib.Data.Multiset
 public import QuadraticIterates.Mathlib.Data.ZMod
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
