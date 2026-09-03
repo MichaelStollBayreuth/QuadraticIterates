@@ -11,7 +11,6 @@ public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 
 import QuadraticIterates.Mathlib.Algebra.BigOperators
-import QuadraticIterates.Mathlib.Data.Nat
 import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
@@ -496,8 +495,8 @@ theorem embed_equiv (n : ℕ) :
   rw [φn1.nonempty_mulEquiv_iff_card_eq hφn1, φn.nonempty_mulEquiv_iff_card_eq hφn,
     card_galoisGroup_eq_finrank, card_galoisGroup_eq_finrank, card_wreathPower, card_wreathPower]
   refine ⟨fun hy ↦ ?_, fun ⟨hxeq, hreq⟩ ↦ ?_⟩
-  · exact Nat.eq_and_eq_of_le_of_le_of_mul_eq_mul hxle hrle (by rw [htower, hy, hexp])
-      (Nat.two_pow_pos _) (Nat.two_pow_pos _)
+  · exact (mul_eq_mul_iff_eq_and_eq_of_pos hxle hrle Module.finrank_pos (Nat.two_pow_pos _)).mp
+      (by rw [htower, hy, hexp])
   · rw [← htower, hxeq, hreq, ← hexp]
 
 end

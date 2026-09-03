@@ -15,7 +15,6 @@ public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Multiset
-public import QuadraticIterates.Mathlib.Data.Nat
 public import QuadraticIterates.Mathlib.Data.ZMod
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 public import QuadraticIterates.Mathlib.GroupTheory.Card
