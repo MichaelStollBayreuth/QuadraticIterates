@@ -58,7 +58,54 @@ lemma factorization_eq_zero_iff_not_dvd {p x : R} (hp : Prime p) (hpn : normaliz
   rw [← one_le_factorization_iff_dvd hp hpn hx]
   lia
 
+/-- The factorization of a product of nonzero elements is the sum of the factorizations. -/
+lemma factorization_prod {ι : Type*} {s : Finset ι} {f : ι → R} (hf : ∀ i ∈ s, f i ≠ 0) :
+    factorization (∏ i ∈ s, f i) = ∑ i ∈ s, factorization (f i) := by
+  classical
+  induction s using Finset.induction with
+  | empty => simp
+  | insert a s ha ih =>
+    have := nontrivial_of_ne _ _ (hf a (Finset.mem_insert_self a s))
+    rw [Finset.prod_insert ha, factorization_mul (hf a (Finset.mem_insert_self a s))
+        (Finset.prod_ne_zero_iff.mpr fun i hi ↦ hf i (Finset.mem_insert_of_mem hi)),
+      Finset.sum_insert ha, ih fun i hi ↦ hf i (Finset.mem_insert_of_mem hi)]
+
 end Factorization
+
+section GCD
+
+variable {R : Type*} [CommMonoidWithZero R] [UniqueFactorizationMonoid R]
+    [NormalizedGCDMonoid R] [DecidableEq R]
+
+/-- The normalized factors of a gcd form the intersection of the normalized factors: the gcd is
+the meet in the divisibility lattice, which `normalizedFactors` embeds into the multisets. -/
+theorem UniqueFactorizationMonoid.normalizedFactors_gcd (a b : R) (ha : a ≠ 0) (hb : b ≠ 0) :
+    normalizedFactors (gcd a b) = normalizedFactors a ⊓ normalizedFactors b := by
+  have := nontrivial_of_ne a 0 ha
+  have hg : gcd a b ≠ 0 := gcd_ne_zero_of_left ha
+  refine le_antisymm (le_inf
+    ((dvd_iff_normalizedFactors_le_normalizedFactors hg ha).mp (gcd_dvd_left a b))
+    ((dvd_iff_normalizedFactors_le_normalizedFactors hg hb).mp (gcd_dvd_right a b))) ?_
+  set s := normalizedFactors a ⊓ normalizedFactors b
+  have hmem (q : R) (hq : q ∈ s) : q ∈ normalizedFactors a := Multiset.mem_of_le inf_le_left hq
+  have hirr (q : R) (hq : q ∈ s) : Irreducible q := irreducible_of_normalized_factor q (hmem q hq)
+  have hs0 : s.prod ≠ 0 := Multiset.prod_ne_zero fun h0 ↦ (hirr 0 h0).ne_zero rfl
+  have hfac : normalizedFactors s.prod = s := (normalizedFactors_prod_eq s hirr).trans
+    ((Multiset.map_congr rfl fun q hq ↦ normalize_normalized_factor q (hmem q hq)).trans
+      (Multiset.map_id' s))
+  have hdvd (x : R) (hx : x ≠ 0) (hle : s ≤ normalizedFactors x) : s.prod ∣ x :=
+    (dvd_iff_normalizedFactors_le_normalizedFactors hs0 hx).mpr (by rwa [hfac])
+  rw [← hfac]
+  exact (dvd_iff_normalizedFactors_le_normalizedFactors hs0 hg).mp
+    (dvd_gcd (hdvd a ha inf_le_left) (hdvd b hb inf_le_right))
+
+/-- The `p`-multiplicity of a gcd is the minimum of the multiplicities. -/
+theorem factorization_gcd_min (a b : R) (ha : a ≠ 0) (hb : b ≠ 0) (p : R) :
+    factorization (gcd a b) p = min (factorization a p) (factorization b p) := by
+  simp only [factorization_eq_count, normalizedFactors_gcd a b ha hb, Multiset.inf_eq_inter,
+    Multiset.count_inter]
+
+end GCD
 
 section PeriodicShape
 
