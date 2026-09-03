@@ -385,9 +385,9 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
   classical
   have hεu : IsUnit ε := IsUnit.of_pow_eq_one hε two_ne_zero
   obtain ⟨m, hm1, hpm, hmin⟩ :
-      ∃ m : ℕ, 1 ≤ m ∧ p ∣ gammaSeq g ε m ∧
-        ∀ k < m, ¬ (1 ≤ k ∧ p ∣ gammaSeq g ε k) :=
-    ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2, fun _ ↦ Nat.find_min hex⟩
+      ∃ m : ℕ, 1 ≤ m ∧ p ∣ gammaSeq g ε m ∧ ∀ k < m, 1 ≤ k → ¬ p ∣ gammaSeq g ε k :=
+    ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
+      fun _ hk h1 hd ↦ Nat.find_min hex hk ⟨h1, hd⟩⟩
   have hm1' : m ≠ 1 := by
     rintro rfl
     rw [gammaSeq_one] at hpm
@@ -414,8 +414,8 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
       linear_combination (-(g.eval 0) ^ 2) * hε
     rw [hsq]
     exact hcm1.mul_right _
-  exact ⟨m, hm1, E, factorization_periodic_shape hp hpn (gammaSeq g ε) m E hm2 hne hE.symm
-    hmin hpncm1 (gammaSeq_period g (by lia) hbase)⟩
+  exact ⟨m, hm1, E, factorization_periodic_shape hp hpn hm2 hne hE.symm hmin hpncm1
+    (gammaSeq_period g (by lia) hbase)⟩
 
 /-- **Constant-valuation shape of the `γ`-sequence over a UFD** (for even `g`, `ε² = 1`, `γ`
 nowhere zero): for each normalized prime `p`, the valuation `v_p(γ_n)` equals a constant `E`
