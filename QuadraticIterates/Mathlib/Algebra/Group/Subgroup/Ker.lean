@@ -22,7 +22,7 @@ theorem mem_mrange_powMonoidHom_two_iff {M : Type*} [CommMonoid M] (a : M) :
 /-- The value of a unit is a square iff the unit is one. -/
 theorem Units.isSquare_val_iff {M : Type*} [CommMonoid M] (u : Mˣ) :
     IsSquare (u : M) ↔ IsSquare u := by
-  refine ⟨fun ⟨t, ht⟩ ↦ ?_, fun ⟨t, ht⟩ ↦ ⟨t, by simp [ht]⟩⟩
+  refine ⟨fun ⟨t, ht⟩ ↦ ?_, fun h ↦ h.map (Units.coeHom M)⟩
   obtain ⟨t, rfl⟩ := isUnit_of_mul_isUnit_left (ht ▸ u.isUnit)
   exact ⟨t, Units.ext (by simpa using ht)⟩
 
