@@ -13,13 +13,27 @@ import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 
 /-!
-# The relative degree `[K_{n+1} : K_n]`
+# The degree criterion `[K_{n+1} : K_n] = 2^(2^n)`
 
-`K_{n+1}` is generated over `K_n` by square roots of the shifted roots `β - a` of `f_n`
-(`rootShift`), so its relative degree is `2` to the power of `2^n` minus the dimension of the
-`𝔽₂`-space of multiplicative relations among them (`relfinrank_succ_eq_pow`). The relation space is
-trivial exactly when `c_{n+1}` is not a square in `K_n`, which is Lemma 1.6 (`degree_criterion`);
-Lemma 1.5 (`kummer_extension_criterion`) then says which rationals stay non-squares in `K_n`.
+`K_{n+1}` is generated over `K_n` by square roots of the shifted roots `β - a` of `f_n`, so
+`[K_{n+1} : K_n] = 2^(2^n - d)` with `d` the `𝔽₂`-dimension of the space of multiplicative
+relations among them. That space vanishes exactly when `c_{n+1} = ∏_β (β - a)` is not a square
+in `K_n` (Lemma 1.6), and when `Ω_n ≅ [C₂]ⁿ` the rationals that are squares in `K_n` are
+determined by `c_1, …, c_n` (Lemma 1.5).
+
+## Main definitions
+
+* `rootShift a n β`: the shifted root `β - a` of `f_n`, as an element of `K_n`.
+
+## Main statements
+
+* `relfinrank_succ_eq_pow`: `[K_{n+1} : K_n] = 2^(2^n - dim rootRelations (rootShift a n))`.
+* `prod_rootShift_eq_cSeq`, `isSquare_algebraMap_cSeq`: the norm identity `∏_β (β - a) = c_{n+1}`
+  in `K_n`; hence `c_1, …, c_n` are squares in `K_n`.
+* `degree_criterion` (Lemma 1.6): `[K_{n+1} : K_n] = 2^(2^n)` iff `c_{n+1}` is not a square in
+  `K_n`, through `rootRelations_rootShift_eq_bot_iff`.
+* `kummer_extension_criterion` (Lemma 1.5): if `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent,
+  a rational `c` is a non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -35,21 +49,20 @@ section
 
 variable (a : ℤ)
 
-/-! ### The relative degree `[K_{n+1} : K_n]` -/
+/-! ### The shifted roots `β - a` and their relation space -/
 
 /-- The shifted root `β - a` of `f_n`, as an element of `K_n`: these are the radicands whose
 square roots generate `K_{n+1}` over `K_n`. -/
-noncomputable def rootShift (a : ℤ) (n : ℕ) (β : (fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :
+noncomputable def rootShift (n : ℕ) (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
     ↥(splittingField a n) :=
-  ⟨(β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ),
+  ⟨(β : AlgebraicClosure ℚ) - a,
     sub_mem (IntermediateField.subset_adjoin ℚ _ β.2) (IntermediateField.intCast_mem _ a)⟩
 
-@[simp] lemma coe_rootShift (n : ℕ) (β : (fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :
-    (rootShift a n β : AlgebraicClosure ℚ)
-      = (β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ) := rfl
+@[simp] lemma coe_rootShift (n : ℕ) (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
+    (rootShift a n β : AlgebraicClosure ℚ) = (β : AlgebraicClosure ℚ) - a := rfl
 
 lemma rootShift_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ}
-    (β : (fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) : rootShift a n β ≠ 0 :=
+    (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) : rootShift a n β ≠ 0 :=
   fun h ↦ sub_intCast_ne_zero_of_mem_rootSet a ha β.2 (congrArg Subtype.val h)
 
 /-- The relative degree `[K_{n+1} : K_n]` equals `2 ^ (2^n - d)`, where `d` is the `𝔽₂`-dimension
@@ -60,7 +73,7 @@ theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] (ha : ¬IsSq
       = 2 ^ (2 ^ n - Module.finrank (ZMod 2) (rootRelations (rootShift a n))) := by
   choose g hg using exists_sq_eq_sub a
   have hx (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
-      g β ^ 2 = algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (rootShift a n β) := hg β
+      g β ^ 2 = algebraMap ↥(splittingField a n) (AlgebraicClosure ℚ) (rootShift a n β) := hg β
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg, Set.image_eq_range,
     multiquadratic_degree_family hx (rootShift_ne_zero a ha),
     card_rootSet_iteratedPoly a (irreducible_iteratedPoly a ha n)]
@@ -76,6 +89,8 @@ lemma exists_ringEquiv_rootShift_smul (n : ℕ) (σ : GaloisGroup a n) :
       AlgebraicClosure ℚ) = ϕ (rootShift a n β) :=
     AlgEquiv.restrictNormal_commutes ϕ (splittingField a n) (rootShift a n β)
   rw [hcomm, coe_rootShift, coe_rootShift, map_sub, map_intCast, Gal.restrict_smul]
+
+/-! ### The norm identity `∏ (β - a) = c_{n+1}` -/
 
 /-- The norm identity `∏ (α - a) = c_{n+1}` over the roots `α` of `f_n` (with multiplicity), by
 evaluating the monic split `f_n` at `a`. -/
@@ -105,16 +120,21 @@ lemma prod_rootSet_sub_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
 /-- The product of the shifted roots `β - a` of `f_n` is `c_{n+1}`, as elements of `K_n`. -/
 lemma prod_rootShift_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     ∏ β, rootShift a n β = algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ) := by
-  refine (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)).injective ?_
+  refine (algebraMap ↥(splittingField a n) (AlgebraicClosure ℚ)).injective ?_
   simpa [map_prod] using prod_rootSet_sub_eq_cSeq a ha n
 
-end
+/-- `c_1, …, c_n` are squares in `K_n`: `c_{k+1} = ∏_β (β - a)` over the roots `β` of `f_k`, and
+each `β - a` is the square of a root of `f_{k+1}`, which lies in `K_{k+1} ⊆ K_n`. -/
+lemma isSquare_algebraMap_cSeq (ha : ¬IsSquare (-a : ℚ)) {k n : ℕ} (hkn : k < n) :
+    IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (k + 1) : ℚ)) := by
+  choose g hg using exists_sq_eq_sub a
+  refine (IntermediateField.isSquare_algebraMap_iff _ _).mpr
+    ⟨∏ β : fℚ[a, k].rootSet (AlgebraicClosure ℚ), g β, prod_mem fun β _ ↦ splittingField_mono a hkn
+      (IntermediateField.subset_adjoin ℚ _ (mem_rootSet_succ_of_sq_eq_sub a β.2 (hg β))), ?_⟩
+  rw [← Finset.prod_pow, map_intCast, ← prod_rootSet_sub_eq_cSeq a ha k]
+  exact Finset.prod_congr rfl fun β _ ↦ hg β
 
-section
-
-variable (a : ℤ)
-
-/-! ### The degree criterion and the Kummer extension criterion -/
+/-! ### Lemma 1.6: the degree criterion -/
 
 /-- The relation space of the shifted roots vanishes iff `c_{n+1}` is not a square in `K_n`: if
 it is nonzero, it contains the all-ones vector, `Ω_n` being a 2-group acting transitively on the
@@ -147,14 +167,19 @@ theorem degree_criterion (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     (card_rootSet_iteratedPoly a (irreducible_iteratedPoly a ha n))
   lia
 
+/-! ### Lemma 1.5: the Kummer extension criterion -/
+
+/-- If `Ω_n ≅ [C₂]ⁿ`, then `Gal(K_n/ℚ)` has exactly `2^n` characters to `C₂`
+(`wreath_max_elem_ab`), which bounds the degree of the subfields of `K_n` generated by square roots
+of rationals. -/
 lemma card_monoidHom_eq_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n)) :
-    Nat.card (((splittingField a n) ≃ₐ[ℚ] (splittingField a n)) →*
-      Multiplicative (ZMod 2)) = 2 ^ n := by
+    Nat.card ((↥(splittingField a n) ≃ₐ[ℚ] ↥(splittingField a n)) →* Multiplicative (ZMod 2))
+      = 2 ^ n := by
   refine (Nat.card_congr ?_).trans (wreath_max_elem_ab n)
-  exact ((AlgEquiv.autCongr (IsSplittingField.algEquiv _ (fℚ[a, n]))).trans
+  exact ((AlgEquiv.autCongr (IsSplittingField.algEquiv _ fℚ[a, n])).trans
     hiso.some).monoidHomCongrLeftEquiv
 
-/-- If `Ω_n ≅ [C_2]^n` and the `c_i` are 2-independent with square roots `x i` in `K_n`, then the
+/-- If `Ω_n ≅ [C₂]ⁿ` and the `c_i` are 2-independent with square roots `x i` in `K_n`, then the
 image of `c : ℚ` in `K_n` is a square iff it is the square of some
 `z ∈ IntermediateField.adjoin ℚ (Set.range x)`: that field has the maximal degree `2^n` of a
 subfield of `K_n` generated by square roots of rationals. -/
@@ -174,17 +199,10 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
   exact ((card_monoidHom_eq_two_pow a hiso).trans
     (by rw [hindep.finrank_adjoin_range_eq_two_pow hx, Fintype.card_fin])).le
 
-/-- `c_1, …, c_n` are squares in `K_n`: `c_{k+1} = ∏_β (β - a)` over the roots `β` of `f_k`, and
-each `β - a` is the square of a root of `f_{k+1}`, which lies in `K_{k+1} ⊆ K_n`. -/
-lemma isSquare_algebraMap_cSeq (ha : ¬IsSquare (-a : ℚ)) {k n : ℕ} (hkn : k < n) :
-    IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (k + 1) : ℚ)) := by
-  choose g hg using exists_sq_eq_sub a
-  refine (IntermediateField.isSquare_algebraMap_iff _ _).mpr
-    ⟨∏ β : fℚ[a, k].rootSet (AlgebraicClosure ℚ), g β, prod_mem fun β _ ↦ splittingField_mono a hkn
-      (IntermediateField.subset_adjoin ℚ _ (mem_rootSet_succ_of_sq_eq_sub a β.2 (hg β))), ?_⟩
-  rw [← Finset.prod_pow, map_intCast, ← prod_rootSet_sub_eq_cSeq a ha k]
-  exact Finset.prod_congr rfl fun β _ ↦ hg β
-
+/-- If `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent, then a rational `c` is a square in `K_n`
+iff `c` times a subproduct of `c_1, …, c_n` is a rational square: the `√c_i` generate the maximal
+subfield of `K_n` generated by square roots of rationals, and squares descend along it
+(`IntermediateField.square_descent`). -/
 lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
     (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ))) (c : ℚ) :
