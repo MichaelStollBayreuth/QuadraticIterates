@@ -370,7 +370,7 @@ noncomputable def rootRelations {ι : Type*} [Fintype ι] (r : ι → L) :
 `L`. -/
 theorem mem_rootRelations {ι : Type*} [Fintype ι] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     {ε : ι → ZMod 2} :
-    ε ∈ rootRelations r ↔ IsSquare (∏ i ∈ Finset.univ.filter (fun i ↦ ε i = 1), r i) := by
+    ε ∈ rootRelations r ↔ IsSquare (∏ i with ε i = 1, r i) := by
   rw [rootRelations, LinearMap.mem_ker, Fintype.linearCombination_apply,
     sum_zmod_two_smul_eq_sum_filter (fun i ↦ sqClass (r i)) ε,
     ← isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hr i)]
@@ -404,7 +404,7 @@ noncomputable def multiquadraticRelations (s : Finset ι) (r : ι → L) :
 theorem mem_multiquadraticRelations {s : Finset ι} {r : ι → L} (hr : ∀ i ∈ s, r i ≠ 0)
     {ε : ι → ZMod 2} :
     ε ∈ multiquadraticRelations s r
-      ↔ (∀ i ∉ s, ε i = 0) ∧ IsSquare (∏ i ∈ s.filter (fun i ↦ ε i = 1), r i) := by
+      ↔ (∀ i ∉ s, ε i = 0) ∧ IsSquare (∏ i ∈ s with ε i = 1, r i) := by
   have hrne (i : ↥s) : r i.1 ≠ 0 := hr i.1 i.2
   have hoff (v : ↥s → ZMod 2) {i : ι} (hi : i ∉ s) :
       Function.ExtendByZero.linearMap (ZMod 2) (Subtype.val : ↥s → ι) v i = 0 := by
@@ -416,7 +416,7 @@ theorem mem_multiquadraticRelations {s : Finset ι} {r : ι → L} (hr : ∀ i �
     rw [← Finset.prod_filter_coe_sort]
     simpa using (mem_rootRelations hrne).mp hv
   · rwa [SetLike.mem_coe, mem_rootRelations hrne,
-      Finset.prod_filter_coe_sort s (fun i ↦ ε i = 1) r]
+      Finset.prod_filter_coe_sort s (ε · = 1) r]
   · funext i
     by_cases hi : i ∈ s
     · simpa using Subtype.val_injective.extend_apply (fun y : ↥s ↦ ε y.1) 0 ⟨i, hi⟩
@@ -491,7 +491,7 @@ theorem exists_mem_multiquadraticRelations_insert_iff [DecidableEq ι] {s : Fins
     (fun i hi ↦ hr i (Finset.mem_insert_of_mem hi))]
   refine ⟨fun ⟨ε, hε, hεj⟩ ↦ ?_, fun ⟨t, hts, hsq⟩ ↦ ?_⟩
   · obtain ⟨-, hsq⟩ := (mem_multiquadraticRelations hr).mp hε
-    refine ⟨s.filter (fun i ↦ ε i = 1), Finset.filter_subset _ _, ?_⟩
+    refine ⟨{i ∈ s | ε i = 1}, Finset.filter_subset _ _, ?_⟩
     simpa [Finset.filter_insert, hεj,
       Finset.prod_insert fun h ↦ hjs (Finset.mem_of_mem_filter j h)] using hsq
   · refine ⟨((insert j t : Finset ι) : Set ι).indicator 1,
@@ -567,8 +567,7 @@ theorem rootRelations_invariant {G : Type*} [Group G] {ι : Type*} [Fintype ι] 
   classical
   obtain ⟨φ, hφ⟩ := hcompat g
   rw [mem_rootRelations hr] at hv ⊢
-  have : ∏ i ∈ Finset.univ.filter (fun i ↦ v (g⁻¹ • i) = 1), r i
-      = φ (∏ j ∈ Finset.univ.filter (fun j ↦ v j = 1), r j) := by
+  have : ∏ i with v (g⁻¹ • i) = 1, r i = φ (∏ j with v j = 1, r j) := by
     rw [map_prod]
     exact (Finset.prod_equiv (MulAction.toPerm g) (fun j ↦ by simp) fun j _ ↦ hφ j).symm
   rw [this]
