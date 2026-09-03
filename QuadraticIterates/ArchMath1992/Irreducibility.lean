@@ -199,21 +199,6 @@ theorem even_reducible_factorization {p : ℚ[X]} (hmonic : p.Monic)
         rw [← mul_pow, neg_mul_neg, one_mul, one_pow],
       map_one, one_mul]
 
-lemma intCast_cSeq_eq_ite_mul_eval_zero {m : ℕ} (hm : 1 ≤ m) :
-    (cSeq a m : ℚ) = (if m = 1 then -1 else 1) * (fℚ[a, m]).eval 0 := by
-  have hkey (k : ℕ) : cSeq a (k + 2) = (iteratedPoly a (k + 2)).eval 0 := by
-    induction k with
-    | zero => simp [cSeq_two, iteratedPoly_succ]
-    | succ j ih =>
-      have h2 : (iteratedPoly a (j + 3)).eval 0 = ((iteratedPoly a (j + 2)).eval 0) ^ 2 + a := by
-        simp [iteratedPoly_succ]
-      rw [cSeq_succ a (by lia), h2, ih]
-  rcases eq_or_ne m 1 with rfl | hne
-  · simp [cSeq_one, iteratedPoly_succ]
-  · obtain ⟨k, rfl⟩ : ∃ k, m = k + 2 := ⟨m - 2, by lia⟩
-    rw [if_neg (by lia), one_mul, hkey k]
-    exact_mod_cast intCast_eval_iteratedPoly (S := ℚ) a 0 (k + 2)
-
 /-- For irreducible `F`, every even divisor (`d(-X) = d`) of `F ∘ (X² + c)` is trivial — a unit
 or associated to `F ∘ (X² + c)` — since it descends to a divisor of `F`. -/
 theorem isUnit_or_associated_of_dvd_comp (c : ℚ) {F : ℚ[X]} (hF : Irreducible F)
@@ -288,19 +273,11 @@ private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
     (hgeq : C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1] = g * g.comp (-X)) :
     IsSquare (cSeq a (j + 1) : ℚ) := by
   have hgnd : g.natDegree = 2 ^ j := by
-    rw [natDegree_iteratedPoly] at hgdeg
-    have h2 : 2 ^ (j + 1) = 2 * 2 ^ j := pow_succ' 2 j
+    rw [natDegree_iteratedPoly, pow_succ'] at hgdeg
     lia
-  have hsign : (-1 : ℚ) ^ g.natDegree = (if (j + 1 : ℕ) = 1 then -1 else 1) := by
-    rw [hgnd]
-    rcases Nat.eq_zero_or_pos j with rfl | hjpos
-    · norm_num
-    · rw [if_neg (by lia)]
-      exact (Nat.even_pow.mpr ⟨even_two, by lia⟩).neg_one_pow
-  rw [intCast_cSeq_eq_ite_mul_eval_zero a (by lia)]
-  have heval := congrArg (eval (0 : ℚ)) hgeq
-  rw [eval_mul, eval_C, eval_mul, eval_comp, eval_neg, eval_X, neg_zero] at heval
-  exact ⟨g.eval 0, by rwa [← hsign]⟩
+  have heval := congrArg (eval 0) hgeq
+  simp only [eval_mul, eval_C, eval_comp, eval_neg, eval_X, neg_zero] at heval
+  exact ⟨g.eval 0, by rwa [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]⟩
 
 /-- Lemma 1.2: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible over `ℚ`. -/
 theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
@@ -317,11 +294,8 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
     · simpa using irreducible_X (R := ℚ)
     · by_contra hc
       exact Nat.find_min hex (hjfind ▸ Nat.lt_succ_self j) ⟨hjpos, by lia, hc⟩
-  have hval0 : (fℚ[a, j + 1]).eval 0 ≠ 0 := by
-    intro hzero
-    refine h (j + 1) (by lia) (by lia) ?_
-    rw [intCast_cSeq_eq_ite_mul_eval_zero a (by lia), hzero, mul_zero]
-    exact ⟨0, by ring⟩
+  have hval0 : (fℚ[a, j + 1]).eval 0 ≠ 0 := fun hzero ↦ h (j + 1) (by lia) (by lia)
+    (by rw [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, hzero, mul_zero]; exact .zero)
   have hnoeven : ∀ d : ℚ[X], d ∣ fℚ[a, j + 1] → Associated (d.comp (-X)) d →
       IsUnit d ∨ Associated d (fℚ[a, j + 1]) := by
     have hcomp := iteratedPoly_succ_comp (a : ℚ) j

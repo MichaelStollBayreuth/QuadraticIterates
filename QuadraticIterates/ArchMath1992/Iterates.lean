@@ -102,6 +102,12 @@ lemma iteratedPoly_add (m n : ℕ) :
   | succ k ih =>
     rw [← add_assoc, iteratedPoly_succ_comp, ih, comp_assoc, ← iteratedPoly_succ_comp]
 
+/-- `f_{n+1}(0) = f_n(a)`. -/
+lemma eval_zero_iteratedPoly_succ (n : ℕ) :
+    (iteratedPoly a (n + 1)).eval 0 = (iteratedPoly a n).eval a := by
+  rw [iteratedPoly_succ_comp, eval_comp]
+  simp
+
 lemma monic_iteratedPoly [Nontrivial R] (n : ℕ) : (iteratedPoly a n).Monic := by
   induction n with
   | zero => exact monic_X
@@ -195,6 +201,16 @@ theorem cSeq_succ_eq_neg_one_pow_mul_eval (a : ℤ) (k : ℕ) :
     have hone : (-1 : ℤ) ^ 2 ^ (i + 1) = 1 := by simp [pow_succ, pow_mul']
     rw [cSeq_succ a (by lia), ih, iteratedPoly_succ]
     simp [mul_pow, ← pow_mul, ← pow_succ, hone]
+
+/-- `c_{n+1} = (-1)^{2^n} · f_{n+1}(0)`: the sign is `-1` exactly for `n = 0`. -/
+theorem cSeq_succ_eq_neg_one_pow_mul_eval_zero (a : ℤ) (n : ℕ) :
+    cSeq a (n + 1) = (-1) ^ 2 ^ n * (iteratedPoly a (n + 1)).eval 0 := by
+  rw [eval_zero_iteratedPoly_succ, cSeq_succ_eq_neg_one_pow_mul_eval]
+
+/-- `cSeq_succ_eq_neg_one_pow_mul_eval_zero` after casting to a commutative ring `S`. -/
+lemma intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero {S : Type*} [CommRing S] (a : ℤ) (n : ℕ) :
+    (cSeq a (n + 1) : S) = (-1) ^ 2 ^ n * (iteratedPoly (a : S) (n + 1)).eval 0 := by
+  simp [cSeq_succ_eq_neg_one_pow_mul_eval_zero, intCast_eval_iteratedPoly]
 
 /-- The Möbius factors `b_n = ∏_{d ∣ n} c_d^{μ(n/d)} ∈ ℤ` of the `c`-sequence: the specialization
 of the general `β`-sequence to `X² + a`, `ε = -1` (an integer by strong divisibility, see
