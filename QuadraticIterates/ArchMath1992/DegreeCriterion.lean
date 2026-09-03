@@ -6,6 +6,7 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 
 import Mathlib.Data.FunLike.Fintype
 import Mathlib.Data.Rat.Sqrt
@@ -74,13 +75,11 @@ theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] {n : ℕ} (h
     card_rootSet_iteratedPoly a hirr]
 
 lemma exists_ringEquiv_radicand_smul {n : ℕ}
-    [Fact (map (algebraMap ℚ (AlgebraicClosure ℚ)) (fℚ[a, n])).Splits]
     (r : ((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
         → ↥(splittingField a n))
     (hr : ∀ β, (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ) (r β))
       = (β : AlgebraicClosure ℚ) - (a : AlgebraicClosure ℚ)) (σ : GaloisGroup a n) :
     ∃ φ : (↥(splittingField a n)) ≃+* (↥(splittingField a n)), ∀ β, φ (r β) = r (σ • β) := by
-  have : IsAlgClosure ℚ (AlgebraicClosure ℚ) := AlgebraicClosure.instIsAlgClosure ℚ
   obtain ⟨ϕ, rfl⟩ := Gal.restrict_surjective (fℚ[a, n]) (AlgebraicClosure ℚ) σ
   refine ⟨(ϕ.restrictNormal (splittingField a n)).toRingEquiv, fun β ↦ ?_⟩
   apply (algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)).injective
@@ -94,9 +93,7 @@ lemma exists_ringEquiv_radicand_smul {n : ℕ}
     AlgEquiv.restrictNormal_commutes ϕ (splittingField a n) (r β)
   rw [hcomm, hr β, hr _, hσβ, map_sub, map_intCast]
 
-lemma isPretransitive_galoisGroup (n : ℕ)
-    (hirr : Irreducible (fℚ[a, n]))
-    [Fact (map (algebraMap ℚ (AlgebraicClosure ℚ)) (fℚ[a, n])).Splits] :
+lemma isPretransitive_galoisGroup (n : ℕ) (hirr : Irreducible (fℚ[a, n])) :
     MulAction.IsPretransitive (GaloisGroup a n)
       ↑((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :=
   Gal.galAction_isPretransitive (fℚ[a, n]) (AlgebraicClosure ℚ) hirr
@@ -219,8 +216,6 @@ theorem degree_criterion {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
   · exact degree_criterion_zero a
   · have hna : ¬IsSquare (-a : ℚ) := not_isSquare_neg_of_irreducible a hn hirr
     have hrne := rootShift_ne_zero a hna hn
-    have : Fact (map (algebraMap ℚ (AlgebraicClosure ℚ))
-        (fℚ[a, n])).Splits := ⟨IsAlgClosed.splits _⟩
     have hcard := card_rootSet_iteratedPoly a hirr
     have : Nonempty ↥((fℚ[a, n]).rootSet (AlgebraicClosure ℚ)) :=
       Fintype.card_pos_iff.mp (by rw [hcard]; positivity)
