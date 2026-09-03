@@ -111,7 +111,7 @@ alignment:
   namespace: "QuadraticIterates"
   statements:
     - source: "Lemma 1.0 (Kummer tower facts)"
-      lean: "kummer_degree_bound"
+      lean: "splittingField_succ_eq_sup_adjoin, relfinrank_succ_le"
       module: "QuadraticIterates.ArchMath1992.Iterates"
       status: "proved"
     - source: "Lemma 1.1 a)"

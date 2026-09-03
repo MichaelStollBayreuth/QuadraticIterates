@@ -99,6 +99,15 @@ theorem finrank_adjoin_finset_sqrt_le {s : Finset E}
     exact Nat.mul_le_mul (ih fun y hy ↦ hs y (Finset.mem_insert_of_mem hy))
       (relfinrank_adjoin_insert_sqrt_le hc)
 
+/-- `finrank_adjoin_finset_sqrt_le` for a finite set: adjoining finitely many square roots (each
+squaring into `L`) gives degree at most `2 ^ (number of roots)`. -/
+theorem finrank_adjoin_sqrt_le_two_pow_ncard {t : Set E} (ht : t.Finite)
+    (hs : ∀ x ∈ t, ∃ c : L, x ^ 2 = algebraMap L E c) :
+    Module.finrank L (adjoin L t) ≤ 2 ^ t.ncard := by
+  obtain ⟨s, rfl⟩ := ht.exists_finset_coe
+  rw [Set.ncard_coe_finset]
+  exact finrank_adjoin_finset_sqrt_le fun x hx ↦ hs x (Finset.mem_coe.mpr hx)
+
 /-- Adjoining a square root of `c` gives degree `1` if `c` is already a square in `L`, and `2`
 otherwise. -/
 theorem finrank_adjoin_sqrt_eq {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c)
