@@ -58,8 +58,8 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 
 ## Notation
 
-`fℚ[a, n]` is local notation for the iterate `f_n` viewed in `ℚ[X]`, that is, for
-`(iteratedPoly a n).map (Int.castRingHom ℚ)`.
+`fℚ[a, n]` is local notation for `iteratedPoly (a : ℚ) n`, the iterate `f_n` of `X² + a` over
+`ℚ`.
 
 ## Implementation notes
 

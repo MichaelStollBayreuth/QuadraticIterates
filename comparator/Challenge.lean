@@ -30,7 +30,7 @@ noncomputable def iteratedPoly {R : Type*} [CommSemiring R] (a : R) : ℕ → Po
 
 /-- The Galois group `Ω_n = Gal(f_n/ℚ)` of the `n`-th iterate, via Mathlib's `Polynomial.Gal`. -/
 noncomputable abbrev GaloisGroup (a : ℤ) (n : ℕ) : Type :=
-  ((iteratedPoly a n).map (Int.castRingHom ℚ)).Gal
+  (iteratedPoly (a : ℚ) n).Gal
 
 /-- The `n`-fold iterated regular wreath product `[C_2]^n` of `C_2 = Multiplicative (ZMod 2)`, via
 Mathlib's `IteratedWreathProduct`. -/

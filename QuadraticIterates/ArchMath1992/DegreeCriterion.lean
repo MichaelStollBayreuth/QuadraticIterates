@@ -107,11 +107,11 @@ lemma prod_aroots_sub_eq_cSeq (n : ℕ) :
         ((fℚ[a, n]).aroots (AlgebraicClosure ℚ))).prod
       = (cSeq a (n + 1) : AlgebraicClosure ℚ) := by
   set F := fℚ[a, n] with hF
-  have hmonic : F.Monic := (monic_iteratedPoly a n).map (Int.castRingHom ℚ)
+  have hmonic : F.Monic := monic_iteratedPoly _ n
   have hsplits : (F.map (algebraMap ℚ (AlgebraicClosure ℚ))).Splits := IsAlgClosed.splits _
   have hcard : (F.aroots (AlgebraicClosure ℚ)).card = 2 ^ n := by
     rw [aroots_def, ← hsplits.natDegree_eq_card_roots, hmonic.natDegree_map, hF,
-      (monic_iteratedPoly a n).natDegree_map, natDegree_iteratedPoly]
+      natDegree_iteratedPoly]
   calc (Multiset.map (fun α ↦ α - (a : AlgebraicClosure ℚ))
           (F.aroots (AlgebraicClosure ℚ))).prod
       = (((F.aroots (AlgebraicClosure ℚ)).map
@@ -127,7 +127,7 @@ lemma prod_aroots_sub_eq_cSeq (n : ℕ) :
         rw [hcard, ← hsplits.aeval_eq_prod_aroots_of_monic hmonic (a : AlgebraicClosure ℚ)]
     _ = (-1 : AlgebraicClosure ℚ) ^ 2 ^ n
           * (((iteratedPoly a n).eval a : ℤ) : AlgebraicClosure ℚ) := by
-        rw [hF, aeval_intCast_map]
+        rw [hF, aeval_intCast_iteratedPoly]
     _ = (cSeq a (n + 1) : AlgebraicClosure ℚ) := by
         rw [cSeq_succ_eq_neg_one_pow_mul_eval a n]
         push_cast
@@ -168,7 +168,7 @@ lemma finrank_splittingField_one (hsq : ¬IsSquare (-a : ℚ)) :
   obtain ⟨β, hβ⟩ := IsAlgClosed.exists_pow_nat_eq
     (-(algebraMap ℚ (AlgebraicClosure ℚ) (a : ℚ))) two_pos
   have hβsq : β ^ 2 = algebraMap ℚ (AlgebraicClosure ℚ) (-a : ℚ) := by rw [hβ, map_neg]
-  have hpoly := map_iteratedPoly_one a
+  have hpoly := iteratedPoly_one (a : ℚ)
   have hβroot : β ∈ (fℚ[a, 1]).rootSet (AlgebraicClosure ℚ) := by
     rw [mem_rootSet', hpoly]
     refine ⟨?_, ?_⟩

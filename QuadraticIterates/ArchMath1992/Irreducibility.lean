@@ -65,7 +65,7 @@ theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSe
   lia
 
 lemma map_iteratedPoly_comp_neg_X (k : ℕ) : (fℚ[a, k + 1]).comp (-X) = fℚ[a, k + 1] := by
-  rw [map_iteratedPoly_succ_comp, comp_assoc, X_sq_add_C_comp_neg_X]
+  rw [iteratedPoly_succ_comp, comp_assoc, X_sq_add_C_comp_neg_X]
 
 /-- A monic `p` associated to `g * g(-X)` with `g` monic equals `(-1)^(deg g) · g · g(-X)`. -/
 private theorem monic_eq_of_associated_mul_comp_neg_X {g p : ℚ[X]}
@@ -178,8 +178,8 @@ lemma intCast_cSeq_eq_ite_mul_eval_zero {m : ℕ} (hm : 1 ≤ m) :
   rcases eq_or_ne m 1 with rfl | hne
   · simp [cSeq_one, iteratedPoly_succ]
   · obtain ⟨k, rfl⟩ : ∃ k, m = k + 2 := ⟨m - 2, by lia⟩
-    rw [if_neg (by lia), one_mul, eval_zero_map, hkey k]
-    simp
+    rw [if_neg (by lia), one_mul, hkey k]
+    exact_mod_cast intCast_eval_iteratedPoly (S := ℚ) a 0 (k + 2)
 
 /-- For irreducible `F`, every even divisor (`d(-X) = d`) of `F ∘ (X² + c)` is trivial — a unit
 or associated to `F ∘ (X² + c)` — since it descends to a divisor of `F`. -/
@@ -255,7 +255,7 @@ private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
     (hgeq : C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1] = g * g.comp (-X)) :
     IsSquare (cSeq a (j + 1) : ℚ) := by
   have hgnd : g.natDegree = 2 ^ j := by
-    rw [(monic_iteratedPoly a (j + 1)).natDegree_map, natDegree_iteratedPoly] at hgdeg
+    rw [natDegree_iteratedPoly] at hgdeg
     have h2 : 2 ^ (j + 1) = 2 * 2 ^ j := pow_succ' 2 j
     lia
   have hsign : (-1 : ℚ) ^ g.natDegree = (if (j + 1 : ℕ) = 1 then -1 else 1) := by
@@ -291,11 +291,11 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
     exact ⟨0, by ring⟩
   have hnoeven : ∀ d : ℚ[X], d ∣ fℚ[a, j + 1] → Associated (d.comp (-X)) d →
       IsUnit d ∨ Associated d (fℚ[a, j + 1]) := by
-    have hcomp := map_iteratedPoly_succ_comp a j
+    have hcomp := iteratedPoly_succ_comp (a : ℚ) j
     rw [hcomp]
     exact isUnit_or_associated_of_dvd_comp_of_associated (a : ℚ) hFj_irr (hcomp ▸ hval0)
   obtain ⟨g, hgdeg, hgeq⟩ := even_reducible_factorization
-    ((monic_iteratedPoly a (j + 1)).map _) (map_iteratedPoly_comp_neg_X a j) hjred hnoeven
+    (monic_iteratedPoly (a : ℚ) (j + 1)) (map_iteratedPoly_comp_neg_X a j) hjred hnoeven
   exact h (j + 1) (by lia) (by lia) (isSquare_cSeq_of_even_factorization a hgdeg hgeq)
 
 /-- An integer strictly between the consecutive squares `e ^ 2` and `(e + 1) ^ 2` is not a
@@ -358,11 +358,9 @@ theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreduc
   intro ⟨r, hr⟩
   obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by lia : n ≠ 0)
   have hfac : fℚ[a, m + 1] = (fℚ[a, m] - C r) * (fℚ[a, m] + C r) := by
-    rw [map_iteratedPoly_succ_eq_sq_add a m, show (a : ℚ) = -(r * r) by linear_combination -hr,
-      map_neg, map_mul]
+    rw [iteratedPoly_succ, show (a : ℚ) = -(r * r) by linear_combination -hr, map_neg, map_mul]
     ring
-  have hdeg : (fℚ[a, m]).natDegree = 2 ^ m := by
-    rw [(monic_iteratedPoly a m).natDegree_map, natDegree_iteratedPoly]
+  have hdeg : (fℚ[a, m]).natDegree = 2 ^ m := natDegree_iteratedPoly _ m
   rcases hirr.isUnit_or_isUnit hfac with hu | hu
   · exact not_isUnit_of_natDegree_pos _ (by rw [natDegree_sub_C, hdeg]; positivity) hu
   · exact not_isUnit_of_natDegree_pos _ (by rw [natDegree_add_C, hdeg]; positivity) hu
@@ -374,7 +372,7 @@ lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} 
   have hβa : β = (a : AlgebraicClosure ℚ) := sub_eq_zero.mp hzero
   have hroot : (aeval (a : AlgebraicClosure ℚ)) (fℚ[a, n]) = 0 :=
     hβa ▸ aeval_eq_zero_of_mem_rootSet hβ
-  rw [aeval_intCast_map] at hroot
+  rw [aeval_intCast_iteratedPoly] at hroot
   have hevalZ : (iteratedPoly a n).eval a = 0 := mod_cast hroot
   have hpos : 0 < cSeq a (n + 1) := cSeq_pos a ha (by lia)
   rw [cSeq_succ_eq_neg_one_pow_mul_eval a n, hevalZ, mul_zero] at hpos
@@ -384,7 +382,7 @@ lemma splittingField_one_eq_bot_of_isSquare (ha : IsSquare (-a : ℚ)) : splitti
   obtain ⟨b, hb⟩ := ha
   refine IntermediateField.adjoin_eq_bot_iff.mpr fun β hβ ↦ ?_
   have haeval : (aeval β) (X ^ 2 + C (a : ℚ)) = 0 := by
-    simpa [map_iteratedPoly_one] using aeval_eq_zero_of_mem_rootSet hβ
+    simpa [iteratedPoly_one] using aeval_eq_zero_of_mem_rootSet hβ
   have hsq : β ^ 2 = (algebraMap ℚ (AlgebraicClosure ℚ) b) ^ 2 := by
     have hneg : β ^ 2 = -(algebraMap ℚ (AlgebraicClosure ℚ) (a : ℚ)) := by
       simp only [map_add, map_pow, aeval_X, aeval_C] at haeval
@@ -427,7 +425,7 @@ lemma not_isSquare_neg_of_finrank_eq {n : ℕ} (hn : 1 ≤ n)
 lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible (fℚ[a, n])) :
     Fintype.card ↑((fℚ[a, n]).rootSet (AlgebraicClosure ℚ))
       = 2 ^ n := by
-  simpa [(monic_iteratedPoly a n).natDegree_map, natDegree_iteratedPoly] using
+  simpa [natDegree_iteratedPoly] using
     card_rootSet_eq_natDegree hirr.separable (IsAlgClosed.splits _)
 
 end
