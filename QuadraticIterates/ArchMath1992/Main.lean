@@ -7,11 +7,11 @@ module
 
 public import QuadraticIterates.ArchMath1992.Iterates
 
-import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 import QuadraticIterates.ArchMath1992.DegreeCriterion
 import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Int.Order.Units
+import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
 import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
@@ -115,38 +115,30 @@ lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m :
   rw [sqClass_prod_zpow _ fun x hx ↦
     mod_cast ne_zero_of_mem_divisorsAntidiagonal (cSeq_ne_zero a ha) hx]
 
-/-- Section 1, `(b) ↔ (c)`: `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are 2-independent. -/
+/-- `F d` is a value of `fun i : Fin n ↦ F (i + 1)` whenever `d ∣ i + 1` for some `i : Fin n`. -/
+private lemma mem_range_of_dvd {α : Type*} (F : ℕ → α) {n : ℕ} {i : Fin n} {d : ℕ}
+    (hd : d ∣ (i : ℕ) + 1) : F d ∈ Set.range (fun j : Fin n ↦ F ((j : ℕ) + 1)) :=
+  have h1 := Nat.pos_of_dvd_of_pos hd i.1.succ_pos
+  have h2 := Nat.le_of_dvd i.1.succ_pos hd
+  have := i.2
+  ⟨⟨d - 1, by lia⟩, by simp [Nat.sub_add_cancel h1]⟩
+
+/-- Section 1, `(b) ↔ (c)`: `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are 2-independent,
+since their classes in `ℚˣ/(ℚˣ)²` span the same `𝔽₂`-subspace (Möbius inversion in both
+directions). -/
 theorem section1_b_iff_c (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) ↔
       TwoIndependent (fun i : Fin n ↦ (bSeq a ((i : ℕ) + 1) : ℚ)) := by
-  have hmem (F : ℕ → ℚ) (d : ℕ) (hd1 : 1 ≤ d) (hdn : d ≤ n) :
-      sqClass (F d) ∈ Set.range (fun j : Fin n ↦ sqClass (F ((j : ℕ) + 1))) :=
-    ⟨⟨d - 1, by lia⟩, by simp [Nat.sub_add_cancel hd1]⟩
-  have hspan :
-      Submodule.span (ZMod 2) (Set.range fun i : Fin n ↦ sqClass (cSeq a ((i : ℕ) + 1) : ℚ))
-        = Submodule.span (ZMod 2)
-            (Set.range fun i : Fin n ↦ sqClass (bSeq a ((i : ℕ) + 1) : ℚ)) := by
-    have hdvd {i : Fin n} {d : ℕ} (hd : d ∣ (i : ℕ) + 1) : 1 ≤ d ∧ d ≤ n :=
-      ⟨Nat.pos_of_dvd_of_pos hd (by lia), (Nat.le_of_dvd (by lia) hd).trans (by have := i.2; lia)⟩
-    apply le_antisymm
-    · rw [Submodule.span_le, Set.range_subset_iff]
-      intro i
-      rw [SetLike.mem_coe, sqClass_cSeq_eq_sum_divisors a ha (by lia)]
-      exact Submodule.sum_mem _ fun d hd ↦ Submodule.subset_span
-        (hmem (fun k ↦ (bSeq a k : ℚ)) d (hdvd (Nat.dvd_of_mem_divisors hd)).1
-          (hdvd (Nat.dvd_of_mem_divisors hd)).2)
-    · rw [Submodule.span_le, Set.range_subset_iff]
-      intro i
-      rw [SetLike.mem_coe, sqClass_bSeq_eq_sum_divisorsAntidiagonal a ha (by lia)]
-      refine Submodule.sum_mem _ fun x hx ↦ zsmul_mem (Submodule.subset_span ?_) (μ x.1)
-      have hx2 := hdvd (Nat.dvd_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx))
-      exact hmem (fun d ↦ (cSeq a d : ℚ)) x.2 hx2.1 hx2.2
-  rw [twoIndependent_iff_linearIndependent, twoIndependent_iff_linearIndependent,
-    linearIndependent_iff_card_eq_finrank_span, linearIndependent_iff_card_eq_finrank_span,
-    show (Set.range fun i : Fin n ↦ sqClass (cSeq a ((i : ℕ) + 1) : ℚ)).finrank (ZMod 2)
-        = (Set.range fun i : Fin n ↦ sqClass (bSeq a ((i : ℕ) + 1) : ℚ)).finrank (ZMod 2) by
-      simp only [Set.finrank]
-      rw [hspan]]
+  rw [twoIndependent_iff_linearIndependent, twoIndependent_iff_linearIndependent]
+  refine linearIndependent_iff_of_span_range_eq (le_antisymm ?_ ?_) <;>
+    rw [Submodule.span_le, Set.range_subset_iff] <;> intro i
+  · rw [SetLike.mem_coe, sqClass_cSeq_eq_sum_divisors a ha i.1.succ_pos]
+    exact Submodule.sum_mem _ fun d hd ↦ Submodule.subset_span
+      (mem_range_of_dvd (fun k ↦ sqClass (bSeq a k : ℚ)) (Nat.dvd_of_mem_divisors hd))
+  · rw [SetLike.mem_coe, sqClass_bSeq_eq_sum_divisorsAntidiagonal a ha i.1.succ_pos]
+    exact Submodule.sum_mem _ fun x hx ↦ zsmul_mem (Submodule.subset_span
+      (mem_range_of_dvd (fun k ↦ sqClass (cSeq a k : ℚ))
+        (Nat.dvd_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx)))) _
 
 /-- Theorem (Section 1), part 1: `Ω_n ≅ [C_2]^n` ⟺ `c_1, …, c_n` are 2-independent ⟺ `b_1, …, b_n`
 are 2-independent. -/
