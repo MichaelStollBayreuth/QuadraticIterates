@@ -6,7 +6,10 @@ import Mathlib.Algebra.Ring.Divisibility.Basic
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Strong divisibility of sequences from a translation congruence
+# Normalization under homomorphisms; strong divisibility from a translation congruence
+
+Normalizing before applying a monoid homomorphism does not change the normalized image
+(`normalize_map_normalize`).
 
 A sequence `a` in a GCD domain with `a 0 = 0` satisfying the *translation congruence*
 `a m ∣ a (m + j) - a j` for all `m, j` is a strong divisibility sequence:
@@ -18,6 +21,13 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 -/
 
 @[expose] public section
+
+/-- Normalizing before applying a monoid homomorphism does not change the normalized image. -/
+theorem normalize_map_normalize {α : Type*} [CommMonoidWithZero α] [IsCancelMulZero α]
+    [NormalizationMonoid α] {F : Type*} [FunLike F α α] [MonoidHomClass F α α] (f : F) (x : α) :
+    normalize (f (normalize x)) = normalize (f x) :=
+  have h := (normalize_associated x).map f
+  normalize_eq_normalize h.dvd h.symm.dvd
 
 variable {R : Type*} [CommRing R] [IsDomain R] [NormalizedGCDMonoid R]
 

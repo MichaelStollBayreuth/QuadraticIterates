@@ -10,8 +10,6 @@ public import QuadraticIterates.ArchMath1992.Iterates
 import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
-import QuadraticIterates.Mathlib.Data.Multiset
-import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
 /-!
 # Irreducibility of the iterates over `ℚ`
@@ -100,105 +98,6 @@ theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {k : ℕ} (hk : 1 ≤ k) 
 lemma map_iteratedPoly_comp_neg_X (k : ℕ) : (fℚ[a, k + 1]).comp (-X) = fℚ[a, k + 1] := by
   rw [iteratedPoly_succ_comp, comp_assoc, X_sq_add_C_comp_neg_X]
 
-/-- A monic `p` associated to `g * g(-X)` with `g` monic equals `(-1)^(deg g) · g · g(-X)`. -/
-private theorem monic_eq_of_associated_mul_comp_neg_X {g p : ℚ[X]}
-    (hgMonic : g.Monic) (hpMonic : p.Monic) (hassoc : Associated p (g * g.comp (-X))) :
-    p = C ((-1 : ℚ) ^ g.natDegree) * (g * g.comp (-X)) := by
-  have hwMonic : (C ((-1 : ℚ) ^ g.natDegree) * (g * g.comp (-X))).Monic := by
-    have h1 : C ((-1 : ℚ) ^ g.natDegree) * (g * g.comp (-X))
-        = g * ((-1 : ℚ[X]) ^ g.natDegree * g.comp (-X)) := by
-      rw [map_pow, map_neg, map_one]
-      ring
-    rw [h1]
-    exact hgMonic.mul (Monic.neg_one_pow_natDegree_mul_comp_neg_X hgMonic)
-  apply eq_of_monic_of_associated hpMonic hwMonic
-  rw [mul_comm (C ((-1 : ℚ) ^ g.natDegree))]
-  exact hassoc.trans (associated_mul_unit_left _ _
-    (isUnit_C.mpr (isUnit_one.neg.pow g.natDegree))).symm
-
-/-- For a nonzero reducible even `p` with no nontrivial even divisors, the map
-`q ↦ normalize (q(-X))` is a fixed-point-free involution on the normalized factors of `p`,
-hence pairs them up. -/
-private theorem exists_normalizedFactors_involution_split {p : ℚ[X]} (hp0 : p ≠ 0)
-    (heven : p.comp (-X) = p) (hpirr : ¬ Irreducible p)
-    (hnoeven : ∀ d : ℚ[X], d ∣ p → Associated (d.comp (-X)) d → IsUnit d ∨ Associated d p) :
-    ∃ N : Multiset ℚ[X], UniqueFactorizationMonoid.normalizedFactors p
-      = N + N.map (fun q ↦ normalize (q.comp (-X))) := by
-  set σ : ℚ[X] ≃ₐ[ℚ] ℚ[X] := algEquivAevalNegX
-  have hσapp (q : ℚ[X]) : σ q = q.comp (-X) := by
-    rw [algEquivAevalNegX_apply, ← comp_eq_aeval]
-  set M := UniqueFactorizationMonoid.normalizedFactors p
-  set τ : ℚ[X] → ℚ[X] := fun q ↦ normalize (q.comp (-X)) with hτdef
-  have hτinv (q : ℚ[X]) (hq : q ∈ M) : τ (τ q) = q := by
-    have hqnorm : normalize q = q :=
-      ((UniqueFactorizationMonoid.mem_normalizedFactors_iff' hp0).mp hq).2.1
-    calc τ (τ q) = τ (q.comp (-X)) := normalize_normalize_comp_neg_X _
-      _ = normalize q := congrArg normalize (comp_neg_X_comp_neg_X q)
-      _ = q := hqnorm
-  have hinvM : M.map τ = M := by
-    have hτσ (q : ℚ[X]) : τ q = normalize (σ.toRingEquiv.toMulEquiv q) := by
-      simp only [hτdef]
-      rw [← hσapp q]
-      rfl
-    rw [Multiset.map_congr rfl fun q _ ↦ hτσ q]
-    exact normalizedFactors_map_mulEquiv_eq σ.toRingEquiv.toMulEquiv hp0
-      (by rw [show σ.toRingEquiv.toMulEquiv p = p from (hσapp p).trans heven]; exact .refl p)
-  have hfixM (q : ℚ[X]) (hq : q ∈ M) : τ q ≠ q := by
-    intro hfix
-    have hirr : Irreducible q := UniqueFactorizationMonoid.irreducible_of_normalized_factor q hq
-    have hassoc : Associated (q.comp (-X)) q := by
-      have h1 := (normalize_associated (q.comp (-X))).symm
-      rwa [show normalize (q.comp (-X)) = τ q from rfl, hfix] at h1
-    rcases hnoeven q (UniqueFactorizationMonoid.dvd_of_mem_normalizedFactors hq) hassoc
-      with hu | hap
-    · exact hirr.not_isUnit hu
-    · exact hpirr (hap.irreducible hirr)
-  exact Multiset.exists_add_map_of_involutive τ M hτinv hinvM hfixM
-
-/-- A reducible monic even polynomial with no nontrivial even divisors factors as
-`(-1) ^ (deg g) · p = g · g(-X)`: its irreducible factors pair up under `X ↦ -X`. -/
-theorem even_reducible_factorization {p : ℚ[X]} (hmonic : p.Monic)
-    (heven : p.comp (-X) = p) (hpirr : ¬ Irreducible p)
-    (hnoeven : ∀ d : ℚ[X], d ∣ p → Associated (d.comp (-X)) d → IsUnit d ∨ Associated d p) :
-    ∃ g : ℚ[X], 2 * g.natDegree = p.natDegree ∧
-      C ((-1 : ℚ) ^ g.natDegree) * p = g * g.comp (-X) := by
-  have hp0 : p ≠ 0 := hmonic.ne_zero
-  obtain ⟨N, hN⟩ := exists_normalizedFactors_involution_split hp0 heven hpirr hnoeven
-  set τ : ℚ[X] → ℚ[X] := fun q ↦ normalize (q.comp (-X)) with hτdef
-  set g := N.prod with hgdef
-  have hNsub (q : ℚ[X]) (hq : q ∈ N) : q ∈ UniqueFactorizationMonoid.normalizedFactors p :=
-    hN ▸ Multiset.mem_add.mpr (.inl hq)
-  have hgMonic : g.Monic := by
-    rw [hgdef, ← Multiset.map_id N]
-    exact monic_multiset_prod_of_monic _ _ fun q hq ↦
-      ((Polynomial.mem_normalizedFactors_iff hp0).mp (hNsub q hq)).2.1
-  have hNcompprod : (N.map (fun q ↦ q.comp (-X))).prod = g.comp (-X) := by
-    rw [← multiset_prod_comp, hgdef]
-  have hNmapτ : Associated (N.map τ).prod (g.comp (-X)) := by
-    have heq : (N.map τ).prod = normalize ((N.map (fun q ↦ q.comp (-X))).prod) := by
-      simpa [Multiset.map_map, hτdef, coe_normalizeHom] using
-        (map_multiset_prod (normalizeHom (α := ℚ[X])) (N.map (fun q ↦ q.comp (-X)))).symm
-    rw [heq, hNcompprod]
-    exact normalize_associated _
-  have hassoc_p : Associated p (g * g.comp (-X)) := by
-    have hMprod : Associated (g * (N.map τ).prod) p := by
-      have hprodeq : (UniqueFactorizationMonoid.normalizedFactors p).prod
-          = g * (N.map τ).prod := by
-        rw [hN, Multiset.prod_add, hgdef]
-      exact hprodeq ▸ UniqueFactorizationMonoid.prod_normalizedFactors hp0
-    exact hMprod.symm.trans (Associated.mul_left g hNmapτ)
-  have hpw : p = C ((-1 : ℚ) ^ g.natDegree) * (g * g.comp (-X)) :=
-    monic_eq_of_associated_mul_comp_neg_X hgMonic hmonic hassoc_p
-  refine ⟨g, ?_, ?_⟩
-  · rw [hpw, natDegree_C_mul (neg_one_pow_ne_zero g.natDegree),
-      natDegree_mul hgMonic.ne_zero (by rw [Ne, comp_neg_X_eq_zero_iff]; exact hgMonic.ne_zero),
-      natDegree_comp]
-    simp
-    ring
-  · rw [hpw, ← mul_assoc, ← map_mul, show (-1 : ℚ) ^ g.natDegree * (-1 : ℚ) ^ g.natDegree = 1 by
-        rw [← mul_pow, neg_mul_neg, one_mul, one_pow],
-      map_one, one_mul]
-
 end
 
 section
@@ -211,14 +110,14 @@ variable (a : ℤ)
 `deg f_{j+1} = 2 · deg g`, then evaluation at `0` exhibits `c_{j+1}` as a square in `ℚ`. -/
 private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
     (hgdeg : 2 * g.natDegree = (fℚ[a, j + 1]).natDegree)
-    (hgeq : C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1] = g * g.comp (-X)) :
+    (hgeq : g * g.comp (-X) = C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1]) :
     IsSquare (cSeq a (j + 1) : ℚ) := by
   have hgnd : g.natDegree = 2 ^ j := by
     rw [natDegree_iteratedPoly, pow_succ'] at hgdeg
     lia
   have heval := congrArg (eval 0) hgeq
   simp only [eval_mul, eval_C, eval_comp, eval_neg, eval_X, neg_zero] at heval
-  exact ⟨g.eval 0, by rwa [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]⟩
+  exact ⟨g.eval 0, by rw [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]; exact heval.symm⟩
 
 /-- Lemma 1.2: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible over `ℚ`. -/
 theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
@@ -242,8 +141,9 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
     rw [iteratedPoly_succ_comp]
     exact fun _ ↦ hFj_irr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X
       (by rwa [eval_zero_iteratedPoly_succ] at hval0)
-  obtain ⟨g, hgdeg, hgeq⟩ := even_reducible_factorization
-    (monic_iteratedPoly (a : ℚ) (j + 1)) (map_iteratedPoly_comp_neg_X a j) hjred hnoeven
+  obtain ⟨g, hgdeg, hgeq⟩ :=
+    (monic_iteratedPoly (a : ℚ) (j + 1)).exists_mul_comp_neg_X_eq_of_not_irreducible
+      (map_iteratedPoly_comp_neg_X a j) hjred hnoeven
   exact h (j + 1) (by lia) (by lia) (isSquare_cSeq_of_even_factorization a hgdeg hgeq)
 
 /-- Corollary 1.3: all `f_n` (`n ≥ 1`) are irreducible over `ℚ`. -/

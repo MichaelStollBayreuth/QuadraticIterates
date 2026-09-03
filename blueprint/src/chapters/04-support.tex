@@ -265,7 +265,7 @@ them.
   \lean{Polynomial.even_eq_comp_X_sq_add_C, Polynomial.eq_expand_two_contract_of_comp_neg_X,
     Polynomial.expand_two_comp_neg_X, Polynomial.X_sq_add_C_comp_neg_X,
     Polynomial.comp_neg_X_eq_or_eq_neg_of_associated, Associated.comp_neg_X,
-    Polynomial.normalize_normalize_comp_neg_X, Polynomial.expand_contract_of_forall_coeff_eq_zero,
+    Polynomial.expand_contract_of_forall_coeff_eq_zero,
     Polynomial.coeff_eq_zero_of_comp_neg_X_eq_of_not_two_dvd, Polynomial.comp_dvd_comp_iff}
   \leanok
   Over a domain of characteristic $\ne 2$, a polynomial fixed by $X \mapsto -X$ is a polynomial
@@ -282,15 +282,20 @@ them.
 
 \begin{lemma}[Pairing the irreducible factors]
   \label{lem:involution}
-  \lean{Multiset.exists_add_map_of_involutive, normalizedFactors_map_mulEquiv_eq}
+  \lean{Multiset.exists_add_map_of_involutive, normalizedFactors_map_mulEquiv_eq,
+    normalize_map_normalize, exists_normalizedFactors_eq_add_map}
   \leanok
-  A fixed-point-free involution of a multiset splits it as $N + \tau(N)$. Applied to
-  $q \mapsto \mathrm{normalize}(q(-X))$ on the normalized factors of an even polynomial without
-  nontrivial even divisors, this yields the factorization $\pm p = g \cdot g(-X)$.
+  A fixed-point-free involution of a multiset splits it as $N + \tau(N)$. Consequently, if
+  $\sigma$ is an involutive automorphism of a UFD and $p$ is a reducible element with
+  $\sigma(p) \sim p$ whose $\sigma$-invariant divisors (up to associates) are all trivial, then
+  the normalized factors of $p$ pair up under $\mathrm{normalize} \circ \sigma$. For
+  $\sigma = (X \mapsto -X)$ on the polynomial ring over a field, this yields the factorization
+  $\pm p = g \cdot g(-X)$ of an even polynomial without nontrivial even divisors.
 \end{lemma}
 \begin{proof}
   \leanok
-  Induction on the multiset, removing an orbit $\{q, \tau q\}$ at a time; that the involution
-  preserves the multiset of normalized factors is functoriality of factorization under the ring
-  automorphism $X \mapsto -X$.
+  Induction on the multiset, removing an orbit $\{q, \tau q\}$ at a time; that
+  $\mathrm{normalize} \circ \sigma$ preserves the multiset of normalized factors is
+  functoriality of factorization under $\sigma$, and it has no fixed point there because a fixed
+  normalized factor would be a nontrivial $\sigma$-invariant divisor.
 \end{proof}
