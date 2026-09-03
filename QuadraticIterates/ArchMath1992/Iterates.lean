@@ -81,8 +81,7 @@ lemma iteratedPoly_add (m n : ℕ) :
   induction n with
   | zero => simp
   | succ k ih =>
-    rw [show m + (k + 1) = (m + k) + 1 from rfl, iteratedPoly_succ_comp, ih, comp_assoc,
-      ← iteratedPoly_succ_comp]
+    rw [← add_assoc, iteratedPoly_succ_comp, ih, comp_assoc, ← iteratedPoly_succ_comp]
 
 lemma monic_iteratedPoly [Nontrivial R] (n : ℕ) : (iteratedPoly a n).Monic := by
   induction n with
@@ -143,9 +142,9 @@ lemma cSeq_eq_gammaSeq (a : ℤ) (n : ℕ) : cSeq a n = gammaSeq (X ^ 2 + C a) (
 
 /-- The recursion `c_{n+1} = c_n² + a`, valid for `n ≥ 1`. -/
 theorem cSeq_succ (a : ℤ) {n : ℕ} (hn : 1 ≤ n) : cSeq a (n + 1) = cSeq a n ^ 2 + a := by
-  simp only [cSeq_eq_gammaSeq, gammaSeq_succ _ _ hn, eval_add, eval_pow, eval_X, eval_C]
+  simp [cSeq_eq_gammaSeq, gammaSeq_succ _ _ hn]
 
-lemma cSeq_two (a : ℤ) : cSeq a 2 = a ^ 2 + a := by rw [cSeq_succ a le_rfl, cSeq_one]; ring
+lemma cSeq_two (a : ℤ) : cSeq a 2 = a ^ 2 + a := by rw [cSeq_succ a le_rfl, cSeq_one, neg_sq]
 
 /-- **Strong divisibility** for the `c`-sequence: `gcd (c_m) (c_n) = |c_{gcd m n}|`. -/
 theorem cSeq_gcd (a : ℤ) (m n : ℕ) : Int.gcd (cSeq a m) (cSeq a n) = (cSeq a (m.gcd n)).natAbs :=
@@ -163,10 +162,9 @@ theorem cSeq_succ_eq_neg_one_pow_mul_eval (a : ℤ) (k : ℕ) :
   induction k with
   | zero => simp [cSeq_one]
   | succ i ih =>
-    have hsq : ((-1 : ℤ) ^ 2 ^ i) ^ 2 = 1 := by rw [pow_right_comm, neg_one_sq, one_pow]
     have hone : (-1 : ℤ) ^ 2 ^ (i + 1) = 1 :=
       (Nat.even_pow.mpr ⟨even_two, i.succ_ne_zero⟩).neg_one_pow
-    rw [cSeq_succ a (by lia), ih, hone, one_mul, mul_pow, hsq, one_mul]
+    rw [cSeq_succ a (by lia), ih, hone, one_mul, mul_pow, ← pow_mul, ← pow_succ, hone, one_mul]
     simp [iteratedPoly_succ]
 
 /-- The Möbius factors `b_n = ∏_{d ∣ n} c_d^{μ(n/d)} ∈ ℤ` of the `c`-sequence: the specialization
@@ -247,10 +245,9 @@ lemma map_iteratedPoly_one : fℚ[a, 1] = X ^ 2 + C (a : ℚ) := by
   simp [map_iteratedPoly_succ_eq_sq_add]
 
 lemma map_iteratedPoly_succ (k : ℕ) : fℚ[a, k + 1] = (fℚ[a, k]).comp (X ^ 2 + C (a : ℚ)) := by
-  rw [map_iteratedPoly, map_iteratedPoly, iteratedPoly_succ_comp]; rfl
+  rw [map_iteratedPoly, map_iteratedPoly]; exact iteratedPoly_succ_comp _ k
 
-lemma monic_map_iteratedPoly (n : ℕ) : (fℚ[a, n]).Monic := by
-  rw [map_iteratedPoly]; exact monic_iteratedPoly _ n
+lemma monic_map_iteratedPoly (n : ℕ) : (fℚ[a, n]).Monic := (monic_iteratedPoly a n).map _
 
 lemma natDegree_map_iteratedPoly (n : ℕ) : (fℚ[a, n]).natDegree = 2 ^ n := by
   rw [map_iteratedPoly, natDegree_iteratedPoly]
@@ -277,12 +274,10 @@ lemma exists_sq_eq_sub (α : AlgebraicClosure ℚ) :
 lemma splittingField_le_succ (n : ℕ) : splittingField a n ≤ splittingField a (n + 1) := by
   refine IntermediateField.adjoin_le_iff.mpr fun α hα ↦ ?_
   obtain ⟨β, hβ⟩ := exists_sq_eq_sub a α
-  have hβmem : β ∈ splittingField a (n + 1) :=
-    IntermediateField.subset_adjoin ℚ _ ((mem_rootSet_iteratedPoly_succ a n β).mpr
-      (by simpa [hβ, sub_add_cancel] using hα))
-  have hα_eq : α = β ^ 2 + (a : AlgebraicClosure ℚ) := by rw [hβ]; ring
-  rw [hα_eq]
-  exact add_mem (pow_mem hβmem 2) (IntermediateField.intCast_mem _ a)
+  rw [← sub_add_cancel α (a : AlgebraicClosure ℚ), ← hβ]
+  exact add_mem (pow_mem (IntermediateField.subset_adjoin ℚ _
+    ((mem_rootSet_iteratedPoly_succ a n β).mpr (by rwa [hβ, sub_add_cancel]))) 2)
+    (IntermediateField.intCast_mem _ a)
 
 lemma splittingField_mono {m n : ℕ} (hmn : m ≤ n) : splittingField a m ≤ splittingField a n :=
   Nat.le_induction le_rfl (fun k _ ih ↦ ih.trans (splittingField_le_succ a k)) n hmn
@@ -290,9 +285,7 @@ lemma splittingField_mono {m n : ℕ} (hmn : m ≤ n) : splittingField a m ≤ s
 /-- `K_0 = ℚ`: the only root of `f_0 = X` is `0`. -/
 @[simp] lemma splittingField_zero_eq_bot : splittingField a 0 = ⊥ := by
   refine IntermediateField.adjoin_eq_bot_iff.mpr fun x hx ↦ ?_
-  rw [iteratedPoly_zero, map_X, mem_rootSet_of_injective
-    (algebraMap ℚ (AlgebraicClosure ℚ)).injective X_ne_zero] at hx
-  rw [SetLike.mem_coe, show x = 0 by simpa using hx]
+  obtain rfl : x = 0 := by simpa [mem_rootSet] using hx
   exact zero_mem _
 
 /-- `K_{n+1} = K_n(√(α - a) : α root of f_n)`, for any choice `g` of square roots: a root `β` of
@@ -354,19 +347,13 @@ theorem pow_two_pow_apply_root (ϕ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicC
     (ϕ ^ (2 ^ m)) γ = γ := by
   induction m generalizing γ with
   | zero =>
-    rw [iteratedPoly_zero, map_X,
-      mem_rootSet_of_injective (algebraMap ℚ (AlgebraicClosure ℚ)).injective X_ne_zero] at hγ
-    obtain rfl : γ = 0 := by simpa using hγ
+    obtain rfl : γ = 0 := by simpa [mem_rootSet] using hγ
     simp
   | succ k ih =>
-    have hsq : ((ϕ ^ 2 ^ k) γ) ^ 2 = γ ^ 2 := by
-      have hfix := ih ((mem_rootSet_iteratedPoly_succ a k γ).mp hγ)
-      have hmap : (ϕ ^ 2 ^ k) (γ ^ 2 + (a : AlgebraicClosure ℚ))
-          = ((ϕ ^ 2 ^ k) γ) ^ 2 + (a : AlgebraicClosure ℚ) := by
-        simp [map_add, map_pow, map_intCast]
-      rw [hmap] at hfix
-      linear_combination hfix
-    rw [show (2 : ℕ) ^ (k + 1) = 2 ^ k + 2 ^ k by ring, pow_add, AlgEquiv.mul_apply]
+    have hsq : ((ϕ ^ 2 ^ k) γ) ^ 2 = γ ^ 2 := add_right_cancel (by
+      simpa only [map_add, map_pow, map_intCast] using
+        ih ((mem_rootSet_iteratedPoly_succ a k γ).mp hγ))
+    rw [pow_succ, pow_mul, sq, AlgEquiv.mul_apply]
     rcases sq_eq_sq_iff_eq_or_eq_neg.mp hsq with h | h
     · rw [h, h]
     · rw [h, map_neg, h, neg_neg]
@@ -403,10 +390,9 @@ lemma card_wreathPower (n : ℕ) : Nat.card (WreathPower n) = 2 ^ (2 ^ n - 1) :=
 /-- `#[C_2]^{n+1} = #[C_2]^n · 2^{2^n}`. -/
 lemma card_wreathPower_succ (n : ℕ) :
     Nat.card (WreathPower (n + 1)) = Nat.card (WreathPower n) * 2 ^ 2 ^ n := by
-  rw [card_wreathPower, card_wreathPower, ← pow_add]
+  rw [card_wreathPower, card_wreathPower, ← pow_add, pow_succ]
   congr 1
   have := Nat.one_le_two_pow (n := n)
-  rw [pow_succ]
   lia
 
 lemma card_galoisGroup_eq_finrank (n : ℕ) :
