@@ -114,15 +114,17 @@ $|b_n|$ is not a square when $2 \le n \le 5 \cdot 10^7$.
 
 \begin{definition}[$2$-independence]
   \label{def:twoindep}
-  \lean{QuadraticIterates.TwoIndependent,
+  \lean{QuadraticIterates.TwoIndependent, QuadraticIterates.TwoIndependent.ne_zero,
     QuadraticIterates.twoIndependent_iff_linearIndependent,
     QuadraticIterates.TwoIndependent.of_snoc, sqClass}
   \leanok
   Nonzero rational numbers $a_1, \dots, a_n$ are called \emph{$2$-independent} if their residue
   classes in the $\FF_2$-vector space $\QQ^*/(\QQ^*)^2$ are linearly independent.
-  \formalnote{\texttt{TwoIndependent} is stated in the equivalent elementary form ``all $a_i$ are
-  nonzero, and no nonempty subfamily has square product'', which is what the proofs use; the
-  translation into linear independence of the classes $\texttt{sqClass}(a_i)$ in
-  $\QQ^*/(\QQ^*)^2$ is \lname{twoIndependent\_iff\_linearIndependent}. Families are indexed by
+  \formalnote{\texttt{TwoIndependent} is stated in the equivalent elementary form ``no nonempty
+  subfamily has a square product'', which is what the proofs use, for a family of elements of any
+  commutative monoid; that all $a_i$ are nonzero is then a consequence, $0$ being a square
+  (\lname{TwoIndependent.ne\_zero}). The translation into linear independence of the classes
+  $\texttt{sqClass}(a_i)$ in $L^*/(L^*)^2$, for any field $L$, is
+  \lname{twoIndependent\_iff\_linearIndependent}. The families of the paper are indexed by
   \texttt{Fin n}, and $c_1, \dots, c_n$ appears as the family $i \mapsto c_{i+1}$.}
 \end{definition}

@@ -110,12 +110,11 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
   induction n with
   | zero =>
-    refine ⟨fun _ ↦ ⟨fun i ↦ i.elim0, fun S hS ↦ hS.elim fun i _ ↦ i.elim0⟩, fun _ ↦ ?_⟩
+    refine ⟨fun _ S hS ↦ hS.elim fun i _ ↦ i.elim0, fun _ ↦ ?_⟩
     apply nonempty_mulEquiv_of_finrank_eq a
     rw [splittingField_zero_eq_bot, IntermediateField.finrank_bot]
     norm_num
   | succ n ih =>
-    have hc0 : (cSeq a (n + 1) : ℚ) ≠ 0 := mod_cast cSeq_ne_zero a ha (by lia)
     have hsnoc : (fun i : Fin (n + 1) ↦ (cSeq a ((i : ℕ) + 1) : ℚ))
         = Fin.snoc (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) (cSeq a (n + 1) : ℚ) := by
       ext i
@@ -124,12 +123,12 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       · simp [Fin.snoc_last]
     rw [hsnoc, (embed_equiv a n).2]
     refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun hsnocindep ↦ ?_⟩
-    · exact (kummer_extension_criterion a hiso (ih.mp hiso) hc0).mp
+    · exact (kummer_extension_criterion a hiso (ih.mp hiso) _).mp
         ((degree_criterion a (irreducible_iteratedPoly a ha n)).mp hrel)
     · have hindep := TwoIndependent.of_snoc hsnocindep
       have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr hindep
       exact ⟨hiso, (degree_criterion a (irreducible_iteratedPoly a ha n)).mpr
-        ((kummer_extension_criterion a hiso hindep hc0).mpr hsnocindep)⟩
+        ((kummer_extension_criterion a hiso hindep _).mpr hsnocindep)⟩
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/
 lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
@@ -199,7 +198,7 @@ theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     (h : ∀ k ≥ 2, k ≤ n → ¬IsSquare |bSeq a k|) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
   refine ((section1_equiv a ha n).out 2 0).mp ?_
-  refine ⟨fun i ↦ by simpa using bSeq_ne_zero a ha (Nat.le_add_left 1 (i : ℕ)), fun S hS hsq ↦ ?_⟩
+  intro S hS hsq
   have hsq_int : IsSquare (∏ i ∈ S, bSeq a ((i : ℕ) + 1)) := by
     rwa [show (∏ i ∈ S, (bSeq a ((i : ℕ) + 1) : ℚ))
         = ((∏ i ∈ S, bSeq a ((i : ℕ) + 1) : ℤ) : ℚ) by push_cast; rfl,

@@ -173,54 +173,49 @@ noncomputable def normPoly (a : ℤ) : ℤ[X] := C |a| * X ^ 2 + C a.sign
 
 lemma evenPoly_normPoly (a : ℤ) : EvenPoly (normPoly a) := evenPoly_C_mul_X_sq_add_C |a| a.sign
 
-/-! ### 2-independence of families of rationals -/
+/-! ### 2-independence -/
 
-/-- Nonzero rationals `a_1, …, a_n` are *2-independent* if their classes in `ℚ*/(ℚ*)²` are
-`𝔽₂`-linearly independent: no nonempty subfamily has product a square in `ℚ`. -/
-def TwoIndependent {n : ℕ} (v : Fin n → ℚ) : Prop :=
-  (∀ i, v i ≠ 0) ∧
-    ∀ S : Finset (Fin n), S.Nonempty → ¬IsSquare (∏ i ∈ S, v i)
+section TwoIndependent
+
+variable {ι : Type*}
+
+/-- A family of elements of a commutative monoid is *2-independent* if no nonempty subfamily has
+a square product. For nonzero rationals this says that the classes in `ℚ*/(ℚ*)²` are
+`𝔽₂`-linearly independent (`twoIndependent_iff_linearIndependent`). -/
+def TwoIndependent {M : Type*} [CommMonoid M] (v : ι → M) : Prop :=
+  ∀ S : Finset ι, S.Nonempty → ¬IsSquare (∏ i ∈ S, v i)
+
+/-- The members of a 2-independent family are nonzero, `0` being a square. -/
+lemma TwoIndependent.ne_zero {M : Type*} [CommMonoidWithZero M] {v : ι → M}
+    (h : TwoIndependent v) (i : ι) : v i ≠ 0 :=
+  fun hi ↦ h {i} (Finset.singleton_nonempty i) (by simp [hi])
 
 /-- 2-independence of `Fin.snoc v c` restricts to the initial family `v`. -/
-theorem TwoIndependent.of_snoc {n : ℕ} {v : Fin n → ℚ} {c : ℚ}
-    (h : TwoIndependent (Fin.snoc v c)) : TwoIndependent v := by
-  obtain ⟨hv0, hvsq⟩ := h
-  refine ⟨fun i ↦ ?_, fun S hS ↦ ?_⟩
-  · simpa [Fin.snoc_castSucc] using hv0 i.castSucc
-  · have hSmap : (S.map Fin.castSuccEmb).Nonempty := by
-      obtain ⟨x, hx⟩ := hS
-      exact ⟨x.castSucc, Finset.mem_map.mpr ⟨x, hx, rfl⟩⟩
-    simpa [Fin.snoc_castSucc, Finset.prod_map S Fin.castSuccEmb (Fin.snoc v c)] using
-      hvsq (S.map Fin.castSuccEmb) hSmap
+theorem TwoIndependent.of_snoc {M : Type*} [CommMonoid M] {n : ℕ} {v : Fin n → M} {c : M}
+    (h : TwoIndependent (Fin.snoc v c)) : TwoIndependent v := fun S hS ↦ by
+  simpa [Fin.snoc_castSucc, Finset.prod_map S Fin.castSuccEmb (Fin.snoc v c)] using
+    h (S.map Fin.castSuccEmb) hS.map
 
-/-- A family of rationals is 2-independent iff the family of its classes in `ℚˣ/(ℚˣ)²` is
+/-- A family in a field `L` is 2-independent iff the family of its classes in `Lˣ/(Lˣ)²` is
 `𝔽₂`-linearly independent. -/
-theorem twoIndependent_iff_linearIndependent {n : ℕ} (v : Fin n → ℚ) :
-    TwoIndependent v ↔ LinearIndependent (ZMod 2) (fun i ↦ sqClass (v i)) := by
-  rw [Fintype.linearIndependent_iff]
-  have h01 : ∀ x : ZMod 2, x = 0 ∨ x = 1 := by decide
-  refine ⟨fun ⟨hv0, hsq⟩ g hg i ↦ ?_, fun H ↦ ?_⟩
+theorem twoIndependent_iff_linearIndependent [Fintype ι] {L : Type*} [Field L] [DecidableEq L]
+    (v : ι → L) : TwoIndependent v ↔ LinearIndependent (ZMod 2) (fun i ↦ sqClass (v i)) := by
+  refine ⟨fun h ↦ Fintype.linearIndependent_iff.mpr fun g hg i ↦ ?_, fun H S hS hsq ↦ ?_⟩
   · by_contra hgi
-    have hg1 : g i = 1 := (h01 (g i)).resolve_left hgi
-    refine hsq (Finset.univ.filter fun j ↦ g j = 1)
-      ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ i, hg1⟩⟩ ?_
-    rw [isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hv0 i),
+    refine h {j | g j = 1} ⟨i, by simpa using (show ∀ x : ZMod 2, x ≠ 0 → x = 1 by decide) _ hgi⟩ ?_
+    rw [isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ h.ne_zero i),
       ← Finset.sum_zmod_two_smul_eq_sum_filter (fun i ↦ sqClass (v i)) g, hg]
-  · have hne (i) : sqClass (v i) ≠ 0 := fun hi ↦ by
-      have h := H (fun j ↦ if j = i then 1 else 0) ?_ i
-      · simp at h
-      · rw [Finset.sum_eq_single i (fun j _ hj ↦ by simp [hj])
-          (fun h ↦ absurd (Finset.mem_univ i) h), if_pos rfl, hi, smul_zero]
-    have hv0 (i) : v i ≠ 0 := fun hvi ↦ hne i (by rw [hvi, sqClass_zero])
-    refine ⟨hv0, fun S hS hsqS ↦ ?_⟩
+  · classical
+    have hv0 (i) : v i ≠ 0 := fun hvi ↦ H.ne_zero i (by rw [hvi, sqClass_zero])
     obtain ⟨i, hiS⟩ := hS
-    have hfilt : Finset.univ.filter (fun j ↦ (if j ∈ S then (1 : ZMod 2) else 0) = 1) = S := by
-      ext j
-      by_cases hj : j ∈ S <;> simp [hj, zero_ne_one (α := ZMod 2)]
-    have hg : ∑ j, (if j ∈ S then (1 : ZMod 2) else 0) • sqClass (v j) = 0 := by
-      rw [Finset.sum_zmod_two_smul_eq_sum_filter (fun j ↦ sqClass (v j)), hfilt]
-      exact (isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hv0 i)).mp hsqS
-    exact absurd (H _ hg i) (by simp [hiS])
+    refine absurd (Fintype.linearIndependent_iff.mp H (fun j ↦ if j ∈ S then 1 else 0) ?_ i)
+      (by simp [hiS])
+    rw [Finset.sum_zmod_two_smul_eq_sum_filter (fun j ↦ sqClass (v j)),
+      show Finset.univ.filter (fun j ↦ (if j ∈ S then (1 : ZMod 2) else 0) = 1) = S by ext; simp,
+      ← isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hv0 i)]
+    exact hsq
+
+end TwoIndependent
 
 
 section

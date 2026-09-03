@@ -259,7 +259,7 @@ lemma finrank_adjoin_range_eq_two_pow {n : ℕ}
     (hx : ∀ i, x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ)) :
     Module.finrank ℚ (IntermediateField.adjoin ℚ (Set.range x)) = 2 ^ n := by
   classical
-  rw [multiquadratic_degree_family hx hindep.1, (rootRelations_eq_bot_iff _).mpr
+  rw [multiquadratic_degree_family hx hindep.ne_zero, (rootRelations_eq_bot_iff _).mpr
     ((twoIndependent_iff_linearIndependent _).mp hindep), finrank_bot, Fintype.card_fin,
     Nat.sub_zero]
 
@@ -376,13 +376,13 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     rw [sq]
     exact (hx i).symm
   rw [isSquare_algebraMap_iff_exists_sq_eq a hiso hindep hx2 c, ← Set.image_univ,
-    ← Finset.coe_univ, IntermediateField.square_descent (fun i _ ↦ hx2 i) (fun i _ ↦ hindep.1 i) c]
+    ← Finset.coe_univ,
+    IntermediateField.square_descent (fun i _ ↦ hx2 i) (fun i _ ↦ hindep.ne_zero i) c]
   exact exists_congr fun S ↦ and_iff_right (Finset.subset_univ S)
 
-lemma twoIndependent_snoc_iff {n : ℕ} {v : Fin n → ℚ} (hv : TwoIndependent v) {c : ℚ} (hc : c ≠ 0) :
+lemma twoIndependent_snoc_iff {n : ℕ} {v : Fin n → ℚ} (hv : TwoIndependent v) (c : ℚ) :
     TwoIndependent (Fin.snoc v c) ↔
       ∀ S : Finset (Fin n), ¬IsSquare (c * ∏ i ∈ S, v i) := by
-  obtain ⟨hv0, hvsq⟩ := hv
   have hprod_no (S : Finset (Fin n)) :
       ∏ i ∈ S.map Fin.castSuccEmb, Fin.snoc v c i = ∏ i ∈ S, v i := by
     simp [Fin.snoc_castSucc]
@@ -398,27 +398,23 @@ lemma twoIndependent_snoc_iff {n : ℕ} {v : Fin n → ℚ} (hv : TwoIndependent
       · intro hlast
         ext x
         rcases Fin.eq_castSucc_or_eq_last x with ⟨j, rfl⟩ | rfl <;> simp [hlast]
-  refine ⟨fun ⟨_, hsnocsq⟩ S ↦ ?_, fun hcS ↦ ⟨fun i ↦ ?_, fun T hT ↦ ?_⟩⟩
+  refine ⟨fun hsnocsq S ↦ ?_, fun hcS T hT ↦ ?_⟩
   · simpa [hprod_yes S] using
       hsnocsq (insert (Fin.last n) (S.map Fin.castSuccEmb)) (Finset.insert_nonempty _ _)
-  · rcases Fin.eq_castSucc_or_eq_last i with ⟨j, rfl⟩ | rfl
-    · rw [Fin.snoc_castSucc]
-      exact hv0 j
-    · rwa [Fin.snoc_last]
   · obtain ⟨S, hno, hyes⟩ := hdecomp T
     by_cases hlast : Fin.last n ∈ T
     · rw [hyes hlast, hprod_yes S]
       exact hcS S
     · rw [hno hlast, hprod_no S]
-      exact hvsq S ((Finset.map_nonempty (f := Fin.castSuccEmb)).mp (hno hlast ▸ hT))
+      exact hv S ((Finset.map_nonempty (f := Fin.castSuccEmb)).mp (hno hlast ▸ hT))
 
-/-- Lemma 1.5: if `Ω_n ≅ [C_2]^n` and `c_1, …, c_n` are 2-independent, then a nonzero `c ∈ ℚ` is a
-non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent. -/
+/-- Lemma 1.5: if `Ω_n ≅ [C_2]^n` and `c_1, …, c_n` are 2-independent, then `c ∈ ℚ` is a
+non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent (for `c = 0` both sides fail). -/
 theorem kummer_extension_criterion {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
-    (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ))) {c : ℚ} (hc : c ≠ 0) :
+    (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ))) (c : ℚ) :
     ¬IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       TwoIndependent (Fin.snoc (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) c) := by
-  rw [twoIndependent_snoc_iff hindep hc,
+  rw [twoIndependent_snoc_iff hindep c,
     isSquare_algebraMap_iff_exists_mul_prod a hiso hindep c, not_exists]
 
 end
