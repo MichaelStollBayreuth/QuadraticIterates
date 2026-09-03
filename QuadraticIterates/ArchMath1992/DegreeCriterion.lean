@@ -218,13 +218,9 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       ∃ S : Finset (Fin n), IsSquare (c * ∏ i ∈ S, (cSeq a ((i : ℕ) + 1) : ℚ)) := by
   classical
-  have hmax := (nonempty_mulEquiv_iff_finrank_eq a n).mp hiso
   have hroot (i : Fin n) :
-      IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ)) := by
-    rcases Nat.eq_zero_or_pos n with rfl | hnpos
-    · exact absurd i.2 (by simp)
-    · have hnsq : ¬IsSquare (-a : ℚ) := not_isSquare_neg_of_finrank_eq a hnpos hmax
-      exact isSquare_algebraMap_cSeq a hnsq i.2
+      IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ)) :=
+    isSquare_algebraMap_cSeq a (by simpa using hindep.not_isSquare ⟨0, i.pos⟩) i.2
   choose x hx using hroot
   have hx2 (i) : x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ) := by
     rw [sq]

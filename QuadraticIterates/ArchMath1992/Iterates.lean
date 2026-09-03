@@ -252,10 +252,15 @@ a square product. For nonzero rationals this says that the classes in `ℚ*/(ℚ
 def TwoIndependent [CommMonoid M] (v : ι → M) : Prop :=
   ∀ S : Finset ι, S.Nonempty → ¬IsSquare (∏ i ∈ S, v i)
 
+/-- No member of a 2-independent family is a square (the singleton subfamilies). -/
+lemma TwoIndependent.not_isSquare [CommMonoid M] {v : ι → M} (h : TwoIndependent v) (i : ι) :
+    ¬IsSquare (v i) := by
+  simpa using h {i} (Finset.singleton_nonempty i)
+
 /-- The members of a 2-independent family are nonzero, `0` being a square. -/
 lemma TwoIndependent.ne_zero [CommMonoidWithZero M] {v : ι → M} (h : TwoIndependent v) (i : ι) :
     v i ≠ 0 :=
-  fun hi ↦ h {i} (Finset.singleton_nonempty i) (by simp [hi])
+  fun hi ↦ h.not_isSquare i (hi ▸ IsSquare.zero)
 
 /-- 2-independence of `Fin.snoc v c` restricts to the initial family `v`. -/
 theorem TwoIndependent.of_snoc [CommMonoid M] {n : ℕ} {v : Fin n → M} {c : M}
