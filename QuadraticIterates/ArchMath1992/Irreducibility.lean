@@ -81,7 +81,7 @@ theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSe
   (abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha)).trans_le (abs_le_cSeq a ha hn)
 
 /-- `c_n ≠ 0` for `n ≥ 1`, since `|c_n| ≥ |a| > 0`. -/
-theorem cSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : cSeq a n ≠ 0 := fun h ↦
+theorem cSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, cSeq a n ≠ 0 := fun _ hn h ↦
   ne_zero_of_not_isSquare_neg a ha (by simpa [h] using abs_le_abs_cSeq a ha hn)
 
 /-- No `c_n` (`n ≥ 1`) is a rational square: `c_{n+1} = c_n² + a` lies strictly between two
@@ -155,7 +155,7 @@ lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ}
     β - (a : AlgebraicClosure ℚ) ≠ 0 := fun hzero ↦ by
   have hroot := aeval_eq_zero_of_mem_rootSet hβ
   rw [sub_eq_zero.mp hzero, aeval_intCast_iteratedPoly, Int.cast_eq_zero] at hroot
-  exact cSeq_ne_zero a ha n.succ_pos (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
+  exact cSeq_ne_zero a ha _ n.succ_pos (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
 
 /-- An irreducible `f_n` is separable, so it has exactly `2^n = deg f_n` roots in `ℚ̄`. -/
 lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible fℚ[a, n]) :

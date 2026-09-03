@@ -41,41 +41,37 @@ variable (a : ℤ)
 
 /-! ### The integer factors `b_n` -/
 
-/-- `cSeq_ne_zero` in the `∀ d ≥ 1` form the `moebiusFactorR` API consumes. -/
-private lemma cSeq_ne_zero' (ha : ¬IsSquare (-a : ℚ)) : ∀ d ≥ 1, cSeq a d ≠ 0 :=
-  fun _ ↦ cSeq_ne_zero a ha
-
 /-- The constant-valuation shape for `c`: the specialization of `factorization_gammaSeq_shape`
 to `X² + a`, `ε = -1`, in the form consumed by `moebiusFactorR_isRelPrime`. -/
 lemma cSeq_factorization_shape (ha : ¬IsSquare (-a : ℚ)) :
     ∀ q : ℤ, Prime q → normalize q = q →
       ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (cSeq a k) q = if m ∣ k then E else 0 :=
   fun _ hq hqn ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq
-    (cSeq_ne_zero' a ha) hq hqn
+    (cSeq_ne_zero a ha) hq hqn
 
 /-- The image of `b_n` in `ℚ` is the Möbius product `∏_{ed = n} c_d^{μ(e)}` (Lemma 1.1 b): the
 Möbius product of the `c`-sequence is the integer `b_n`, since `c` is a strong divisibility
 sequence. -/
 lemma intCast_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     (bSeq a n : ℚ) = moebiusFactorK (cSeq a) n :=
-  algebraMap_moebiusFactorR (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
+  algebraMap_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
 
 lemma bSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : bSeq a n ≠ 0 := by
   rw [bSeq_eq_moebiusFactorR]
-  exact moebiusFactorR_ne_zero (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
+  exact moebiusFactorR_ne_zero (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
 
 /-- Möbius inversion for the integer factors (Lemma 1.1 b): `c_n = ∏_{d ∣ n} b_d`. -/
 lemma cSeq_eq_prod_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     cSeq a n = ∏ d ∈ n.divisors, bSeq a d := by
   simp only [bSeq_eq_moebiusFactorR]
-  exact prod_moebiusFactorR (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
+  exact prod_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
 
 /-- The integer factors `b_n` are pairwise coprime (Lemma 1.1 b): the valuation of `b_n` at
 each prime is supported on a single index, so no prime divides two distinct factors. -/
 lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n)
     (hmn : m ≠ n) : IsCoprime (bSeq a m) (bSeq a n) := by
   rw [bSeq_eq_moebiusFactorR, bSeq_eq_moebiusFactorR]
-  exact (moebiusFactorR_isRelPrime (cSeq_ne_zero' a ha) (cSeq_associated_gcd a)
+  exact (moebiusFactorR_isRelPrime (cSeq_ne_zero a ha) (cSeq_associated_gcd a)
     (cSeq_factorization_shape a ha) m n hm hn hmn).isCoprime
 
 end
@@ -124,8 +120,7 @@ lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m :
   rw [intCast_bSeq a ha hm, moebiusFactorK_eq_prod]
   simp only [eq_intCast]
   rw [sqClass_prod_zpow _ fun x hx ↦
-    mod_cast cSeq_ne_zero a ha
-      (Nat.pos_of_ne_zero (Nat.right_ne_zero_of_mem_divisorsAntidiagonal hx))]
+    mod_cast ne_zero_of_mem_divisorsAntidiagonal (cSeq_ne_zero a ha) hx]
 
 /-- Section 1, `(b) ↔ (c)`: `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are 2-independent. -/
 theorem section1_b_iff_c (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
