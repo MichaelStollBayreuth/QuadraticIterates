@@ -35,8 +35,8 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
   two above at `g = X² + a`, `ε = -1`.
 * `QuadraticIterates.normPoly`: the rescaling `|a|·X² + sign a` of `X² + a`, whose `γ`-sequence
   is `|c_n| / |a|` and hence positive.
-* `QuadraticIterates.moebiusFactor`: the rational Möbius product of an integer sequence.
-* `QuadraticIterates.TwoIndependent`: `𝔽₂`-linear independence of classes in `ℚ*/(ℚ*)²`.
+* `QuadraticIterates.TwoIndependent`: 2-independence of a family, i.e. no nonempty subfamily has
+  a square product; for rationals, `𝔽₂`-linear independence of the classes in `ℚ*/(ℚ*)²`.
 * `QuadraticIterates.rootShift`: the shifted root `β - a ∈ K_n` of `f_n`.
 
 ## Main statements
@@ -49,10 +49,12 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 * `QuadraticIterates.section3_main` (Section 3): if `a > 0` with `a ≡ 1, 2 mod 4`, or `a < 0`,
   `a ≡ 0 mod 4` and `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`;
 * `QuadraticIterates.odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`;
+* `QuadraticIterates.nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff
+  `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`;
 * `QuadraticIterates.degree_criterion` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is
   not a square in `K_n`;
-* `QuadraticIterates.kummer_extension_criterion` (Lemma 1.5): a nonzero rational is a non-square
-  in `K_n` iff it extends the 2-independent family `c_1, …, c_n`.
+* `QuadraticIterates.kummer_extension_criterion` (Lemma 1.5): a rational is a non-square in
+  `K_n` iff it extends the 2-independent family `c_1, …, c_n`.
 
 ## Notation
 

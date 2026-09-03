@@ -20,11 +20,18 @@ import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 
 The iterates `f_n` of `f = X² + a`, the splitting field `K_n` of `f_n` over `ℚ` taken inside
 `AlgebraicClosure ℚ`, the Galois group `Ω_n = Gal(f_n/ℚ)` and the iterated wreath product `[C₂]ⁿ`;
-the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 2-independence of
-families of rationals. The main results here are Odoni's embedding `Ω_n ↪ [C₂]ⁿ`
-(`odoni_embedding`), the Kummer tower `K_n ⊆ K_{n+1}` with `[K_{n+1} : K_n] ≤ 2^{2^n}`
-(`splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le`), and Lemma 1.4
-(`nonempty_mulEquiv_succ_iff`).
+the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 2-independence.
+
+## Main statements
+
+* `splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le` (Facts 1.0):
+  `K_{n+1} = K_n(√(α - a) : α root of f_n)`, hence `[K_{n+1} : K_n] ≤ 2^{2^n}`.
+* `odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group
+  (`isPGroup_galoisGroup`) acting faithfully on the at most `2^n` roots of `f_n`.
+* `nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and
+  `[K_{n+1} : K_n] = 2^{2^n}`.
+* `twoIndependent_iff_linearIndependent`: a family is 2-independent iff its classes in
+  `Lˣ/(Lˣ)²` are `𝔽₂`-linearly independent.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -271,6 +278,7 @@ lemma exists_sq_eq_sub (α : AlgebraicClosure ℚ) :
     ∃ β : AlgebraicClosure ℚ, β ^ 2 = α - (a : AlgebraicClosure ℚ) :=
   IsAlgClosed.exists_pow_nat_eq _ two_pos
 
+/-- `K_n ⊆ K_{n+1}`: a root `α` of `f_n` is `β² + a` for a root `β` of `f_{n+1}`. -/
 lemma splittingField_le_succ (n : ℕ) : splittingField a n ≤ splittingField a (n + 1) := by
   refine IntermediateField.adjoin_le_iff.mpr fun α hα ↦ ?_
   obtain ⟨β, hβ⟩ := exists_sq_eq_sub a α
@@ -328,7 +336,9 @@ theorem relfinrank_succ_eq_finrank_adjoin (n : ℕ) (g : AlgebraicClosure ℚ �
       (by rw [IntermediateField.restrictScalars_adjoin_eq_sup]; exact le_sup_left)]
   congr 1
 
-lemma relfinrank_succ_le (n : ℕ) :
+/-- `[K_{n+1} : K_n] ≤ 2^{2^n}`: `K_{n+1}` is generated over `K_n` by at most `2^n` square
+roots. -/
+theorem relfinrank_succ_le (n : ℕ) :
     (splittingField a n).relfinrank (splittingField a (n + 1)) ≤ 2 ^ 2 ^ n := by
   choose g hg using exists_sq_eq_sub a
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg]
@@ -372,8 +382,7 @@ theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
 
 /-- Odoni's embedding theorem: `Ω_n` embeds into `[C_2]^n`, being a `2`-group acting faithfully on
 the at most `2 ^ n` roots of `f_n`. -/
-theorem odoni_embedding (n : ℕ) :
-    ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
+theorem odoni_embedding (n : ℕ) : ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
   (isPGroup_galoisGroup a n).exists_injective_monoidHom_iteratedWreathProduct
     (Gal.galActionHom_injective (fℚ[a, n]) (AlgebraicClosure ℚ))
     ((Nat.card_coe_set_eq _).trans_le (ncard_rootSet_iteratedPoly_le a n))
