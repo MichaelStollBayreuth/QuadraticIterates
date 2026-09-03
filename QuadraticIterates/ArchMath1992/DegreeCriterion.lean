@@ -164,16 +164,6 @@ theorem degree_criterion (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   rw [hrfd, Submodule.finrank_eq_zero, ← not_iff_not]
   simpa using hallne.symm.trans hallsq
 
-lemma finrank_adjoin_range_eq_two_pow {n : ℕ}
-    (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)))
-    {x : Fin n → ↥(splittingField a n)}
-    (hx : ∀ i, x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ)) :
-    Module.finrank ℚ (IntermediateField.adjoin ℚ (Set.range x)) = 2 ^ n := by
-  classical
-  rw [multiquadratic_degree_family hx hindep.ne_zero, (rootRelations_eq_bot_iff _).mpr
-    ((twoIndependent_iff_linearIndependent _).mp hindep), finrank_bot, Fintype.card_fin,
-    Nat.sub_zero]
-
 lemma card_monoidHom_eq_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n)) :
     Nat.card (((splittingField a n) ≃ₐ[ℚ] (splittingField a n)) →*
       Multiplicative (ZMod 2)) = 2 ^ n := by
@@ -199,7 +189,7 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
   refine ⟨w, IntermediateField.mem_adjoin_of_sq_eq_algebraMap_of_card_le
     (Set.forall_mem_range.mpr fun i ↦ ⟨_, hx i⟩) ?_ hw.symm, hw.symm⟩
   exact ((card_monoidHom_eq_two_pow a hiso).trans
-    (finrank_adjoin_range_eq_two_pow a hindep hx).symm).le
+    (by rw [hindep.finrank_adjoin_range_eq_two_pow hx, Fintype.card_fin])).le
 
 /-- `c_1, …, c_n` are squares in `K_n`: `c_{k+1} = ∏_β (β - a)` over the roots `β` of `f_k`, and
 each `β - a` is the square of a root of `f_{k+1}`, which lies in `K_{k+1} ⊆ K_n`. -/

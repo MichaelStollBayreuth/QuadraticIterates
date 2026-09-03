@@ -306,6 +306,16 @@ theorem twoIndependent_iff_linearIndependent [Finite ι] {L : Type*} [Field L] [
     have h0 := (Submodule.mem_bot (ZMod 2)).mp (((rootRelations_eq_bot_iff v).mpr H).le hmem)
     simpa [hiS] using congrFun h0 i
 
+/-- Square roots of a 2-independent family of radicands `r : ι → L` generate an extension of the
+full degree `2^|ι|`: there are no relations in `multiquadratic_degree_family`. -/
+theorem TwoIndependent.finrank_adjoin_range_eq_two_pow [Fintype ι] {L : Type*} [Field L]
+    [NeZero (2 : L)] {E : Type*} [Field E] [Algebra L E] {r : ι → L} (hr : TwoIndependent r)
+    {x : ι → E} (hx : ∀ i, x i ^ 2 = algebraMap L E (r i)) :
+    Module.finrank L (IntermediateField.adjoin L (Set.range x)) = 2 ^ Fintype.card ι := by
+  classical
+  rw [multiquadratic_degree_family hx hr.ne_zero, (rootRelations_eq_bot_iff _).mpr
+    ((twoIndependent_iff_linearIndependent _).mp hr), finrank_bot, Nat.sub_zero]
+
 end TwoIndependent
 
 /-! ### The iterates over `ℚ` -/

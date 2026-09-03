@@ -194,7 +194,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   \lean{QuadraticIterates.kummer_extension_criterion,
     QuadraticIterates.isSquare_algebraMap_iff_exists_mul_prod,
     QuadraticIterates.isSquare_algebraMap_iff_exists_sq_eq,
-    QuadraticIterates.finrank_adjoin_range_eq_two_pow,
+    QuadraticIterates.TwoIndependent.finrank_adjoin_range_eq_two_pow,
     QuadraticIterates.card_monoidHom_eq_two_pow,
     QuadraticIterates.isSquare_algebraMap_cSeq}
   \leanok
@@ -218,7 +218,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   $c_1, \dots, c_n$. This implies the asserted equivalence.
   \formalnote{The two halves of ``the kernel has dimension exactly $n$'' are separate lemmas. For
   the lower bound, $\QQ(\sqrt{c_1}, \dots, \sqrt{c_n})$ has degree $2^n$ because the $c_i$ are
-  $2$-independent (\lname{finrank\_adjoin\_range\_eq\_two\_pow}, via
+  $2$-independent (\lname{TwoIndependent.finrank\_adjoin\_range\_eq\_two\_pow}, via
   Lemma~\ref{lem:multiquadratic}). For the upper bound, any subfield of $K_n$ generated over
   $\QQ$ by square roots of rationals is Galois with elementary abelian group, so its degree is
   bounded by $\#\Hom(\Om_n, C_2) = 2^n$ (Lemma~\ref{lem:wreathab}). Hence a square root of $c$
