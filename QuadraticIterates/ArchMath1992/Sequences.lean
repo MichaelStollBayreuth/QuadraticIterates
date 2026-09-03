@@ -6,7 +6,6 @@ Authors: Michael Stoll
 module
 
 public import Mathlib.Algebra.Polynomial.Expand
-public import Mathlib.RingTheory.Int.Basic
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 
 import Mathlib.Data.ZMod.Basic
@@ -16,7 +15,6 @@ import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
-import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
 /-!
 # The iteration sequence of a polynomial and its Möbius factors
@@ -88,7 +86,7 @@ theorem eval_neg (hg : EvenPoly g) (y : R) : g.eval (-y) = g.eval y := hg.eval_c
 /-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
 lemma iterate_eval_neg (hg : EvenPoly g) {k : ℕ} (hk : 1 ≤ k) (y : R) :
     (g.eval ·)^[k] (-y) = (g.eval ·)^[k] y := by
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
+  obtain ⟨k', rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
   rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
 
 /-- For even `g`, a divisor of `a² - b²` divides `g(a) - g(b)`. -/
@@ -151,12 +149,10 @@ lemma gammaSeq_succ (ε : R) {n : ℕ} (hn : 1 ≤ n) :
 /-- `γ_{m+n}` is the `n`-fold iterate of `z ↦ g(z)` applied to `γ_m` (`m ≥ 1`). -/
 lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
     gammaSeq g ε (m + n) = (g.eval ·)^[n] (gammaSeq g ε m) := by
-  obtain ⟨m', rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hm)
   induction n with
   | zero => simp
   | succ n ih =>
-    rw [show m' + 1 + (n + 1) = m' + n + 1 + 1 by ring, gammaSeq_succ g ε (by lia),
-      show m' + n + 1 = m' + 1 + n by ring, ih, Function.iterate_succ_apply']
+    rw [← add_assoc, gammaSeq_succ g ε (by lia), ih, Function.iterate_succ_apply']
 
 /-- A ring homomorphism intertwines the `γ`-sequences of `g` and its image:
 `φ(γ_n(g, ε)) = γ_n(g.map φ, φ ε)`. -/
@@ -188,10 +184,7 @@ theorem gammaSeq_eq_ite_even (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0
   intro n hn
   induction n, hn using Nat.le_induction with
   | base => simp [h0]
-  | succ k hk ih =>
-    rw [gammaSeq_succ g 1 hk, ih]
-    simp only [Nat.even_add_one]
-    split_ifs <;> assumption
+  | succ k hk ih => grind [gammaSeq_succ g 1 hk, Nat.even_add_one]
 
 /-- Consecutive terms of the alternating sequence of `gammaSeq_eq_ite_even` sum to `3`. -/
 theorem gammaSeq_add_succ_eq_three (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0 = 1)
@@ -207,7 +200,6 @@ theorem gammaSeq_eq_eval_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) (h0 :
   intro n hn
   induction n, hn using Nat.le_induction with
   | base =>
-    rw [show (2 : ℕ) = 1 + 1 from rfl, gammaSeq_succ g ε le_rfl]
     exact hg.eval_congr (by rw [gammaSeq_one, mul_pow, hε, one_mul, h0, one_pow])
   | succ k hk ih =>
     rw [gammaSeq_succ g ε (by lia), ih]
@@ -227,7 +219,6 @@ theorem gammaSeq_eq_gammaSeq_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) {
     gammaSeq g ε n = gammaSeq g 1 n := by
   induction n, hn using Nat.le_induction with
   | base =>
-    rw [show (2 : ℕ) = 1 + 1 from rfl, gammaSeq_succ g ε le_rfl, gammaSeq_succ g 1 le_rfl]
     exact hg.eval_congr (by rw [gammaSeq_one, gammaSeq_one, mul_pow, mul_pow, hε, one_pow])
   | succ k hk ih => rw [gammaSeq_succ g ε (by lia), gammaSeq_succ g 1 (by lia), ih]
 
@@ -258,9 +249,7 @@ private lemma gammaSeq_one_dvd_sub (m j : ℕ) :
     gammaSeq g 1 m ∣ gammaSeq g 1 (m + j) - gammaSeq g 1 j := by
   induction j with
   | zero => simp
-  | succ j ih =>
-    rw [← add_assoc, gammaSeq_one_succ, gammaSeq_one_succ]
-    exact ih.trans (sub_dvd_eval_sub _ _ g)
+  | succ j ih => simpa [← add_assoc, gammaSeq_one_succ] using ih.trans (sub_dvd_eval_sub _ _ g)
 
 variable {g}
 
@@ -309,12 +298,9 @@ lemma gammaSeq_period_of_dvd_succ_sub_eval_zero (hg : EvenPoly g) {ε : R} (hε 
   rw [show 2 + m = m + 1 + 1 by ring, gammaSeq_succ g ε (by lia), show (2 : ℕ) = 1 + 1 from rfl,
     gammaSeq_succ g ε le_rfl]
   refine hg.dvd_eval_sub ?_
-  have hsq : gammaSeq g ε (m + 1) ^ 2 - gammaSeq g ε 1 ^ 2
-      = (gammaSeq g ε (m + 1) - g.eval 0) * (gammaSeq g ε (m + 1) + g.eval 0) := by
-    rw [gammaSeq_one]
-    linear_combination (-(g.eval 0) ^ 2) * hε
-  rw [hsq]
-  exact hq.mul_right _
+  have h1 : gammaSeq g ε 1 ^ 2 = g.eval 0 ^ 2 := by rw [gammaSeq_one, mul_pow, hε, one_mul]
+  rw [h1, sq_sub_sq]
+  exact hq.mul_left _
 
 /-- If `γ_k + γ_{2k} = 0`, then `γ_{lk} = γ_{2k}` for all `l ≥ 2` (over any ring, for even `g`):
 `γ` is constant on positive multiples of `k` past the first. -/
@@ -341,9 +327,9 @@ theorem prod_gammaSeq_mul_eq (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
   have hf (t : ℕ) (ht : t ∈ S) :
       gammaSeq g ε (k * t) = gammaSeq g ε (2 * k) * (if t = 1 then -1 else 1) := by
     rcases eq_or_ne t 1 with rfl | h
-    · rw [mul_one, if_pos rfl, mul_neg, mul_one, hγk_neg]
-    · have := hS t ht
-      rw [if_neg h, mul_one, mul_comm k t, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)]
+    · simp [hγk_neg]
+    · rw [if_neg h, mul_one, mul_comm k t,
+        gammaSeq_mul_eq_two_mul hg hk hzero t (by have := hS t ht; lia)]
   rw [Finset.prod_congr rfl hf, Finset.prod_mul_distrib, Finset.prod_const,
     Finset.prod_ite_eq' S 1 (fun _ ↦ (-1 : R))]
 
@@ -357,9 +343,8 @@ theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk :
     ∏ t ∈ Sp, gammaSeq g ε (k * t) = -∏ t ∈ Sm, gammaSeq g ε (k * t) := by
   rw [prod_gammaSeq_mul_eq hg hk hzero fun t ht ↦ hS t (Finset.mem_union_left _ ht),
     prod_gammaSeq_mul_eq hg hk hzero fun t ht ↦ hS t (Finset.mem_union_right _ ht), hcard]
-  rcases Finset.mem_union.mp h1 with h | h
-  · simp [h, Finset.disjoint_left.mp hdisj h]
-  · simp [h, Finset.disjoint_right.mp hdisj h]
+  rcases Finset.mem_union.mp h1 with h | h <;>
+    simp [h, Finset.disjoint_left.mp hdisj, Finset.disjoint_right.mp hdisj]
 
 /-- If `γ_k + γ_{2k} = 0` and `γ_{2k}` is a unit, then `∏_{t ∈ S} γ_{kt}` is a unit for every set
 `S` of positive indices (over any ring, for even `g`). -/
@@ -435,15 +420,10 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
     (hpg : ¬p ∣ g.eval 0) (hex : ∃ k : ℕ, 1 ≤ k ∧ p ∣ gammaSeq g ε k) :
     ∃ m ≥ 1, ∃ E : ℕ, ∀ n ≥ 1, factorization (gammaSeq g ε n) p = if m ∣ n then E else 0 := by
   classical
-  obtain ⟨m, ⟨hm1, hpm⟩, hmin⟩ : ∃ m, (1 ≤ m ∧ p ∣ gammaSeq g ε m) ∧
-      ∀ k < m, ¬(1 ≤ k ∧ p ∣ gammaSeq g ε k) :=
-    ⟨Nat.find hex, Nat.find_spec hex, fun _ hk ↦ Nat.find_min hex hk⟩
-  have hm2 : 2 ≤ m := by
-    have : m ≠ 1 := by
-      rintro rfl
-      exact hpg ((gammaSeq_one_associated_eval_zero
-        (IsUnit.of_pow_eq_one hε two_ne_zero)).dvd_iff_dvd_right.mp hpm)
-    lia
+  obtain ⟨m, ⟨hm1, hpm⟩, hmin⟩ := Nat.findX hex
+  have hm2 : 2 ≤ m :=
+    hm1.lt_of_ne' fun h ↦ hpg ((gammaSeq_one_associated_eval_zero
+      (IsUnit.of_pow_eq_one hε two_ne_zero)).dvd_iff_dvd_right.mp (h ▸ hpm))
   set E := factorization (gammaSeq g ε m) p with hE
   have hE1 := (one_le_factorization_iff_dvd hp hpn (hne m hm1)).mpr hpm
   -- `p^{E+1} ∣ γ_{m+1} - g(0)` via `γ_m² ∣ γ_{m+1} - g(0)`
@@ -488,8 +468,7 @@ variable {g}
 `gcd (γ_m) (γ_n) = |γ_{gcd m n}|`. -/
 theorem gammaSeq_gcd (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1) (m n : ℕ) :
     Int.gcd (gammaSeq g ε m) (gammaSeq g ε n) = (gammaSeq g ε (m.gcd n)).natAbs := by
-  have h := Int.associated_iff_natAbs.mp (gammaSeq_associated_gcd hg hε m n)
-  rw [← h, ← Int.coe_gcd, Int.natAbs_natCast]
+  rw [← Int.natAbs_gcd, Int.associated_iff_natAbs.mp (gammaSeq_associated_gcd hg hε m n)]
 
 /-- The image of `β_n` in `ℚ` is the Möbius product `∏_{ed = n} γ_d^{μ(e)}` (for even `g`,
 `ε = ±1`, and `γ` nowhere zero on positive indices): the specialization of
@@ -536,8 +515,7 @@ lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)
     (h1 : ((g.eval 1 : ℤ) : ZMod 4) = 2) :
     ∀ n ≥ 1, ((gammaSeq g 1 n + gammaSeq g 1 (n + 1) : ℤ) : ZMod 4) = 3 := by
   intro n hn
-  push_cast
-  simp only [intCast_gammaSeq, Int.cast_one]
+  push_cast [intCast_gammaSeq]
   exact gammaSeq_add_succ_eq_three (hg.map _) (by decide) (by rw [eval_zero_map, h0, map_one])
     (by rwa [eval_one_map]) n hn
 
@@ -549,14 +527,12 @@ lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε
     ∀ n ≥ 2, ((gammaSeq g ε n + gammaSeq g ε (n + 1) : ℤ) : ZMod 8) = 6 := by
   have hfiber : ∀ x : ZMod 8, ZMod.castHom (by norm_num : (4 : ℕ) ∣ 8) (ZMod 4) x = 3 →
       x ^ 2 = 1 ∧ 2 * x = 6 := by decide
-  obtain ⟨hsq1, h2x⟩ := hfiber ((g.eval 1 : ℤ) : ZMod 8) (by rw [map_intCast]; exact h1)
+  obtain ⟨hsq1, h2x⟩ := hfiber ((g.eval 1 : ℤ) : ZMod 8) (by rwa [map_intCast])
   intro n hn
-  push_cast
-  simp only [intCast_gammaSeq]
-  rw [gammaSeq_add_succ_eq_two_mul_eval_one (hg.map _) (by rw [← Int.cast_pow, hε, Int.cast_one])
+  push_cast [intCast_gammaSeq]
+  rwa [gammaSeq_add_succ_eq_two_mul_eval_one (hg.map _) (by rw [← Int.cast_pow, hε, Int.cast_one])
       (by rw [eval_zero_map, eq_intCast, ← Int.cast_pow, h0, Int.cast_one])
       (by rwa [eval_one_map]) n hn, eval_one_map]
-  exact h2x
 
 /-- Over `ℤ`, if `ε² = g(0)² = 1` and `γ_1 > 0`, then `γ_1 = 1`. -/
 lemma gammaSeq_one_eq_one_of_pos {ε : ℤ} (hε : ε ^ 2 = 1) (h0 : g.eval 0 ^ 2 = 1)
@@ -577,8 +553,8 @@ theorem not_isSquare_betaSeq_of_pos_of_not_isSquare_neg_one (hg : EvenPoly g) {�
       = gammaSeq g ε n + gammaSeq g ε (n + 1) :=
     Int.toNat_of_nonneg (add_pos (hpos n hn) (hpos (n + 1) (by lia))).le
   exact not_isSquare_betaSeq hg hε (fun n hn ↦ (hpos n hn).ne')
-    (fun n hn ↦ by rw [hdtn n hn]; exact gammaSeq_add_succ_dvd hg ε hn)
-    (fun n hn ↦ by rw [hdtn n hn]; exact isCoprime_gammaSeq_add_succ ε hn h0) hnsq
+    (fun n hn ↦ hdtn n hn ▸ gammaSeq_add_succ_dvd hg ε hn)
+    (fun n hn ↦ hdtn n hn ▸ isCoprime_gammaSeq_add_succ ε hn h0) hnsq
 
 /-- Lemma 2.2 a): if all `γ_n > 0`, `g(0) = 1` and `g(1) ≡ 2 mod 4`, then `β_n` is not a square
 in `ℚ` for `n ≥ 2`, since `γ_n + γ_{n+1} ≡ 3 mod 4` for all `n ≥ 1`. -/
@@ -590,9 +566,8 @@ theorem not_isSquare_betaSeq_of_pos_of_eval_one_emod_four_eq_two (hg : EvenPoly 
     rwa [gammaSeq_one, h0, mul_one] at this
   refine not_isSquare_betaSeq_of_pos_of_not_isSquare_neg_one hg hε hpos (h0 ▸ isUnit_one)
     fun n hn ↦ ZMod.not_isSquare_neg_one_of_emod_four_eq_three ?_
-  have h1' : ((g.eval 1 : ℤ) : ZMod 4) = 2 :=
-    (ZMod.intCast_eq_intCast_iff' (g.eval 1) 2 4).mpr (by lia)
-  have hsum := gammaSeq_add_succ_zmod_four_eq_three hg h0 h1' n hn
+  have hsum := gammaSeq_add_succ_zmod_four_eq_three hg h0
+    ((ZMod.intCast_eq_intCast_iff' (g.eval 1) 2 4).mpr (by lia)) n hn
   have := (ZMod.intCast_eq_intCast_iff' _ 3 4).mp (mod_cast hsum)
   have := hpos n hn
   have := hpos (n + 1) (by lia)
@@ -610,9 +585,8 @@ theorem not_isSquare_betaSeq_of_pos_of_eval_one_emod_four_eq_three (hg : EvenPol
     have hγ1 := gammaSeq_one_eq_one_of_pos hε h0 (hpos 1 le_rfl)
     have hγ2 : gammaSeq g ε 2 = g.eval 1 := by rw [gammaSeq_succ g ε le_rfl, hγ1]
     exact ZMod.not_isSquare_neg_one_of_four_dvd (by lia)
-  · have h1' : ((g.eval 1 : ℤ) : ZMod 4) = 3 :=
-      (ZMod.intCast_eq_intCast_iff' (g.eval 1) 3 4).mpr (by lia)
-    have hsum := gammaSeq_add_succ_zmod_eight_eq_six hg hε h0 h1' n hn2
+  · have hsum := gammaSeq_add_succ_zmod_eight_eq_six hg hε h0
+      ((ZMod.intCast_eq_intCast_iff' (g.eval 1) 3 4).mpr (by lia)) n hn2
     have := (ZMod.intCast_eq_intCast_iff' _ 6 8).mp (mod_cast hsum)
     have := hpos n hn
     have := hpos (n + 1) (by lia)
