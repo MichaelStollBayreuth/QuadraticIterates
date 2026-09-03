@@ -24,9 +24,20 @@ import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 For `g ∈ R[X]` and a sign `ε`, the sequence `γ_1 = ε · g(0)`, `γ_{n+1} = g(γ_n)` and its Möbius
 factors `β_n = ∏_{d ∣ n} γ_d^{μ(n/d)}`. The results are stated at the generality each one needs:
 over a `CommSemiring` for the recursion, over a `CommRing` for the congruences, over a GCD domain
-for strong divisibility (`gammaSeq_associated_gcd`), over a UFD for the valuation shape
-(`factorization_gammaSeq_shape`) and the integrality of `β`, and finally over `ℤ` for Lemmas 2.1
-and 2.2 of the paper (`not_isSquare_betaSeq` and `not_isSquare_betaSeq_of_pos`).
+for strong divisibility, over a UFD for the valuation shape and the integrality of `β`, and
+finally over `ℤ` for Lemmas 2.1 and 2.2 of the paper.
+
+## Main statements
+
+* `EvenPoly`: `g` is even, i.e. `g ∈ R[X²]`; over a domain of characteristic `≠ 2` this is
+  `g(-X) = g` (`evenPoly_iff_comp_neg_X`).
+* `gammaSeq`, `betaSeq`: the sequences `γ` and `β`. `map_gammaSeq` says that `γ` commutes with
+  ring homomorphisms, which is how every congruence below is computed in `ZMod m`.
+* `gammaSeq_associated_gcd`: strong divisibility of `γ` for even `g` and `ε² = 1`.
+* `factorization_gammaSeq_shape`: `v_p(γ_n)` is constant on the multiples of some index and `0`
+  elsewhere.
+* `not_isSquare_betaSeq`, `not_isSquare_betaSeq_of_pos`: Lemmas 2.1 and 2.2 of the paper, `β_n`
+  is not a square in `ℚ` for `n ≥ 2` under congruence conditions on `γ` resp. on `g(0)`, `g(1)`.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -80,6 +91,7 @@ lemma iterate_eval_neg (hg : EvenPoly g) {k : ℕ} (hk : 1 ≤ k) (y : R) :
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
   rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
 
+/-- For even `g`, a divisor of `a² - b²` divides `g(a) - g(b)`. -/
 lemma dvd_eval_sub (hg : EvenPoly g) {N a b : R} (h : N ∣ a ^ 2 - b ^ 2) :
     N ∣ g.eval a - g.eval b := by
   obtain ⟨h', rfl⟩ := hg
@@ -136,6 +148,7 @@ lemma gammaSeq_succ (ε : R) {n : ℕ} (hn : 1 ≤ n) :
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
   rfl
 
+/-- `γ_{m+n}` is the `n`-fold iterate of `z ↦ g(z)` applied to `γ_m` (`m ≥ 1`). -/
 lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
     gammaSeq g ε (m + n) = (g.eval ·)^[n] (gammaSeq g ε m) := by
   obtain ⟨m', rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hm)
@@ -219,7 +232,8 @@ theorem gammaSeq_eq_gammaSeq_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) {
   | succ k hk ih => rw [gammaSeq_succ g ε (by lia), gammaSeq_succ g 1 (by lia), ih]
 
 /-- For a unit `ε`, `γ_1 = ε · g(0)` is associated to `g(0)`. -/
-lemma gammaSeq_one_associated {ε : R} (hε : IsUnit ε) : Associated (gammaSeq g ε 1) (g.eval 0) :=
+lemma gammaSeq_one_associated_eval_zero {ε : R} (hε : IsUnit ε) :
+    Associated (gammaSeq g ε 1) (g.eval 0) :=
   associated_unit_mul_left _ _ hε
 
 /-- For even `g` and `ε² = 1`, the `ε`-sequence is associated to the `ε = 1` sequence: the two
@@ -228,7 +242,7 @@ theorem gammaSeq_associated_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) (n
     Associated (gammaSeq g ε n) (gammaSeq g 1 n) := by
   match n with
   | 0 => simp
-  | 1 => simpa using gammaSeq_one_associated (IsUnit.of_pow_eq_one hε two_ne_zero)
+  | 1 => simpa using gammaSeq_one_associated_eval_zero (IsUnit.of_pow_eq_one hε two_ne_zero)
   | (_ + 2) => rw [gammaSeq_eq_gammaSeq_one hg hε (by lia)]
 
 end
@@ -410,7 +424,8 @@ lemma factorization_gammaSeq_of_dvd_eval_zero (hg : EvenPoly g) {ε : R} (hε : 
   have hg0 : g.eval 0 ≠ 0 := fun h ↦ hne 1 le_rfl (by rw [gammaSeq_one, h, mul_zero])
   have hv1 := (one_le_factorization_iff_dvd hp hpn hg0).mpr hpg
   induction n, hn using Nat.le_induction with
-  | base => rw [(gammaSeq_one_associated (IsUnit.of_pow_eq_one hε two_ne_zero)).factorization_eq]
+  | base =>
+    rw [(gammaSeq_one_associated_eval_zero (IsUnit.of_pow_eq_one hε two_ne_zero)).factorization_eq]
   | succ k hk ih =>
     refine factorization_eq_of_dvd_sub hp hpn (hne (k + 1) (by lia)) hg0 rfl ?_
     exact pow_succ_dvd_gammaSeq_succ_sub hg hk hv1
@@ -430,7 +445,7 @@ private lemma factorization_gammaSeq_shape_of_exists (hg : EvenPoly g) {ε : R} 
   have hm2 : 2 ≤ m := by
     have : m ≠ 1 := by
       rintro rfl
-      exact hpg ((gammaSeq_one_associated
+      exact hpg ((gammaSeq_one_associated_eval_zero
         (IsUnit.of_pow_eq_one hε two_ne_zero)).dvd_iff_dvd_right.mp hpm)
     lia
   set E := factorization (gammaSeq g ε m) p with hE
