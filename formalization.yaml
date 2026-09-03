@@ -127,7 +127,7 @@ alignment:
       module: "QuadraticIterates.ArchMath1992.Irreducibility"
       status: "proved"
     - source: "Corollary 1.3"
-      lean: "irreducible_iteratedPoly_of_pos"
+      lean: "irreducible_iteratedPoly"
       module: "QuadraticIterates.ArchMath1992.Irreducibility"
       status: "proved"
     - source: "Odoni's embedding theorem"

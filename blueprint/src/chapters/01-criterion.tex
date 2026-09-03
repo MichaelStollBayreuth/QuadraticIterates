@@ -106,7 +106,9 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
   coprime (since their g.c.d.\ is even). Thus, $f_m$ being reducible, there exists a polynomial
   $g$ with $\varepsilon \cdot f_m = g(X) \cdot g(-X)$. In particular,
   $c_m = \varepsilon f_m(0) = g(0)^2$ is a square in $\QQ$.
-  \formalnote{The sign $\varepsilon$ is carried explicitly: what is produced is
+  \formalnote{The formalization inducts on $n$ instead of taking a minimal reducible iterate:
+  the induction hypothesis says that $f_n$ is irreducible, and the step is the argument above
+  for $m = n + 1$. The sign $\varepsilon$ is carried explicitly: what is produced is
   $(-1)^{\deg g} f_m = g \cdot g(-X)$ with $2 \deg g = \deg f_m$, and $(-1)^{\deg g}$ is exactly
   the sign relating $c_m$ to $f_m(0)$ (\lname{cSeq\_succ\_eq\_neg\_one\_pow\_mul\_eval\_zero}).
   ``No nontrivial even divisor'' is proved in the sharper form needed here: any divisor of
@@ -121,8 +123,7 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
 \begin{corollary}
   \label{cor:1.3}
   \uses{lem:1.2}
-  \lean{QuadraticIterates.irreducible_iteratedPoly_of_pos,
-    QuadraticIterates.irreducible_iteratedPoly, QuadraticIterates.not_isSquare_cSeq,
+  \lean{QuadraticIterates.irreducible_iteratedPoly, QuadraticIterates.not_isSquare_cSeq,
     QuadraticIterates.not_isSquare_neg_of_irreducible, Int.not_isSquare_of_sq_lt_of_lt_sq}
   \leanok
   All $f_n$ are irreducible over $\QQ$.
@@ -134,8 +135,8 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
   $a > 0$: $c_n^2 < c_n^2 + a = c_{n+1} < (c_n + 1)^2$, so $c_{n+1}$ is not a square; if
   $a < -1$: $(c_n - 1)^2 < c_n^2 + a = c_{n+1} \le c_n^2$, so $c_{n+1}$ is not a square. Since
   $c_1 = -a$ is not a square either, Lemma~\ref{lem:1.2} applies.
-  \formalnote{The formal statement covers $n = 0$ as well ($f_0 = X$ is irreducible). The
-  converse implication is also formalized: irreducibility of a single $f_n$ with $n \ge 1$ forces
+  \formalnote{The formal statement covers $n = 0$ as well ($f_0 = X$ is irreducible), as does
+  Lemma~\ref{lem:1.2}. The converse implication is also formalized: irreducibility of a single $f_n$ with $n \ge 1$ forces
   $-a$ to be a non-square (\lname{not\_isSquare\_neg\_of\_irreducible}), since otherwise
   $f_n = (f_{n-1} - r)(f_{n-1} + r)$. This is what allows Lemma~\ref{lem:1.6} to be stated with
   irreducibility as its hypothesis.}

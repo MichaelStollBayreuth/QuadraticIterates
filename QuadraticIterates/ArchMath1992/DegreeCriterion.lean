@@ -338,10 +338,8 @@ lemma isSquare_algebraMap_cSeq (n : ℕ) (hnsq : ¬IsSquare (-a : ℚ)) (m : ℕ
       (mem_rootSet_iteratedPoly_succ a k δ).mpr (by simp [hδ, sub_add_cancel, β.2])
     exact ⟨⟨δ, hmono (IntermediateField.subset_adjoin ℚ _ hroot)⟩, hδ⟩
   choose w hw using hsqrt
-  have hnodup : ((fℚ[a, k]).aroots (AlgebraicClosure ℚ)).Nodup := by
-    rcases Nat.eq_zero_or_pos k with rfl | hkpos
-    · simp
-    · exact nodup_roots (irreducible_iteratedPoly_of_pos a hnsq hkpos).separable.map
+  have hnodup : ((fℚ[a, k]).aroots (AlgebraicClosure ℚ)).Nodup :=
+    nodup_roots (irreducible_iteratedPoly a hnsq k).separable.map
   refine ⟨∏ β, w β, hinj ?_⟩
   have hlhs : algebraMap (↥(splittingField a n)) (AlgebraicClosure ℚ)
       ((algebraMap ℚ (↥(splittingField a n))) (cSeq a (k + 1) : ℚ))

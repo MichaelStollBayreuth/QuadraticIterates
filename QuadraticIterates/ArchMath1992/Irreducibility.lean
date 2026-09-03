@@ -119,44 +119,31 @@ private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
   simp only [eval_mul, eval_C, eval_comp, eval_neg, eval_X, neg_zero] at heval
   exact ⟨g.eval 0, by rw [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]; exact heval.symm⟩
 
-/-- Lemma 1.2: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible over `ℚ`. -/
-theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ} (hn : 1 ≤ n)
-    (h : ∀ k ≥ 1, k ≤ n → ¬IsSquare (cSeq a k : ℚ)) :
-    Irreducible (fℚ[a, n]) := by
-  classical
-  by_contra hcon
-  have hex : ∃ k, 1 ≤ k ∧ k ≤ n ∧ ¬ Irreducible (fℚ[a, k]) := ⟨n, hn, le_rfl, hcon⟩
-  obtain ⟨j, hjfind⟩ : ∃ j, Nat.find hex = j + 1 :=
-    ⟨Nat.find hex - 1, by have := (Nat.find_spec hex).1; lia⟩
-  obtain ⟨hj1, hjn, hjred⟩ := hjfind ▸ Nat.find_spec hex
-  have hFj_irr : Irreducible (fℚ[a, j]) := by
-    rcases Nat.eq_zero_or_pos j with rfl | hjpos
-    · simpa using irreducible_X (R := ℚ)
-    · by_contra hc
-      exact Nat.find_min hex (hjfind ▸ Nat.lt_succ_self j) ⟨hjpos, by lia, hc⟩
-  have hval0 : (fℚ[a, j + 1]).eval 0 ≠ 0 := fun hzero ↦ h (j + 1) (by lia) (by lia)
-    (by rw [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, hzero, mul_zero]; exact .zero)
-  have hnoeven : ∀ d : ℚ[X], d ∣ fℚ[a, j + 1] → Associated (d.comp (-X)) d →
-      IsUnit d ∨ Associated d (fℚ[a, j + 1]) := by
-    rw [iteratedPoly_succ_comp]
-    exact fun _ ↦ hFj_irr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X
-      (by rwa [eval_zero_iteratedPoly_succ] at hval0)
-  obtain ⟨g, hgdeg, hgeq⟩ :=
-    (monic_iteratedPoly (a : ℚ) (j + 1)).exists_mul_comp_neg_X_eq_of_not_irreducible
-      (map_iteratedPoly_comp_neg_X a j) hjred hnoeven
-  exact h (j + 1) (by lia) (by lia) (isSquare_cSeq_of_even_factorization a hgdeg hgeq)
+/-- Lemma 1.2: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible over `ℚ`.
+By induction: `f_{n+1} = f_n ∘ (X² + a)` is even and, `f_n` being irreducible, has no nontrivial
+even divisor, so if it were reducible, `c_{n+1}` would be a square. -/
+theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ}
+    (h : ∀ k ≥ 1, k ≤ n → ¬IsSquare (cSeq a k : ℚ)) : Irreducible fℚ[a, n] := by
+  induction n with
+  | zero => simpa using irreducible_X (R := ℚ)
+  | succ n ih =>
+    have hn := h (n + 1) n.succ_pos le_rfl
+    have hF0 : fℚ[a, n].eval (a : ℚ) ≠ 0 := fun h0 ↦ hn (by
+      have : (iteratedPoly a n).eval a = 0 := by
+        exact_mod_cast (intCast_eval_iteratedPoly (S := ℚ) a a n).trans h0
+      simp [cSeq_succ_eq_neg_one_pow_mul_eval, this])
+    have hirr := ih fun k hk hkn ↦ h k hk (hkn.trans n.le_succ)
+    by_contra hred
+    obtain ⟨g, hgdeg, hgeq⟩ :=
+      (monic_iteratedPoly (a : ℚ) (n + 1)).exists_mul_comp_neg_X_eq_of_not_irreducible
+        (map_iteratedPoly_comp_neg_X a n) hred fun _ ↦ by
+          rw [iteratedPoly_succ_comp]
+          exact hirr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X hF0
+    exact hn (isSquare_cSeq_of_even_factorization a hgdeg hgeq)
 
-/-- Corollary 1.3: all `f_n` (`n ≥ 1`) are irreducible over `ℚ`. -/
-theorem irreducible_iteratedPoly_of_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
-    Irreducible (fℚ[a, n]) :=
-  irreducible_iteratedPoly_of_not_isSquare_cSeq a hn fun _ hk1 _ ↦ not_isSquare_cSeq a ha hk1
-
-/-- All `f_n` (including `f_0 = X`) are irreducible over `ℚ` when `-a` is not a square in `ℚ`;
-this extends `irreducible_iteratedPoly_of_pos` to `n = 0`. -/
-theorem irreducible_iteratedPoly (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) : Irreducible (fℚ[a, n]) := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simpa using irreducible_X (R := ℚ)
-  · exact irreducible_iteratedPoly_of_pos a ha hn
+/-- Corollary 1.3: all `f_n` are irreducible over `ℚ` (including `f_0 = X`). -/
+theorem irreducible_iteratedPoly (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) : Irreducible fℚ[a, n] :=
+  irreducible_iteratedPoly_of_not_isSquare_cSeq a fun _ hk _ ↦ not_isSquare_cSeq a ha hk
 
 /-- If `-a = r ^ 2` in `ℚ`, then `f_n = f_{n-1} ^ 2 + a = (f_{n-1} - r) * (f_{n-1} + r)` factors
 nontrivially, so irreducibility of any `f_n` with `n ≥ 1` implies that `-a` is not a square.
