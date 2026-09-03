@@ -64,9 +64,8 @@ lemma cSeq_factorization_shape (ha : ¬IsSquare (-a : ℚ)) :
 Möbius product of the `c`-sequence is the integer `b_n`, since `c` is a strong divisibility
 sequence. -/
 lemma intCast_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
-    (bSeq a n : ℚ) = moebiusFactor (cSeq a) n := by
-  rw [bSeq_eq_moebiusFactorR]
-  exact intCast_moebiusFactorR (cSeq_ne_zero' a ha) (cSeq_gcd a) hn
+    (bSeq a n : ℚ) = moebiusFactorK (cSeq a) n :=
+  algebraMap_moebiusFactorR (cSeq_ne_zero' a ha) (cSeq_associated_gcd a) n hn
 
 lemma bSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : bSeq a n ≠ 0 := by
   rw [bSeq_eq_moebiusFactorR]
@@ -145,7 +144,9 @@ lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `b_m` is the Möbius-weighted sum of the classes of the `c_d`. -/
 lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (bSeq a m : ℚ) = ∑ x ∈ m.divisorsAntidiagonal, (μ x.1) • sqClass (cSeq a x.2 : ℚ) := by
-  rw [intCast_bSeq a ha hm, moebiusFactor_eq_prod, sqClass_prod_zpow _ fun x hx ↦
+  rw [intCast_bSeq a ha hm, moebiusFactorK_eq_prod]
+  simp only [eq_intCast]
+  rw [sqClass_prod_zpow _ fun x hx ↦
     mod_cast cSeq_ne_zero a ha
       (Nat.pos_of_ne_zero (Nat.right_ne_zero_of_mem_divisorsAntidiagonal hx))]
 
@@ -277,8 +278,9 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) :
   have hQ : ((|bSeq a n| : ℤ) : ℚ) = ((betaSeq (normPoly a) a.sign n : ℤ) : ℚ) := by
     rw [Int.cast_abs, intCast_bSeq a ha (by lia),
       intCast_betaSeq (evenPoly_normPoly a) (sign_sq_eq_one a ha0)
-        (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') n (by lia),
-      moebiusFactor_eq_prod, moebiusFactor_eq_prod, Finset.abs_prod]
+        (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') (by lia),
+      moebiusFactorK_eq_prod, moebiusFactorK_eq_prod, Finset.abs_prod]
+    simp only [eq_intCast]
     have hfac : ∀ x ∈ n.divisorsAntidiagonal,
         |(cSeq a x.2 : ℚ) ^ (μ x.1)|
           = ((gammaSeq (normPoly a) a.sign x.2 : ℤ) : ℚ) ^ (μ x.1)

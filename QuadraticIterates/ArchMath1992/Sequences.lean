@@ -35,7 +35,6 @@ Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
 @[expose] public section
 
 open Polynomial
-open scoped ArithmeticFunction.Moebius
 
 namespace QuadraticIterates
 
@@ -434,32 +433,6 @@ section
 
 variable (g : ℤ[X])
 
-/-- The Möbius factor `∏_{d ∣ n} c_d^{μ(n/d)}` of an integer sequence `c`, as a product over the
-divisor antidiagonal of `n`: pairs `(e, d)` with `e * d = n` contribute `c_d ^ μ(e)`. Rational, as
-`μ` can be negative; it is an integer when `c` is a strong divisibility sequence. -/
-noncomputable def moebiusFactor (c : ℕ → ℤ) (n : ℕ) : ℚ :=
-  ∏ x ∈ n.divisorsAntidiagonal, (c x.2 : ℚ) ^ (μ x.1)
-
-lemma moebiusFactor_eq_prod (c : ℕ → ℤ) (n : ℕ) :
-    moebiusFactor c n = ∏ x ∈ n.divisorsAntidiagonal, (c x.2 : ℚ) ^ (μ x.1) := rfl
-
-/-- Strong divisibility over `ℤ`, translated from the `Int.gcd`/`natAbs` form into the
-`Associated`-of-`GCDMonoid.gcd` form consumed by the `moebiusFactorR` API. -/
-lemma associated_gcd_of_int_gcd_eq_natAbs {c : ℕ → ℤ}
-    (hsd : ∀ m n, Int.gcd (c m) (c n) = (c (m.gcd n)).natAbs) (m n : ℕ) :
-    Associated (gcd (c m) (c n)) (c (m.gcd n)) := by
-  rw [Int.associated_iff_natAbs, ← Int.coe_gcd, Int.natAbs_natCast, hsd]
-
-/-- Over `ℤ`, the image in `ℚ` of the integer-valued Möbius factor `moebiusFactorR` is the
-`ℚ`-valued Möbius product `moebiusFactor`, for a strong divisibility sequence. -/
-lemma intCast_moebiusFactorR {c : ℕ → ℤ} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Int.gcd (c m) (c n) = (c (m.gcd n)).natAbs) {n : ℕ} (hn : 1 ≤ n) :
-    ((moebiusFactorR c n : ℤ) : ℚ) = moebiusFactor c n := by
-  rw [← eq_intCast (algebraMap ℤ ℚ) (moebiusFactorR c n),
-    algebraMap_moebiusFactorR hc (associated_gcd_of_int_gcd_eq_natAbs hsd) n hn,
-    moebiusFactorK, moebiusFactor_eq_prod]
-  exact Finset.prod_congr rfl fun x _ ↦ by norm_num
-
 /-- The image in a ring `S` of the `ε`-sequence over `ℤ` is the `ε`-sequence of the image of `g`:
 `(γ_n : S) = γ_n(g.map (· : ℤ → S), ε)`. -/
 lemma intCast_gammaSeq (ε : ℤ) (S : Type*) [CommRing S] (i : ℕ) : ((gammaSeq g ε i : ℤ) : S)
@@ -476,11 +449,12 @@ theorem gammaSeq_gcd (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1) (m n : ℕ)
   rw [← h, ← Int.coe_gcd, Int.natAbs_natCast]
 
 /-- The image of `β_n` in `ℚ` is the Möbius product `∏_{ed = n} γ_d^{μ(e)}` (for even `g`,
-`ε = ±1`, and `γ` nowhere zero on positive indices). -/
+`ε = ±1`, and `γ` nowhere zero on positive indices): the specialization of
+`algebraMap_moebiusFactorR` to `ℤ ⊆ ℚ`, by strong divisibility. -/
 lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
-    (hγ : ∀ k ≥ 1, gammaSeq g ε k ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
-    ((betaSeq g ε n : ℤ) : ℚ) = moebiusFactor (gammaSeq g ε) n :=
-  intCast_moebiusFactorR hγ (gammaSeq_gcd hg hε) hn
+    (hγ : ∀ k ≥ 1, gammaSeq g ε k ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
+    ((betaSeq g ε n : ℤ) : ℚ) = moebiusFactorK (gammaSeq g ε) n :=
+  algebraMap_moebiusFactorR hγ (gammaSeq_associated_gcd hg hε) n hn
 
 /-- The `ZMod m` specialization of `prod_gammaSeq_mul_eq` via `intCast_gammaSeq`. -/
 private lemma prod_gammaSeq_mul_cast_eq (hg : EvenPoly g) {ε : ℤ} {k : ℕ} (hk : 1 ≤ k) {m : ℕ}
@@ -517,8 +491,9 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
   set P : ℤ := ∏ t ∈ Sp, gammaSeq g ε (k * t) with hP
   set Q : ℤ := ∏ t ∈ Sm, gammaSeq g ε (k * t) with hQ
   have hβ : ((betaSeq g ε n : ℤ) : ℚ) = (P : ℚ) / (Q : ℚ) := by
-    rw [intCast_betaSeq hg hε hγ n (by lia), moebiusFactor_eq_prod,
-      prod_pow_moebius_eq_div n k n' (by lia) rfl hk
+    rw [intCast_betaSeq hg hε hγ (by lia), moebiusFactorK_eq_prod]
+    simp only [eq_intCast]
+    rw [prod_pow_moebius_eq_div n k n' (by lia) rfl hk
         (fun d ↦ ((gammaSeq g ε d : ℤ) : ℚ)) hdisj hunion hSp hSm,
       hP, hQ]
     push_cast

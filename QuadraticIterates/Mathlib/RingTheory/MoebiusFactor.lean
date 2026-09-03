@@ -39,6 +39,11 @@ variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 noncomputable def moebiusFactorK (c : ℕ → R) (n : ℕ) : K :=
   ∏ x ∈ n.divisorsAntidiagonal, (algebraMap R K (c x.2)) ^ (μ x.1)
 
+/-- The unfolding lemma of `moebiusFactorK`: rewrite with it instead of unfolding the definition. -/
+theorem moebiusFactorK_eq_prod (c : ℕ → R) (n : ℕ) :
+    moebiusFactorK (K := K) c n = ∏ x ∈ n.divisorsAntidiagonal, algebraMap R K (c x.2) ^ (μ x.1) :=
+  rfl
+
 /-- The numerator `∏_{ed = n, μ(e) = 1} c_d` of the Möbius factor, in `R`. -/
 noncomputable def numProd (c : ℕ → R) (n : ℕ) : R :=
   ∏ x ∈ n.divisorsAntidiagonal with μ x.1 = 1, c x.2

@@ -97,8 +97,8 @@ $|b_n|$ is not a square when $2 \le n \le 5 \cdot 10^7$.
 \begin{definition}[The Möbius factors $b_n$]
   \label{def:bseq}
   \uses{def:cseq}
-  \lean{QuadraticIterates.bSeq, QuadraticIterates.bSeq_one, QuadraticIterates.moebiusFactor,
-    QuadraticIterates.moebiusFactor_eq_prod, QuadraticIterates.bSeq_eq_moebiusFactorR}
+  \lean{QuadraticIterates.bSeq, QuadraticIterates.bSeq_one,
+    QuadraticIterates.bSeq_eq_moebiusFactorR}
   \leanok
   $b_n := \prod_{d \dvd n} c_d^{\mu(n/d)}$, where $\mu$ is the Möbius function. In particular
   $b_1 = c_1 = -a$.
@@ -107,8 +107,9 @@ $|b_n|$ is not a square when $2 \le n \le 5 \cdot 10^7$.
   is \texttt{moebiusFactorR} of the sequence $c$, the preimage in $\ZZ$ of the rational Möbius
   product (junk when that product is not integral). Lemma~\ref{lem:1.1}~b) is then the statement
   that this preimage really maps to the rational product $\prod_{ed = n} c_d^{\mu(e)}$
-  (\lname{intCast\_bSeq}), i.e. that the product is an integer. \texttt{moebiusFactor} is the
-  rational product itself, written over the divisor antidiagonal of $n$.}
+  (\lname{intCast\_bSeq}), i.e. that the product is an integer. The rational product itself is
+  \texttt{moebiusFactorK} with $K = \QQ$, written over the divisor antidiagonal of $n$
+  (Lemma~\ref{lem:moebiusfactor}).}
 \end{definition}
 
 \begin{definition}[$2$-independence]
