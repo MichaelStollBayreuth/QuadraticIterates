@@ -152,8 +152,7 @@ theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreduc
 `f_n`, whose square roots generate `K_{n+1}` over `K_n`, are nonzero. -/
 lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ}
     {β : AlgebraicClosure ℚ} (hβ : β ∈ fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
-    β - (a : AlgebraicClosure ℚ) ≠ 0 := by
-  intro hzero
+    β - (a : AlgebraicClosure ℚ) ≠ 0 := fun hzero ↦ by
   have hroot := aeval_eq_zero_of_mem_rootSet hβ
   rw [sub_eq_zero.mp hzero, aeval_intCast_iteratedPoly, Int.cast_eq_zero] at hroot
   exact cSeq_ne_zero a ha n.succ_pos (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])

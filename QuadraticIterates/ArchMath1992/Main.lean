@@ -92,8 +92,7 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
   induction n with
   | zero =>
-    exact ⟨fun _ S hS ↦ hS.elim fun i _ ↦ i.elim0,
-      fun _ ↦ (nonempty_mulEquiv_iff_finrank_eq a 0).mpr (by simp)⟩
+    exact ⟨fun _ S ⟨i, _⟩ ↦ i.elim0, fun _ ↦ (nonempty_mulEquiv_iff_finrank_eq a 0).mpr (by simp)⟩
   | succ n ih =>
     have hsnoc : (fun i : Fin (n + 1) ↦ (cSeq a ((i : ℕ) + 1) : ℚ))
         = Fin.snoc (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) (cSeq a (n + 1) : ℚ) := by
@@ -103,12 +102,11 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       · simp [Fin.snoc_last]
     rw [hsnoc, nonempty_mulEquiv_succ_iff a n]
     refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun hsnocindep ↦ ?_⟩
-    · exact (kummer_extension_criterion a hiso (ih.mp hiso) _).mp
-        ((degree_criterion a ha n).mp hrel)
+    · exact (kummer_extension_criterion a hiso (ih.mp hiso)).mp ((degree_criterion a ha n).mp hrel)
     · have hindep := TwoIndependent.of_snoc hsnocindep
       have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr hindep
       exact ⟨hiso, (degree_criterion a ha n).mpr
-        ((kummer_extension_criterion a hiso hindep _).mpr hsnocindep)⟩
+        ((kummer_extension_criterion a hiso hindep).mpr hsnocindep)⟩
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/
 lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :

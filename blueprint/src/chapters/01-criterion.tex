@@ -227,7 +227,8 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   multiquadratic descent lemma (Lemma~\ref{lem:descent}) turns that into the statement that $c$ times a
   subproduct of the $c_i$ is a square in $\QQ$ --- which is exactly the failure of
   $2$-independence of $c_1, \dots, c_n, c$. The hypothesis $c \ne 0$ is not needed for the formal
-  statement: for $c = 0$ both sides are false.}
+  statement: for $c = 0$ both sides are false. Neither is the standing assumption on $a$: it is
+  recovered from the $2$-independence of $c_1 = -a$ (\lname{TwoIndependent.not\_isSquare}).}
 \end{proof}
 
 % The paper's remark after Lemma 1.5 is unnumbered, and it stays unnumbered here: a `remark`
@@ -243,7 +244,9 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
     QuadraticIterates.rootShift_ne_zero, QuadraticIterates.prod_rootShift_eq_cSeq,
     QuadraticIterates.prod_rootSet_sub_eq_cSeq, QuadraticIterates.prod_aroots_sub_eq_cSeq,
     QuadraticIterates.rootRelations_rootShift_eq_bot_iff,
-    QuadraticIterates.exists_ringEquiv_rootShift_smul}
+    QuadraticIterates.exists_ringEquiv_rootShift_smul,
+    QuadraticIterates.sub_intCast_ne_zero_of_mem_rootSet,
+    QuadraticIterates.card_rootSet_iteratedPoly}
   \leanok
   For all $n$: $[K_{n+1} : K_n] = 2^{2^n} \iff c_{n+1}$ is not a square in $K_n$.
 \end{lemma}
@@ -277,7 +280,8 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
   instead argues under the maximality hypothesis $[K_n : \QQ] = 2^{2^n - 1}$, which is strictly
   stronger. $V$ is \texttt{rootRelations} of the family
   $\beta \mapsto \beta - a$ of shifted roots (\texttt{rootShift}); that this family consists of
-  nonzero elements is where $c_{n+1} \neq 0$ enters. The identity
+  nonzero elements is where $c_{n+1} \neq 0$ enters
+  (\lname{sub\_intCast\_ne\_zero\_of\_mem\_rootSet}). The identity
   $\prod_j (\alpha_j - a) = c_{n+1}$ is proved by evaluating the monic split $f_n$ at $a$
   (\lname{prod\_aroots\_sub\_eq\_cSeq}).}
 \end{proof}

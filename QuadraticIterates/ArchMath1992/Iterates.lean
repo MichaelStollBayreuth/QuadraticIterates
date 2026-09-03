@@ -279,10 +279,8 @@ theorem twoIndependent_snoc_iff [CommMonoid M] {n : ℕ} (v : Fin n → M) (c : 
   · simpa [Finset.prod_insert, hprod S, Fin.snoc_last] using
       h (insert (Fin.last n) (S.map Fin.castSuccEmb)) (Finset.insert_nonempty _ _)
   · obtain ⟨S, rfl | rfl⟩ := Fin.exists_eq_map_castSuccEmb_or_insert_last T
-    · rw [hprod]
-      exact hv S (Finset.map_nonempty.mp hT)
-    · rw [Finset.prod_insert (by simp), Fin.snoc_last, hprod]
-      exact hc S
+    · exact hprod S ▸ hv S (Finset.map_nonempty.mp hT)
+    · simpa [Finset.prod_insert, Fin.snoc_last, hprod] using hc S
 
 /-- A family in a field `L` is 2-independent iff the family of its classes in `Lˣ/(Lˣ)²` is
 `𝔽₂`-linearly independent. -/
