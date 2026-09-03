@@ -7,8 +7,6 @@ module
 
 public import QuadraticIterates.ArchMath1992.Iterates
 
-import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-import Mathlib.Algebra.Order.Field.Power
 import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 import QuadraticIterates.ArchMath1992.DegreeCriterion
 import QuadraticIterates.ArchMath1992.Irreducibility
@@ -220,28 +218,19 @@ lemma gammaSeq_normPoly_pos (ha : ¬IsSquare (-a : ℚ)) :
   (mul_pos_iff_of_pos_right (abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha))).mp
     (abs_cSeq_eq_gammaSeq_mul_abs a ha d ▸ abs_pos.mpr (cSeq_ne_zero a ha d hd))
 
-lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) :
-    ∀ n ≥ 2, |bSeq a n| = betaSeq (normPoly a) a.sign n := by
+/-- `|b_n| = β_n` for `n ≥ 2`, `β` the `β`-sequence of the rescaled polynomial `normPoly a`: both
+are Möbius products, of `|c_d| = γ_d · |a|` and of `γ_d`, and the factors `|a|` cancel because the
+exponents `μ(n/d)` sum to zero. -/
+lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) :
+    |bSeq a n| = betaSeq (normPoly a) a.sign n := by
   have ha0 := ne_zero_of_not_isSquare_neg a ha
-  have haQ : ((|a| : ℤ) : ℚ) ≠ 0 := by simpa using abs_ne_zero.mpr ha0
-  intro n hn
   have hQ : ((|bSeq a n| : ℤ) : ℚ) = ((betaSeq (normPoly a) a.sign n : ℤ) : ℚ) := by
-    rw [Int.cast_abs, intCast_bSeq a ha (by lia),
+    rw [Int.cast_abs, intCast_bSeq a ha (by lia), abs_moebiusFactorK,
       intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
         (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') (by lia),
-      moebiusFactorK_eq_prod, moebiusFactorK_eq_prod, Finset.abs_prod]
-    simp only [eq_intCast]
-    have hfac : ∀ x ∈ n.divisorsAntidiagonal,
-        |(cSeq a x.2 : ℚ) ^ (μ x.1)|
-          = ((gammaSeq (normPoly a) a.sign x.2 : ℤ) : ℚ) ^ (μ x.1)
-            * ((|a| : ℤ) : ℚ) ^ (μ x.1) := by
-      intro x _
-      rw [abs_zpow, ← Int.cast_abs, abs_cSeq_eq_gammaSeq_mul_abs a ha x.2]
-      push_cast
-      exact mul_zpow ..
-    rw [Finset.prod_congr rfl hfac, Finset.prod_mul_distrib, Finset.prod_zpow_eq_zpow_sum₀ haQ,
-      moebius_antidiag_sum_zero n hn]
-    simp
+      ← moebiusFactorK_mul_const (gammaSeq (normPoly a) a.sign)
+        (by simpa using abs_ne_zero.mpr ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
+    simp only [abs_cSeq_eq_gammaSeq_mul_abs a ha]
   exact_mod_cast hQ
 
 /-- Section 3, main result: if `a > 0` and `a ≡ 1 or 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is
@@ -256,7 +245,7 @@ theorem section3_main
     · exact fun hsq ↦ hnsq (Rat.isSquare_intCast_iff.mp (by push_cast; exact hsq))
   have ha0 := ne_zero_of_not_isSquare_neg a ha
   refine section1_squarefree a ha n fun k hk2 _ ↦ ?_
-  rw [abs_bSeq_eq_betaSeq a ha k hk2]
+  rw [abs_bSeq_eq_betaSeq a ha hk2]
   rw [← Rat.isSquare_intCast_iff]
   refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
     (gammaSeq_normPoly_pos a ha) ?_ k hk2

@@ -93,11 +93,3 @@ theorem Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime {ι : Type*} (f 
   refine ⟨|a0|, ?_⟩
   rcases ha0 with h | h <;> simpa [sq, abs_mul, abs_neg] using congrArg abs h
 
-/-- A product of powers of a fixed nonzero base with integer exponents collapses to a single
-power. -/
-theorem Finset.prod_zpow_eq_zpow_sum₀ {ι G : Type*} [CommGroupWithZero G] {x : G} (hx : x ≠ 0)
-    (s : Finset ι) (e : ι → ℤ) : ∏ i ∈ s, x ^ e i = x ^ (∑ i ∈ s, e i) := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert a t ha ih => rw [prod_insert ha, sum_insert ha, ih, zpow_add₀ hx]

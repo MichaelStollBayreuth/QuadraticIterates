@@ -217,12 +217,15 @@ them.
   \label{lem:moebiussign}
   \lean{moebius_sign_partition, prod_pow_moebius_eq_div, moebius_antidiag_sum_zero,
     beta_radical, moebius_restricted_sum, indicator_moebius_nonneg, moebius_transform_nonneg,
-    ArithmeticFunction.sum_divisors_moebius}
+    ArithmeticFunction.sum_divisors_moebius, moebiusFactorK_mul_const, abs_moebiusFactorK,
+    Finset.prod_zpow_eq_zpow_sum₀}
   \leanok
   For squarefree $n' > 1$, the divisors of $n'$ split into two sets of equal cardinality
   according to the sign of $\mu$, so a Möbius product $\prod_{d \dvd n} x_d^{\mu(n/d)}$ is a
   quotient of two products with the same number of factors; and
-  $\sum_{d \dvd n} \mu(n/d) = 0$ for $n \ge 2$.
+  $\sum_{d \dvd n} \mu(n/d) = 0$ for $n \ge 2$, so that scaling the sequence $(x_d)$ by a
+  nonzero constant does not change its Möbius products of index $n \ge 2$ (and forming Möbius
+  products commutes with taking absolute values).
 \end{lemma}
 \begin{proof}
   \leanok
@@ -252,7 +255,7 @@ them.
 
 \begin{lemma}[Squares and coprimality]
   \label{lem:coprimesquare}
-  \lean{Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime, Finset.prod_zpow_eq_zpow_sum₀}
+  \lean{Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime}
   \leanok
   If a product of pairwise coprime integers is a square, then the absolute value of each factor
   is a square.

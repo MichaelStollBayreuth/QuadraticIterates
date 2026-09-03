@@ -5,7 +5,10 @@ public import Mathlib.RingTheory.Localization.Integer
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Field.Power
 import QuadraticIterates.Mathlib.Algebra.BigOperators
+import QuadraticIterates.Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 
 /-!
 # Integrality of Möbius factors of strong divisibility sequences
@@ -43,6 +46,19 @@ noncomputable def moebiusFactorK (c : ℕ → R) (n : ℕ) : K :=
 theorem moebiusFactorK_eq_prod (c : ℕ → R) (n : ℕ) :
     moebiusFactorK (K := K) c n = ∏ x ∈ n.divisorsAntidiagonal, algebraMap R K (c x.2) ^ (μ x.1) :=
   rfl
+
+/-- Scaling a sequence by a constant `t` does not change its Möbius factors of index `n ≥ 2`,
+since the exponents `μ(e)` sum to zero. -/
+theorem moebiusFactorK_mul_const (c : ℕ → R) {t : R} (ht : algebraMap R K t ≠ 0) {n : ℕ}
+    (hn : 2 ≤ n) : moebiusFactorK (K := K) (fun d ↦ c d * t) n = moebiusFactorK c n := by
+  simp only [moebiusFactorK_eq_prod, map_mul, mul_zpow, Finset.prod_mul_distrib,
+    Finset.prod_zpow_eq_zpow_sum₀ ht, moebius_antidiag_sum_zero n hn, zpow_zero, mul_one]
+
+/-- In an ordered field, the absolute value of a Möbius factor of an integer sequence is the
+Möbius factor of the sequence of absolute values. -/
+theorem abs_moebiusFactorK [LinearOrder K] [IsStrictOrderedRing K] (c : ℕ → ℤ) (n : ℕ) :
+    |moebiusFactorK (K := K) c n| = moebiusFactorK (K := K) (fun d ↦ |c d|) n := by
+  simp [moebiusFactorK_eq_prod, Finset.abs_prod, abs_zpow]
 
 /-- The numerator `∏_{ed = n, μ(e) = 1} c_d` of the Möbius factor, in `R`. -/
 noncomputable def numProd (c : ℕ → R) (n : ℕ) : R :=

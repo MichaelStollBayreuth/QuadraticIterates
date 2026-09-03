@@ -8,6 +8,7 @@ public import QuadraticIterates.ArchMath1992.Main
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.Algebra.BigOperators
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import QuadraticIterates.Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 public import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
