@@ -41,7 +41,7 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 
 ## Main statements
 
-* `QuadraticIterates.section1_equiv` (Theorem, part 1): `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are
+* `QuadraticIterates.section1_tfae` (Theorem, part 1): `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are
   2-independent iff `b_1, …, b_n` are 2-independent, where `c_1 = -a`, `c_{n+1} = c_n² + a =
   f_{n+1}(0)` and `b_n = ∏_{d ∣ n} c_d^{μ(n/d)}`;
 * `QuadraticIterates.section1_squarefree` (Theorem, part 2): if none of `|b_2|, …, |b_n|` is a

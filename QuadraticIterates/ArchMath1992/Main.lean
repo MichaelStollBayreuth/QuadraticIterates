@@ -22,7 +22,7 @@ theorem of the paper.
 
 ## Main statements
 
-* `section1_equiv`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are
+* `section1_tfae`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are
   2-independent (`section1_a_iff_b`, `section1_b_iff_c`).
 * `section1_squarefree`: if none of `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`.
 * `section3_main`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is not a
@@ -135,7 +135,7 @@ theorem section1_b_iff_c (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
 
 /-- Theorem (Section 1), part 1: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n`
 are 2-independent. -/
-theorem section1_equiv (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
+theorem section1_tfae (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     [Nonempty (GaloisGroup a n ≃* WreathPower n),
      TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)),
      TwoIndependent (fun i : Fin n ↦ (bSeq a ((i : ℕ) + 1) : ℚ))].TFAE := by
@@ -151,7 +151,7 @@ theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
   have hzero (i : Fin n) (hi : IsSquare (-bSeq a ((i : ℕ) + 1))) : (i : ℕ) = 0 :=
     Nat.eq_zero_of_not_pos fun hi0 ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inr hi))
-  refine ((section1_equiv a ha n).out 2 0).mp ((twoIndependent_intCast_iff _).mpr
+  refine ((section1_tfae a ha n).out 2 0).mp ((twoIndependent_intCast_iff _).mpr
     ((twoIndependent_iff_of_pairwise_isCoprime fun i j hij ↦
       isCoprime_bSeq a ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)).mpr
         ⟨fun i ↦ ?_, fun i hi j hj ↦ Fin.ext ((hzero i hi).trans (hzero j hj).symm)⟩))
