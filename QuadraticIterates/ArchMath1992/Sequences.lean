@@ -10,7 +10,6 @@ public import Mathlib.RingTheory.Int.Basic
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 
 import Mathlib.Data.ZMod.Basic
-import Mathlib.RingTheory.Ideal.Quotient.Defs
 import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
@@ -304,37 +303,30 @@ theorem prod_gammaSeq_mul_eq (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
   · rw [mul_one, if_pos rfl, mul_neg, mul_one, hγk_neg]
   · rw [if_neg h, mul_one, mul_comm k t, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)]
 
-/-- If `γ_n + γ_{n+1} = 0`, then `γ_{n+j} = γ_{n+1}` for all `j ≥ 1` (over any ring, for even `g`):
-the fixed-point relation `g(γ_{n+1}) = γ_{n+1}` makes `γ` constant past index `n`. -/
-theorem gammaSeq_add_eq_succ (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 1 ≤ n)
-    (hzero : gammaSeq g ε n + gammaSeq g ε (n + 1) = 0) :
-    ∀ j ≥ 1, gammaSeq g ε (n + j) = gammaSeq g ε (n + 1) := by
-  have hsucc (m : ℕ) (hm : 1 ≤ m) : gammaSeq g ε (m + 1) = g.eval (gammaSeq g ε m) :=
-    gammaSeq_succ g ε hm
-  have hneg : gammaSeq g ε (n + 1) = -gammaSeq g ε n := by linear_combination hzero
-  have hstep : g.eval (gammaSeq g ε (n + 1)) = gammaSeq g ε (n + 1) := by
-    conv_lhs => rw [hneg, hg.eval_neg, ← hsucc n hn]
+/-- For even `g`, `γ_n + γ_{n+1}` divides `γ_{n+j} - γ_{n+1}` for all `j ≥ 1` (`n ≥ 1`): modulo
+`γ_n + γ_{n+1}` one has `g(γ_{n+1}) ≡ g(-γ_n) = γ_{n+1}`, so the sequence is constant from index
+`n + 1` on. -/
+lemma gammaSeq_add_succ_dvd_sub (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ n) :
+    ∀ j ≥ 1,
+      gammaSeq g ε n + gammaSeq g ε (n + 1) ∣ gammaSeq g ε (n + j) - gammaSeq g ε (n + 1) := by
+  have hfix : gammaSeq g ε n + gammaSeq g ε (n + 1) ∣
+      g.eval (gammaSeq g ε (n + 1)) - gammaSeq g ε (n + 1) := by
+    have h := sub_dvd_eval_sub (gammaSeq g ε (n + 1)) (-gammaSeq g ε n) g
+    rwa [sub_neg_eq_add, add_comm, hg.eval_neg, ← gammaSeq_succ g ε hn] at h
   intro j hj
   induction j, hj using Nat.le_induction with
-  | base => rfl
-  | succ j hj ih => rw [show n + (j + 1) = (n + j) + 1 by ring, hsucc (n + j) (by lia), ih, hstep]
+  | base => simp
+  | succ j hj ih =>
+    rw [← add_assoc, gammaSeq_succ g ε (n := n + j) (by lia),
+      ← sub_add_sub_cancel _ (g.eval (gammaSeq g ε (n + 1))) _]
+    exact dvd_add (ih.trans (sub_dvd_eval_sub _ _ g)) hfix
 
-/-- For even `g`, `γ_n + γ_{n+1}` divides `γ_n + γ_{2n}` (`n ≥ 1`): modulo the left-hand side the
-sequence is constant from index `n + 1` on, so `γ_{2n} ≡ γ_{n+1}`. -/
+/-- For even `g`, `γ_n + γ_{n+1}` divides `γ_n + γ_{2n}` (`n ≥ 1`), since `γ_{2n} ≡ γ_{n+1}`
+modulo the left-hand side. -/
 lemma gammaSeq_add_succ_dvd (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ n) :
     gammaSeq g ε n + gammaSeq g ε (n + 1) ∣ gammaSeq g ε n + gammaSeq g ε (2 * n) := by
-  set D := gammaSeq g ε n + gammaSeq g ε (n + 1) with hD
-  set π := Ideal.Quotient.mk (Ideal.span {D})
-  have hz : gammaSeq (g.map π) (π ε) n + gammaSeq (g.map π) (π ε) (n + 1) = 0 := by
-    rw [← map_gammaSeq, ← map_gammaSeq, ← map_add, ← hD, Ideal.Quotient.eq_zero_iff_mem,
-      Ideal.mem_span_singleton]
-  have key : π (gammaSeq g ε (n + n)) = π (gammaSeq g ε (n + 1)) := by
-    rw [map_gammaSeq, map_gammaSeq]
-    exact gammaSeq_add_eq_succ (hg.map _) hn hz n hn
-  have hsplit : gammaSeq g ε n + gammaSeq g ε (2 * n)
-      = D + (gammaSeq g ε (n + n) - gammaSeq g ε (n + 1)) := by rw [hD, two_mul]; ring
-  rw [hsplit]
-  exact dvd_add dvd_rfl (Ideal.mem_span_singleton.mp (Ideal.Quotient.eq.mp key))
+  have h := dvd_add (dvd_refl _) (gammaSeq_add_succ_dvd_sub hg ε hn n hn)
+  rwa [add_add_sub_cancel, ← two_mul] at h
 
 variable (g) in
 /-- `γ_{n+1} ≡ g(0)` modulo `γ_n`, so `γ_n + γ_{n+1}` and `γ_n` are coprime once `g(0)` is a
