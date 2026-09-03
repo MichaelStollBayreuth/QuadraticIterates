@@ -17,6 +17,7 @@ public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Multiset
 public import QuadraticIterates.Mathlib.Data.ZMod
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
+public import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 public import QuadraticIterates.Mathlib.GroupTheory.Card
 public import QuadraticIterates.Mathlib.GroupTheory.PGroup
 public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct

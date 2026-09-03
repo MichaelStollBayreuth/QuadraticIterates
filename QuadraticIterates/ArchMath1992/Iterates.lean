@@ -11,6 +11,7 @@ public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 
 import QuadraticIterates.Mathlib.Algebra.BigOperators
+import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
@@ -291,8 +292,6 @@ theorem pow_two_pow_apply_root (ϕ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicC
 /-- `Ω_n = Gal(f_n/ℚ)` is a 2-group. -/
 theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
   set F := fℚ[a, n]
-  have : Fact (F.map (algebraMap ℚ (AlgebraicClosure ℚ))).Splits := ⟨IsAlgClosed.splits _⟩
-  have : IsAlgClosure ℚ (AlgebraicClosure ℚ) := AlgebraicClosure.instIsAlgClosure ℚ
   refine isPGroup_iff_pow_pow_eq_one.mpr fun σ ↦ ⟨n, ?_⟩
   obtain ⟨ϕ, rfl⟩ := Gal.restrict_surjective F (AlgebraicClosure ℚ) σ
   apply Gal.galActionHom_injective F (AlgebraicClosure ℚ)
@@ -307,7 +306,6 @@ theorem odoni_embedding (n : ℕ) :
     ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ := by
   set F := fℚ[a, n]
   set E := AlgebraicClosure ℚ
-  have : Fact (F.map (algebraMap ℚ E)).Splits := ⟨IsAlgClosed.splits _⟩
   have hcard_le : Fintype.card ↥(F.rootSet E)
       ≤ Fintype.card (Fin n → Multiplicative (ZMod 2)) := by
     rw [show Fintype.card (Fin n → Multiplicative (ZMod 2)) = 2 ^ n by
@@ -454,13 +452,9 @@ lemma card_wreathPower (n : ℕ) : Nat.card (WreathPower n) = 2 ^ (2 ^ n - 1) :=
   norm_num
 
 lemma card_galoisGroup_eq_finrank (n : ℕ) :
-    Nat.card (GaloisGroup a n) = Module.finrank ℚ (splittingField a n) := by
-  set F := fℚ[a, n]
-  have e : ↥(splittingField a n) ≃ₐ[ℚ] F.SplittingField := IsSplittingField.algEquiv _ F
-  have : Normal ℚ F.SplittingField := SplittingField.instNormal F
-  have : IsGalois ℚ F.SplittingField := IsGalois.mk
-  exact (IsGalois.card_aut_eq_finrank ℚ F.SplittingField).trans
-    (LinearEquiv.finrank_eq e.toLinearEquiv).symm
+    Nat.card (GaloisGroup a n) = Module.finrank ℚ (splittingField a n) :=
+  (Nat.card_congr (AlgEquiv.autCongr (IsSplittingField.algEquiv _ (fℚ[a, n])).symm).toEquiv).trans
+    (IsGalois.card_aut_eq_finrank ℚ _)
 
 /-- Lemma 1.4: `Ω_n` embeds into `[C_2]^n`, and `Ω_{n+1} ≅ [C_2]^{n+1}` iff `Ω_n ≅ [C_2]^n` and
 `[K_{n+1} : K_n] = 2^{2^n}`. -/
