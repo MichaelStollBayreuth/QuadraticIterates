@@ -10,8 +10,7 @@ import Mathlib.Tactic.LinearCombination
 
 A sequence `a` in a GCD domain with `a 0 = 0` satisfying the *translation congruence*
 `a m ∣ a (m + j) - a j` for all `m, j` is a strong divisibility sequence:
-`gcd (a m) (a n) = normalize (a (gcd m n))`. Over `ℤ` this reads
-`Int.gcd (a m) (a n) = |a (gcd m n)|`. This is the arithmetic engine behind the
+`gcd (a m) (a n) = normalize (a (gcd m n))`. This is the arithmetic engine behind the
 Fibonacci-style `Int.gcd_fib`, isolated from the specific recurrence.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated

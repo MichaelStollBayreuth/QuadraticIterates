@@ -8,12 +8,12 @@ public import QuadraticIterates.ArchMath1992.Main
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.Algebra.BigOperators
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Eval
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 public import QuadraticIterates.Mathlib.Algebra.Squares
-public import QuadraticIterates.Mathlib.Data.Int.DvdSequence
 public import QuadraticIterates.Mathlib.Data.Multiset
 public import QuadraticIterates.Mathlib.Data.Nat
 public import QuadraticIterates.Mathlib.Data.ZMod

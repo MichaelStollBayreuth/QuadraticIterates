@@ -15,7 +15,7 @@ import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
-import QuadraticIterates.Mathlib.Data.Int.DvdSequence
+import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
