@@ -12,6 +12,7 @@ $\gamma_n \ne 0$ and set $\beta_n := \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$ for $
   \lean{QuadraticIterates.EvenPoly, QuadraticIterates.evenPoly_iff_comp_neg_X,
     QuadraticIterates.EvenPoly.eval_neg, QuadraticIterates.EvenPoly.eval_congr,
     QuadraticIterates.EvenPoly.dvd_eval_sub, QuadraticIterates.EvenPoly.map,
+    QuadraticIterates.EvenPoly.iterate_eval_neg,
     QuadraticIterates.gammaSeq, QuadraticIterates.gammaSeq_zero,
     QuadraticIterates.gammaSeq_one, QuadraticIterates.gammaSeq_succ,
     QuadraticIterates.gammaSeq_add, QuadraticIterates.map_gammaSeq,
@@ -88,7 +89,8 @@ We will now give a handier criterion for the assumptions of Lemma~\ref{lem:2.1} 
     QuadraticIterates.gammaSeq_add_succ_dvd_sub,
     QuadraticIterates.gammaSeq_add_succ_zmod_four_eq_three,
     QuadraticIterates.gammaSeq_add_succ_zmod_eight_eq_six,
-    QuadraticIterates.gammaSeq_add_succ_eq_three,
+    QuadraticIterates.gammaSeq_eq_ite_even, QuadraticIterates.gammaSeq_add_succ_eq_three,
+    QuadraticIterates.gammaSeq_eq_eval_one,
     QuadraticIterates.gammaSeq_add_succ_eq_two_mul_eval_one}
   \leanok
   If all the $\gamma_n$ are positive, and

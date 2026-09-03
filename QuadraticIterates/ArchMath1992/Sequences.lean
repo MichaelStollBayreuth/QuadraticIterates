@@ -71,6 +71,12 @@ theorem EvenPoly.eval_congr {R : Type*} [CommSemiring R] {g : R[X]} (hg : EvenPo
 theorem EvenPoly.eval_neg {R : Type*} [CommRing R] {g : R[X]} (hg : EvenPoly g) (y : R) :
     g.eval (-y) = g.eval y := hg.eval_congr (neg_sq y)
 
+/-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
+lemma EvenPoly.iterate_eval_neg {R : Type*} [CommRing R] {g : R[X]} (hg : EvenPoly g) {k : ℕ}
+    (hk : 1 ≤ k) (y : R) : (g.eval ·)^[k] (-y) = (g.eval ·)^[k] y := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
+  rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
+
 /-- Being an even polynomial is preserved by ring homomorphisms. -/
 theorem EvenPoly.map {R S : Type*} [CommSemiring R] [CommSemiring S] {g : R[X]}
     (hg : EvenPoly g) (φ : R →+* S) : EvenPoly (g.map φ) := by
@@ -143,44 +149,47 @@ lemma gammaSeq_one_succ (n : ℕ) : gammaSeq g 1 (n + 1) = g.eval (gammaSeq g 1 
 variable {g}
 
 /-- In a ring with `4 = 0`, the `ε = 1` sequence of an even `g` with `g(0) = 1`, `g(1) = 2`
-alternates between `1` and `2`, so consecutive terms sum to `3`. (The only property of `ZMod 4`
-used in the mod-4 step is `4 = 0`, which gives `g(2) = g(0)` by evenness.) -/
-theorem gammaSeq_add_succ_eq_three (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0 = 1)
-    (h1 : g.eval 1 = 2) :
-    ∀ n ≥ 1, gammaSeq g 1 n + gammaSeq g 1 (n + 1) = 3 := by
-  have h22 : (2 : R) ^ 2 = (0 : R) ^ 2 := by
-    rw [show (2 : R) ^ 2 = 4 by norm_num, h4, zero_pow two_ne_zero]
-  have h20 : g.eval 2 = 1 := (hg.eval_congr h22).trans h0
-  have hinv : ∀ m ≥ 1, (gammaSeq g 1 m = 1 ∧ gammaSeq g 1 (m + 1) = 2) ∨
-      (gammaSeq g 1 m = 2 ∧ gammaSeq g 1 (m + 1) = 1) := by
-    intro m hm
-    induction m, hm using Nat.le_induction with
-    | base => exact .inl ⟨by simp [h0], by
-        rw [gammaSeq_succ g 1 le_rfl, gammaSeq_one, one_mul, h0, h1]⟩
-    | succ k hk ih =>
-      rcases ih with ⟨-, hb⟩ | ⟨-, hb⟩
-      · exact .inr ⟨hb, by rw [gammaSeq_succ g 1 (by lia), hb, h20]⟩
-      · exact .inl ⟨hb, by rw [gammaSeq_succ g 1 (by lia), hb, h1]⟩
+alternates: `γ_n = 2` for even `n` and `γ_n = 1` for odd `n`. (The only property of `ZMod 4` used
+in the mod-4 step is `4 = 0`, which gives `g(2) = g(0)` by evenness.) -/
+theorem gammaSeq_eq_ite_even (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0 = 1)
+    (h1 : g.eval 1 = 2) : ∀ n ≥ 1, gammaSeq g 1 n = if Even n then 2 else 1 := by
+  have h20 : g.eval 2 = 1 :=
+    (hg.eval_congr (by rw [show (2 : R) ^ 2 = 4 by norm_num, h4, zero_pow two_ne_zero])).trans h0
   intro n hn
-  rcases hinv n hn with ⟨ha, hb⟩ | ⟨ha, hb⟩ <;> rw [ha, hb] <;> norm_num
+  induction n, hn using Nat.le_induction with
+  | base => simp [h0]
+  | succ k hk ih =>
+    rw [gammaSeq_succ g 1 hk, ih]
+    simp only [Nat.even_add_one]
+    split_ifs <;> assumption
 
-/-- If `ε² = g(0)² = g(1)² = 1` and `g` is even, then `γ_n = g(1)` for all `n ≥ 2`, so
-consecutive terms sum to `2·g(1)`. (The only property of `ZMod 8` used in the mod-8 step is
-that the relevant residues square to `1`.) -/
+/-- Consecutive terms of the alternating sequence of `gammaSeq_eq_ite_even` sum to `3`. -/
+theorem gammaSeq_add_succ_eq_three (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0 = 1)
+    (h1 : g.eval 1 = 2) : ∀ n ≥ 1, gammaSeq g 1 n + gammaSeq g 1 (n + 1) = 3 := fun n hn ↦ by
+  rw [gammaSeq_eq_ite_even hg h4 h0 h1 n hn, gammaSeq_eq_ite_even hg h4 h0 h1 (n + 1) (by lia)]
+  simp only [Nat.even_add_one]
+  split_ifs <;> norm_num
+
+/-- If `ε² = g(0)² = g(1)² = 1` and `g` is even, then `γ_n = g(1)` for all `n ≥ 2`. (The only
+property of `ZMod 8` used in the mod-8 step is that the relevant residues square to `1`.) -/
+theorem gammaSeq_eq_eval_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) (h0 : g.eval 0 ^ 2 = 1)
+    (h1 : g.eval 1 ^ 2 = 1) : ∀ n ≥ 2, gammaSeq g ε n = g.eval 1 := by
+  intro n hn
+  induction n, hn using Nat.le_induction with
+  | base =>
+    rw [show (2 : ℕ) = 1 + 1 from rfl, gammaSeq_succ g ε le_rfl]
+    exact hg.eval_congr (by rw [gammaSeq_one, mul_pow, hε, one_mul, h0, one_pow])
+  | succ k hk ih =>
+    rw [gammaSeq_succ g ε (by lia), ih]
+    exact hg.eval_congr (by rw [h1, one_pow])
+
+/-- Consecutive terms of the eventually constant sequence of `gammaSeq_eq_eval_one` sum to
+`2·g(1)` (`n ≥ 2`). -/
 theorem gammaSeq_add_succ_eq_two_mul_eval_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
     (h0 : g.eval 0 ^ 2 = 1) (h1 : g.eval 1 ^ 2 = 1) :
-    ∀ n ≥ 2, gammaSeq g ε n + gammaSeq g ε (n + 1) = 2 * g.eval 1 := by
-  have hval : ∀ n ≥ 2, gammaSeq g ε n = g.eval 1 := by
-    intro n hn
-    induction n, hn using Nat.le_induction with
-    | base =>
-      rw [show (2 : ℕ) = 1 + 1 from rfl, gammaSeq_succ g ε le_rfl]
-      exact hg.eval_congr (by rw [gammaSeq_one, mul_pow, hε, one_mul, h0, one_pow])
-    | succ k hk ih =>
-      rw [gammaSeq_succ g ε (by lia), ih]
-      exact hg.eval_congr (by rw [h1, one_pow])
-  intro n hn
-  rw [hval n hn, hval (n + 1) (by lia), two_mul]
+    ∀ n ≥ 2, gammaSeq g ε n + gammaSeq g ε (n + 1) = 2 * g.eval 1 := fun n hn ↦ by
+  rw [gammaSeq_eq_eval_one hg hε h0 h1 n hn, gammaSeq_eq_eval_one hg hε h0 h1 (n + 1) (by lia),
+    two_mul]
 
 /-- For even `g` and `ε² = 1`, the `ε`-sequence *equals* the `ε = 1` sequence from index `2` on:
 the sign is absorbed by the square inside `g`. -/
@@ -286,27 +295,14 @@ lemma gammaSeq_period_of_dvd_succ_sub_eval_zero (hg : EvenPoly g) {ε : R} (hε 
 theorem gammaSeq_mul_eq_two_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
     (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) :
     ∀ l ≥ 2, gammaSeq g ε (l * k) = gammaSeq g ε (2 * k) := by
-  have hγ (i j : ℕ) (hi : 1 ≤ i) :
-      gammaSeq g ε (i + j) = (fun z ↦ g.eval z)^[j] (gammaSeq g ε i) := gammaSeq_add g ε hi j
-  have hevenk (y : R) : (fun z ↦ g.eval z)^[k] (-y) = (fun z ↦ g.eval z)^[k] y := by
-    obtain ⟨k', rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by lia : k ≠ 0)
-    rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
   have hneg : gammaSeq g ε (2 * k) = -gammaSeq g ε k := by linear_combination hzero
-  have hfix : (fun z ↦ g.eval z)^[k] (gammaSeq g ε (2 * k)) = gammaSeq g ε (2 * k) := by
-    rw [hneg, hevenk, ← hγ k k hk, ← two_mul, hneg]
+  have hfix : (g.eval ·)^[k] (gammaSeq g ε (2 * k)) = gammaSeq g ε (2 * k) := by
+    rw [hneg, hg.iterate_eval_neg hk, ← gammaSeq_add g ε hk, ← two_mul, hneg]
   intro l hl
   induction l, hl using Nat.le_induction with
   | base => rfl
   | succ l hl ih =>
-    rw [show (l + 1) * k = l * k + k by ring, hγ (l * k) k (one_le_mul (by lia) hk), ih, hfix]
-
-/-- A product of terms each equal to `α · (-1 if t = 1 else 1)` collapses to `α ^ |S|` times a
-single sign depending on whether `1 ∈ S`. -/
-private theorem prod_eq_pow_card_mul_ite {α : R} {S : Finset ℕ} {f : ℕ → R}
-    (hf : ∀ t ∈ S, f t = α * (if t = 1 then (-1 : R) else 1)) :
-    (∏ t ∈ S, f t) = α ^ S.card * (if 1 ∈ S then (-1 : R) else 1) := by
-  rw [Finset.prod_congr rfl hf, Finset.prod_mul_distrib, Finset.prod_const,
-    Finset.prod_ite_eq' S 1 (fun _ ↦ (-1 : R))]
+    rw [show (l + 1) * k = l * k + k by ring, gammaSeq_add g ε (one_le_mul (by lia) hk), ih, hfix]
 
 /-- If `γ_k + γ_{2k} = 0`, then a product `∏_{t ∈ S} γ_{kt}` over positive indices `t` collapses
 to `γ_{2k} ^ |S|` up to a sign recording whether `1 ∈ S` (over any ring, for even `g`). -/
@@ -316,11 +312,14 @@ theorem prod_gammaSeq_mul_eq (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
     (∏ t ∈ S, gammaSeq g ε (k * t))
       = gammaSeq g ε (2 * k) ^ S.card * (if 1 ∈ S then -1 else 1) := by
   have hγk_neg : gammaSeq g ε k = -gammaSeq g ε (2 * k) := by linear_combination hzero
-  refine prod_eq_pow_card_mul_ite fun t ht ↦ ?_
-  have ht1 : 1 ≤ t := hS t ht
-  rcases eq_or_ne t 1 with rfl | h
-  · rw [mul_one, if_pos rfl, mul_neg, mul_one, hγk_neg]
-  · rw [if_neg h, mul_one, mul_comm k t, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)]
+  have hf (t : ℕ) (ht : t ∈ S) :
+      gammaSeq g ε (k * t) = gammaSeq g ε (2 * k) * (if t = 1 then -1 else 1) := by
+    rcases eq_or_ne t 1 with rfl | h
+    · rw [mul_one, if_pos rfl, mul_neg, mul_one, hγk_neg]
+    · have := hS t ht
+      rw [if_neg h, mul_one, mul_comm k t, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)]
+  rw [Finset.prod_congr rfl hf, Finset.prod_mul_distrib, Finset.prod_const,
+    Finset.prod_ite_eq' S 1 (fun _ ↦ (-1 : R))]
 
 /-- If `γ_k + γ_{2k} = 0`, then for disjoint sets `Sp`, `Sm` of positive indices of the same
 size, one of which contains `1`, `∏_{t ∈ Sp} γ_{kt} = -∏_{t ∈ Sm} γ_{kt}` (over any ring, for
