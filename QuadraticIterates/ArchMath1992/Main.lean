@@ -86,27 +86,14 @@ variable (a : ℤ)
 
 /-! ### The main theorems -/
 
-lemma nonempty_mulEquiv_of_finrank_eq {n : ℕ}
-    (hmax : Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1)) :
-    Nonempty (GaloisGroup a n ≃* WreathPower n) := by
-  obtain ⟨φ, hφ⟩ := odoni_embedding a n
-  have hfinG : Finite (GaloisGroup a n) :=
-    Nat.finite_of_card_ne_zero (by rw [card_galoisGroup_eq_finrank a n, hmax]; positivity)
-  have hfinW : Finite (WreathPower n) :=
-    Nat.finite_of_card_ne_zero (by rw [card_wreathPower]; positivity)
-  exact (MonoidHom.nonempty_mulEquiv_iff_card_eq φ hφ).mpr
-    (by rw [card_galoisGroup_eq_finrank a n, hmax, card_wreathPower])
-
 /-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. -/
 theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
   induction n with
   | zero =>
-    refine ⟨fun _ S hS ↦ hS.elim fun i _ ↦ i.elim0, fun _ ↦ ?_⟩
-    apply nonempty_mulEquiv_of_finrank_eq a
-    rw [splittingField_zero_eq_bot, IntermediateField.finrank_bot]
-    norm_num
+    exact ⟨fun _ S hS ↦ hS.elim fun i _ ↦ i.elim0,
+      fun _ ↦ (nonempty_mulEquiv_iff_finrank_eq a 0).mpr (by simp)⟩
   | succ n ih =>
     have hsnoc : (fun i : Fin (n + 1) ↦ (cSeq a ((i : ℕ) + 1) : ℚ))
         = Fin.snoc (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) (cSeq a (n + 1) : ℚ) := by

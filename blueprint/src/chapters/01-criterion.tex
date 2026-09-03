@@ -166,7 +166,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   \uses{def:galois, def:wreath, facts:1.0}
   \lean{QuadraticIterates.nonempty_mulEquiv_succ_iff, QuadraticIterates.odoni_embedding,
     QuadraticIterates.isPGroup_galoisGroup, QuadraticIterates.pow_two_pow_apply_root,
-    QuadraticIterates.card_wreathPower_succ, QuadraticIterates.nonempty_mulEquiv_of_finrank_eq}
+    QuadraticIterates.card_wreathPower_succ, QuadraticIterates.nonempty_mulEquiv_iff_finrank_eq}
   \leanok
   $\Om_n$ can be embedded into $\Ct{n}$. In particular, we have for all $n$:
   \[ \Om_{n+1} \cong \Ct{n+1} \iff \Om_n \cong \Ct{n} \text{ and } [K_{n+1} : K_n] = 2^{2^n}. \]
@@ -198,8 +198,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
     QuadraticIterates.finrank_adjoin_le_two_pow,
     QuadraticIterates.card_monoidHom_eq_two_pow,
     QuadraticIterates.isSquare_algebraMap_cSeq,
-    QuadraticIterates.twoIndependent_snoc_iff,
-    QuadraticIterates.finrank_eq_of_nonempty_mulEquiv}
+    QuadraticIterates.twoIndependent_snoc_iff}
   \leanok
   If $\Om_n \cong \Ct{n}$ and $c_1, c_2, \dots, c_n$ are $2$-independent, then for all
   $c \in \QQ^*$:

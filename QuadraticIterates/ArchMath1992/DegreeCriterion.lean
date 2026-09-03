@@ -165,11 +165,6 @@ theorem degree_criterion (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   rw [hrfd, Submodule.finrank_eq_zero, ← not_iff_not]
   simpa using hallne.symm.trans hallsq
 
-lemma finrank_eq_of_nonempty_mulEquiv {n : ℕ}
-    (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n)) :
-    Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1) := by
-  rw [← card_galoisGroup_eq_finrank a n, Nat.card_congr hiso.some.toEquiv, card_wreathPower]
-
 lemma finrank_adjoin_range_eq_two_pow {n : ℕ}
     (hindep : TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)))
     {x : Fin n → ↥(splittingField a n)}
@@ -256,7 +251,7 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       ∃ S : Finset (Fin n), IsSquare (c * ∏ i ∈ S, (cSeq a ((i : ℕ) + 1) : ℚ)) := by
   classical
-  have hmax := finrank_eq_of_nonempty_mulEquiv a hiso
+  have hmax := (nonempty_mulEquiv_iff_finrank_eq a n).mp hiso
   have hroot (i : Fin n) :
       IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1) : ℚ)) := by
     rcases Nat.eq_zero_or_pos n with rfl | hnpos

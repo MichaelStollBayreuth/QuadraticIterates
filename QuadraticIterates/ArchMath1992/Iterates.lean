@@ -37,7 +37,8 @@ the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 
   tower, `[K_n : K_m] ≤ 2^{2^n - 2^m}` (`relfinrank_le_two_pow`); so the maximal degree
   `[K_n : ℚ] = 2^{2^n - 1}` forces `-a` to be a non-square (`not_isSquare_neg_of_finrank_eq`).
 * `odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group
-  (`isPGroup_galoisGroup`) acting faithfully on the at most `2^n` roots of `f_n`.
+  (`isPGroup_galoisGroup`) acting faithfully on the at most `2^n` roots of `f_n`; hence
+  `Ω_n ≅ [C₂]ⁿ` iff `[K_n : ℚ] = 2^{2^n - 1}` (`nonempty_mulEquiv_iff_finrank_eq`).
 * `nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and
   `[K_{n+1} : K_n] = 2^{2^n}`.
 * `twoIndependent_iff_linearIndependent`: a family is 2-independent iff its classes in
@@ -479,6 +480,14 @@ lemma card_galoisGroup_eq_finrank (n : ℕ) :
     Nat.card (GaloisGroup a n) = Module.finrank ℚ ↥(splittingField a n) :=
   (Nat.card_congr (AlgEquiv.autCongr (IsSplittingField.algEquiv _ fℚ[a, n]).symm).toEquiv).trans
     (IsGalois.card_aut_eq_finrank ℚ _)
+
+/-- `Ω_n ≅ [C_2]^n` iff `K_n` has the maximal possible degree `2^(2^n - 1)` over `ℚ`, since `Ω_n`
+embeds into `[C_2]^n` (`odoni_embedding`) and `#Ω_n = [K_n : ℚ]`. -/
+theorem nonempty_mulEquiv_iff_finrank_eq (n : ℕ) :
+    Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
+      Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1) := by
+  obtain ⟨φ, hφ⟩ := odoni_embedding a n
+  rw [φ.nonempty_mulEquiv_iff_card_eq hφ, card_galoisGroup_eq_finrank, card_wreathPower]
 
 /-- Lemma 1.4: `Ω_{n+1} ≅ [C_2]^{n+1}` iff `Ω_n ≅ [C_2]^n` and `[K_{n+1} : K_n] = 2^{2^n}`. Both
 `#Ω_n ≤ #[C_2]^n` (by `odoni_embedding`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`, and the products of the
