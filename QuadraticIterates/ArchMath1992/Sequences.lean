@@ -72,6 +72,14 @@ theorem map {S : Type*} [CommSemiring S] (hg : EvenPoly g) (φ : R →+* S) : Ev
 
 end EvenPoly
 
+/-- `X² + a` is an even polynomial. -/
+lemma evenPoly_X_sq_add_C (a : R) : EvenPoly (X ^ 2 + C a) :=
+  ⟨X + C a, by rw [map_add, expand_X, expand_C]⟩
+
+/-- `b·X² + c` is an even polynomial. -/
+lemma evenPoly_C_mul_X_sq_add_C (b c : R) : EvenPoly (C b * X ^ 2 + C c) :=
+  ⟨C b * X + C c, by simp⟩
+
 end EvenPoly
 
 section EvenPoly

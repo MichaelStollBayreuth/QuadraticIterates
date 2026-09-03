@@ -40,28 +40,33 @@ open Polynomial
 
 namespace QuadraticIterates
 
+/-! ### The iterates `f_n` of `X² + a` -/
+
 /-- The iterates `f_n` of `f = X² + a` over a commutative (semi)ring `R`: `f_0 = X`,
 `f_{n+1} = f_n² + a`. Over `ℤ` (`R := ℤ`) this is the sequence of the paper. -/
 noncomputable def iteratedPoly {R : Type*} [CommSemiring R] (a : R) : ℕ → R[X]
   | 0 => X
   | n + 1 => (iteratedPoly a n) ^ 2 + C a
 
-@[simp] lemma iteratedPoly_zero {R : Type*} [CommSemiring R] (a : R) : iteratedPoly a 0 = X := rfl
+section
 
-lemma iteratedPoly_succ {R : Type*} [CommSemiring R] (a : R) (n : ℕ) :
-    iteratedPoly a (n + 1) = iteratedPoly a n ^ 2 + C a := rfl
+variable {R : Type*} [CommSemiring R] (a : R)
+
+@[simp] lemma iteratedPoly_zero : iteratedPoly a 0 = X := rfl
+
+lemma iteratedPoly_succ (n : ℕ) : iteratedPoly a (n + 1) = iteratedPoly a n ^ 2 + C a := rfl
 
 /-- Iterating commutes with any ring homomorphism: the image of `f_n` under `φ` is the `n`-th
 iterate over the codomain with parameter `φ a`. -/
-lemma map_iteratedPoly {R S : Type*} [CommSemiring R] [CommSemiring S] (φ : R →+* S) (a : R)
-    (n : ℕ) : (iteratedPoly a n).map φ = iteratedPoly (φ a) n := by
+lemma map_iteratedPoly {S : Type*} [CommSemiring S] (φ : R →+* S) (n : ℕ) :
+    (iteratedPoly a n).map φ = iteratedPoly (φ a) n := by
   induction n with
   | zero => simp
   | succ k ih =>
     rw [iteratedPoly_succ, Polynomial.map_add, Polynomial.map_pow, ih, map_C, iteratedPoly_succ]
 
 /-- `f_{n+1} = f_n ∘ (X² + a)`: the iterate can also grow on the right. -/
-lemma iteratedPoly_succ_comp {R : Type*} [CommSemiring R] (a : R) (n : ℕ) :
+lemma iteratedPoly_succ_comp (n : ℕ) :
     iteratedPoly a (n + 1) = (iteratedPoly a n).comp (X ^ 2 + C a) := by
   induction n with
   | zero => simp [iteratedPoly_succ]
@@ -71,7 +76,7 @@ lemma iteratedPoly_succ_comp {R : Type*} [CommSemiring R] (a : R) (n : ℕ) :
     rw [iteratedPoly_succ, add_comp, pow_comp, C_comp]
 
 /-- Iterates compose additively: `f_{m+n} = f_m ∘ f_n`. -/
-lemma iteratedPoly_add {R : Type*} [CommSemiring R] (a : R) (m n : ℕ) :
+lemma iteratedPoly_add (m n : ℕ) :
     iteratedPoly a (m + n) = (iteratedPoly a m).comp (iteratedPoly a n) := by
   induction n with
   | zero => simp
@@ -79,19 +84,22 @@ lemma iteratedPoly_add {R : Type*} [CommSemiring R] (a : R) (m n : ℕ) :
     rw [show m + (k + 1) = (m + k) + 1 from rfl, iteratedPoly_succ_comp, ih, comp_assoc,
       ← iteratedPoly_succ_comp]
 
-lemma monic_iteratedPoly {R : Type*} [CommSemiring R] [Nontrivial R] (a : R) (n : ℕ) :
-    (iteratedPoly a n).Monic := by
+lemma monic_iteratedPoly [Nontrivial R] (n : ℕ) : (iteratedPoly a n).Monic := by
   induction n with
   | zero => exact monic_X
   | succ k ih =>
     rw [iteratedPoly_succ_comp]
     exact ih.comp (monic_X_pow_add_C a two_ne_zero) (by simp)
 
-lemma natDegree_iteratedPoly {R : Type*} [CommSemiring R] [NoZeroDivisors R] [Nontrivial R]
-    (a : R) (n : ℕ) : (iteratedPoly a n).natDegree = 2 ^ n := by
+lemma natDegree_iteratedPoly [NoZeroDivisors R] [Nontrivial R] (n : ℕ) :
+    (iteratedPoly a n).natDegree = 2 ^ n := by
   induction n with
   | zero => simp
   | succ k ih => rw [iteratedPoly_succ_comp, natDegree_comp, ih, natDegree_X_pow_add_C, pow_succ]
+
+end
+
+/-! ### Splitting fields, Galois groups and wreath powers -/
 
 /-- `fℚ[a, n]` denotes the `n`-th iterate `f_n = iteratedPoly a n`, viewed in `ℚ[X]`. -/
 scoped notation "fℚ[" a ", " n "]" => map (Int.castRingHom ℚ) (iteratedPoly a n)
@@ -119,16 +127,8 @@ noncomputable abbrev GaloisGroup (a : ℤ) (n : ℕ) : Type := (fℚ[a, n]).Gal
 /-- The `n`-fold iterated regular wreath product `[C_2]^n` of `C_2 = Multiplicative (ZMod 2)`, via
 Mathlib's `IteratedWreathProduct`. -/
 abbrev WreathPower (n : ℕ) : Type := IteratedWreathProduct (Multiplicative (ZMod 2)) n
+
 /-! ### The sequences `c` and `b` over `ℤ` -/
-
-/-- `X² + a` is an even polynomial. -/
-lemma evenPoly_X_sq_add_C {R : Type*} [CommSemiring R] (a : R) : EvenPoly (X ^ 2 + C a) :=
-  ⟨X + C a, by rw [map_add, expand_X, expand_C]⟩
-
-/-- `b·X² + c` is an even polynomial. -/
-lemma evenPoly_C_mul_X_sq_add_C {R : Type*} [CommSemiring R] (b c : R) :
-    EvenPoly (C b * X ^ 2 + C c) :=
-  ⟨C b * X + C c, by simp⟩
 
 /-- The integer sequence `c_n` (indexed from 1): `c_1 = -a`, `c_{n+1} = c_n² + a`; the value at
 index `0` is `0`. It is the `γ`-sequence of `X² + a` with `ε = -1`. -/
@@ -234,12 +234,11 @@ theorem twoIndependent_iff_linearIndependent [Fintype ι] {L : Type*} [Field L] 
 
 end TwoIndependent
 
+/-! ### The iterates over `ℚ` -/
 
 section
 
 variable (a : ℤ)
-
-/-! ### Degrees, roots and the Galois group of the iterates over `ℚ` -/
 
 lemma map_iteratedPoly_succ_eq_sq_add (k : ℕ) : fℚ[a, k + 1] = (fℚ[a, k]) ^ 2 + C (a : ℚ) := by
   simp [iteratedPoly_succ]
@@ -267,49 +266,7 @@ lemma mem_rootSet_iteratedPoly_succ (n : ℕ) (β : AlgebraicClosure ℚ) :
     and_iff_right (monic_map_iteratedPoly a _).ne_zero, map_iteratedPoly_succ, aeval_comp]
   simp
 
-/-- Any `ℚ`-automorphism of `ℚ̄` raised to the power `2 ^ m` fixes every root of `f_m`. -/
-theorem pow_two_pow_apply_root (ϕ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)
-    {m : ℕ} {γ : AlgebraicClosure ℚ} (hγ : γ ∈ (fℚ[a, m]).rootSet (AlgebraicClosure ℚ)) :
-    (ϕ ^ (2 ^ m)) γ = γ := by
-  induction m generalizing γ with
-  | zero =>
-    rw [iteratedPoly_zero, map_X,
-      mem_rootSet_of_injective (algebraMap ℚ (AlgebraicClosure ℚ)).injective X_ne_zero] at hγ
-    obtain rfl : γ = 0 := by simpa using hγ
-    simp
-  | succ k ih =>
-    have hsq : ((ϕ ^ 2 ^ k) γ) ^ 2 = γ ^ 2 := by
-      have hfix := ih ((mem_rootSet_iteratedPoly_succ a k γ).mp hγ)
-      have hmap : (ϕ ^ 2 ^ k) (γ ^ 2 + (a : AlgebraicClosure ℚ))
-          = ((ϕ ^ 2 ^ k) γ) ^ 2 + (a : AlgebraicClosure ℚ) := by
-        simp [map_add, map_pow, map_intCast]
-      rw [hmap] at hfix
-      linear_combination hfix
-    rw [show (2 : ℕ) ^ (k + 1) = 2 ^ k + 2 ^ k by ring, pow_add, AlgEquiv.mul_apply]
-    rcases sq_eq_sq_iff_eq_or_eq_neg.mp hsq with h | h
-    · rw [h, h]
-    · rw [h, map_neg, h, neg_neg]
-
-/-- `Ω_n = Gal(f_n/ℚ)` is a 2-group. -/
-theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
-  set F := fℚ[a, n]
-  refine isPGroup_iff_pow_pow_eq_one.mpr fun σ ↦ ⟨n, ?_⟩
-  obtain ⟨ϕ, rfl⟩ := Gal.restrict_surjective F (AlgebraicClosure ℚ) σ
-  apply Gal.galActionHom_injective F (AlgebraicClosure ℚ)
-  rw [map_pow, map_one, ← map_pow, ← map_pow]
-  ext β
-  simp only [Equiv.Perm.one_apply]
-  exact (Gal.galActionHom_restrict F (AlgebraicClosure ℚ) (ϕ ^ 2 ^ n) β).trans
-    (pow_two_pow_apply_root a ϕ β.2)
-
-/-- Odoni's embedding theorem: `Ω_n` embeds into `[C_2]^n`, being a `2`-group acting faithfully on
-the at most `2 ^ n` roots of `f_n`. -/
-theorem odoni_embedding (n : ℕ) :
-    ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
-  (isPGroup_galoisGroup a n).exists_injective_monoidHom_iteratedWreathProduct
-    (Gal.galActionHom_injective (fℚ[a, n]) (AlgebraicClosure ℚ))
-    ((Nat.card_coe_set_eq _).trans_le (ncard_rootSet_iteratedPoly_le a n))
-    (Multiplicative (ZMod 2)) (by simp [Nat.card_eq_fintype_card])
+/-! ### The tower of splitting fields `K_n ⊆ K_{n+1}` -/
 
 /-- Every element of `ℚ̄` has a square root after subtracting `a`; the square roots of the
 `α - a` for `α` a root of `f_n` are what generates `K_{n+1}` over `K_n`. -/
@@ -337,14 +294,6 @@ lemma splittingField_mono {m n : ℕ} (hmn : m ≤ n) : splittingField a m ≤ s
     (algebraMap ℚ (AlgebraicClosure ℚ)).injective X_ne_zero] at hx
   rw [SetLike.mem_coe, show x = 0 by simpa using hx]
   exact zero_mem _
-
-end
-
-section
-
-variable (a : ℤ)
-
-/-! ### The Kummer tower `K_n ⊆ K_{n+1}` -/
 
 /-- `K_{n+1} = K_n(√(α - a) : α root of f_n)`, for any choice `g` of square roots: a root `β` of
 `f_{n+1}` is `± g(β² + a)`, and `g α` is a root of `f_{n+1}` for every root `α` of `f_n`. -/
@@ -396,6 +345,54 @@ lemma relfinrank_succ_le (n : ℕ) :
   intro x ⟨α, hα, hx⟩
   exact ⟨⟨α - a, sub_mem (IntermediateField.subset_adjoin ℚ _ hα)
     (IntermediateField.intCast_mem _ a)⟩, hx ▸ hg α⟩
+
+/-! ### Odoni's embedding `Ω_n ↪ [C₂]ⁿ` -/
+
+/-- Any `ℚ`-automorphism of `ℚ̄` raised to the power `2 ^ m` fixes every root of `f_m`. -/
+theorem pow_two_pow_apply_root (ϕ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)
+    {m : ℕ} {γ : AlgebraicClosure ℚ} (hγ : γ ∈ (fℚ[a, m]).rootSet (AlgebraicClosure ℚ)) :
+    (ϕ ^ (2 ^ m)) γ = γ := by
+  induction m generalizing γ with
+  | zero =>
+    rw [iteratedPoly_zero, map_X,
+      mem_rootSet_of_injective (algebraMap ℚ (AlgebraicClosure ℚ)).injective X_ne_zero] at hγ
+    obtain rfl : γ = 0 := by simpa using hγ
+    simp
+  | succ k ih =>
+    have hsq : ((ϕ ^ 2 ^ k) γ) ^ 2 = γ ^ 2 := by
+      have hfix := ih ((mem_rootSet_iteratedPoly_succ a k γ).mp hγ)
+      have hmap : (ϕ ^ 2 ^ k) (γ ^ 2 + (a : AlgebraicClosure ℚ))
+          = ((ϕ ^ 2 ^ k) γ) ^ 2 + (a : AlgebraicClosure ℚ) := by
+        simp [map_add, map_pow, map_intCast]
+      rw [hmap] at hfix
+      linear_combination hfix
+    rw [show (2 : ℕ) ^ (k + 1) = 2 ^ k + 2 ^ k by ring, pow_add, AlgEquiv.mul_apply]
+    rcases sq_eq_sq_iff_eq_or_eq_neg.mp hsq with h | h
+    · rw [h, h]
+    · rw [h, map_neg, h, neg_neg]
+
+/-- `Ω_n = Gal(f_n/ℚ)` is a 2-group. -/
+theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
+  set F := fℚ[a, n]
+  refine isPGroup_iff_pow_pow_eq_one.mpr fun σ ↦ ⟨n, ?_⟩
+  obtain ⟨ϕ, rfl⟩ := Gal.restrict_surjective F (AlgebraicClosure ℚ) σ
+  apply Gal.galActionHom_injective F (AlgebraicClosure ℚ)
+  rw [map_pow, map_one, ← map_pow, ← map_pow]
+  ext β
+  simp only [Equiv.Perm.one_apply]
+  exact (Gal.galActionHom_restrict F (AlgebraicClosure ℚ) (ϕ ^ 2 ^ n) β).trans
+    (pow_two_pow_apply_root a ϕ β.2)
+
+/-- Odoni's embedding theorem: `Ω_n` embeds into `[C_2]^n`, being a `2`-group acting faithfully on
+the at most `2 ^ n` roots of `f_n`. -/
+theorem odoni_embedding (n : ℕ) :
+    ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
+  (isPGroup_galoisGroup a n).exists_injective_monoidHom_iteratedWreathProduct
+    (Gal.galActionHom_injective (fℚ[a, n]) (AlgebraicClosure ℚ))
+    ((Nat.card_coe_set_eq _).trans_le (ncard_rootSet_iteratedPoly_le a n))
+    (Multiplicative (ZMod 2)) (by simp [Nat.card_eq_fintype_card])
+
+/-! ### Lemma 1.4: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}` -/
 
 lemma card_wreathPower (n : ℕ) : Nat.card (WreathPower n) = 2 ^ (2 ^ n - 1) := by
   rw [IteratedWreathProduct.card,
