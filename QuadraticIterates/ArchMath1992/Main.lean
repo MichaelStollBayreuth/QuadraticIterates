@@ -12,16 +12,23 @@ import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Int.Order.Units
 import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
-import QuadraticIterates.Mathlib.GroupTheory.Card
 
 /-!
 # The main theorems
 
-The integer factors `b_n` of the `c`-sequence — integral, pairwise coprime, and recovering `c_n` by
-Möbius inversion (Lemma 1.1 b) — and the three results of the paper: `section1_equiv`
-(`Ω_n ≅ [C₂]ⁿ` iff the `c_i` are 2-independent iff the `b_i` are), `section1_squarefree` (no
-`|b_k|` a square forces `Ω_n ≅ [C₂]ⁿ`) and `section3_main` (the congruence conditions on `a` that
-guarantee this for every `n`).
+The integer factors `b_n` of the `c`-sequence (Lemma 1.1 b), the two parts of the Section 1
+theorem and the Section 3 theorem of the paper.
+
+## Main statements
+
+* `section1_equiv`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are
+  2-independent (`section1_a_iff_b`, `section1_b_iff_c`).
+* `section1_squarefree`: if none of `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`.
+* `section3_main`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is not a
+  square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. The proof rescales `X² + a` to
+  `normPoly a = |a| X² + sgn a`, whose `γ`-sequence is `|c_n| / |a|`
+  (`abs_cSeq_eq_gammaSeq_mul_abs`) and whose `β`-sequence is `|b_n|` (`abs_bSeq_eq_betaSeq`), and
+  applies Lemma 2.2 (`not_isSquare_abs_bSeq`).
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -29,7 +36,6 @@ Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
 
 @[expose] public section
 
-open Polynomial
 open scoped ArithmeticFunction.Moebius
 
 namespace QuadraticIterates
@@ -38,7 +44,7 @@ section
 
 variable (a : ℤ)
 
-/-! ### The integer factors `b_n` -/
+/-! ### Lemma 1.1 b): the integer factors `b_n` -/
 
 /-- The constant-valuation shape for `c`: the specialization of `factorization_gammaSeq_shape`
 to `X² + a`, `ε = -1`, in the form consumed by `moebiusFactorR_isRelPrime`. -/
@@ -48,9 +54,8 @@ lemma cSeq_factorization_shape (ha : ¬IsSquare (-a : ℚ)) :
   fun _ hq hqn ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq
     (cSeq_ne_zero a ha) hq hqn
 
-/-- The image of `b_n` in `ℚ` is the Möbius product `∏_{ed = n} c_d^{μ(e)}` (Lemma 1.1 b): the
-Möbius product of the `c`-sequence is the integer `b_n`, since `c` is a strong divisibility
-sequence. -/
+/-- Lemma 1.1 b): the Möbius product `∏_{ed = n} c_d^{μ(e)}` is the integer `b_n`, since `c` is a
+strong divisibility sequence. -/
 lemma intCast_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     (bSeq a n : ℚ) = moebiusFactorK (cSeq a) n :=
   algebraMap_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
@@ -70,15 +75,12 @@ lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn
   (moebiusFactorR_isRelPrime (cSeq_ne_zero a ha) (cSeq_associated_gcd a)
     (cSeq_factorization_shape a ha) m n hm hn hmn).isCoprime
 
-end
+/-! ### Theorem (Section 1) -/
 
-section
-
-variable (a : ℤ)
-
-/-! ### The main theorems -/
-
-/-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. -/
+/-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on
+`n`: `Ω_{n+1} ≅ [C₂]ⁿ⁺¹` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^(2^n)` (Lemma 1.4), the
+degree condition says that `c_{n+1}` is not a square in `K_n` (Lemma 1.6), and given
+`Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent (Lemma 1.5). -/
 theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
@@ -134,7 +136,7 @@ theorem section1_b_iff_c (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       (mem_range_of_dvd (fun k ↦ sqClass (cSeq a k : ℚ))
         (Nat.dvd_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx)))) _
 
-/-- Theorem (Section 1), part 1: `Ω_n ≅ [C_2]^n` ⟺ `c_1, …, c_n` are 2-independent ⟺ `b_1, …, b_n`
+/-- Theorem (Section 1), part 1: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n`
 are 2-independent. -/
 theorem section1_equiv (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     [Nonempty (GaloisGroup a n ≃* WreathPower n),
@@ -144,9 +146,9 @@ theorem section1_equiv (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   tfae_have 2 ↔ 3 := section1_b_iff_c a ha n
   tfae_finish
 
-/-- Theorem (Section 1), part 2: if none of `|b_2|, …, |b_n|` is a square in `ℚ`, then `Ω_n ≅
-[C_2]^n`. By pairwise coprimality, the `b_k` are 2-independent as soon as no `b_k` and at most one
-`-b_k` is a square; `-b_1 = a` is the only candidate, since `b_1 = -a` is not a square. -/
+/-- Theorem (Section 1), part 2: if none of `|b_2|, …, |b_n|` is a square in `ℚ`, then
+`Ω_n ≅ [C₂]ⁿ`. By pairwise coprimality, the `b_k` are 2-independent as soon as no `b_k` and at
+most one `-b_k` is a square; `-b_1 = a` is the only candidate, since `b_1 = -a` is not a square. -/
 theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     (h : ∀ k ≥ 2, k ≤ n → ¬IsSquare |bSeq a k|) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
@@ -160,6 +162,8 @@ theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
   · rw [hi, zero_add, bSeq_one]
     exact fun hsq ↦ ha (mod_cast hsq)
   · exact fun hsq ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inl hsq))
+
+/-! ### The `γ`-sequence of the rescaled polynomial -/
 
 /-- `γ_1 = sgn(a) · g(0) = sgn(a)² = 1` for the rescaled polynomial `g = normPoly a`. -/
 lemma gammaSeq_normPoly_one (ha0 : a ≠ 0) : gammaSeq (normPoly a) a.sign 1 = 1 := by
@@ -200,6 +204,8 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) 
     simp only [abs_cSeq_eq_gammaSeq_mul_abs a ha]
   exact_mod_cast hQ
 
+/-! ### Theorem (Section 3) -/
+
 /-- In each of the three cases of the Section 3 theorem, `-a` is not a square in `ℚ`. -/
 lemma not_isSquare_neg_of_cases
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
@@ -219,7 +225,7 @@ theorem not_isSquare_abs_bSeq
   grind [eval_normPoly, Int.sign_eq_one_of_pos, Int.sign_eq_neg_one_of_neg, abs_of_pos, abs_of_neg]
 
 /-- Section 3, main result: if `a > 0` and `a ≡ 1 or 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is
-not a square, then `Gal(f_n/ℚ) ≅ [C_2]^n` for all `n ≥ 1`. -/
+not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
 theorem section3_main
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) := fun n _ ↦
