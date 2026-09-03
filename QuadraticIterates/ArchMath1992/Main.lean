@@ -55,22 +55,19 @@ lemma intCast_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     (bSeq a n : ℚ) = moebiusFactorK (cSeq a) n :=
   algebraMap_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
 
-lemma bSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : bSeq a n ≠ 0 := by
-  rw [bSeq_eq_moebiusFactorR]
-  exact moebiusFactorR_ne_zero (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
+lemma bSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : bSeq a n ≠ 0 :=
+  moebiusFactorR_ne_zero (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
 
 /-- Möbius inversion for the integer factors (Lemma 1.1 b): `c_n = ∏_{d ∣ n} b_d`. -/
 lemma cSeq_eq_prod_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
-    cSeq a n = ∏ d ∈ n.divisors, bSeq a d := by
-  simp only [bSeq_eq_moebiusFactorR]
-  exact prod_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
+    cSeq a n = ∏ d ∈ n.divisors, bSeq a d :=
+  prod_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
 
 /-- The integer factors `b_n` are pairwise coprime (Lemma 1.1 b): the valuation of `b_n` at
 each prime is supported on a single index, so no prime divides two distinct factors. -/
 lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n)
-    (hmn : m ≠ n) : IsCoprime (bSeq a m) (bSeq a n) := by
-  rw [bSeq_eq_moebiusFactorR, bSeq_eq_moebiusFactorR]
-  exact (moebiusFactorR_isRelPrime (cSeq_ne_zero a ha) (cSeq_associated_gcd a)
+    (hmn : m ≠ n) : IsCoprime (bSeq a m) (bSeq a n) :=
+  (moebiusFactorR_isRelPrime (cSeq_ne_zero a ha) (cSeq_associated_gcd a)
     (cSeq_factorization_shape a ha) m n hm hn hmn).isCoprime
 
 end
@@ -100,12 +97,9 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/
 lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (cSeq a m : ℚ) = ∑ d ∈ m.divisors, sqClass (bSeq a d : ℚ) := by
-  have hprod : (cSeq a m : ℚ) = ∏ d ∈ m.divisors, (bSeq a d : ℚ) := by
-    rw [cSeq_eq_prod_bSeq a ha hm]
-    push_cast
-    rfl
-  rw [hprod, sqClass_prod fun d hd ↦
-    mod_cast bSeq_ne_zero a ha (Nat.pos_of_mem_divisors hd)]
+  rw [show (cSeq a m : ℚ) = ∏ d ∈ m.divisors, (bSeq a d : ℚ) from
+      mod_cast cSeq_eq_prod_bSeq a ha hm,
+    sqClass_prod fun d hd ↦ mod_cast bSeq_ne_zero a ha (Nat.pos_of_mem_divisors hd)]
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `b_m` is the Möbius-weighted sum of the classes of the `c_d`. -/
 lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
@@ -202,16 +196,15 @@ lemma abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) 
       intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
         (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') (by lia),
       ← moebiusFactorK_mul_const (gammaSeq (normPoly a) a.sign)
-        (by simpa using abs_ne_zero.mpr ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
+        (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
     simp only [abs_cSeq_eq_gammaSeq_mul_abs a ha]
   exact_mod_cast hQ
 
 /-- In each of the three cases of the Section 3 theorem, `-a` is not a square in `ℚ`. -/
 lemma not_isSquare_neg_of_cases
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
-    ¬IsSquare (-a : ℚ) := by
-  have : ¬IsSquare (-a) := by grind [not_isSquare_of_neg]
-  exact mod_cast this
+    ¬IsSquare (-a : ℚ) :=
+  mod_cast (show ¬IsSquare (-a) by grind [not_isSquare_of_neg])
 
 /-- Lemma 2.2 applied to the `c`-sequence: in each of the three cases of the Section 3 theorem,
 no `|b_n|` with `n ≥ 2` is a square. Case a) gives `g(0) = 1`, `g(1) ≡ 2 mod 4` for the rescaled
