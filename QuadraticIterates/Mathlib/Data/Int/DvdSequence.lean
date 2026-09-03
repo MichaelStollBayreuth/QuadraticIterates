@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Algebra.GCDMonoid.Basic
 
-import Mathlib.Algebra.GCDMonoid.Nat
 import Mathlib.Algebra.Ring.Divisibility.Basic
 import Mathlib.Tactic.LinearCombination
 
@@ -57,11 +56,3 @@ theorem associated_gcd_of_dvd_sub {a : ℕ → R} (h0 : a 0 = 0)
     (hdvd : ∀ m j, a m ∣ a (m + j) - a j) (m n : ℕ) :
     Associated (gcd (a m) (a n)) (a (m.gcd n)) :=
   gcd_eq_normalize_of_dvd_sub h0 hdvd m n ▸ normalize_associated _
-
-/-- If `a 0 = 0` and `a m ∣ a (m + j) - a j` for all `m, j` (the *translation congruence*), then
-`a` is a strong divisibility sequence: `Int.gcd (a m) (a n) = |a (gcd m n)|`. -/
-theorem Int.gcd_eq_natAbs_of_dvd_sub {a : ℕ → ℤ} (h0 : a 0 = 0)
-    (hdvd : ∀ m j, a m ∣ a (m + j) - a j) (m n : ℕ) :
-    Int.gcd (a m) (a n) = (a (m.gcd n)).natAbs := by
-  have h := Int.associated_iff_natAbs.mp (associated_gcd_of_dvd_sub h0 hdvd m n)
-  rw [← h, ← Int.coe_gcd, Int.natAbs_natCast]

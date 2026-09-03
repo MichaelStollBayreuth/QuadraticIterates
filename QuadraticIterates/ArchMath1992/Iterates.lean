@@ -182,17 +182,6 @@ def TwoIndependent {n : ℕ} (v : Fin n → ℚ) : Prop :=
   (∀ i, v i ≠ 0) ∧
     ∀ S : Finset (Fin n), S.Nonempty → ¬IsSquare (∏ i ∈ S, v i)
 
-/-- Square roots of 2-independent rationals in a `ℚ`-algebra are pairwise distinct. -/
-theorem TwoIndependent.sqrt_injective {n : ℕ} {v : Fin n → ℚ} (hv : TwoIndependent v)
-    {K : Type*} [Field K] [Algebra ℚ K] {x : Fin n → K}
-    (hx : ∀ i, x i ^ 2 = algebraMap ℚ K (v i)) : Function.Injective x := by
-  intro i j hij
-  by_contra hne
-  have h2 : v i = v j := (algebraMap ℚ K).injective (by rw [← hx i, ← hx j, hij])
-  refine hv.2 {i, j} ⟨i, by simp⟩ ?_
-  rw [Finset.prod_pair hne, ← h2]
-  exact ⟨v i, rfl⟩
-
 /-- 2-independence of `Fin.snoc v c` restricts to the initial family `v`. -/
 theorem TwoIndependent.of_snoc {n : ℕ} {v : Fin n → ℚ} {c : ℚ}
     (h : TwoIndependent (Fin.snoc v c)) : TwoIndependent v := by

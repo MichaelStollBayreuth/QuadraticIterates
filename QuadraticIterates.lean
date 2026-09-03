@@ -23,6 +23,5 @@ public import QuadraticIterates.Mathlib.GroupTheory.PGroup
 public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
-public import QuadraticIterates.Mathlib.NumberTheory.PadicVal
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
