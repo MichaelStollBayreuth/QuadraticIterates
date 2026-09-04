@@ -26,7 +26,7 @@ theorem ArithmeticFunction.sum_divisors_moebius (n : ℕ) :
   simpa [moebius_mul_coe_zeta, one_apply] using (coe_mul_zeta_apply (f := μ) (x := n)).symm
 
 /-- `∑_{ed = n} μ e = 0` for `n ≥ 2`. -/
-theorem moebius_antidiag_sum_zero (n : ℕ) (hn : 2 ≤ n) :
+theorem moebius_antidiag_sum_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal, μ x.1 = 0 := by
   rw [Nat.sum_divisorsAntidiagonal (fun i _ ↦ μ i), sum_divisors_moebius, if_neg (by lia)]
 
@@ -53,7 +53,7 @@ theorem beta_radical {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ) (hn : 1 �
 
 /-- For squarefree `n' > 1`, the divisors of `n'` split into two halves of equal size according
 to the sign of `μ(n'/t)`. -/
-theorem moebius_sign_partition (n' : ℕ) (hn'1 : 1 < n') (hsf : Squarefree n') :
+theorem moebius_sign_partition {n' : ℕ} (hn'1 : 1 < n') (hsf : Squarefree n') :
     ∃ Sp Sm : Finset ℕ, Disjoint Sp Sm ∧ Sp ∪ Sm = n'.divisors ∧ Sp.card = Sm.card ∧
       (∀ t ∈ Sp, μ (n' / t) = 1) ∧ (∀ t ∈ Sm, μ (n' / t) = -1) := by
   have hpm (t : ℕ) (ht : t ∈ n'.divisors) : μ (n' / t) = 1 ∨ μ (n' / t) = -1 :=
@@ -86,7 +86,7 @@ theorem prod_pow_moebius_eq_div {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ
 
 /-- The Möbius sum over the antidiagonal pairs `(e, d)` of `n` with `m ∣ d` is `1` if `n = m` and
 `0` otherwise (for `m, n ≥ 1`). -/
-theorem moebius_restricted_sum (m n : ℕ) (hm : 1 ≤ m) (hn : 1 ≤ n) :
+theorem moebius_restricted_sum {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal with m ∣ x.2, μ x.1 = if n = m then 1 else 0 := by
   by_cases hmn : m ∣ n
   · obtain ⟨N, rfl⟩ := hmn
@@ -103,7 +103,7 @@ theorem moebius_restricted_sum (m n : ℕ) (hm : 1 ≤ m) (hn : 1 ≤ n) :
 /-- For a level set `{d : k ≤ g d}` of a `gcd`-`min` function `g`, the antidiagonal Möbius transform
 of its indicator (in the second coordinate) over `n` is `0` or `1`; in particular nonnegative. -/
 theorem indicator_moebius_nonneg (g : ℕ → ℕ)
-    (hmin : ∀ x ≥ 1, ∀ y ≥ 1, g (x.gcd y) = min (g x) (g y)) (n : ℕ) (hn : 1 ≤ n) (k : ℕ) :
+    (hmin : ∀ x ≥ 1, ∀ y ≥ 1, g (x.gcd y) = min (g x) (g y)) {n : ℕ} (hn : 1 ≤ n) (k : ℕ) :
     0 ≤ ∑ x ∈ n.divisorsAntidiagonal, μ x.1 * (if k ≤ g x.2 then 1 else 0) := by
   have hmem (x : ℕ × ℕ) (hx : x ∈ n.divisorsAntidiagonal) : x.2 ∈ n.divisors :=
     Nat.snd_mem_divisors_of_mem_antidiagonal hx
@@ -123,14 +123,14 @@ theorem indicator_moebius_nonneg (g : ℕ → ℕ)
       exact Nat.gcd_eq_left_iff_dvd.mp (le_antisymm (Nat.gcd_le_left d hm1) (hmle _ hgcd))
     · rw [Nat.gcd_eq_left hmd] at h
       exact hmk.trans (h ▸ min_le_right _ _)
-  rw [Finset.filter_congr fun x hx ↦ hpred x.2 (hmem x hx), moebius_restricted_sum m n hm1 hn]
+  rw [Finset.filter_congr fun x hx ↦ hpred x.2 (hmem x hx), moebius_restricted_sum hm1 hn]
   split_ifs <;> decide
 
 /-- **Nonnegativity of the Möbius transform of a `gcd`-`min` function.** If `g` satisfies
 `g (gcd x y) = min (g x) (g y)`, then `∑_{ed = n} μ e · g d ≥ 0`. This is the arithmetic core of the
 integrality of the Möbius factors of a strong divisibility sequence. -/
 theorem moebius_transform_nonneg (g : ℕ → ℕ)
-    (hmin : ∀ x ≥ 1, ∀ y ≥ 1, g (x.gcd y) = min (g x) (g y)) (n : ℕ) (hn : 1 ≤ n) :
+    (hmin : ∀ x ≥ 1, ∀ y ≥ 1, g (x.gcd y) = min (g x) (g y)) {n : ℕ} (hn : 1 ≤ n) :
     0 ≤ ∑ x ∈ n.divisorsAntidiagonal, μ x.1 * (g x.2 : ℤ) := by
   have hmono (x : ℕ × ℕ) (hx : x ∈ n.divisorsAntidiagonal) : g x.2 ≤ g n := by
     have hx2 : x.2 ∈ n.divisors := Nat.snd_mem_divisors_of_mem_antidiagonal hx
@@ -144,4 +144,4 @@ theorem moebius_transform_nonneg (g : ℕ → ℕ)
     simp
   rw [Finset.sum_congr rfl fun x hx ↦ by rw [hcard (g x.2) (hmono x hx), Finset.mul_sum],
     Finset.sum_comm]
-  exact Finset.sum_nonneg fun k _ ↦ indicator_moebius_nonneg g hmin n hn k
+  exact Finset.sum_nonneg fun k _ ↦ indicator_moebius_nonneg g hmin hn k

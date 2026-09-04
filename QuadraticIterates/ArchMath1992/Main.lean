@@ -43,7 +43,7 @@ namespace QuadraticIterates
 
 section
 
-variable (a : ℤ)
+variable {a : ℤ}
 
 /-! ### Lemma 1.1 b): the integer factors `b_n` -/
 
@@ -52,28 +52,28 @@ to `X² + a`, `ε = -1`, in the form consumed by `moebiusFactorR_isRelPrime`. -/
 lemma factorization_cSeq_shape (ha : ¬IsSquare (-a : ℚ)) :
     ∀ q : ℤ, Prime q → normalize q = q →
       ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (cSeq a k) q = if m ∣ k then E else 0 :=
-  fun _ ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq (cSeq_ne_zero a ha)
+  fun _ ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq (cSeq_ne_zero ha)
 
 /-- Lemma 1.1 b): the Möbius product `∏_{ed = n} c_d^{μ(e)}` is the integer `b_n`, since `c` is a
 strong divisibility sequence. -/
 lemma intCast_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     (bSeq a n : ℚ) = moebiusFactorK (cSeq a) n :=
-  algebraMap_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
+  algebraMap_moebiusFactorR (cSeq_ne_zero ha) (cSeq_associated_gcd a) hn
 
 lemma bSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : bSeq a n ≠ 0 :=
-  moebiusFactorR_ne_zero (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
+  moebiusFactorR_ne_zero (cSeq_ne_zero ha) (cSeq_associated_gcd a) hn
 
 /-- Möbius inversion for the integer factors (Lemma 1.1 b): `c_n = ∏_{d ∣ n} b_d`. -/
 lemma cSeq_eq_prod_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     cSeq a n = ∏ d ∈ n.divisors, bSeq a d :=
-  prod_moebiusFactorR (cSeq_ne_zero a ha) (cSeq_associated_gcd a) n hn
+  prod_moebiusFactorR (cSeq_ne_zero ha) (cSeq_associated_gcd a) hn
 
 /-- The integer factors `b_n` are pairwise coprime (Lemma 1.1 b): the valuation of `b_n` at
 each prime is supported on a single index, so no prime divides two distinct factors. -/
 lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n)
     (hmn : m ≠ n) : IsCoprime (bSeq a m) (bSeq a n) :=
-  (moebiusFactorR_isRelPrime (cSeq_ne_zero a ha) (cSeq_associated_gcd a)
-    (factorization_cSeq_shape a ha) m n hm hn hmn).isCoprime
+  (moebiusFactorR_isRelPrime (cSeq_ne_zero ha) (cSeq_associated_gcd a)
+    (factorization_cSeq_shape ha) hm hn hmn).isCoprime
 
 /-! ### Theorem (Section 1) -/
 
@@ -92,23 +92,23 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     rw [← Fin.snoc_init_self (fun i : Fin (n + 1) ↦ (cSeq a ((i : ℕ) + 1) : ℚ)),
       nonempty_mulEquiv_succ_iff a n]
     refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun h ↦ ?_⟩
-    · exact (kummer_extension_criterion a hiso (ih.mp hiso)).mp ((degree_criterion a ha n).mp hrel)
+    · exact (kummer_extension_criterion hiso (ih.mp hiso)).mp ((degree_criterion ha n).mp hrel)
     · have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr h.of_snoc
-      exact ⟨hiso, (degree_criterion a ha n).mpr
-        ((kummer_extension_criterion a hiso h.of_snoc).mpr h)⟩
+      exact ⟨hiso, (degree_criterion ha n).mpr
+        ((kummer_extension_criterion hiso h.of_snoc).mpr h)⟩
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/
 lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (cSeq a m : ℚ) = ∑ d ∈ m.divisors, sqClass (bSeq a d : ℚ) := by
-  rw [cSeq_eq_prod_bSeq a ha hm, Int.cast_prod]
-  exact sqClass_prod fun d hd ↦ mod_cast bSeq_ne_zero a ha (Nat.pos_of_mem_divisors hd)
+  rw [cSeq_eq_prod_bSeq ha hm, Int.cast_prod]
+  exact sqClass_prod fun d hd ↦ mod_cast bSeq_ne_zero ha (Nat.pos_of_mem_divisors hd)
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `b_m` is the Möbius-weighted sum of the classes of the `c_d`. -/
 lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (bSeq a m : ℚ) = ∑ x ∈ m.divisorsAntidiagonal, (μ x.1) • sqClass (cSeq a x.2 : ℚ) := by
-  simp only [intCast_bSeq a ha hm, moebiusFactorK_eq_prod, eq_intCast]
+  simp only [intCast_bSeq ha hm, moebiusFactorK_eq_prod, eq_intCast]
   exact sqClass_prod_zpow _ fun x hx ↦
-    mod_cast ne_zero_of_mem_divisorsAntidiagonal (cSeq_ne_zero a ha) hx
+    mod_cast ne_zero_of_mem_divisorsAntidiagonal (cSeq_ne_zero ha) hx
 
 /-- `F d` is a value of `fun i : Fin n ↦ F (i + 1)` whenever `d ∣ i + 1` for some `i : Fin n`. -/
 private lemma mem_range_of_dvd {α : Type*} (F : ℕ → α) {n : ℕ} {i : Fin n} {d : ℕ}
@@ -125,10 +125,10 @@ theorem section1_b_iff_c (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   simp only [twoIndependent_iff_linearIndependent]
   refine linearIndependent_iff_of_span_range_eq (le_antisymm ?_ ?_) <;>
     rw [Submodule.span_le, Set.range_subset_iff] <;> intro i
-  · rw [SetLike.mem_coe, sqClass_cSeq_eq_sum_divisors a ha i.1.succ_pos]
+  · rw [SetLike.mem_coe, sqClass_cSeq_eq_sum_divisors ha i.1.succ_pos]
     exact Submodule.sum_mem _ fun d hd ↦ Submodule.subset_span
       (mem_range_of_dvd (fun k ↦ sqClass (bSeq a k : ℚ)) (Nat.dvd_of_mem_divisors hd))
-  · rw [SetLike.mem_coe, sqClass_bSeq_eq_sum_divisorsAntidiagonal a ha i.1.succ_pos]
+  · rw [SetLike.mem_coe, sqClass_bSeq_eq_sum_divisorsAntidiagonal ha i.1.succ_pos]
     exact Submodule.sum_mem _ fun x hx ↦ zsmul_mem (Submodule.subset_span
       (mem_range_of_dvd (fun k ↦ sqClass (cSeq a k : ℚ))
         (Nat.dvd_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx)))) _
@@ -139,8 +139,8 @@ theorem section1_tfae (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     [Nonempty (GaloisGroup a n ≃* WreathPower n),
      TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)),
      TwoIndependent (fun i : Fin n ↦ (bSeq a ((i : ℕ) + 1) : ℚ))].TFAE := by
-  tfae_have 1 ↔ 2 := section1_a_iff_b a ha n
-  tfae_have 2 ↔ 3 := section1_b_iff_c a ha n
+  tfae_have 1 ↔ 2 := section1_a_iff_b ha n
+  tfae_have 2 ↔ 3 := section1_b_iff_c ha n
   tfae_finish
 
 /-- Theorem (Section 1), part 2: if none of `|b_2|, …, |b_n|` is a square, then
@@ -151,9 +151,9 @@ theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
   have hzero (i : Fin n) (hi : IsSquare (-bSeq a ((i : ℕ) + 1))) : (i : ℕ) = 0 :=
     Nat.eq_zero_of_not_pos fun hi0 ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inr hi))
-  refine ((section1_tfae a ha n).out 2 0).mp ((twoIndependent_intCast_iff _).mpr
+  refine ((section1_tfae ha n).out 2 0).mp ((twoIndependent_intCast_iff _).mpr
     ((twoIndependent_iff_of_pairwise_isCoprime fun i j hij ↦
-      isCoprime_bSeq a ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)).mpr
+      isCoprime_bSeq ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)).mpr
         ⟨fun i ↦ ?_, fun i hi j hj ↦ Fin.ext ((hzero i hi).trans (hzero j hj).symm)⟩))
   rcases eq_or_ne (i : ℕ) 0 with hi | hi
   · rwa [hi, zero_add, bSeq_one, ← Rat.isSquare_intCast_iff, Int.cast_neg]
@@ -174,29 +174,29 @@ theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   | zero => simp
   | succ k ih =>
     rcases k with _ | k
-    · simp [gammaSeq_normPoly_one a (ne_zero_of_not_isSquare_neg a ha)]
-    · rw [abs_of_pos (cSeq_pos a ha (by lia)), cSeq_succ a k.succ_pos, ← sq_abs (cSeq a _), ih,
+    · simp [gammaSeq_normPoly_one (ne_zero_of_not_isSquare_neg ha)]
+    · rw [abs_of_pos (cSeq_pos ha (by lia)), cSeq_succ a k.succ_pos, ← sq_abs (cSeq a _), ih,
         gammaSeq_succ _ _ k.succ_pos, eval_normPoly]
       linear_combination -Int.sign_mul_abs a
 
 /-- The `γ`-sequence of `normPoly a` is positive, as `c_n ≠ 0` for `n ≥ 1`. -/
 lemma gammaSeq_normPoly_pos (ha : ¬IsSquare (-a : ℚ)) :
     ∀ n ≥ 1, 0 < gammaSeq (normPoly a) a.sign n := fun n hn ↦
-  (mul_pos_iff_of_pos_right (abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha))).mp
-    (abs_cSeq_eq_gammaSeq_mul_abs a ha n ▸ abs_pos.mpr (cSeq_ne_zero a ha n hn))
+  (mul_pos_iff_of_pos_right (abs_pos.mpr (ne_zero_of_not_isSquare_neg ha))).mp
+    (abs_cSeq_eq_gammaSeq_mul_abs ha n ▸ abs_pos.mpr (cSeq_ne_zero ha n hn))
 
 /-- `|b_n| = β_n` for `n ≥ 2`, `β` the `β`-sequence of the rescaled polynomial `normPoly a`: both
 are Möbius products, of `|c_d| = γ_d · |a|` and of `γ_d`, and the factors `|a|` cancel because the
 exponents `μ(n/d)` sum to zero. -/
 theorem abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) :
     |bSeq a n| = betaSeq (normPoly a) a.sign n := by
-  have ha0 := ne_zero_of_not_isSquare_neg a ha
-  rw [← Int.cast_inj (α := ℚ), Int.cast_abs, intCast_bSeq a ha (by lia), abs_moebiusFactorK,
+  have ha0 := ne_zero_of_not_isSquare_neg ha
+  rw [← Int.cast_inj (α := ℚ), Int.cast_abs, intCast_bSeq ha (by lia), abs_moebiusFactorK,
     intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
-      (fun d hd ↦ (gammaSeq_normPoly_pos a ha d hd).ne') (by lia),
+      (fun d hd ↦ (gammaSeq_normPoly_pos ha d hd).ne') (by lia),
     ← moebiusFactorK_mul_const (gammaSeq (normPoly a) a.sign)
       (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
-  simp only [abs_cSeq_eq_gammaSeq_mul_abs a ha]
+  simp only [abs_cSeq_eq_gammaSeq_mul_abs ha]
 
 /-! ### Theorem (Section 3) -/
 
@@ -212,10 +212,10 @@ polynomial `g = normPoly a`, cases b) and c) give `g(1) ≡ 3 mod 4`. -/
 theorem not_isSquare_abs_bSeq
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a)))
     {n : ℕ} (hn : 2 ≤ n) : ¬IsSquare |bSeq a n| := by
-  have ha := not_isSquare_neg_of_cases a hcase
-  rw [abs_bSeq_eq_betaSeq a ha hn, ← Rat.isSquare_intCast_iff]
+  have ha := not_isSquare_neg_of_cases hcase
+  rw [abs_bSeq_eq_betaSeq ha hn, ← Rat.isSquare_intCast_iff]
   refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a)
-    (Int.sign_sq_of_ne_zero (ne_zero_of_not_isSquare_neg a ha)) (gammaSeq_normPoly_pos a ha) ?_ n hn
+    (Int.sign_sq_of_ne_zero (ne_zero_of_not_isSquare_neg ha)) (gammaSeq_normPoly_pos ha) ?_ n hn
   grind [eval_normPoly, Int.sign_eq_one_of_pos, Int.sign_eq_neg_one_of_neg, abs_of_pos, abs_of_neg]
 
 /-- Section 3, main result: if `a > 0` and `a ≡ 1 or 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is
@@ -223,8 +223,8 @@ not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
 theorem section3_main
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) := fun n _ ↦
-  section1_squarefree a (not_isSquare_neg_of_cases a hcase) n fun _ hk2 _ ↦
-    not_isSquare_abs_bSeq a hcase hk2
+  section1_squarefree (not_isSquare_neg_of_cases hcase) n fun _ hk2 _ ↦
+    not_isSquare_abs_bSeq hcase hk2
 
 end
 

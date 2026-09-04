@@ -107,7 +107,7 @@ variable {R : Type*} [CommMonoidWithZero R] [UniqueFactorizationMonoid R]
 
 /-- The normalized factors of a gcd form the intersection of the normalized factors: the gcd is
 the meet in the divisibility lattice, which `normalizedFactors` embeds into the multisets. -/
-theorem UniqueFactorizationMonoid.normalizedFactors_gcd (a b : R) (ha : a ≠ 0) (hb : b ≠ 0) :
+theorem UniqueFactorizationMonoid.normalizedFactors_gcd {a b : R} (ha : a ≠ 0) (hb : b ≠ 0) :
     normalizedFactors (gcd a b) = normalizedFactors a ⊓ normalizedFactors b := by
   have := nontrivial_of_ne a 0 ha
   have hg : gcd a b ≠ 0 := gcd_ne_zero_of_left ha
@@ -128,9 +128,9 @@ theorem UniqueFactorizationMonoid.normalizedFactors_gcd (a b : R) (ha : a ≠ 0)
     (dvd_gcd (hdvd a ha inf_le_left) (hdvd b hb inf_le_right))
 
 /-- The `p`-multiplicity of a gcd is the minimum of the multiplicities. -/
-theorem factorization_gcd_min (a b : R) (ha : a ≠ 0) (hb : b ≠ 0) (p : R) :
+theorem factorization_gcd_min {a b : R} (ha : a ≠ 0) (hb : b ≠ 0) (p : R) :
     factorization (gcd a b) p = min (factorization a p) (factorization b p) := by
-  simp only [factorization_eq_count, normalizedFactors_gcd a b ha hb, Multiset.inf_eq_inter,
+  simp only [factorization_eq_count, normalizedFactors_gcd ha hb, Multiset.inf_eq_inter,
     Multiset.count_inter]
 
 end GCD

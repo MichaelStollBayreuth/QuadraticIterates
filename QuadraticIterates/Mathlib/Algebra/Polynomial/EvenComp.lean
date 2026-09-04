@@ -86,7 +86,7 @@ theorem eq_expand_two_contract_of_comp_neg_X (hb : b.comp (-X) = b) :
     coeff_eq_zero_of_comp_neg_X_eq_of_not_two_dvd hb).symm
 
 /-- An even polynomial over a domain of characteristic `≠ 2` is a polynomial in `X² + c`. -/
-theorem even_eq_comp_X_sq_add_C (c : R) (b : R[X]) (hb : b.comp (-X) = b) :
+theorem even_eq_comp_X_sq_add_C (c : R) {b : R[X]} (hb : b.comp (-X) = b) :
     ∃ e : R[X], b = e.comp (X ^ 2 + C c) :=
   ⟨(contract 2 b).comp (X - C c), by
     rw [comp_assoc, show (X - C c : R[X]).comp (X ^ 2 + C c) = X ^ 2 by simp,
@@ -150,7 +150,7 @@ theorem _root_.Irreducible.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq [Ne
     {F : K[X]} (hF : Irreducible F) {c : K} {d : K[X]}
     (hd : d ∣ F.comp (X ^ 2 + C c)) (heven : d.comp (-X) = d) :
     IsUnit d ∨ Associated d (F.comp (X ^ 2 + C c)) := by
-  obtain ⟨e, rfl⟩ := even_eq_comp_X_sq_add_C c d heven
+  obtain ⟨e, rfl⟩ := even_eq_comp_X_sq_add_C c heven
   rw [comp_dvd_comp_iff (by simp), hF.dvd_iff] at hd
   exact hd.imp (·.map (compRingHom (X ^ 2 + C c))) (·.symm.map (compRingHom (X ^ 2 + C c)))
 

@@ -61,10 +61,12 @@ noncomputable def rootShift (n : ℕ) (β : fℚ[a, n].rootSet (AlgebraicClosure
 @[simp] lemma coe_rootShift (n : ℕ) (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
     (rootShift a n β : AlgebraicClosure ℚ) = (β : AlgebraicClosure ℚ) - a := rfl
 
+variable {a}
+
 /-- The shifted roots are nonzero, since `f_n(a) = ± c_{n+1} ≠ 0`. -/
 lemma rootShift_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ}
     (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) : rootShift a n β ≠ 0 :=
-  fun h ↦ sub_intCast_ne_zero_of_mem_rootSet a ha β.2 (congrArg Subtype.val h)
+  fun h ↦ sub_intCast_ne_zero_of_mem_rootSet ha β.2 (congrArg Subtype.val h)
 
 /-- The relative degree `[K_{n+1} : K_n]` equals `2 ^ (2^n - d)`, where `d` is the `𝔽₂`-dimension
 of the multiquadratic relations among the shifted roots `β - a` of `f_n`. -/
@@ -74,8 +76,8 @@ theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] (ha : ¬IsSq
       = 2 ^ (2 ^ n - Module.finrank (ZMod 2) (rootRelations (rootShift a n))) := by
   choose g hg using exists_sq_eq_sub a
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg, Set.image_eq_range,
-    multiquadratic_degree_family (r := rootShift a n) (fun β ↦ hg β) (rootShift_ne_zero a ha),
-    card_rootSet_iteratedPoly a (irreducible_iteratedPoly a ha n)]
+    multiquadratic_degree_family (r := rootShift a n) (fun β ↦ hg β) (rootShift_ne_zero ha),
+    card_rootSet_iteratedPoly (irreducible_iteratedPoly ha n)]
 
 /-- Every element of `Ω_n` acts on the shifted roots `β - a ∈ K_n` through a ring automorphism of
 `K_n`: the restriction of any extension of it to `ℚ̄`. -/
@@ -88,6 +90,7 @@ lemma exists_ringEquiv_rootShift_smul (n : ℕ) (σ : GaloisGroup a n) :
 
 /-! ### The norm identity `∏ (β - a) = c_{n+1}` -/
 
+variable (a) in
 /-- The norm identity `∏ (α - a) = c_{n+1}` over the roots `α` of `f_n` (with multiplicity), by
 evaluating the monic split `f_n` at `a`. -/
 lemma prod_aroots_sub_eq_cSeq (n : ℕ) :
@@ -106,14 +109,14 @@ of `f_n` in `ℚ̄`. -/
 lemma prod_rootSet_sub_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     ∏ β : fℚ[a, n].rootSet (AlgebraicClosure ℚ), ((β : AlgebraicClosure ℚ) - a)
       = (cSeq a (n + 1) : AlgebraicClosure ℚ) :=
-  (prod_rootSet_eq_prod_aroots (nodup_roots (irreducible_iteratedPoly a ha n).separable.map)
+  (prod_rootSet_eq_prod_aroots (nodup_roots (irreducible_iteratedPoly ha n).separable.map)
     (· - (a : AlgebraicClosure ℚ))).trans (prod_aroots_sub_eq_cSeq a n)
 
 /-- The product of the shifted roots `β - a` of `f_n` is `c_{n+1}`, as elements of `K_n`. -/
 lemma prod_rootShift_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     ∏ β, rootShift a n β = algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ) := by
   refine (algebraMap ↥(splittingField a n) (AlgebraicClosure ℚ)).injective ?_
-  simpa using prod_rootSet_sub_eq_cSeq a ha n
+  simpa using prod_rootSet_sub_eq_cSeq ha n
 
 /-- `c_1, …, c_n` are squares in `K_n`: `c_{k+1} = ∏_β (β - a)` over the roots `β` of `f_k`, and
 each `β - a` is the square of a root of `f_{k+1}`, which lies in `K_{k+1} ⊆ K_n`. -/
@@ -123,7 +126,7 @@ lemma isSquare_algebraMap_cSeq (ha : ¬IsSquare (-a : ℚ)) {k n : ℕ} (hkn : k
   refine (IntermediateField.isSquare_algebraMap_iff _ _).mpr
     ⟨∏ β : fℚ[a, k].rootSet (AlgebraicClosure ℚ), g β, prod_mem fun β _ ↦ splittingField_mono a hkn
       (IntermediateField.subset_adjoin ℚ _ (mem_rootSet_succ_of_sq_eq_sub a β.2 (hg β))), ?_⟩
-  simp [← Finset.prod_pow, map_intCast, ← prod_rootSet_sub_eq_cSeq a ha k, hg]
+  simp [← Finset.prod_pow, map_intCast, ← prod_rootSet_sub_eq_cSeq ha k, hg]
 
 /-! ### Lemma 1.6: the degree criterion -/
 
@@ -135,14 +138,14 @@ lemma rootRelations_rootShift_eq_bot_iff [DecidableEq (AlgebraicClosure ℚ)]
     (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     rootRelations (rootShift a n) = ⊥ ↔
       ¬IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) := by
-  have hirr := irreducible_iteratedPoly a ha n
-  have hrne := rootShift_ne_zero a ha (n := n)
+  have hirr := irreducible_iteratedPoly ha n
+  have hrne := rootShift_ne_zero ha (n := n)
   have : Nonempty ↥(fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :=
-    Fintype.card_pos_iff.mp (card_rootSet_iteratedPoly a hirr ▸ Nat.two_pow_pos n)
+    Fintype.card_pos_iff.mp (card_rootSet_iteratedPoly hirr ▸ Nat.two_pow_pos n)
   have := Gal.galAction_isPretransitive fℚ[a, n] (AlgebraicClosure ℚ) hirr
-  rw [← prod_rootShift_eq_cSeq a ha n, ← all_ones_mem_rootRelations hrne, ← not_iff_not, not_not]
+  rw [← prod_rootShift_eq_cSeq ha n, ← all_ones_mem_rootRelations hrne, ← not_iff_not, not_not]
   refine ⟨rootRelations_all_ones (isPGroup_galoisGroup a n) hrne
-    (exists_ringEquiv_rootShift_smul a n), fun hmem hbot ↦ one_ne_zero (α := ZMod 2) ?_⟩
+    (exists_ringEquiv_rootShift_smul n), fun hmem hbot ↦ one_ne_zero (α := ZMod 2) ?_⟩
   rw [hbot, Submodule.mem_bot] at hmem
   exact congrFun hmem (Classical.arbitrary _)
 
@@ -152,10 +155,10 @@ theorem degree_criterion (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n ↔
       ¬IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) := by
   classical
-  rw [← rootRelations_rootShift_eq_bot_iff a ha n, ← Submodule.finrank_eq_zero,
-    relfinrank_succ_eq_pow a ha n, Nat.pow_right_inj one_lt_two]
+  rw [← rootRelations_rootShift_eq_bot_iff ha n, ← Submodule.finrank_eq_zero,
+    relfinrank_succ_eq_pow ha n, Nat.pow_right_inj one_lt_two]
   have := (rootRelations_finrank_le (rootShift a n)).trans_eq
-    (card_rootSet_iteratedPoly a (irreducible_iteratedPoly a ha n))
+    (card_rootSet_iteratedPoly (irreducible_iteratedPoly ha n))
   lia
 
 /-! ### Lemma 1.5: the Kummer extension criterion -/
@@ -184,7 +187,7 @@ theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
   refine ⟨fun hsq ↦ ?_, fun ⟨z, _, hz⟩ ↦ hz ▸ IsSquare.sq z⟩
   obtain ⟨w, hw⟩ := hsq.exists_sq
   exact ⟨w, IntermediateField.mem_adjoin_of_sq_eq_algebraMap_of_card_le
-    (Set.forall_mem_range.mpr fun i ↦ ⟨_, hx i⟩) ((card_monoidHom_eq_two_pow a hiso).trans
+    (Set.forall_mem_range.mpr fun i ↦ ⟨_, hx i⟩) ((card_monoidHom_eq_two_pow hiso).trans
       (by rw [hindep.finrank_adjoin_range_eq_two_pow hx, Fintype.card_fin])).le hw.symm, hw.symm⟩
 
 /-- If `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent, then a rational `c` is a square in `K_n`
@@ -197,8 +200,8 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       ∃ S : Finset (Fin n), IsSquare (c * ∏ i ∈ S, (cSeq a ((i : ℕ) + 1) : ℚ)) := by
   choose x hx using fun i : Fin n ↦
-    (isSquare_algebraMap_cSeq a (by simpa using hindep.not_isSquare ⟨0, i.pos⟩) i.2).exists_sq
-  rw [isSquare_algebraMap_iff_exists_sq_eq a hiso hindep (fun i ↦ (hx i).symm) c,
+    (isSquare_algebraMap_cSeq (by simpa using hindep.not_isSquare ⟨0, i.pos⟩) i.2).exists_sq
+  rw [isSquare_algebraMap_iff_exists_sq_eq hiso hindep (fun i ↦ (hx i).symm) c,
     ← Set.image_univ, ← Finset.coe_univ,
     IntermediateField.square_descent (fun i _ ↦ (hx i).symm) (fun i _ ↦ hindep.ne_zero i) c]
   exact exists_congr fun S ↦ and_iff_right (Finset.subset_univ S)
@@ -210,7 +213,7 @@ theorem kummer_extension_criterion {n : ℕ} (hiso : Nonempty (GaloisGroup a n �
     ¬IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       TwoIndependent (Fin.snoc (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) c) := by
   rw [twoIndependent_snoc_iff, and_iff_right hindep,
-    isSquare_algebraMap_iff_exists_mul_prod a hiso hindep c, not_exists]
+    isSquare_algebraMap_iff_exists_mul_prod hiso hindep c, not_exists]
 
 end
 

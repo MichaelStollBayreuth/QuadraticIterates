@@ -90,8 +90,8 @@ theorem isSquare_abs_iff {α : Type*} [Ring α] [LinearOrder α] [IsOrderedRing 
 open Function in
 /-- If a family `f` is pairwise coprime on a finite set `S` and `∏_{i ∈ S} f i` is a square, then
 `|f i|` is a square for every `i ∈ S`. -/
-theorem Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime {ι : Type*} (f : ι → ℤ)
-    (S : Finset ι) (hcop : (S : Set ι).Pairwise (IsCoprime on f)) (hsq : IsSquare (∏ i ∈ S, f i))
+theorem Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime {ι : Type*} {f : ι → ℤ}
+    {S : Finset ι} (hcop : (S : Set ι).Pairwise (IsCoprime on f)) (hsq : IsSquare (∏ i ∈ S, f i))
     {i : ι} (hi : i ∈ S) : IsSquare |f i| := by
   classical
   have hcopb : IsCoprime (f i) (∏ j ∈ S.erase i, f j) := IsCoprime.prod_right fun j hj ↦

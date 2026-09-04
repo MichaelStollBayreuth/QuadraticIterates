@@ -484,7 +484,7 @@ theorem gammaSeq_gcd (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1) (m n : ℕ)
 lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     (hγ : ∀ k ≥ 1, gammaSeq g ε k ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
     ((betaSeq g ε n : ℤ) : ℚ) = moebiusFactorK (gammaSeq g ε) n :=
-  algebraMap_moebiusFactorR hγ (gammaSeq_associated_gcd hg hε) n hn
+  algebraMap_moebiusFactorR hγ (gammaSeq_associated_gcd hg hε) hn
 
 /-- Lemma 2.1: if for each `n ≥ 1` the modulus `m n` divides `γ_n + γ_{2n}`, is prime to `γ_n`,
 and `-1` is not a square mod `m n`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
@@ -501,7 +501,7 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
   have hn'1 : 1 < n' := Nat.one_lt_radical_iff.mpr (by lia)
   have hkpos : 1 ≤ k := by grind
   obtain ⟨Sp, Sm, hdisj, hunion, hcard, hSp, hSm⟩ :=
-    moebius_sign_partition n' hn'1 UniqueFactorizationMonoid.squarefree_radical
+    moebius_sign_partition hn'1 UniqueFactorizationMonoid.squarefree_radical
   have hS (t : ℕ) (ht : t ∈ Sp ∪ Sm) : 1 ≤ t := Nat.pos_of_mem_divisors (hunion ▸ ht)
   have h1 : 1 ∈ Sp ∪ Sm := hunion ▸ Nat.one_mem_divisors.mpr (by lia)
   rw [intCast_betaSeq hg hε hγ (by lia), moebiusFactorK_eq_prod]

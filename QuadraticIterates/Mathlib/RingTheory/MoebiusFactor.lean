@@ -52,7 +52,7 @@ since the exponents `μ(e)` sum to zero. -/
 theorem moebiusFactorK_mul_const (c : ℕ → R) {t : R} (ht : algebraMap R K t ≠ 0) {n : ℕ}
     (hn : 2 ≤ n) : moebiusFactorK (K := K) (fun d ↦ c d * t) n = moebiusFactorK c n := by
   simp only [moebiusFactorK_eq_prod, map_mul, mul_zpow, Finset.prod_mul_distrib,
-    Finset.prod_zpow_eq_zpow_sum₀ ht, moebius_antidiag_sum_zero n hn, zpow_zero, mul_one]
+    Finset.prod_zpow_eq_zpow_sum₀ ht, moebius_antidiag_sum_zero hn, zpow_zero, mul_one]
 
 /-- In an ordered field, the absolute value of a Möbius factor of an integer sequence is the
 Möbius factor of the sequence of absolute values. -/
@@ -95,7 +95,7 @@ lemma moebiusFactorK_ne_zero {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) (n : 
       (ne_zero_of_mem_divisorsAntidiagonal hc hx))
 
 /-- Möbius inversion in the fraction field: `c n = ∏_{d ∣ n} moebiusFactorK c d`. -/
-lemma prod_moebiusFactorK {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
+lemma prod_moebiusFactorK {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
     algebraMap R K (c n) = ∏ d ∈ n.divisors, moebiusFactorK (K := K) c d :=
   ((ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_nonzero
       (f := moebiusFactorK (K := K) c) (g := fun k ↦ algebraMap R K (c k))
@@ -141,7 +141,7 @@ lemma factorization_c_gcd_min {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
       = min (factorization (c x) p) (factorization (c y) p) := by
   intro x hx y hy
   rw [factorization_eq_count, ← (hsd x y).normalizedFactors_eq, ← factorization_eq_count,
-    factorization_gcd_min (c x) (c y) (hc x hx) (hc y hy)]
+    factorization_gcd_min (hc x hx) (hc y hy)]
 
 end UniqueFactorizationMonoid
 
@@ -169,7 +169,7 @@ variable [IsFractionRing R K] [UniqueFactorizationMonoid R] [NormalizedGCDMonoid
 /-- The denominator product of a nowhere-zero strong divisibility sequence divides the numerator
 product: prime by prime, `v_p(numProd) - v_p(denProd)` is a nonnegative Möbius transform. -/
 theorem denProd_dvd_numProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (n : ℕ) (hn : 1 ≤ n) :
+    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
     denProd c n ∣ numProd c n := by
   classical
   rw [dvd_iff_normalizedFactors_le_normalizedFactors (denProd_ne_zero hc n) (numProd_ne_zero hc n),
@@ -177,24 +177,24 @@ theorem denProd_dvd_numProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
   intro p
   rw [← factorization_eq_count, ← factorization_eq_count]
   have hge := moebius_transform_nonneg (fun d ↦ factorization (c d) p)
-    (factorization_c_gcd_min hc hsd p) n hn
+    (factorization_c_gcd_min hc hsd p) hn
   have heq := factorization_numProd_sub_denProd hc n p
   omega
 
 /-- **Integrality.** For a nowhere-zero strong divisibility sequence `c` in a UFD `R`, the
 fraction-field Möbius factor `moebiusFactorK c n` lies in the image of `R`. -/
 theorem moebiusFactorK_isInteger {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (n : ℕ) (hn : 1 ≤ n) :
+    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
     IsLocalization.IsInteger R (moebiusFactorK (K := K) c n) := by
   rw [moebiusFactorK_eq_div c]
   exact (isInteger_div_iff_dvd (numProd c n) (denProd_ne_zero hc n)).mpr
-    (denProd_dvd_numProd hc hsd n hn)
+    (denProd_dvd_numProd hc hsd hn)
 
 /-- The defining identity of the `R`-valued factor: `β_n · denProd = numProd`. -/
 theorem moebiusFactorR_mul_denProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (n : ℕ) (hn : 1 ≤ n) :
+    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
     moebiusFactorR c n * denProd c n = numProd c n := by
-  obtain ⟨r, hr⟩ := moebiusFactorK_isInteger (K := FractionRing R) hc hsd n hn
+  obtain ⟨r, hr⟩ := moebiusFactorK_isInteger (K := FractionRing R) hc hsd hn
   apply FaithfulSMul.algebraMap_injective R (FractionRing R)
   rw [map_mul, moebiusFactorR, ← hr,
     Function.leftInverse_invFun (FaithfulSMul.algebraMap_injective R (FractionRing R)) r, hr,
@@ -204,38 +204,38 @@ theorem moebiusFactorR_mul_denProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
 /-- **API lemma.** In any fraction field `K` of `R`, the image of `moebiusFactorR c n` is the
 Möbius formula (for a nowhere-zero strong divisibility sequence). -/
 theorem algebraMap_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (n : ℕ) (hn : 1 ≤ n) :
+    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
     algebraMap R K (moebiusFactorR c n) = moebiusFactorK (K := K) c n := by
   rw [moebiusFactorK_eq_div c, eq_div_iff ((map_ne_zero_iff _
     (FaithfulSMul.algebraMap_injective R K)).mpr (denProd_ne_zero hc n)), ← map_mul,
-    moebiusFactorR_mul_denProd hc hsd n hn]
+    moebiusFactorR_mul_denProd hc hsd hn]
 
 theorem moebiusFactorR_ne_zero {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (n : ℕ) (hn : 1 ≤ n) :
+    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
     moebiusFactorR c n ≠ 0 := fun h0 ↦
-  numProd_ne_zero hc n (by rw [← moebiusFactorR_mul_denProd hc hsd n hn, h0, zero_mul])
+  numProd_ne_zero hc n (by rw [← moebiusFactorR_mul_denProd hc hsd hn, h0, zero_mul])
 
 /-- Möbius inversion in `R`: `c n = ∏_{d ∣ n} moebiusFactorR c d` for a nowhere-zero strong
 divisibility sequence. -/
 theorem prod_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (n : ℕ) (hn : 1 ≤ n) :
+    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
     c n = ∏ d ∈ n.divisors, moebiusFactorR c d := by
   apply FaithfulSMul.algebraMap_injective R (FractionRing R)
   rw [map_prod, Finset.prod_congr rfl fun d hd ↦
-      algebraMap_moebiusFactorR hc hsd d (Nat.pos_of_mem_divisors hd),
-    prod_moebiusFactorK hc n hn]
+      algebraMap_moebiusFactorR hc hsd (Nat.pos_of_mem_divisors hd),
+    prod_moebiusFactorK hc hn]
 
 variable [DecidableEq R]
 
 /-- `v_p(β_n)` is the Möbius transform of `v_p ∘ c`. -/
 theorem factorization_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
-    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (n : ℕ) (hn : 1 ≤ n) (p : R) :
+    (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) (p : R) :
     (factorization (moebiusFactorR c n) p : ℤ)
       = ∑ x ∈ n.divisorsAntidiagonal, μ x.1 * (factorization (c x.2) p : ℤ) := by
   have hkey : factorization (moebiusFactorR c n) p + factorization (denProd c n) p
       = factorization (numProd c n) p := by
-    rw [← Finsupp.add_apply, ← factorization_mul (moebiusFactorR_ne_zero hc hsd n hn)
-      (denProd_ne_zero hc n), moebiusFactorR_mul_denProd hc hsd n hn]
+    rw [← Finsupp.add_apply, ← factorization_mul (moebiusFactorR_ne_zero hc hsd hn)
+      (denProd_ne_zero hc n), moebiusFactorR_mul_denProd hc hsd hn]
   have := factorization_numProd_sub_denProd hc n p
   omega
 
@@ -243,13 +243,13 @@ theorem factorization_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 
 then `v_p(β_n)` is supported at the single index `n = m`. -/
 theorem factorization_moebiusFactorR_shape {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (p : R) {m E : ℕ} (hm : 1 ≤ m)
-    (hshape : ∀ k ≥ 1, factorization (c k) p = if m ∣ k then E else 0) (n : ℕ) (hn : 1 ≤ n) :
+    (hshape : ∀ k ≥ 1, factorization (c k) p = if m ∣ k then E else 0) {n : ℕ} (hn : 1 ≤ n) :
     factorization (moebiusFactorR c n) p = if n = m then E else 0 := by
   have hmain : (factorization (moebiusFactorR c n) p : ℤ) = if n = m then (E : ℤ) else 0 := by
-    rw [factorization_moebiusFactorR hc hsd n hn p, Finset.sum_congr rfl fun x hx ↦
+    rw [factorization_moebiusFactorR hc hsd hn p, Finset.sum_congr rfl fun x hx ↦
         congrArg (μ x.1 * ·) (by rw [hshape x.2 (Nat.pos_of_mem_divisors
           (Nat.snd_mem_divisors_of_mem_antidiagonal hx)), Nat.cast_ite, Nat.cast_zero]),
-      Finset.sum_mul_ite_const n.divisorsAntidiagonal, moebius_restricted_sum m n hm hn]
+      Finset.sum_mul_ite_const n.divisorsAntidiagonal, moebius_restricted_sum hm hn]
     split_ifs <;> simp
   exact_mod_cast hmain
 
@@ -259,23 +259,23 @@ theorem moebiusFactorR_isRelPrime {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n)))
     (hshape : ∀ p : R, Prime p → normalize p = p →
       ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (c k) p = if m ∣ k then E else 0)
-    (m n : ℕ) (hm : 1 ≤ m) (hn : 1 ≤ n) (hmn : m ≠ n) :
+    {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) (hmn : m ≠ n) :
     IsRelPrime (moebiusFactorR c m) (moebiusFactorR c n) := by
   intro d hdm hdn
   by_contra hdu
-  have hd0 : d ≠ 0 := fun h ↦ moebiusFactorR_ne_zero hc hsd m hm (zero_dvd_iff.mp (h ▸ hdm))
+  have hd0 : d ≠ 0 := fun h ↦ moebiusFactorR_ne_zero hc hsd hm (zero_dvd_iff.mp (h ▸ hdm))
   obtain ⟨p, hp⟩ := exists_mem_normalizedFactors hd0 hdu
   have hpp : Prime p := prime_of_normalized_factor p hp
   have hpn : normalize p = p := normalize_normalized_factor p hp
   obtain ⟨M, hM1, E, hE⟩ := hshape p hpp hpn
   have hcount (k : ℕ) (hk : 1 ≤ k) (hdvd : d ∣ moebiusFactorR c k) :
       1 ≤ factorization (moebiusFactorR c k) p :=
-    (one_le_factorization_iff_dvd hpp hpn (moebiusFactorR_ne_zero hc hsd k hk)).mpr
+    (one_le_factorization_iff_dvd hpp hpn (moebiusFactorR_ne_zero hc hsd hk)).mpr
       ((dvd_of_mem_normalizedFactors hp).trans hdvd)
   have hm' := hcount m hm hdm
   have hn' := hcount n hn hdn
-  rw [factorization_moebiusFactorR_shape hc hsd p hM1 hE m hm] at hm'
-  rw [factorization_moebiusFactorR_shape hc hsd p hM1 hE n hn] at hn'
+  rw [factorization_moebiusFactorR_shape hc hsd p hM1 hE hm] at hm'
+  rw [factorization_moebiusFactorR_shape hc hsd p hM1 hE hn] at hn'
   split_ifs at hm' hn' with e1 e2
   · exact hmn (e1.trans e2.symm)
   all_goals lia

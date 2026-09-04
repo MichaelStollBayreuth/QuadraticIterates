@@ -17,4 +17,4 @@ open QuadraticIterates in
 theorem challenge_section3_main (a : ℤ)
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
-  section3_main a hcase
+  section3_main hcase

@@ -36,7 +36,7 @@ namespace QuadraticIterates
 
 section
 
-variable (a : ℤ)
+variable {a : ℤ}
 
 /-! ### The numbers `c_n`: size, positivity and non-squareness -/
 
@@ -67,22 +67,22 @@ theorem abs_le_abs_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : 
   | base => simp
   | succ k hk ih =>
     exact cSeq_succ a hk ▸
-      (abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg a ha) ih).trans (le_abs_self _)
+      (abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg ha) ih).trans (le_abs_self _)
 
 /-- `c_n ≥ |a|` for all `n ≥ 2`. -/
 theorem abs_le_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : |a| ≤ cSeq a n := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   rw [cSeq_succ a (by lia)]
-  exact abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg a ha)
-    (abs_le_abs_cSeq a ha (by lia))
+  exact abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg ha)
+    (abs_le_abs_cSeq ha (by lia))
 
 /-- Lemma 1.1 a): `c_n > 0` for all `n ≥ 2`. -/
 theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSeq a n :=
-  (abs_pos.mpr (ne_zero_of_not_isSquare_neg a ha)).trans_le (abs_le_cSeq a ha hn)
+  (abs_pos.mpr (ne_zero_of_not_isSquare_neg ha)).trans_le (abs_le_cSeq ha hn)
 
 /-- `c_n ≠ 0` for `n ≥ 1`, since `|c_n| ≥ |a| > 0`. -/
 theorem cSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, cSeq a n ≠ 0 := fun _ hn h ↦
-  ne_zero_of_not_isSquare_neg a ha (by simpa [h] using abs_le_abs_cSeq a ha hn)
+  ne_zero_of_not_isSquare_neg ha (by simpa [h] using abs_le_abs_cSeq ha hn)
 
 /-- No `c_n` (`n ≥ 1`) is a rational square: `c_{n+1} = c_n² + a` lies strictly between two
 consecutive squares because `|c_n| ≥ |a|`, and `c_1 = -a` is not a square by assumption. -/
@@ -92,8 +92,8 @@ theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) 
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · simpa using ha
   · rw [Rat.isSquare_intCast_iff, cSeq_succ a hm]
-    exact not_isSquare_sq_add_of_abs_le_abs (ne_zero_of_not_isSquare_neg a ha)
-      (ne_neg_one_of_not_isSquare_neg a ha) (abs_le_abs_cSeq a ha hm)
+    exact not_isSquare_sq_add_of_abs_le_abs (ne_zero_of_not_isSquare_neg ha)
+      (ne_neg_one_of_not_isSquare_neg ha) (abs_le_abs_cSeq ha hm)
 
 /-! ### Irreducibility of the iterates -/
 
@@ -126,11 +126,11 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ}
         (iteratedPoly_succ_comp_neg_X (a : ℚ) n) hred fun _ ↦ by
           rw [iteratedPoly_succ_comp]
           exact hirr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X hF0
-    exact hn (isSquare_cSeq_of_even_factorization a hgdeg hgeq)
+    exact hn (isSquare_cSeq_of_even_factorization hgdeg hgeq)
 
 /-- Corollary 1.3: all `f_n` are irreducible over `ℚ` (including `f_0 = X`). -/
 theorem irreducible_iteratedPoly (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) : Irreducible fℚ[a, n] :=
-  irreducible_iteratedPoly_of_not_isSquare_cSeq a fun _ hk _ ↦ not_isSquare_cSeq a ha hk
+  irreducible_iteratedPoly_of_not_isSquare_cSeq fun _ hk _ ↦ not_isSquare_cSeq ha hk
 
 /-- If `-a = r ^ 2` in `ℚ`, then `f_n = f_{n-1} ^ 2 + a = (f_{n-1} - r) * (f_{n-1} + r)` factors
 nontrivially, so irreducibility of any `f_n` with `n ≥ 1` implies that `-a` is not a square.
@@ -155,7 +155,7 @@ lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ}
     β - (a : AlgebraicClosure ℚ) ≠ 0 := fun hzero ↦ by
   have hroot := aeval_eq_zero_of_mem_rootSet hβ
   rw [sub_eq_zero.mp hzero, aeval_intCast_iteratedPoly, Int.cast_eq_zero] at hroot
-  exact cSeq_ne_zero a ha _ n.succ_pos (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
+  exact cSeq_ne_zero ha _ n.succ_pos (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
 
 /-- An irreducible `f_n` is separable, so it has exactly `2^n = deg f_n` roots in `ℚ̄`. -/
 lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible fℚ[a, n]) :
