@@ -76,7 +76,7 @@ theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] (ha : ¬IsSq
       = 2 ^ (2 ^ n - Module.finrank (ZMod 2) (rootRelations (rootShift a n))) := by
   choose g hg using exists_sq_eq_sub a
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg, Set.image_eq_range,
-    multiquadratic_degree_family (r := rootShift a n) (fun β ↦ hg β) (rootShift_ne_zero ha),
+    multiquadratic_degree_family (r := rootShift a n) (hg ·) (rootShift_ne_zero ha),
     card_rootSet_iteratedPoly (irreducible_iteratedPoly ha n)]
 
 /-- Every element of `Ω_n` acts on the shifted roots `β - a ∈ K_n` through a ring automorphism of
@@ -101,7 +101,7 @@ lemma prod_aroots_sub_eq_cSeq (n : ℕ) :
   rw [cSeq_succ_eq_neg_one_pow_mul_eval, Int.cast_mul, Int.cast_pow, Int.cast_neg, Int.cast_one,
     ← aeval_intCast_iteratedPoly,
     (IsAlgClosed.splits _).aeval_eq_prod_aroots_of_monic (monic_iteratedPoly _ n),
-    ← hcard, ← Multiset.card_map (fun α ↦ (a : AlgebraicClosure ℚ) - α), ← Multiset.prod_map_neg]
+    ← hcard, ← Multiset.card_map ((a : AlgebraicClosure ℚ) - ·), ← Multiset.prod_map_neg]
   simp
 
 /-- The norm identity over the root set: `∏_β (β - a) = c_{n+1}` for the `2^n` distinct roots `β`

@@ -320,7 +320,7 @@ theorem twoIndependent_iff_linearIndependent [Finite ι] {L : Type*} [Field L] [
   · by_contra hne
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hne
     exact h {j | ε j = 1} ⟨i, by simpa using (show ∀ x : ZMod 2, x ≠ 0 → x = 1 by decide) _ hi⟩
-      ((mem_rootRelations fun i ↦ h.ne_zero i).mp hε)
+      ((mem_rootRelations h.ne_zero).mp hε)
   · classical
     have hv0 (i : ι) : v i ≠ 0 := fun hvi ↦ H.ne_zero i (by rw [hvi, sqClass_zero])
     have hmem : (fun j ↦ if j ∈ S then (1 : ZMod 2) else 0) ∈ rootRelations v :=
