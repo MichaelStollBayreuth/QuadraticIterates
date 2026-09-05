@@ -69,15 +69,11 @@ theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSqu
 theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :
     m % 4 = 0 ∨ m % 4 = 1 := by
   obtain ⟨r, rfl⟩ := h
-  have h : (r : ZMod 4) * r = 0 ∨ (r : ZMod 4) * r = 1 := by
-    generalize (r : ZMod 4) = x
-    decide +revert
-  rcases h with h | h
-  · have := (ZMod.intCast_eq_intCast_iff' (r * r) 0 4).mp (by push_cast; exact h)
-    omega
-  · have := (ZMod.intCast_eq_intCast_iff' (r * r) 1 4).mp (by push_cast; exact h)
-    omega
+  rw [Int.mul_emod]
+  rcases (show r % 4 = 0 ∨ r % 4 = 1 ∨ r % 4 = 2 ∨ r % 4 = 3 by omega) with h | h | h | h <;>
+    rw [h] <;> decide
 
+/-- The `IsSquare` form of Mathlib's `Int.sq_ne_two_mod_four`. -/
 theorem Int.not_isSquare_of_emod_four_eq_two {m : ℤ} (h : m % 4 = 2) : ¬IsSquare m :=
   fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; omega
 

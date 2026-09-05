@@ -48,19 +48,14 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three (ha
     ¬IsSquare |bSeq a n| := by
   have ha' : ¬IsSquare (-a : ℚ) := mod_cast hsq
   have hk₀2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
-  have hn2 : 2 ≤ n := by
-    have := Nat.div_mul_cancel (radical_dvd_self (a := n))
-    nlinarith [Nat.radical_pos n]
-  have h4 := gammaSeq_normPoly_add_succ_emod_four ha ha4 hk₀2
+  have h4 := gammaSeq_normPoly_add_succ_emod_four_eq_three ha ha4 hk₀2
   obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := gammaSeq (normPoly a) a.sign (n / radical n) +
     gammaSeq (normPoly a) a.sign (n / radical n + 1)) (by
       have := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
       have := gammaSeq_normPoly_pos ha' (n / radical n + 1) (by lia)
       lia)
-  rw [abs_bSeq_eq_betaSeq ha' hn2, ← Rat.isSquare_intCast_iff]
-  exact not_isSquare_betaSeq_of_dvd_add_succ (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha.ne)
-    (fun d hd ↦ (gammaSeq_normPoly_pos ha' d hd).ne') (isUnit_eval_zero_normPoly ha.ne) hn2 rfl
-    (Nat.div_mul_cancel radical_dvd_self).symm (m := m) (dvd_of_eq hm.symm)
+  exact not_isSquare_abs_bSeq_of_dvd_add_succ ha' (hk₀2.trans (Nat.div_le_self n _))
+    (Nat.div_mul_cancel radical_dvd_self).symm (dvd_of_eq hm.symm)
     (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by omega))
 
 /-- Lemmas 3.2 and 3.3 of [Li 2020]: for `a < 0` with `a ≡ 3 mod 4` and squarefree `n > 2`,

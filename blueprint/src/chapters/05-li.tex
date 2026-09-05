@@ -206,7 +206,7 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
 
 \begin{lemma}[\cite{li2021}, Corollary 2.4]
   \label{lem:li-succ}
-  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_succ}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_succ, QuadraticIterates.not_isSquare_abs_bSeq_of_dvd_add_succ}
   \leanok
   \uses{def:gammaseq}
   Let $g(0)$ be a unit, $n \ge 2$, $k := n/\rad(n)$, and $m$ a modulus with
@@ -251,7 +251,7 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
 
 \begin{proposition}[\cite{li2021}, Proposition 2.5, $k$ even]
   \label{lem:li-even}
-  \lean{QuadraticIterates.not_isSquare_betaSeq_of_even_of_dvd_add_two, isCoprime_of_isCoprime_gcd_of_dvd_add}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_even_of_dvd_add_two, QuadraticIterates.not_isSquare_abs_bSeq_of_even_of_dvd_add_two, isCoprime_of_isCoprime_gcd_of_dvd_add, IsRelPrime.of_gcd_right_of_dvd_add}
   \leanok
   \uses{def:gammaseq}
   Let $n \ge 2$ with $k = n/\rad(n)$ even, and $m$ a modulus with $m \dvd \gamma_k + \gamma_{k+2}$,
@@ -270,7 +270,7 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
 
 \begin{proposition}[\cite{li2021}, Proposition 2.5, $k$ odd]
   \label{lem:li-odd}
-  \lean{QuadraticIterates.not_isSquare_betaSeq_of_odd_of_dvd_add_two, QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod_of_odd, QuadraticIterates.isUnit_prod_gammaSeq_mul_of_odd, QuadraticIterates.isCoprime_gammaSeq_of_odd_of_dvd_add_two}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_odd_of_dvd_add_two, QuadraticIterates.not_isSquare_abs_bSeq_of_odd_of_dvd_add_two, QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod_of_odd, QuadraticIterates.isUnit_prod_gammaSeq_mul_of_odd, QuadraticIterates.isCoprime_gammaSeq_of_odd_of_dvd_add_two}
   \leanok
   \uses{def:gammaseq}
   Let $g(0)$ be a unit, $n \ge 2$ with $k = n/\rad(n)$ odd and $k > 1$, and $m$ a modulus with
@@ -306,7 +306,7 @@ of Lemma~\ref{lem:li-period}.
 
 \begin{lemma}[The sequence modulo $\gamma_2^2$]
   \label{lem:li-modsq}
-  \lean{QuadraticIterates.gammaSeq_two_sq_dvd_sub_ite_even}
+  \lean{QuadraticIterates.gammaSeq_two_sq_dvd_sub_ite_even, QuadraticIterates.gammaSeq_two_dvd_of_even}
   \leanok
   \uses{def:normpoly}
   For every even $g$ with $g(0)^2 = 1$ and $\gamma_1 = 1$, and all $n \ge 2$:
@@ -339,7 +339,7 @@ of Lemma~\ref{lem:li-period}.
 
 \begin{lemma}[$a \equiv 1 \bmod 4$]
   \label{lem:li-mod8-1}
-  \lean{QuadraticIterates.gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one, QuadraticIterates.gammaSeq_normPoly_add_two_emod_eight, QuadraticIterates.gammaSeq_normPoly_emod_four_of_even}
+  \lean{QuadraticIterates.gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one, QuadraticIterates.gammaSeq_normPoly_add_two_emod_eight_eq_six, QuadraticIterates.gammaSeq_normPoly_emod_four_eq_two_of_even}
   \leanok
   \uses{def:normpoly}
   If $a < 0$ and $a \equiv 1 \bmod 4$, then $\gamma_n \equiv 3 \bmod 8$ for odd $n \ge 3$ and
@@ -358,7 +358,7 @@ of Lemma~\ref{lem:li-period}.
 
 \begin{lemma}[$a \equiv 3 \bmod 4$]
   \label{lem:li-mod4-3}
-  \lean{QuadraticIterates.gammaSeq_normPoly_zmod_four_of_emod_four_eq_three, QuadraticIterates.gammaSeq_normPoly_add_succ_emod_four, QuadraticIterates.gammaSeq_eq_ite_even_of_eval_one_eq_zero}
+  \lean{QuadraticIterates.gammaSeq_normPoly_zmod_four_of_emod_four_eq_three, QuadraticIterates.gammaSeq_normPoly_add_succ_emod_four_eq_three, QuadraticIterates.gammaSeq_eq_ite_even_of_eval_one_eq_zero}
   \leanok
   \uses{def:normpoly}
   If $a < 0$ and $a \equiv 3 \bmod 4$, then $\gamma_n \equiv 0 \bmod 4$ for even $n \ge 2$ and
@@ -448,7 +448,7 @@ of Lemma~\ref{lem:li-period}.
 
 \begin{lemma}[\cite{li2021}, Lemma 3.4]
   \label{lem:li-B-odd}
-  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one, Nat.even_div_radical_iff_four_dvd}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one, Nat.even_div_radical_iff_four_dvd, Nat.two_le_div_radical_of_not_squarefree, Nat.squarefree_iff_radical_eq_self}
   \leanok
   \uses{def:normpoly}
   Let $a < 0$, $a \equiv 1 \bmod 4$, and let $n \ge 1$ be not squarefree with $4 \nmid n$. Then

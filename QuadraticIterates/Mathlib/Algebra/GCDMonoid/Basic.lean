@@ -27,6 +27,12 @@ theorem normalize_map_normalize {α : Type*} [MonoidWithZero α] [NormalizationM
     normalize (f (normalize x)) = normalize (f x) :=
   normalize_eq_normalize_iff_associated.mpr ((normalize_associated x).map f)
 
+/-- If `m` divides `a + b` and is relatively prime to `gcd a b`, then `m` is relatively prime to
+`a`: a common divisor of `m` and `a` divides `b`, hence `gcd a b`. -/
+theorem IsRelPrime.of_gcd_right_of_dvd_add {R : Type*} [CommRing R] [IsDomain R] [GCDMonoid R]
+    {m a b : R} (hcop : IsRelPrime m (gcd a b)) (hdvd : m ∣ a + b) : IsRelPrime m a :=
+  fun _ hdm hda ↦ hcop hdm (dvd_gcd hda (by simpa using dvd_sub (hdm.trans hdvd) hda))
+
 variable {R : Type*} [CommRing R] [IsDomain R] [NormalizedGCDMonoid R]
 
 /- TODO:

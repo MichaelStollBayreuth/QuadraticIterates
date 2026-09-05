@@ -92,6 +92,8 @@ theorem prod_pow_moebius_eq_div {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ
   refine Finset.prod_congr rfl fun t _ ↦ ?_
   rcases moebius_eq_or (n' / t) with h | h | h <;> simp [h]
 
+/-- The Möbius sum `∑_{ed = n, m ∣ d} μ e` over the antidiagonal pairs whose second coordinate is
+a multiple of `m` is `1` if `n = m` and `0` otherwise: it is `∑_{e ∣ n/m} μ e` when `m ∣ n`. -/
 theorem sum_divisorsAntidiagonal_filter_dvd_moebius {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal with m ∣ x.2, μ x.1 = if n = m then 1 else 0 := by
   by_cases hmn : m ∣ n

@@ -326,6 +326,13 @@ theorem gammaSeq_two_sq_dvd_sub_ite_even (hg : EvenPoly g) {ε : R} (h0 : g.eval
           = (gammaSeq g ε n - g.eval 0) * (gammaSeq g ε n + g.eval 0) by linear_combination h0]
       exact ih.mul_right _
 
+/-- For even `g` with `g(0)² = 1` and `γ_1 = 1`, `γ_2` divides `γ_n` for every even `n ≥ 2`. -/
+theorem gammaSeq_two_dvd_of_even (hg : EvenPoly g) {ε : R} (h0 : g.eval 0 ^ 2 = 1)
+    (h1 : gammaSeq g ε 1 = 1) {n : ℕ} (hn : 2 ≤ n) (hne : Even n) :
+    gammaSeq g ε 2 ∣ gammaSeq g ε n :=
+  (dvd_sub_left dvd_rfl).mp ((dvd_pow_self _ two_ne_zero).trans
+    (by simpa [if_pos hne] using gammaSeq_two_sq_dvd_sub_ite_even hg h0 h1 n hn))
+
 /-- A divisor `q` of `γ_{m+1} - g(0)` is a period divisor of `γ` from index `2` on, i.e.
 `q ∣ γ_{n+m} - γ_n` for all `n ≥ 2` (for even `g` and `ε² = 1`, so that `γ_1² = g(0)²`). -/
 lemma gammaSeq_period_of_dvd_succ_sub_eval_zero (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
@@ -442,6 +449,8 @@ theorem gammaSeq_mul_eq_ite_even_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ} (hk
   rw [gammaSeq_eq_ite_even_of_add_two_eq_zero hg hko.pos hzero (k * t) (by lia)]
   grind [Nat.not_even_iff_odd]
 
+/-- For odd `k` with `γ_k + γ_{k+2} = 0`, `∏_{t ∈ S} γ_{kt}` is a unit for every set `S` of positive
+indices once `γ_k` and `γ_{k+1}` are units: every factor is one of `γ_k`, `-γ_k`, `γ_{k+1}`. -/
 theorem isUnit_prod_gammaSeq_mul_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ} (hko : Odd k)
     (hzero : gammaSeq g ε k + gammaSeq g ε (k + 2) = 0) (hu : IsUnit (gammaSeq g ε k))
     (hu1 : IsUnit (gammaSeq g ε (k + 1))) {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) :
@@ -451,8 +460,7 @@ theorem isUnit_prod_gammaSeq_mul_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ} (hk
   · rwa [mul_one]
   · rw [gammaSeq_mul_eq_ite_even_of_odd hg hko hzero (by have := hS t ht; lia)]
     split_ifs
-    · exact hu1
-    · exact hu.neg
+    exacts [hu1, hu.neg]
 
 /-- For odd `k` with `γ_k + γ_{k+2} = 0`, the products of the `γ_{kt}` over the two halves of the
 sign partition of the divisors `t` of a squarefree `n' ≥ 3` are negatives of each other (over any
@@ -639,6 +647,37 @@ theorem not_isSquare_betaSeq_of_dvd_add_two_mul (hg : EvenPoly g) {ε : ℤ} (h�
   · exact isUnit_prod_gammaSeq_mul (hg.map _) hkpos hz hu fun t ht ↦
       Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht)
 
+/-- The `γ_2`-free part of `γ_t`: `γ_t / γ_2` for even `t`, and `γ_t` itself for odd `t`. -/
+private noncomputable def oddPart (g : ℤ[X]) (ε : ℤ) (t : ℕ) : ℤ :=
+  if t % 2 = 0 then gammaSeq g ε t / gammaSeq g ε 2 else gammaSeq g ε t
+
+private lemma gammaSeq_eq_mul_oddPart (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 0 ^ 2 = 1)
+    (h1 : gammaSeq g ε 1 = 1) {t : ℕ} (ht : 1 ≤ t) :
+    gammaSeq g ε t = (if t % 2 = 0 then gammaSeq g ε 2 else 1) * oddPart g ε t := by
+  rw [oddPart]
+  split_ifs with he
+  · exact (Int.mul_ediv_cancel' (gammaSeq_two_dvd_of_even hg h0 h1 (by omega)
+      (Nat.even_iff.mpr he))).symm
+  · rw [one_mul]
+
+/-- Modulo `γ_2`, the `γ_2`-free part of `γ_t` is `1` for even `t > 1` and `-1` for odd `t > 1`
+(when `g(0) = -1` and `γ_1 = 1`). -/
+private lemma intCast_oddPart (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 0 = -1)
+    (h1 : gammaSeq g ε 1 = 1) (h2 : gammaSeq g ε 2 ≠ 0) {m : ℕ} (hm : (m : ℤ) = gammaSeq g ε 2)
+    {t : ℕ} (ht : 1 < t) : ((oddPart g ε t : ℤ) : ZMod m) = if t % 2 = 0 then 1 else -1 := by
+  have hd := gammaSeq_two_sq_dvd_sub_ite_even hg (by rw [h0]; ring) h1 t ht
+  rw [oddPart]
+  split_ifs with he
+  · rw [if_pos (Nat.even_iff.mpr he)] at hd
+    obtain ⟨w, hw⟩ := hd
+    rw [show gammaSeq g ε t = gammaSeq g ε 2 * (1 + gammaSeq g ε 2 * w) by linear_combination hw,
+      Int.mul_ediv_cancel_left _ h2, ← hm]
+    push_cast
+    simp
+  · rw [if_neg (Nat.even_iff.not.mpr he), h0, sub_neg_eq_add, add_comm] at hd
+    exact_mod_cast ZMod.intCast_eq_neg_intCast_of_dvd_add
+      (hm ▸ (dvd_pow_self _ two_ne_zero).trans hd)
+
 /-- **Lemma 3.3 of [Li 2020], abstractly.** For even `g` with `g(0) = -1` and `γ_1 = 1`, and
 squarefree `n ≥ 3`, `β_n` is not a square in `ℚ` as soon as `-1` is not a square modulo `γ_2`:
 modulo `γ_2²`, `γ_t ≡ γ_2` for even `t` and `γ_t ≡ -1` for odd `t ≥ 3`, so after cancelling the
@@ -650,58 +689,35 @@ theorem not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one (hg : EvenPol
     (hnsq : ¬IsSquare (-1 : ZMod m)) {n : ℕ} (hsf : Squarefree n) (hn : 3 ≤ n) :
     ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
   have h2 : gammaSeq g ε 2 ≠ 0 := hγ 2 one_le_two
-  have hmod := gammaSeq_two_sq_dvd_sub_ite_even hg (by rw [h0]; ring) h1
-  let u : ℕ → ℤ := fun t ↦ if t % 2 = 0 then gammaSeq g ε t / gammaSeq g ε 2 else gammaSeq g ε t
-  have hu (t : ℕ) (ht : t ∈ n.divisors) :
-      gammaSeq g ε t = (if t % 2 = 0 then gammaSeq g ε 2 else 1) * u t := by
-    simp only [u]
-    split_ifs with he
-    · have hd := (dvd_pow_self _ two_ne_zero).trans
-        (hmod t (by have := Nat.pos_of_mem_divisors ht; omega))
-      rw [if_pos (Nat.even_iff.mpr he)] at hd
-      exact (Int.mul_ediv_cancel' ((dvd_sub_left dvd_rfl).mp hd)).symm
-    · rw [one_mul]
-  have hsplit (S : Finset ℕ) (hS : S ⊆ n.divisors) :
-      ∏ t ∈ S, gammaSeq g ε (1 * t) = gammaSeq g ε 2 ^ #{t ∈ S | t % 2 = 0} * ∏ t ∈ S, u t := by
+  have hsplit (S : Finset ℕ) (hS : S ⊆ n.divisors) : ∏ t ∈ S, gammaSeq g ε (1 * t)
+      = gammaSeq g ε 2 ^ #{t ∈ S | t % 2 = 0} * ∏ t ∈ S, oddPart g ε t := by
     simp only [one_mul]
-    rw [Finset.prod_congr rfl fun t ht ↦ hu t (hS ht), Finset.prod_mul_distrib, Finset.prod_ite,
-      Finset.prod_const, Finset.prod_const_one, mul_one]
+    rw [Finset.prod_congr rfl fun t ht ↦ gammaSeq_eq_mul_oddPart hg (by rw [h0]; ring) h1
+        (Nat.pos_of_mem_divisors (hS ht)),
+      Finset.prod_mul_distrib, Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one]
   have hcard (i : ℕ) : #{t ∈ {t ∈ n.divisors | μ (n / t) = 1} | t % 2 = i}
       = #{t ∈ {t ∈ n.divisors | μ (n / t) = -1} | t % 2 = i} := by
     simpa [Finset.filter_filter, and_comm] using
       hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one (Finset.filter_subset _ _)
         (sum_divisors_filter_mod_two_moebius_div hn i)
-  have hu' (t : ℕ) (ht : t ∈ n.divisors) (h1t : t ≠ 1) :
-      (u t : ZMod m) = if t % 2 = 0 then 1 else -1 := by
-    have hd := hmod t (by have := Nat.pos_of_mem_divisors ht; omega)
-    simp only [u]
-    split_ifs with he
-    · rw [if_pos (Nat.even_iff.mpr he)] at hd
-      obtain ⟨w, hw⟩ := hd
-      rw [show gammaSeq g ε t = gammaSeq g ε 2 * (1 + gammaSeq g ε 2 * w) by linear_combination hw,
-        Int.mul_ediv_cancel_left _ h2, ← hm]
-      push_cast
-      simp
-    · rw [if_neg (Nat.even_iff.not.mpr he), h0, sub_neg_eq_add, add_comm] at hd
-      have h := ZMod.intCast_eq_neg_intCast_of_dvd_add (hm ▸ (dvd_pow_self _ two_ne_zero).trans hd)
-      exact_mod_cast h
+  have hu (t : ℕ) (ht : t ∈ n.divisors) (h1t : t ≠ 1) :
+      ((oddPart g ε t : ℤ) : ZMod m) = if t % 2 = 0 then 1 else -1 :=
+    intCast_oddPart hg h0 h1 h2 hm (by have := Nat.pos_of_mem_divisors ht; omega)
   have hunion := hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one
   refine not_isSquare_betaSeq_of_prod_eq_neg_prod hg hε hγ (by lia)
-    (Nat.radical_eq_self_of_squarefree hsf).symm (one_mul n).symm (pow_ne_zero _ h2)
+    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm (pow_ne_zero _ h2)
     (hsplit _ (Finset.filter_subset _ _))
     ((hsplit _ (Finset.filter_subset _ _)).trans (by rw [hcard 0])) (m := m) ?_ ?_ hnsq <;>
     push_cast
   · refine Finset.prod_eq_neg_prod_of_forall_card_filter_eq (κ := (· % 2))
-      (w := fun i ↦ if i = 0 then 1 else -1) (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by omega)
-      (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia)) (by simp [u, h1])
-      (fun t ht h1t ↦ hu' t (hunion ▸ ht) h1t) hcard
+      (w := fun i ↦ if i = 0 then 1 else -1) (Finset.disjoint_filter.mpr fun _ _ _ _ ↦ by omega)
+      (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia)) (by simp [oddPart, h1])
+      (fun t ht h1t ↦ hu t (hunion ▸ ht) h1t) hcard
   · refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
     rcases eq_or_ne t 1 with rfl | h1t
-    · simp [u, h1]
-    · rw [hu' t (Finset.mem_of_mem_filter t ht) h1t]
-      split_ifs
-      · exact isUnit_one
-      · exact isUnit_one.neg
+    · simp [oddPart, h1]
+    · rw [hu t (Finset.mem_of_mem_filter t ht) h1t]
+      split_ifs <;> simp
 
 /-- Lemma 2.1: if for each `n ≥ 1` the modulus `m n` divides `γ_n + γ_{2n}`, is prime to `γ_n`,
 and `-1` is not a square mod `m n`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
