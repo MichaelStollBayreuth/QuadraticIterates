@@ -16,8 +16,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; an upstreaming candidate for Mathl
 
 @[expose] public section
 
-/-- A product of powers of a fixed nonzero base with integer exponents collapses to a single
-power. -/
 theorem Finset.prod_zpow_eq_zpow_sum₀ {ι G₀ : Type*} [CommGroupWithZero G₀] {x : G₀} (hx : x ≠ 0)
     (s : Finset ι) (f : ι → ℤ) : ∏ i ∈ s, x ^ f i = x ^ (∑ i ∈ s, f i) := by
   induction s using Finset.cons_induction with

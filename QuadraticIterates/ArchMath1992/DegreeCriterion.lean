@@ -113,7 +113,6 @@ lemma prod_rootSet_sub_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   (prod_rootSet_eq_prod_aroots (nodup_roots (irreducible_iteratedPoly ha n).separable.map)
     (· - (a : AlgebraicClosure ℚ))).trans (prod_aroots_sub_eq_cSeq a n)
 
-/-- The product of the shifted roots `β - a` of `f_n` is `c_{n+1}`, as elements of `K_n`. -/
 lemma prod_rootShift_eq_cSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     ∏ β, rootShift a n β = algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ) := by
   refine (algebraMap ↥(splittingField a n) (AlgebraicClosure ℚ)).injective ?_

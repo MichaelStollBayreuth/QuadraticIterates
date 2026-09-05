@@ -61,12 +61,10 @@ section Factorization
 variable {R : Type*} [CommMonoidWithZero R] [UniqueFactorizationMonoid R]
     [NormalizationMonoid R] [DecidableEq R]
 
-/-- The multiplicity of a normalized prime `p` in `x ≠ 0`, as an `emultiplicity`. -/
 lemma emultiplicity_eq_factorization {p x : R} (hp : Prime p) (hpn : normalize p = p)
     (hx : x ≠ 0) : emultiplicity p x = factorization x p := by
   rw [factorization_eq_count, emultiplicity_eq_count_normalizedFactors hp.irreducible hx, hpn]
 
-/-- `p ^ k ∣ x` iff `k` is at most the multiplicity of a normalized prime `p` in `x ≠ 0`. -/
 lemma _root_.Associated.factorization_eq {a b : R} (h : Associated a b) :
     factorization a = factorization b :=
   congrArg Multiset.toFinsupp h.normalizedFactors_eq
@@ -75,18 +73,15 @@ lemma pow_dvd_iff_le_factorization {p x : R} (hp : Prime p) (hpn : normalize p =
     {k : ℕ} : p ^ k ∣ x ↔ k ≤ factorization x p := by
   rw [pow_dvd_iff_le_emultiplicity, emultiplicity_eq_factorization hp hpn hx, Nat.cast_le]
 
-/-- A normalized prime `p` divides `x ≠ 0` iff its multiplicity in `x` is positive. -/
 lemma one_le_factorization_iff_dvd {p x : R} (hp : Prime p) (hpn : normalize p = p) (hx : x ≠ 0) :
     1 ≤ factorization x p ↔ p ∣ x := by
   simpa using (pow_dvd_iff_le_factorization hp hpn hx (k := 1)).symm
 
-/-- The multiplicity of a normalized prime `p` in `x ≠ 0` vanishes iff `p ∤ x`. -/
 lemma factorization_eq_zero_iff_not_dvd {p x : R} (hp : Prime p) (hpn : normalize p = p)
     (hx : x ≠ 0) : factorization x p = 0 ↔ ¬p ∣ x := by
   rw [← one_le_factorization_iff_dvd hp hpn hx]
   lia
 
-/-- The factorization of a product of nonzero elements is the sum of the factorizations. -/
 lemma factorization_prod {ι : Type*} {s : Finset ι} {f : ι → R} (hf : ∀ i ∈ s, f i ≠ 0) :
     factorization (∏ i ∈ s, f i) = ∑ i ∈ s, factorization (f i) := by
   classical
@@ -127,7 +122,6 @@ theorem UniqueFactorizationMonoid.normalizedFactors_gcd {a b : R} (ha : a ≠ 0)
   exact (dvd_iff_normalizedFactors_le_normalizedFactors hs0 hg).mp
     (dvd_gcd (hdvd a ha inf_le_left) (hdvd b hb inf_le_right))
 
-/-- The `p`-multiplicity of a gcd is the minimum of the multiplicities. -/
 theorem factorization_gcd_min {a b : R} (ha : a ≠ 0) (hb : b ≠ 0) (p : R) :
     factorization (gcd a b) p = min (factorization a p) (factorization b p) := by
   simp only [factorization_eq_count, normalizedFactors_gcd ha hb, Multiset.inf_eq_inter,

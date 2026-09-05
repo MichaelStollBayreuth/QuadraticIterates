@@ -30,8 +30,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 open scoped ArithmeticFunction.Moebius
 open UniqueFactorizationMonoid ArithmeticFunction
 
-/-- A sequence that does not vanish at positive indices does not vanish at the second coordinate
-of a pair in `n.divisorsAntidiagonal`. -/
 theorem ne_zero_of_mem_divisorsAntidiagonal {M : Type*} [Zero M] {c : ℕ → M}
     (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ} {x : ℕ × ℕ} (hx : x ∈ n.divisorsAntidiagonal) : c x.2 ≠ 0 :=
   hc x.2 (Nat.pos_of_ne_zero (Nat.right_ne_zero_of_mem_divisorsAntidiagonal hx))
@@ -55,8 +53,6 @@ theorem moebiusFactorK_mul_const (c : ℕ → R) {t : R} (ht : algebraMap R K t 
     Finset.prod_zpow_eq_zpow_sum₀ ht, sum_divisorsAntidiagonal_moebius_eq_zero hn, zpow_zero,
     mul_one]
 
-/-- In an ordered field, the absolute value of a Möbius factor of an integer sequence is the
-Möbius factor of the sequence of absolute values. -/
 theorem abs_moebiusFactorK [LinearOrder K] [IsStrictOrderedRing K] (c : ℕ → ℤ) (n : ℕ) :
     |moebiusFactorK (K := K) c n| = moebiusFactorK (K := K) (fun d ↦ |c d|) n := by
   simp [moebiusFactorK_eq_prod, Finset.abs_prod, abs_zpow]
@@ -69,7 +65,6 @@ noncomputable def numProd (c : ℕ → R) (n : ℕ) : R :=
 noncomputable def denProd (c : ℕ → R) (n : ℕ) : R :=
   ∏ x ∈ n.divisorsAntidiagonal with μ x.1 = -1, c x.2
 
-/-- The Möbius factor is the quotient of its numerator and denominator products. -/
 theorem moebiusFactorK_eq_div (c : ℕ → R) (n : ℕ) :
     moebiusFactorK (K := K) c n
       = algebraMap R K (numProd c n) / algebraMap R K (denProd c n) := by
@@ -88,7 +83,6 @@ section IsFractionRing
 
 variable [IsFractionRing R K]
 
-/-- A Möbius factor of a nowhere-zero sequence is nonzero in the fraction field. -/
 lemma moebiusFactorK_ne_zero {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) (n : ℕ) :
     moebiusFactorK (K := K) c n ≠ 0 :=
   Finset.prod_ne_zero_iff.mpr fun _ hx ↦ zpow_ne_zero _
@@ -104,7 +98,6 @@ lemma prod_moebiusFactorK {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ
       (fun k hk ↦ (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective R K)).mpr (hc k hk))).mpr
     (fun n _ ↦ by simp [moebiusFactorK]) n hn).symm
 
-/-- `algebraMap a / algebraMap b` is integral iff `b ∣ a` (for `b ≠ 0`). -/
 theorem isInteger_div_iff_dvd (a : R) {b : R} (hb : b ≠ 0) :
     IsLocalization.IsInteger R (algebraMap R K a / algebraMap R K b) ↔ b ∣ a := by
   have hbK : algebraMap R K b ≠ 0 :=
@@ -202,8 +195,9 @@ theorem moebiusFactorR_mul_denProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     moebiusFactorK_eq_div c, div_mul_cancel₀ _
       ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective R _)).mpr (denProd_ne_zero hc n))]
 
-/-- **API lemma.** In any fraction field `K` of `R`, the image of `moebiusFactorR c n` is the
-Möbius formula (for a nowhere-zero strong divisibility sequence). -/
+/-- In any fraction field `K` of `R`, not only in the `FractionRing R` used to define it, the image
+of `moebiusFactorR c n` is the Möbius product `moebiusFactorK c n` (for a nowhere-zero strong
+divisibility sequence). -/
 theorem algebraMap_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
     algebraMap R K (moebiusFactorR c n) = moebiusFactorK (K := K) c n := by

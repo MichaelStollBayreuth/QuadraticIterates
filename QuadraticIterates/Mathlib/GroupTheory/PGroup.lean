@@ -42,7 +42,6 @@ open MulAction
 theorem IsPGroup.domMulAct {p : ℕ} {G : Type*} [Group G] (hG : IsPGroup p G) : IsPGroup p Gᵈᵐᵃ :=
   hG.of_equiv (MulEquiv.inv' G)
 
-/-- A function on a pretransitive `G`-set that is invariant under `G` is constant. -/
 theorem MulAction.apply_eq_apply_of_forall_smul_eq {G ι β : Type*} [SMul G ι]
     [IsPretransitive G ι] {w : ι → β} (hw : ∀ (g : G) (i : ι), w (g • i) = w i) (i j : ι) :
     w i = w j :=

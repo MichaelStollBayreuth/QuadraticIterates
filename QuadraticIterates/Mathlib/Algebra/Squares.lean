@@ -46,7 +46,6 @@ theorem Nat.not_sq_add_sq_modEq_three (x y : ℕ) : ¬x ^ 2 + y ^ 2 ≡ 3 [MOD 4
   generalize (x : ZMod 4) = a, (y : ZMod 4) = b
   decide +revert
 
-/-- If `d ∣ m` with `d ≡ 3 mod 4`, then `-1` is not a square in `ZMod m`. -/
 theorem ZMod.not_isSquare_neg_one_of_dvd {m d : ℕ} (hdm : d ∣ m) (hd : d % 4 = 3) :
     ¬IsSquare (-1 : ZMod m) := by
   intro hsq
@@ -54,7 +53,6 @@ theorem ZMod.not_isSquare_neg_one_of_dvd {m d : ℕ} (hdm : d ∣ m) (hd : d % 4
     Nat.eq_sq_add_sq_of_isSquare_mod_neg_one (ZMod.isSquare_neg_one_of_dvd hdm hsq)
   exact Nat.not_sq_add_sq_modEq_three x y hd
 
-/-- If `m ≡ 3 mod 4`, then `-1` is not a square in `ZMod m`. -/
 theorem ZMod.not_isSquare_neg_one_of_emod_four_eq_three {m : ℕ} (hm : m % 4 = 3) :
     ¬IsSquare (-1 : ZMod m) :=
   not_isSquare_neg_one_of_dvd dvd_rfl hm
@@ -64,12 +62,9 @@ theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6
     ¬IsSquare (-1 : ZMod m) :=
   not_isSquare_neg_one_of_dvd (Nat.div_dvd_of_dvd (show 2 ∣ m by omega)) (by omega)
 
-/-- If `4 ∣ m`, then `-1` is not a square in `ZMod m`. -/
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
 
-/-- An integer strictly between the consecutive squares `e ^ 2` and `(e + 1) ^ 2` is not a
-square. -/
 theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
     (h2 : m < (e + 1) ^ 2) :
     ¬IsSquare m := by
@@ -79,7 +74,6 @@ theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
   have h2' := (sq_lt_sq.mp h2).trans_le (by simpa using abs_add_le e 1)
   lia
 
-/-- `|x|` is a square iff `x` or `-x` is. -/
 theorem isSquare_abs_iff {α : Type*} [Ring α] [LinearOrder α] [IsOrderedRing α] {x : α} :
     IsSquare |x| ↔ IsSquare x ∨ IsSquare (-x) :=
   ⟨fun h ↦ (abs_choice x).imp (fun e ↦ (congrArg IsSquare e).mp h)

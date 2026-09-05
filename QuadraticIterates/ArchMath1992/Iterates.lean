@@ -79,13 +79,10 @@ lemma iteratedPoly_succ (n : ℕ) : iteratedPoly a (n + 1) = iteratedPoly a n ^ 
 lemma iteratedPoly_one : iteratedPoly a 1 = X ^ 2 + C a := by
   rw [iteratedPoly_succ, iteratedPoly_zero]
 
-/-- Iterating commutes with any ring homomorphism: the image of `f_n` under `φ` is the `n`-th
-iterate over the codomain with parameter `φ a`. -/
 lemma map_iteratedPoly {S : Type*} [CommSemiring S] (φ : R →+* S) (n : ℕ) :
     (iteratedPoly a n).map φ = iteratedPoly (φ a) n := by
   induction n <;> simp [iteratedPoly_succ, *]
 
-/-- Evaluation commutes with `map_iteratedPoly`: `φ (f_n(x)) = f_n^φ(φ x)`. -/
 lemma map_eval_iteratedPoly {S : Type*} [CommSemiring S] (φ : R →+* S) (x : R) (n : ℕ) :
     φ ((iteratedPoly a n).eval x) = (iteratedPoly (φ a) n).eval (φ x) := by
   rw [← map_iteratedPoly, eval_map, eval₂_at_apply]
@@ -99,7 +96,6 @@ lemma iteratedPoly_succ_comp (n : ℕ) :
     nth_rw 1 [iteratedPoly_succ a (k + 1), ih]
     rw [iteratedPoly_succ, add_comp, pow_comp, C_comp]
 
-/-- Iterates compose additively: `f_{m+n} = f_m ∘ f_n`. -/
 lemma iteratedPoly_add (m n : ℕ) :
     iteratedPoly a (m + n) = (iteratedPoly a m).comp (iteratedPoly a n) := by
   induction n with
@@ -107,7 +103,6 @@ lemma iteratedPoly_add (m n : ℕ) :
   | succ k ih =>
     rw [← add_assoc, iteratedPoly_succ_comp, ih, comp_assoc, ← iteratedPoly_succ_comp]
 
-/-- `f_{n+1}(0) = f_n(a)`. -/
 lemma eval_zero_iteratedPoly_succ (n : ℕ) :
     (iteratedPoly a (n + 1)).eval 0 = (iteratedPoly a n).eval a := by
   simp [iteratedPoly_succ_comp, eval_comp]
@@ -264,14 +259,12 @@ lemma TwoIndependent.ne_zero [CommMonoidWithZero M] {v : ι → M} (h : TwoIndep
     v i ≠ 0 :=
   fun hi ↦ h.not_isSquare i (hi ▸ IsSquare.zero)
 
-/-- 2-independence of `Fin.snoc v c` restricts to the initial family `v`. -/
 theorem TwoIndependent.of_snoc [CommMonoid M] {n : ℕ} {v : Fin n → M} {c : M}
     (h : TwoIndependent (Fin.snoc v c)) :
     TwoIndependent v := fun S hS ↦ by
   simpa [Fin.snoc_castSucc, Finset.prod_map S Fin.castSuccEmb (Fin.snoc v c)] using
     h (S.map Fin.castSuccEmb) hS.map
 
-/-- `Fin.snoc v c` is 2-independent iff `v` is and `c` times no subproduct of `v` is a square. -/
 theorem twoIndependent_snoc_iff [CommMonoid M] {n : ℕ} (v : Fin n → M) (c : M) :
     TwoIndependent (Fin.snoc v c) ↔
       TwoIndependent v ∧ ∀ S : Finset (Fin n), ¬IsSquare (c * ∏ i ∈ S, v i) := by
@@ -285,7 +278,6 @@ theorem twoIndependent_snoc_iff [CommMonoid M] {n : ℕ} (v : Fin n → M) (c : 
     · exact hprod S ▸ hv S (Finset.map_nonempty.mp hT)
     · simpa [Finset.prod_insert, Fin.snoc_last, hprod] using hc S
 
-/-- A family of integers is 2-independent iff it is so in `ℚ`. -/
 theorem twoIndependent_intCast_iff (f : ι → ℤ) :
     TwoIndependent (fun i ↦ (f i : ℚ)) ↔ TwoIndependent f :=
   forall_congr' fun _ ↦ imp_congr_right fun _ ↦
@@ -358,7 +350,6 @@ lemma mem_rootSet_iteratedPoly_succ (n : ℕ) (β : AlgebraicClosure ℚ) :
     mem_rootSet_of_ne (monic_iteratedPoly (a : ℚ) _).ne_zero, iteratedPoly_succ_comp, aeval_comp]
   simp
 
-/-- A square root `β` of `α - a`, for `α` a root of `f_n`, is a root of `f_{n+1}`. -/
 lemma mem_rootSet_succ_of_sq_eq_sub {n : ℕ} {α β : AlgebraicClosure ℚ}
     (hα : α ∈ fℚ[a, n].rootSet (AlgebraicClosure ℚ)) (hβ : β ^ 2 = α - a) :
     β ∈ fℚ[a, n + 1].rootSet (AlgebraicClosure ℚ) :=
@@ -444,7 +435,6 @@ theorem relfinrank_succ_le (n : ℕ) :
 
 /-! ### Odoni's embedding `Ω_n ↪ [C₂]ⁿ` -/
 
-/-- Any `ℚ`-automorphism of `ℚ̄` raised to the power `2 ^ m` fixes every root of `f_m`. -/
 theorem pow_two_pow_apply_root (φ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)
     {m : ℕ} {γ : AlgebraicClosure ℚ} (hγ : γ ∈ fℚ[a, m].rootSet (AlgebraicClosure ℚ)) :
     (φ ^ 2 ^ m) γ = γ := by
@@ -459,7 +449,6 @@ theorem pow_two_pow_apply_root (φ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicC
     rw [pow_succ, pow_mul, sq, AlgEquiv.mul_apply]
     rcases sq_eq_sq_iff_eq_or_eq_neg.mp hsq with h | h <;> simp only [h, map_neg, neg_neg]
 
-/-- `Ω_n = Gal(f_n/ℚ)` is a 2-group. -/
 theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
   set F := fℚ[a, n]
   refine isPGroup_iff_pow_pow_eq_one.mpr fun σ ↦ ⟨n, ?_⟩
@@ -485,7 +474,6 @@ theorem exists_injective_monoidHom_wreathPower (n : ℕ) :
 lemma card_wreathPower (n : ℕ) : Nat.card (WreathPower n) = 2 ^ (2 ^ n - 1) := by
   simp [IteratedWreathProduct.card, Nat.card_eq_fintype_card, Nat.geomSum_eq le_rfl]
 
-/-- `#[C₂]^{n+1} = #[C₂]ⁿ · 2^{2^n}`. -/
 lemma card_wreathPower_succ (n : ℕ) :
     Nat.card (WreathPower (n + 1)) = Nat.card (WreathPower n) * 2 ^ 2 ^ n := by
   rw [card_wreathPower, card_wreathPower, ← pow_add, pow_succ]

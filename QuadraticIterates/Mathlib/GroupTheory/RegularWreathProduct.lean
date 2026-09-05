@@ -122,7 +122,6 @@ def monoidHomEquiv : (D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A) where
 end Fintype
 
 variable (D Q A) in
-/-- `#(D ≀ᵣ Q →* A) = #(D →* A) · #(Q →* A)` for a finite group `Q` and a commutative group `A`. -/
 theorem card_monoidHom [Finite Q] :
     Nat.card (D ≀ᵣ Q →* A) = Nat.card (D →* A) * Nat.card (Q →* A) := by
   classical
@@ -157,8 +156,6 @@ theorem IsPGroup.exists_injective_monoidHom_iteratedWreathProduct {p : ℕ} [Fac
     e.injective.comp ((Subgroup.inclusion_injective hQ).comp
       (Θ.rangeRestrict_injective_iff.mpr hΘinj))⟩
 
-/-- `#(IteratedWreathProduct D n →* A) = #(D →* A) ^ n` for a finite group `D` and a commutative
-group `A`. -/
 theorem IteratedWreathProduct.card_monoidHom (D A : Type*) [Group D] [CommGroup A] [Finite D]
     (n : ℕ) :
     Nat.card (IteratedWreathProduct D n →* A) = Nat.card (D →* A) ^ n := by

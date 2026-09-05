@@ -15,7 +15,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 namespace Finset
 
-/-- Factor a constant out of an indicator-weighted sum: `∑ g x · [p x]·c = c · ∑_{p x} g x`. -/
 theorem sum_mul_ite_const {ι R : Type*} [CommSemiring R] (s : Finset ι) (p : ι → Prop)
     [DecidablePred p] (g : ι → R) (c : R) :
     ∑ x ∈ s, g x * (if p x then c else 0) = c * ∑ x ∈ s with p x, g x := by

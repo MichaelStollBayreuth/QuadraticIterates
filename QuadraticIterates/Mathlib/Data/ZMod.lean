@@ -14,13 +14,11 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-/-- If `m ∣ a + b`, then `b ≡ -a mod m`. -/
 lemma ZMod.intCast_eq_neg_intCast_of_dvd_add {a b : ℤ} {m : ℕ} (h : (m : ℤ) ∣ a + b) :
     (b : ZMod m) = -(a : ZMod m) := by
   rw [← Int.cast_neg, intCast_eq_intCast_iff_dvd_sub, ← neg_add']
   exact h.neg_right
 
-/-- If `m` is coprime to `a` and divides `a + b`, then `b` is a unit mod `m`. -/
 lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd_add {a b : ℤ} {m : ℕ}
     (hcop : IsCoprime (m : ℤ) a) (h : (m : ℤ) ∣ a + b) : IsUnit ((b : ZMod m)) := by
   have hu := (coe_int_isUnit_iff_isCoprime a m).mpr hcop

@@ -60,23 +60,19 @@ namespace EvenPoly
 
 variable {g : R[X]}
 
-/-- An even polynomial takes equal values at points with equal squares. -/
 theorem eval_congr (hg : EvenPoly g) {x y : R} (h : x ^ 2 = y ^ 2) : g.eval x = g.eval y := by
   obtain ⟨h', rfl⟩ := hg
   rw [expand_eval, expand_eval, h]
 
-/-- Being an even polynomial is preserved by ring homomorphisms. -/
 theorem map {S : Type*} [CommSemiring S] (hg : EvenPoly g) (φ : R →+* S) : EvenPoly (g.map φ) := by
   obtain ⟨h, rfl⟩ := hg
   exact ⟨h.map φ, by rw [map_expand]⟩
 
 end EvenPoly
 
-/-- `X² + a` is an even polynomial. -/
 lemma evenPoly_X_sq_add_C (a : R) : EvenPoly (X ^ 2 + C a) :=
   ⟨X + C a, by rw [map_add, expand_X, expand_C]⟩
 
-/-- `b·X² + c` is an even polynomial. -/
 lemma evenPoly_C_mul_X_sq_add_C (b c : R) : EvenPoly (C b * X ^ 2 + C c) :=
   ⟨C b * X + C c, by simp⟩
 
@@ -88,7 +84,6 @@ variable {R : Type*} [CommRing R] {g : R[X]}
 
 namespace EvenPoly
 
-/-- An even polynomial defines an even evaluation function. -/
 theorem eval_neg (hg : EvenPoly g) (y : R) : g.eval (-y) = g.eval y := hg.eval_congr (neg_sq y)
 
 /-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
@@ -97,14 +92,12 @@ lemma iterate_eval_neg (hg : EvenPoly g) {k : ℕ} (hk : 1 ≤ k) (y : R) :
   obtain ⟨k', rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
   rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
 
-/-- For even `g`, a divisor of `a² - b²` divides `g(a) - g(b)`. -/
 lemma dvd_eval_sub (hg : EvenPoly g) {N a b : R} (h : N ∣ a ^ 2 - b ^ 2) :
     N ∣ g.eval a - g.eval b := by
   obtain ⟨h', rfl⟩ := hg
   rw [expand_eval, expand_eval]
   exact h.trans (sub_dvd_eval_sub (a ^ 2) (b ^ 2) h')
 
-/-- An even polynomial is fixed by `X ↦ -X`. -/
 lemma comp_neg_X (hg : EvenPoly g) : g.comp (-X) = g := by
   obtain ⟨h, rfl⟩ := hg
   exact expand_two_comp_neg_X h
@@ -148,13 +141,11 @@ variable {R : Type*} [CommSemiring R] (g : R[X])
 
 @[simp] lemma gammaSeq_one (ε : R) : gammaSeq g ε 1 = ε * g.eval 0 := rfl
 
-/-- The recursion `γ_{n+1} = g(γ_n)`, valid for `n ≥ 1`. -/
 lemma gammaSeq_succ (ε : R) {n : ℕ} (hn : 1 ≤ n) :
     gammaSeq g ε (n + 1) = g.eval (gammaSeq g ε n) := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
   rfl
 
-/-- `γ_{m+n}` is the `n`-fold iterate of `z ↦ g(z)` applied to `γ_m` (`m ≥ 1`). -/
 lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
     gammaSeq g ε (m + n) = (g.eval ·)^[n] (gammaSeq g ε m) := by
   induction n with
@@ -162,8 +153,6 @@ lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
   | succ n ih =>
     rw [← add_assoc, gammaSeq_succ g ε (by lia), ih, Function.iterate_succ_apply']
 
-/-- A ring homomorphism intertwines the `γ`-sequences of `g` and its image:
-`φ(γ_n(g, ε)) = γ_n(g.map φ, φ ε)`. -/
 lemma map_gammaSeq {S : Type*} [CommSemiring S] (φ : R →+* S) (ε : R) (n : ℕ) :
     φ (gammaSeq g ε n) = gammaSeq (g.map φ) (φ ε) n := by
   induction n with
@@ -230,7 +219,6 @@ theorem gammaSeq_eq_gammaSeq_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) {
     exact hg.eval_congr (by rw [gammaSeq_one, gammaSeq_one, mul_pow, mul_pow, hε, one_pow])
   | succ k hk ih => rw [gammaSeq_succ g ε (by lia), gammaSeq_succ g 1 (by lia), ih]
 
-/-- For a unit `ε`, `γ_1 = ε · g(0)` is associated to `g(0)`. -/
 lemma gammaSeq_one_associated_eval_zero {ε : R} (hε : IsUnit ε) :
     Associated (gammaSeq g ε 1) (g.eval 0) :=
   associated_unit_mul_left _ _ hε
@@ -282,14 +270,13 @@ lemma gammaSeq_period {ε : R} {m n₀ : ℕ} (hn₀ : 1 ≤ n₀) {q : R}
     rw [Nat.add_right_comm, gammaSeq_succ g ε (by lia), gammaSeq_succ g ε (by lia)]
     exact ih.trans (sub_dvd_eval_sub _ _ g)
 
-/-- For even `g`, `γ_n ^ 2` divides `γ_{n+1} - g(0)` (`n ≥ 1`). -/
 lemma sq_dvd_gammaSeq_succ_sub (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ n) :
     gammaSeq g ε n ^ 2 ∣ gammaSeq g ε (n + 1) - g.eval 0 := by
   rw [gammaSeq_succ g ε hn]
   exact hg.dvd_eval_sub (by simp)
 
-/-- Sharpening of `sq_dvd_gammaSeq_succ_sub`: a prime power `p^E` with `E ≥ 1` dividing `γ_n`
-already forces `p^{E+1} ∣ γ_{n+1} - g(0)` (`n ≥ 1`). -/
+/-- `sq_dvd_gammaSeq_succ_sub` in the form the valuation argument consumes: `p ^ E ∣ γ_n` with
+`E ≥ 1` gives `p ^ (E + 1) ∣ γ_{n+1} - g(0)`, since `2E ≥ E + 1` (for any `p`, prime or not). -/
 lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 1 ≤ n) {p : R}
     {E : ℕ} (hE : 1 ≤ E) (hpE : p ^ E ∣ gammaSeq g ε n) :
     p ^ (E + 1) ∣ gammaSeq g ε (n + 1) - g.eval 0 :=
@@ -406,7 +393,6 @@ section
 variable {R : Type*} [CommRing R] [UniqueFactorizationMonoid R]
     [NormalizationMonoid R] [DecidableEq R] {g : R[X]}
 
-/-- If `p ∣ g(0)`, the valuation `v_p(γ_n)` is the constant `v_p(g(0))`. -/
 lemma factorization_gammaSeq_of_dvd_eval_zero (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
     (hne : ∀ k ≥ 1, gammaSeq g ε k ≠ 0) {p : R} (hp : Prime p) (hpn : normalize p = p)
     (hpg : p ∣ g.eval 0) {n : ℕ} (hn : 1 ≤ n) :
@@ -464,8 +450,6 @@ section
 
 variable (g : ℤ[X])
 
-/-- The image in a ring `S` of the `ε`-sequence over `ℤ` is the `ε`-sequence of the image of `g`:
-`(γ_n : S) = γ_n(g.map (· : ℤ → S), ε)`. -/
 lemma intCast_gammaSeq (ε : ℤ) (S : Type*) [CommRing S] (i : ℕ) : ((gammaSeq g ε i : ℤ) : S)
     = gammaSeq (g.map (Int.castRingHom S)) (ε : S) i :=
   map_gammaSeq g (Int.castRingHom S) ε i
@@ -543,7 +527,6 @@ lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε
       (by rw [eval_zero_map, eq_intCast, ← Int.cast_pow, h0, Int.cast_one])
       (by rwa [eval_one_map]) n hn, eval_one_map]
 
-/-- Over `ℤ`, if `ε² = g(0)² = 1` and `γ_1 > 0`, then `γ_1 = 1`. -/
 lemma gammaSeq_one_eq_one_of_pos {ε : ℤ} (hε : ε ^ 2 = 1) (h0 : g.eval 0 ^ 2 = 1)
     (hpos : 0 < gammaSeq g ε 1) : gammaSeq g ε 1 = 1 := by
   rw [gammaSeq_one] at hpos ⊢

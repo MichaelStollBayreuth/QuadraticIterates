@@ -69,7 +69,6 @@ theorem abs_le_abs_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : 
     exact cSeq_succ a hk ▸
       (abs_le_sq_add_of_abs_le_abs (ne_neg_one_of_not_isSquare_neg ha) ih).trans (le_abs_self _)
 
-/-- `c_n ≥ |a|` for all `n ≥ 2`. -/
 theorem abs_le_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : |a| ≤ cSeq a n := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   rw [cSeq_succ a (by lia)]

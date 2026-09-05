@@ -16,8 +16,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; an upstreaming candidate for Mathl
 
 @[expose] public section
 
-/-- Two finite families with the same index type and the same span are simultaneously linearly
-independent or not. -/
 theorem linearIndependent_iff_of_span_range_eq {R M : Type*} [Semiring R] [OrzechProperty R]
     [Nontrivial R] [AddCommMonoid M] [Module R M] {ι : Type*} [Finite ι] {v w : ι → M}
     (h : Submodule.span R (Set.range v) = Submodule.span R (Set.range w)) :

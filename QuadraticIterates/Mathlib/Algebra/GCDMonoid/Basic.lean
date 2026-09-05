@@ -22,7 +22,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-/-- Normalizing before applying a monoid homomorphism does not change the normalized image. -/
 theorem normalize_map_normalize {α : Type*} [MonoidWithZero α] [NormalizationMonoid α]
     [IsLeftCancelMulZero α] {F : Type*} [FunLike F α α] [MonoidHomClass F α α] (f : F) (x : α) :
     normalize (f (normalize x)) = normalize (f x) :=

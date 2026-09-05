@@ -44,7 +44,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-/-- An `L`-automorphism fixes or negates any square root of an element of `L`. -/
 theorem AlgEquiv.apply_eq_or_eq_neg_of_sq_eq_algebraMap {L : Type*} [Field L] {E : Type*} [Field E]
     [Algebra L E] (φ : E ≃ₐ[L] E) {y : E} {q : L} (hy : y ^ 2 = algebraMap L E q) :
     φ y = y ∨ φ y = -y :=
@@ -54,12 +53,10 @@ namespace IntermediateField
 
 variable {L : Type*} [Field L] {E : Type*} [Field E] [Algebra L E]
 
-/-- Adjoining `insert x S` to `L` is adjoining `x` to `L(S)`, viewed over `L`. -/
 theorem adjoin_insert (S : Set E) (x : E) :
     adjoin L (insert x S) = ((adjoin L S)⟮x⟯).restrictScalars L := by
   rw [adjoin_adjoin_left, Set.union_singleton]
 
-/-- The relative degree of `L(S, x)` over `L(S)` is the degree of `x` over `L(S)`. -/
 theorem relfinrank_adjoin_insert (S : Set E) (x : E) :
     (adjoin L S).relfinrank (adjoin L (insert x S)) =
       Module.finrank (adjoin L S) (adjoin L S)⟮x⟯ := by
@@ -75,23 +72,18 @@ theorem finrank_adjoin_insert (S : Set E) (x : E) :
   rw [← relfinrank_adjoin_insert,
     finrank_bot_mul_relfinrank (adjoin.mono L _ _ (Set.subset_insert x S))]
 
-/-- Adjoining a single square root `x` (with `x² ∈ L`) to a field `L` gives degree at most `2`. -/
 theorem finrank_adjoin_sqrt_le {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c) :
     Module.finrank L L⟮x⟯ ≤ 2 := by
   have hmonic := Polynomial.monic_X_pow_sub_C c two_ne_zero
   rw [adjoin.finrank ⟨_, hmonic, by simp [hc]⟩]
   simpa using Polynomial.natDegree_le_natDegree (minpoly.min L x hmonic (by simp [hc]))
 
-/-- Adjoining a square root `x` of an element of `L` to `L(t)` gives relative degree at most
-`2`. -/
 theorem relfinrank_adjoin_insert_sqrt_le {t : Set E} {x : E} {c : L}
     (hc : x ^ 2 = algebraMap L E c) :
     (adjoin L t).relfinrank (adjoin L (insert x t)) ≤ 2 :=
   (relfinrank_adjoin_insert t x).trans_le <|
     finrank_adjoin_sqrt_le (hc.trans (IsScalarTower.algebraMap_apply L (adjoin L t) E c))
 
-/-- Adjoining a finite set of square roots (each squaring into `L`) gives degree at most
-`2 ^ |s|`. -/
 theorem finrank_adjoin_finset_sqrt_le {s : Finset E}
     (hs : ∀ x ∈ s, ∃ c : L, x ^ 2 = algebraMap L E c) :
     Module.finrank L (adjoin L (s : Set E)) ≤ 2 ^ s.card := by
@@ -106,8 +98,7 @@ theorem finrank_adjoin_finset_sqrt_le {s : Finset E}
     exact Nat.mul_le_mul (ih fun y hy ↦ hs y (Finset.mem_insert_of_mem hy))
       (relfinrank_adjoin_insert_sqrt_le hc)
 
-/-- `finrank_adjoin_finset_sqrt_le` for a finite set: adjoining finitely many square roots (each
-squaring into `L`) gives degree at most `2 ^ (number of roots)`. -/
+/-- The `Set.Finite` form of `finrank_adjoin_finset_sqrt_le`. -/
 theorem finrank_adjoin_sqrt_le_two_pow_ncard {t : Set E} (ht : t.Finite)
     (hs : ∀ x ∈ t, ∃ c : L, x ^ 2 = algebraMap L E c) :
     Module.finrank L (adjoin L t) ≤ 2 ^ t.ncard := by
@@ -115,8 +106,6 @@ theorem finrank_adjoin_sqrt_le_two_pow_ncard {t : Set E} (ht : t.Finite)
   rw [Set.ncard_coe_finset]
   exact finrank_adjoin_finset_sqrt_le fun x hx ↦ hs x (Finset.mem_coe.mpr hx)
 
-/-- Adjoining a square root of `c` gives degree `1` if `c` is already a square in `L`, and `2`
-otherwise. -/
 theorem finrank_adjoin_sqrt_eq {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c)
     [Decidable (IsSquare c)] :
     Module.finrank L L⟮x⟯ = if IsSquare c then 1 else 2 := by
@@ -134,7 +123,6 @@ theorem finrank_adjoin_sqrt_eq {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c)
   have : 0 < Module.finrank L L⟮x⟯ := Module.finrank_pos
   grind [finrank_adjoin_sqrt_le hc]
 
-/-- Adjoining a square root `w` of `c` doubles the degree when `c` is not a square in `L(S)`. -/
 theorem finrank_adjoin_insert_of_not_isSquare {S : Set E} {w : E} {c : L}
     (hw : w ^ 2 = algebraMap L E c) (h : ¬ IsSquare (algebraMap L (adjoin L S) c)) :
     Module.finrank L (adjoin L (insert w S)) = 2 * Module.finrank L (adjoin L S) := by
@@ -143,7 +131,6 @@ theorem finrank_adjoin_insert_of_not_isSquare {S : Set E} {w : E} {c : L}
     finrank_adjoin_sqrt_eq (hw.trans (IsScalarTower.algebraMap_apply L (adjoin L S) E c)),
     if_neg h, mul_comm]
 
-/-- If `p + q·x = 0` with `p, q ∈ L` and `q ≠ 0`, then `x` lies in the base field. -/
 theorem mem_bot_of_add_mul_eq_zero {x : E} {p q : L} (hq : q ≠ 0)
     (h : algebraMap L E p + algebraMap L E q * x = 0) : x ∈ (⊥ : IntermediateField L E) := by
   refine mem_bot.mpr ⟨-p / q, ?_⟩
@@ -151,8 +138,6 @@ theorem mem_bot_of_add_mul_eq_zero {x : E} {p q : L} (hq : q ≠ 0)
   linear_combination -h
 
 open Polynomial in
-/-- An element of the simple extension `L(y)` with `y² ∈ L` is exactly an `L`-linear combination
-`u + v · y`. -/
 theorem mem_adjoin_sqrt_iff {y : E} {c : L} (hy : y ^ 2 = algebraMap L E c) {z : E} :
     z ∈ L⟮y⟯ ↔ ∃ u v : L, z = algebraMap L E u + algebraMap L E v * y := by
   classical
@@ -194,24 +179,18 @@ theorem exists_mem_adjoin_simple_sq_eq_algebraMap_iff [NeZero (2 : L)] {x : E} {
     congr 1
     grind
 
-/-- For an intermediate field `K` of `E/L` and `e : L`, the image of `e` in `K` is a square
-iff some element of `K` squares to the image of `e` in `E`. -/
 theorem isSquare_algebraMap_iff (K : IntermediateField L E) (e : L) :
     IsSquare (algebraMap L ↥K e) ↔ ∃ z ∈ K, z ^ 2 = algebraMap L E e := by
   refine ⟨fun ⟨w, hw⟩ ↦ ⟨w, w.2, ?_⟩, fun ⟨z, hz, hz2⟩ ↦ ⟨⟨z, hz⟩, Subtype.ext ?_⟩⟩
   · simpa [sq] using congrArg Subtype.val hw.symm
   · simpa [sq] using hz2.symm
 
-/-- If `w` is a square root of `algebraMap e` lying outside an intermediate field `K`, then `e`
-is not a square in `K`. -/
 theorem not_isSquare_algebraMap_of_sqrt_notMem {K : IntermediateField L E} {e : L} {w : E}
     (hw : w ^ 2 = algebraMap L E e) (hwK : w ∉ K) : ¬ IsSquare (algebraMap L ↥K e) := fun h ↦ by
   obtain ⟨z, hzK, hz⟩ := (isSquare_algebraMap_iff K e).mp h
   rcases sq_eq_sq_iff_eq_or_eq_neg.mp (hw.trans hz.symm) with rfl | rfl
   exacts [hwK hzK, hwK (neg_mem hzK)]
 
-/-- An element of the base field is a square in the bottom intermediate field iff it is a square
-in the base field. -/
 theorem isSquare_algebraMap_bot_iff (x : L) :
     IsSquare (algebraMap L ↥(⊥ : IntermediateField L E) x) ↔ IsSquare x := by
   rw [← botEquiv_symm]
@@ -276,8 +255,6 @@ theorem exists_mem_adjoin_sq_eq_algebraMap_iff [NeZero (2 : L)] {ι : Type*} {s 
         refine ⟨insert j t, Finset.insert_subset_insert j ht, ?_⟩
         rwa [Finset.prod_insert fun h ↦ hjs (ht h), ← mul_assoc]
 
-/-- The `L`-automorphism group of a field generated by square roots of elements of `L` has
-exponent `2`. -/
 theorem algEquiv_adjoin_sq_eq_one {S : Set E} (hS : ∀ y ∈ S, ∃ q : L, y ^ 2 = algebraMap L E q)
     (τ : adjoin L S ≃ₐ[L] adjoin L S) : τ ^ 2 = 1 := by
   refine AlgEquiv.coe_toAlgHom_injective (adjoin_algHom_ext L fun x hx ↦ ?_)
@@ -286,8 +263,6 @@ theorem algEquiv_adjoin_sq_eq_one {S : Set E} (hS : ∀ y ∈ S, ∃ q : L, y ^ 
     Subtype.ext (by simpa using hq)
   rcases τ.apply_eq_or_eq_neg_of_sq_eq_algebraMap hgq with h | h <;> simp [sq, h]
 
-/-- A subfield of a Galois extension `E/L` generated by square roots of elements of `L` is Galois
-over `L`. -/
 theorem isGalois_adjoin_of_sq_eq_algebraMap [IsGalois L E] {S : Set E}
     (hS : ∀ y ∈ S, ∃ q : L, y ^ 2 = algebraMap L E q) : IsGalois L (adjoin L S) := by
   have : Normal L (adjoin L S) := normal_iff_forall_map_le'.mpr fun σ ↦ by
@@ -382,7 +357,6 @@ theorem sqClass_prod {ι : Type*} {s : Finset ι} {r : ι → L} (hr : ∀ i ∈
         (Finset.prod_ne_zero_iff.mpr fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)),
       ih fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)]
 
-/-- `sqClass` sends a `zpow` to a `ZMod 2`-scalar multiple (the class is written additively). -/
 theorem sqClass_zpow (x : L) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
   rcases eq_or_ne x 0 with rfl | hx
   · rcases eq_or_ne k 0 with rfl | hk
@@ -393,12 +367,10 @@ theorem sqClass_zpow (x : L) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
       Units.ext (by push_cast; simp),
     QuotientGroup.mk_zpow, ofMul_zpow]
 
-/-- A product over `s` is a square iff the classes in `Lˣ/(Lˣ)²` sum to zero. -/
 theorem isSquare_prod_iff_sum_sqClass_eq_zero {ι : Type*} {s : Finset ι} {r : ι → L}
     (hr : ∀ i ∈ s, r i ≠ 0) : IsSquare (∏ i ∈ s, r i) ↔ ∑ i ∈ s, sqClass (r i) = 0 := by
   rw [← sqClass_prod hr, sqClass_eq_zero_iff _]
 
-/-- `sqClass` linearises a product of `zpow`s: `[∏ rᵢ ^ eᵢ] = ∑ eᵢ • [rᵢ]`. -/
 theorem sqClass_prod_zpow {ι : Type*} {s : Finset ι} {r : ι → L} (e : ι → ℤ)
     (hr : ∀ i ∈ s, r i ≠ 0) :
     sqClass (∏ i ∈ s, r i ^ e i) = ∑ i ∈ s, e i • sqClass (r i) :=
@@ -412,8 +384,6 @@ noncomputable def rootRelations {ι : Type*} [Fintype ι] (r : ι → L) :
     Submodule (ZMod 2) (ι → ZMod 2) :=
   LinearMap.ker (Fintype.linearCombination (ZMod 2) fun i ↦ sqClass (r i))
 
-/-- `ε` is a root relation iff the product of the `r i` over `{i : ε i = 1}` is a square in
-`L`. -/
 theorem mem_rootRelations {ι : Type*} [Fintype ι] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     {ε : ι → ZMod 2} :
     ε ∈ rootRelations r ↔ IsSquare (∏ i with ε i = 1, r i) := by
@@ -421,13 +391,10 @@ theorem mem_rootRelations {ι : Type*} [Fintype ι] {r : ι → L} (hr : ∀ i, 
     Finset.sum_zmod_two_smul_eq_sum_filter (fun i ↦ sqClass (r i)) ε,
     ← isSquare_prod_iff_sum_sqClass_eq_zero (fun i _ ↦ hr i)]
 
-/-- There are no nontrivial root relations iff the classes `[r i]` are `𝔽₂`-linearly
-independent. -/
 theorem rootRelations_eq_bot_iff {ι : Type*} [Fintype ι] (r : ι → L) :
     rootRelations r = ⊥ ↔ LinearIndependent (ZMod 2) fun i ↦ sqClass (r i) :=
   LinearMap.ker_eq_bot.trans linearIndependent_iff_injective_fintypeLinearCombination.symm
 
-/-- The relation space of an `ι`-indexed family has `𝔽₂`-dimension at most `|ι|`. -/
 theorem finrank_rootRelations_le {ι : Type*} [Fintype ι] (r : ι → L) :
     Module.finrank (ZMod 2) (rootRelations r) ≤ Fintype.card ι := by
   simpa [Module.finrank_pi] using Submodule.finrank_le (rootRelations r)
@@ -445,8 +412,6 @@ noncomputable def multiquadraticRelations (s : Finset ι) (r : ι → L) :
   Submodule.map (Function.ExtendByZero.linearMap (ZMod 2) (Subtype.val : ↥s → ι))
     (rootRelations fun i : ↥s ↦ r i.1)
 
-/-- `ε ∈ multiquadraticRelations s r` iff `ε` is supported on `s` and
-`∏_{i ∈ s, ε i = 1} r i` is a square in `L`. -/
 theorem mem_multiquadraticRelations {s : Finset ι} {r : ι → L} (hr : ∀ i ∈ s, r i ≠ 0)
     {ε : ι → ZMod 2} :
     ε ∈ multiquadraticRelations s r
@@ -468,7 +433,6 @@ theorem mem_multiquadraticRelations {s : Finset ι} {r : ι → L} (hr : ∀ i �
     · simpa using Subtype.val_injective.extend_apply (fun y : ↥s ↦ ε y.1) 0 ⟨i, hi⟩
     · rw [hoff _ hi, hsupp i hi]
 
-/-- The indicator vector of `t ⊆ s` is a relation iff `∏_{i ∈ t} r i` is a square. -/
 theorem indicator_mem_multiquadraticRelations_iff {s t : Finset ι} (hts : t ⊆ s) {r : ι → L}
     (hr : ∀ i ∈ s, r i ≠ 0) :
     (t : Set ι).indicator 1 ∈ multiquadraticRelations s r ↔ IsSquare (∏ i ∈ t, r i) := by
@@ -485,15 +449,12 @@ open IntermediateField
 
 variable {L : Type*} [Field L] [DecidableEq L] {ι : Type*}
 
-/-- `multiquadraticRelations s r` has the same `𝔽₂`-dimension as the relation space of the
-restricted family `r|_s`. -/
 theorem finrank_multiquadraticRelations (s : Finset ι) (r : ι → L) :
     Module.finrank (ZMod 2) (multiquadraticRelations s r)
       = Module.finrank (ZMod 2) (rootRelations fun i : ↥s ↦ r i.1) :=
   (Submodule.equivMapOfInjective _
     (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _).symm.finrank_eq
 
-/-- `multiquadraticRelations s r` has `𝔽₂`-dimension at most `|s|`. -/
 theorem finrank_multiquadraticRelations_le (s : Finset ι) (r : ι → L) :
     Module.finrank (ZMod 2) (multiquadraticRelations s r) ≤ s.card := by
   rw [finrank_multiquadraticRelations, ← Fintype.card_coe s]
@@ -503,7 +464,6 @@ instance (s : Finset ι) (r : ι → L) : Module.Finite (ZMod 2) (multiquadratic
   Module.Finite.equiv (Submodule.equivMapOfInjective _
     (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _)
 
-/-- For the full family, the relation submodule is `rootRelations`. -/
 theorem multiquadraticRelations_univ [Fintype ι] {r : ι → L} (hr : ∀ i, r i ≠ 0) :
     multiquadraticRelations Finset.univ r = rootRelations r := by
   ext ε
@@ -526,8 +486,6 @@ theorem multiquadraticRelations_insert_inf_ker_proj [DecidableEq ι] {s : Finset
 
 variable [NeZero (2 : L)] {E : Type*} [Field E] [Algebra L E]
 
-/-- Some relation of `V (insert j s)` has `j`-coordinate `1` iff `r j` is a square in
-`L(x i : i ∈ s)`. -/
 theorem exists_mem_multiquadraticRelations_insert_iff [DecidableEq ι] {s : Finset ι} {j : ι}
     (hjs : j ∉ s) {x : ι → E} {r : ι → L} (hx : ∀ i ∈ insert j s, x i ^ 2 = algebraMap L E (r i))
     (hr : ∀ i ∈ insert j s, r i ≠ 0) :
@@ -630,7 +588,6 @@ theorem one_mem_rootRelations_of_ne_bot {G : Type*} [Group G] (hG : IsPGroup 2 G
   hG.one_mem_of_comp_smul_mem_of_ne_bot
     (fun g _ hv ↦ comp_smul_mem_rootRelations hr hcompat g hv) hne
 
-/-- The all-ones vector is a relation iff `∏ i, r i` is a square in `L`. -/
 theorem one_mem_rootRelations_iff {ι : Type*} [Fintype ι] {L : Type*} [Field L] [DecidableEq L]
     {r : ι → L} (hr : ∀ i, r i ≠ 0) :
     1 ∈ rootRelations r ↔ IsSquare (∏ i, r i) := by

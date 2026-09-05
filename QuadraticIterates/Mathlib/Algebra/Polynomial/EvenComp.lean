@@ -23,8 +23,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 namespace Polynomial
 
-/-- `expand R p` inverts `contract p` on the polynomials whose coefficients vanish away from the
-multiples of `p`. -/
 theorem expand_contract_of_forall_coeff_eq_zero {R : Type*} [CommSemiring R] {p : ℕ} (hp : p ≠ 0)
     {f : R[X]} (hf : ∀ n, ¬ p ∣ n → f.coeff n = 0) : expand R p (contract p f) = f := by
   ext n
@@ -35,17 +33,13 @@ theorem expand_contract_of_forall_coeff_eq_zero {R : Type*} [CommSemiring R] {p 
 
 variable {R : Type*} [CommRing R]
 
-/-- `X² + c` is fixed by `X ↦ -X`. -/
 @[simp] lemma X_sq_add_C_comp_neg_X (c : R) : (X ^ 2 + C c).comp (-X) = X ^ 2 + C c := by
   simp only [add_comp, pow_comp, X_comp, C_comp]
   ring
 
-/-- `X ↦ -X` preserves the degree. -/
 @[simp] theorem natDegree_comp_neg_X (p : R[X]) : (p.comp (-X)).natDegree = p.natDegree :=
   natDegree_eq_of_degree_eq degree_comp_neg_X
 
-/-- Over a domain, a polynomial whose reflection is merely *associated* to it is fixed by
-`X ↦ -X` up to a sign. -/
 theorem comp_neg_X_eq_or_eq_neg_of_associated [IsDomain R] {p : R[X]} (hp : p ≠ 0)
     (h : Associated (p.comp (-X)) p) : p.comp (-X) = p ∨ p.comp (-X) = -p := by
   obtain ⟨u, hu⟩ := h
@@ -60,7 +54,6 @@ theorem comp_neg_X_eq_or_eq_neg_of_associated [IsDomain R] {p : R[X]} (hp : p �
   · exact .inl (by simpa using hu)
   · exact .inr (neg_eq_iff_eq_neg.mp (by simpa using hu))
 
-/-- A polynomial in `X²` is fixed by `X ↦ -X`. -/
 @[simp] theorem expand_two_comp_neg_X (h : R[X]) : (expand R 2 h).comp (-X) = expand R 2 h := by
   simp [expand_eq_comp_X_pow, comp_assoc]
 

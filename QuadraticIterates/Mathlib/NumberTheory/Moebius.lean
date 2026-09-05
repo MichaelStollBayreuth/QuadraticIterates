@@ -26,13 +26,13 @@ theorem sum_divisors_moebius (n : ℕ) :
     ∑ d ∈ n.divisors, μ d = if n = 1 then 1 else 0 := by
   simpa [moebius_mul_coe_zeta, one_apply] using (coe_mul_zeta_apply (f := μ) (x := n)).symm
 
-/-- `∑_{ed = n} μ e = 0` for `n ≥ 2`. -/
 theorem sum_divisorsAntidiagonal_moebius_eq_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal, μ x.1 = 0 := by
   rw [Nat.sum_divisorsAntidiagonal (fun i _ ↦ μ i), sum_divisors_moebius, if_neg (by lia)]
 
-/-- Rewrites the antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` as a product over the divisors
-of the radical `n' = rad n`: `∏_{t ∣ n'} F (k t) ^ μ (n'/t)`, where `k = n / n'`. -/
+/-- The antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` is a product over the divisors of the
+radical `n' = rad n`, namely `∏_{t ∣ n'} F (k t) ^ μ (n'/t)` with `k = n / n'`, because `μ e = 0`
+unless `e ∣ n'`. -/
 theorem prod_pow_moebius_eq_prod_divisors_radical {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ)
     (hn : 1 ≤ n) (hn' : n' = UniqueFactorizationMonoid.radical n) (hk : n = k * n') (F : ℕ → G) :
     ∏ x ∈ n.divisorsAntidiagonal, F x.2 ^ (μ x.1)
@@ -87,8 +87,6 @@ theorem prod_pow_moebius_eq_div {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ
   exact congrArg₂ (· * ·) (Finset.prod_congr rfl fun t ht ↦ by rw [hSp t ht, zpow_one])
     (Finset.prod_congr rfl fun t ht ↦ by rw [hSm t ht, zpow_neg_one])
 
-/-- The Möbius sum over the antidiagonal pairs `(e, d)` of `n` with `m ∣ d` is `1` if `n = m` and
-`0` otherwise (for `m, n ≥ 1`). -/
 theorem sum_divisorsAntidiagonal_filter_dvd_moebius {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal with m ∣ x.2, μ x.1 = if n = m then 1 else 0 := by
   by_cases hmn : m ∣ n
