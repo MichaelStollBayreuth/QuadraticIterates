@@ -65,6 +65,19 @@ theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
 
+/-- A square is `0` or `1` modulo `4`. -/
+theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :
+    m % 4 = 0 ∨ m % 4 = 1 := by
+  obtain ⟨r, rfl⟩ := h
+  have h : (r : ZMod 4) * r = 0 ∨ (r : ZMod 4) * r = 1 := by
+    generalize (r : ZMod 4) = x
+    decide +revert
+  rcases h with h | h
+  · have := (ZMod.intCast_eq_intCast_iff' (r * r) 0 4).mp (by push_cast; exact h)
+    omega
+  · have := (ZMod.intCast_eq_intCast_iff' (r * r) 1 4).mp (by push_cast; exact h)
+    omega
+
 theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
     (h2 : m < (e + 1) ^ 2) :
     ¬IsSquare m := by

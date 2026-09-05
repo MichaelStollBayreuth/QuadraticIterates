@@ -24,3 +24,6 @@ theorem Nat.two_le_div_radical_of_not_squarefree {n : ℕ} (hn : n ≠ 0) (h : �
   refine h ?_
   rw [← Nat.div_mul_cancel (radical_dvd_self (a := n)), h1, one_mul]
   exact squarefree_radical
+
+theorem Nat.radical_eq_self_of_squarefree {n : ℕ} (hsf : Squarefree n) : radical n = n :=
+  Nat.dvd_antisymm radical_dvd_self (hsf.isRadical.dvd_radical hsf.ne_zero)
