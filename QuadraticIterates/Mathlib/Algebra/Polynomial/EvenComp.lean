@@ -140,8 +140,9 @@ theorem Monic.exists_mul_comp_neg_X_eq_of_not_irreducible {p : K[X]} (hp : p.Mon
     exact h1.symm.trans (Associated.mul_left _ (normalize_associated _))
   have hpw := hg.eq_C_neg_one_pow_mul_of_associated hp hassoc
   refine ⟨N.prod, ?_, ?_⟩
-  · rw [hpw, natDegree_C_mul (isUnit_one.neg.pow _).ne_zero, Polynomial.natDegree_mul hg.ne_zero
-      (comp_neg_X_eq_zero_iff.not.mpr hg.ne_zero), natDegree_comp_neg_X, two_mul]
+  · rw [hpw, natDegree_C_mul (isUnit_one.neg.pow _).ne_zero,
+      Polynomial.natDegree_mul hg.ne_zero (comp_neg_X_eq_zero_iff.not.mpr hg.ne_zero),
+      natDegree_comp_neg_X, two_mul]
   · simp [hpw, ← mul_assoc, ← mul_pow]
 
 /-- For irreducible `F`, every even divisor (`d(-X) = d`) of `F ∘ (X² + c)` is trivial — a unit

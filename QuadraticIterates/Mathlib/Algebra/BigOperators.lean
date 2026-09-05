@@ -27,6 +27,6 @@ theorem sum_zmod_two_smul_eq_sum_filter {ι M : Type*} [AddCommMonoid M] [Module
     ∑ i ∈ s, g i • m i = ∑ i ∈ s with g i = 1, m i := by
   rw [sum_filter]
   refine sum_congr rfl fun i _ ↦ ?_
-  rcases (show g i = 0 ∨ g i = 1 by generalize g i = z; revert z; decide) with h | h <;> simp [h]
+  rcases (show g i = 0 ∨ g i = 1 by generalize g i = z; decide +revert) with h | h <;> simp [h]
 
 end Finset

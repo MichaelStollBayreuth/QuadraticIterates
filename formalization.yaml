@@ -114,7 +114,7 @@ fidelity:
 
 # review status
 review:
-  status: ""                   # TODO: suggest "author-verified" (author = source author)
+  status: "author-verified"
   reviewers: ["Michael Stoll"]
   notes: >
     The formalization was directed and reviewed round-by-round by the author of the source

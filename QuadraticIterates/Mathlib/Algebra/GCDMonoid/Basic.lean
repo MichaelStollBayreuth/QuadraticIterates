@@ -30,11 +30,13 @@ theorem normalize_map_normalize {α : Type*} [MonoidWithZero α] [NormalizationM
 
 variable {R : Type*} [CommRing R] [IsDomain R] [NormalizedGCDMonoid R]
 
+/- TODO:
+add lemmas `gcd a (b + a * c) = gcd a b` and variants at the correct level of generality. -/
 private theorem gcd_seq_add {a : ℕ → R} (hdvd : ∀ m j, a m ∣ a (m + j) - a j) (m n : ℕ) :
     gcd (a m) (a (n + m)) = gcd (a m) (a n) := by
   obtain ⟨t, ht⟩ := hdvd m n
-  have h1 : a (n + m) = a n + a m * t := by rw [add_comm n m]; linear_combination ht
-  rw [h1]
+  rw [add_comm, sub_eq_iff_eq_add'] at ht
+  rw [ht]
   refine dvd_antisymm_of_normalize_eq (normalize_gcd ..) (normalize_gcd ..)
     (dvd_gcd (gcd_dvd_left ..) ?_) (dvd_gcd (gcd_dvd_left ..) ?_)
   · simpa using dvd_sub (gcd_dvd_right (a m) (a n + a m * t))
