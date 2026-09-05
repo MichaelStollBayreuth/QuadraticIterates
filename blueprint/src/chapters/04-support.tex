@@ -216,14 +216,19 @@ them.
 
 \begin{lemma}[Möbius sums]
   \label{lem:moebiussign}
-  \lean{Squarefree.exists_disjoint_union_eq_divisors_moebius_div, ArithmeticFunction.prod_pow_moebius_eq_div, ArithmeticFunction.sum_divisorsAntidiagonal_moebius_eq_zero,
+  \lean{Squarefree.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one,
+    Squarefree.filter_moebius_div_eq_one_union_filter_eq_neg_one,
+    ArithmeticFunction.prod_pow_moebius_eq_div, ArithmeticFunction.sum_divisors_moebius_div_eq_zero,
+    ArithmeticFunction.sum_divisorsAntidiagonal_moebius_eq_zero,
     ArithmeticFunction.prod_pow_moebius_eq_prod_divisors_radical, ArithmeticFunction.sum_divisorsAntidiagonal_filter_dvd_moebius, ArithmeticFunction.sum_mul_moebius_boole_nonneg, ArithmeticFunction.sum_mul_moebius_nonneg,
     ArithmeticFunction.sum_divisors_moebius, moebiusFactorK_mul_const, abs_moebiusFactorK,
     Finset.prod_zpow_eq_zpow_sum₀}
   \leanok
-  For squarefree $n' > 1$, the divisors of $n'$ split into two sets of equal cardinality
-  according to the sign of $\mu$, so a Möbius product $\prod_{d \dvd n} x_d^{\mu(n/d)}$ is a
-  quotient of two products with the same number of factors; and
+  For squarefree $n'$, the divisors $t$ of $n'$ split into the two sets $S_\pm$ according to
+  the sign of $\mu(n'/t)$, and $\#S_+ = \#S_-$ on every set of divisors on which
+  $\sum \mu(n'/t)$ vanishes (all divisors, if $n' > 1$); so a Möbius product
+  $\prod_{d \dvd n} x_d^{\mu(n/d)}$ is a quotient of two products with the same number of
+  factors; and
   $\sum_{d \dvd n} \mu(n/d) = 0$ for $n \ge 2$, so that scaling the sequence $(x_d)$ by a
   nonzero constant does not change its Möbius products of index $n \ge 2$ (and forming Möbius
   products commutes with taking absolute values).

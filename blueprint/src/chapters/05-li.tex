@@ -1,5 +1,6 @@
 \chapter{\texorpdfstring{Further values of $a$ with $\Om_n \cong \Ct{n}$: the results of Li}{Further
   values of a with the full wreath power: the results of Li}}
+\label{chap:li}
 
 \emph{This chapter is a plan, not a record.} Nothing in it is formalized yet; it isolates the
 results of Li \cite{li2020, li2021} that extend Theorem~\ref{thm:section3}, reduces them to the
@@ -131,6 +132,8 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[Balanced classes]
   \label{lem:li-classes}
+  \lean{Finset.prod_eq_neg_prod_of_forall_card_filter_eq, Finset.card_filter_eq_one_eq_card_filter_eq_neg_one_of_sum_eq_zero}
+  \leanok
   Let $R$ be a commutative ring, $S = S_+ \sqcup S_-$ a finite set of natural numbers with
   $1 \in S$, $x, w \colon \NN \to R$ and $\kappa \colon \NN \to I$ a ``class'' function such that
   $x_t = w_{\kappa(t)}$ for $t \in S \setminus \{1\}$ and $x_1 = -w_{\kappa(1)}$. If every class
@@ -139,6 +142,7 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
   \[ \prod_{t \in S_+} x_t = -\prod_{t \in S_-} x_t. \]
 \end{lemma}
 \begin{proof}
+  \leanok
   Group each product by classes (\lname{Finset.prod\_fiberwise}): on the class $i$ the product
   over $S_\pm$ is $w_i^{\#\{t \in S_\pm : \kappa(t) = i\}}$, times $-1$ if $1$ lies in the class
   and in $S_\pm$. The exponents agree by balance, and exactly one of $S_+$, $S_-$ contains $1$.
@@ -151,6 +155,8 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[Parity-balanced sign partition]
   \label{lem:li-parity}
+  \lean{ArithmeticFunction.sum_divisors_filter_mod_two_moebius_div, ArithmeticFunction.sum_divisors_filter_dvd_moebius_div}
+  \leanok
   \uses{lem:moebiussign}
   Let $n' > 2$ be squarefree. Then
   \[ \sum_{t \dvd n',\ t \text{ odd}} \mu(n'/t) = 0
@@ -159,6 +165,7 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
   $\mu(n'/t)$ that is balanced on the odd and on the even divisors separately.
 \end{lemma}
 \begin{proof}
+  \leanok
   If $n'$ is odd, there are no even divisors and the odd sum is $\sum_{t \dvd n'} \mu(n'/t) = 0$
   (Lemma~\ref{lem:moebiussign}). If $n' = 2m'$ with $m' > 1$ odd, then $t \mapsto 2t$ is a bijection
   from the divisors of $m'$ onto the even divisors of $n'$ with $\mu(n'/2t) = \mu(m'/t)$, and the
@@ -174,6 +181,8 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[$\beta_n$ from a numerator/denominator congruence]
   \label{lem:li-PQ}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_prod_eq_neg_prod}
+  \leanok
   \uses{def:gammaseq, lem:moebiussign, lem:zmodsquare}
   Let $n \ge 2$, $n' := \rad(n)$, $k := n/n'$, let $S_+ \sqcup S_-$ be a partition of the divisors
   of $n'$ by the sign of $\mu(n'/t)$, and put $P := \prod_{t \in S_+} \gamma_{kt}$,
@@ -183,6 +192,7 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
   square in $\QQ$.
 \end{lemma}
 \begin{proof}
+  \leanok
   $\beta_n = \prod_{d \dvd n} \gamma_d^{\mu(n/d)} = P/Q = P'/Q'$ by
   Lemma~\ref{lem:moebiussign} (\lname{prod\_pow\_moebius\_eq\_div}), and a quotient of two
   integers with $P' \equiv -Q'$, $Q'$ a unit, is not a rational square when $-1$ is not a square
@@ -195,12 +205,15 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[\cite{li2021}, Lemma 2.1: Stoll's criterion at one index]
   \label{lem:li-crit}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_two_mul, QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod, QuadraticIterates.isUnit_prod_gammaSeq_mul}
+  \leanok
   \uses{def:gammaseq}
   Let $n \ge 2$, $k := n/\rad(n)$, and let $m$ be a modulus with $m \dvd \gamma_k + \gamma_{2k}$,
   $m$ coprime to $\gamma_k$, and $-1$ not a square mod $m$. Then $\beta_n$ is not a square in
   $\QQ$.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-classes, lem:li-PQ, lem:moebiussign}
   Exactly the proof of Lemma~\ref{lem:2.1}: mod $m$, $\gamma_{tk} \equiv \gamma_{2k}$ for all
   $t \ge 2$ (\lname{gammaSeq\_mul\_eq\_two\_mul}) and $\gamma_k \equiv -\gamma_{2k}$, so
@@ -216,12 +229,15 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[\cite{li2021}, Corollary 2.4]
   \label{lem:li-succ}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_succ}
+  \leanok
   \uses{def:gammaseq}
   Let $g(0)$ be a unit, $n \ge 2$, $k := n/\rad(n)$, and $m$ a modulus with
   $m \dvd \gamma_k + \gamma_{k+1}$ and $-1$ not a square mod $m$. Then $\beta_n$ is not a square
   in $\QQ$.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-crit}
   $\gamma_k + \gamma_{k+1}$ divides $\gamma_k + \gamma_{2k}$ (\lname{gammaSeq\_add\_succ\_dvd})
   and is coprime to $\gamma_k$ (\lname{isCoprime\_gammaSeq\_add\_succ}); both properties pass to

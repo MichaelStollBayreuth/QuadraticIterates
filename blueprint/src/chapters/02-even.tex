@@ -38,7 +38,7 @@ $\gamma_n \ne 0$ and set $\beta_n := \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$ for $
   \label{lem:2.1}
   \uses{def:gammaseq}
   \lean{QuadraticIterates.not_isSquare_betaSeq, QuadraticIterates.gammaSeq_mul_eq_two_mul,
-    QuadraticIterates.prod_gammaSeq_mul_eq, QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod,
+    QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod,
     QuadraticIterates.isUnit_prod_gammaSeq_mul, QuadraticIterates.gammaSeq_gcd,
     QuadraticIterates.gammaSeq_associated_gcd, QuadraticIterates.gammaSeq_associated_one,
     QuadraticIterates.gammaSeq_eq_gammaSeq_one}
@@ -72,7 +72,9 @@ $\gamma_n \ne 0$ and set $\beta_n := \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$ for $
   square mod $m$ is \lname{ZMod.isSquare\_neg\_one\_of\_isSquare\_div}
   (Lemma~\ref{lem:zmodsquare}). The sign $(-1)^{\mu(n')}$ comes from the single index $t = 1$,
   where $\gamma_k \equiv -\alpha$ rather than $\alpha$; this bookkeeping is
-  \lname{prod\_gammaSeq\_mul\_eq}.}
+  \lname{prod\_gammaSeq\_mul\_eq\_neg\_prod}. The formal proof goes through the single-index
+  criterion \lname{not\_isSquare\_betaSeq\_of\_dvd\_add\_two\_mul} of
+  Chapter~\ref{chap:li}.}
 \end{proof}
 
 We will now give a handier criterion for the assumptions of Lemma~\ref{lem:2.1} to hold.

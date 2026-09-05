@@ -11,6 +11,7 @@ public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
+import QuadraticIterates.Mathlib.Algebra.BigOperators
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
@@ -34,6 +35,12 @@ finally over `ℤ` for Lemmas 2.1 and 2.2 of the paper.
 * `gammaSeq_associated_gcd`: strong divisibility of `γ` for even `g` and `ε² = 1`.
 * `factorization_gammaSeq_shape`: `v_p(γ_n)` is constant on the multiples of some index and `0`
   elsewhere.
+* `not_isSquare_betaSeq_of_prod_eq_neg_prod`: `β_n` is not a square in `ℚ` when the numerator
+  and denominator of its Möbius product are congruent up to sign modulo an `m` with `-1` not a
+  square mod `m`.
+* `not_isSquare_betaSeq_of_dvd_add_two_mul`, `not_isSquare_betaSeq_of_dvd_add_succ`: Lemma 2.1
+  of the paper at a single index `n`, with a modulus dividing `γ_k + γ_{2k}` resp. `γ_k + γ_{k+1}`
+  for `k = n / rad n` (Lemma 2.1 and Corollary 2.4 of [Li 2021]).
 * `not_isSquare_betaSeq`, `not_isSquare_betaSeq_of_pos`: Lemmas 2.1 and 2.2 of the paper, `β_n`
   is not a square in `ℚ` for `n ≥ 2` under congruence conditions on `γ` resp. on `g(0)`, `g(1)`.
 
@@ -44,6 +51,7 @@ Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
 @[expose] public section
 
 open Polynomial
+open scoped ArithmeticFunction.Moebius
 
 namespace QuadraticIterates
 
@@ -311,43 +319,38 @@ theorem gammaSeq_mul_eq_two_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤
   | succ l hl ih =>
     rw [show (l + 1) * k = l * k + k by ring, gammaSeq_add g ε (one_le_mul (by lia) hk), ih, hfix]
 
-/-- If `γ_k + γ_{2k} = 0`, then a product `∏_{t ∈ S} γ_{kt}` over positive indices `t` collapses
-to `γ_{2k} ^ |S|` up to a sign recording whether `1 ∈ S` (over any ring, for even `g`). -/
-theorem prod_gammaSeq_mul_eq (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
-    (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0)
-    {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) :
-    (∏ t ∈ S, gammaSeq g ε (k * t))
-      = gammaSeq g ε (2 * k) ^ S.card * (if 1 ∈ S then -1 else 1) := by
-  have hγk_neg : gammaSeq g ε k = -gammaSeq g ε (2 * k) := by linear_combination hzero
-  have hf (t : ℕ) (ht : t ∈ S) :
-      gammaSeq g ε (k * t) = gammaSeq g ε (2 * k) * (if t = 1 then -1 else 1) := by
-    rcases eq_or_ne t 1 with rfl | h
-    · simp [hγk_neg]
-    · rw [if_neg h, mul_one, mul_comm k t,
-        gammaSeq_mul_eq_two_mul hg hk hzero t (by have := hS t ht; lia)]
-  rw [Finset.prod_congr rfl hf, Finset.prod_mul_distrib, Finset.prod_const,
-    Finset.prod_ite_eq' S 1 (fun _ ↦ (-1 : R))]
-
-/-- If `γ_k + γ_{2k} = 0`, then for disjoint sets `Sp`, `Sm` of positive indices of the same
-size, one of which contains `1`, `∏_{t ∈ Sp} γ_{kt} = -∏_{t ∈ Sm} γ_{kt}` (over any ring, for
-even `g`): both products are `±γ_{2k}^{#Sp}`, and the index `1` decides the sign. -/
-theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
-    (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) {Sp Sm : Finset ℕ}
-    (hdisj : Disjoint Sp Sm) (hcard : Sp.card = Sm.card) (hS : ∀ t ∈ Sp ∪ Sm, 1 ≤ t)
-    (h1 : 1 ∈ Sp ∪ Sm) :
-    ∏ t ∈ Sp, gammaSeq g ε (k * t) = -∏ t ∈ Sm, gammaSeq g ε (k * t) := by
-  rw [prod_gammaSeq_mul_eq hg hk hzero fun t ht ↦ hS t (Finset.mem_union_left _ ht),
-    prod_gammaSeq_mul_eq hg hk hzero fun t ht ↦ hS t (Finset.mem_union_right _ ht), hcard]
-  rcases Finset.mem_union.mp h1 with h | h <;>
-    simp [h, Finset.disjoint_left.mp hdisj, Finset.disjoint_right.mp hdisj]
-
 /-- If `γ_k + γ_{2k} = 0` and `γ_{2k}` is a unit, then `∏_{t ∈ S} γ_{kt}` is a unit for every set
-`S` of positive indices (over any ring, for even `g`). -/
+`S` of positive indices (over any ring, for even `g`): every factor is `±γ_{2k}`. -/
 theorem isUnit_prod_gammaSeq_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
     (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) (hu : IsUnit (gammaSeq g ε (2 * k)))
     {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit (∏ t ∈ S, gammaSeq g ε (k * t)) := by
-  rw [prod_gammaSeq_mul_eq hg hk hzero hS]
-  exact (hu.pow _).mul (by split_ifs <;> simp)
+  refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
+  rcases eq_or_ne t 1 with rfl | h1
+  · rw [mul_one, show gammaSeq g ε k = -gammaSeq g ε (2 * k) by linear_combination hzero]
+    exact hu.neg
+  · rw [mul_comm, gammaSeq_mul_eq_two_mul hg hk hzero t (by have := hS t ht; lia)]
+    exact hu
+
+/-- If `γ_k + γ_{2k} = 0`, then the products of the `γ_{kt}` over the two halves of the sign
+partition of the divisors `t` of a squarefree `n' > 1` (by `μ (n'/t) = ±1`) are negatives of each
+other (over any ring, for even `g`): all factors equal `γ_{2k}` except `γ_k = -γ_{2k}` at `t = 1`,
+and the two halves have the same size. -/
+theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
+    (hzero : gammaSeq g ε k + gammaSeq g ε (2 * k) = 0) {n' : ℕ} (hsf : Squarefree n')
+    (hn'1 : 1 < n') :
+    ∏ t ∈ n'.divisors with μ (n' / t) = 1, gammaSeq g ε (k * t)
+      = -∏ t ∈ n'.divisors with μ (n' / t) = -1, gammaSeq g ε (k * t) := by
+  have hunion := hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one
+  refine Finset.prod_eq_neg_prod_of_forall_card_filter_eq (κ := fun _ ↦ ())
+    (w := fun _ ↦ gammaSeq g ε (2 * k)) (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by omega)
+    (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia))
+    (by rw [mul_one]; linear_combination hzero)
+    (fun t ht h1 ↦ ?_) fun _ ↦ by
+      simpa using hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one subset_rfl
+        (ArithmeticFunction.sum_divisors_moebius_div_eq_zero hn'1)
+  have := Nat.pos_of_mem_divisors (hunion ▸ ht)
+  rw [mul_comm]
+  exact gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)
 
 /-- For even `g`, `γ_n + γ_{n+1}` divides `γ_{n+j} - γ_{n+1}` for all `j ≥ 1` (`n ≥ 1`): modulo
 `γ_n + γ_{n+1}` one has `g(γ_{n+1}) ≡ g(-γ_n) = γ_{n+1}`, so the sequence is constant from index
@@ -448,6 +451,8 @@ end
 
 section
 
+open ArithmeticFunction UniqueFactorizationMonoid
+
 variable (g : ℤ[X])
 
 lemma intCast_gammaSeq (ε : ℤ) (S : Type*) [CommRing S] (i : ℕ) : ((gammaSeq g ε i : ℤ) : S)
@@ -470,7 +475,45 @@ lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     ((betaSeq g ε n : ℤ) : ℚ) = moebiusFactorK (gammaSeq g ε) n :=
   algebraMap_moebiusFactorR hγ (gammaSeq_associated_gcd hg hε) hn
 
-open ArithmeticFunction UniqueFactorizationMonoid in
+/-- **`β_n` from a congruence between numerator and denominator.** For `n ≥ 1`, `n' = rad n` and
+`k = n / n'`, let `P` and `Q` be the products of the `γ_{kt}` over the divisors `t` of `n'` with
+`μ (n'/t) = 1` resp. `μ (n'/t) = -1`, so that `β_n = P / Q`, and let `P = c P'`, `Q = c Q'` with
+`c ≠ 0`. If `P' ≡ -Q' mod m` with `Q'` a unit mod `m`, and `-1` is not a square mod `m`, then
+`β_n` is not a square in `ℚ`. -/
+theorem not_isSquare_betaSeq_of_prod_eq_neg_prod (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
+    (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) {n k n' : ℕ} (hn : 1 ≤ n) (hn' : n' = radical n)
+    (hk : n = k * n') {c P Q : ℤ} (hc : c ≠ 0)
+    (hP : ∏ t ∈ n'.divisors with μ (n' / t) = 1, gammaSeq g ε (k * t) = c * P)
+    (hQ : ∏ t ∈ n'.divisors with μ (n' / t) = -1, gammaSeq g ε (k * t) = c * Q)
+    {m : ℕ} (hPQ : (P : ZMod m) = -(Q : ZMod m)) (hQu : IsUnit (Q : ZMod m))
+    (hnsq : ¬IsSquare (-1 : ZMod m)) : ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
+  rw [intCast_betaSeq hg hε hγ hn, moebiusFactorK_eq_prod]
+  simp only [eq_intCast]
+  rw [prod_pow_moebius_eq_div n k n' hn hn' hk (fun d ↦ ((gammaSeq g ε d : ℤ) : ℚ)),
+    ← Int.cast_prod, ← Int.cast_prod, hP, hQ, Int.cast_mul, Int.cast_mul,
+    mul_div_mul_left _ _ (Int.cast_ne_zero.mpr hc)]
+  exact fun hsq ↦ hnsq (ZMod.isSquare_neg_one_of_isSquare_div hPQ hQu hsq)
+
+/-- **Lemma 2.1 at a single index.** Let `n ≥ 2`, `n' = rad n` and `k = n / n'`. If the modulus `m`
+divides `γ_k + γ_{2k}`, is prime to `γ_k`, and `-1` is not a square mod `m`, then `β_n` is not a
+square in `ℚ`: modulo `m`, `γ_{kt} ≡ γ_{2k}` for all `t ≥ 2` and `γ_k ≡ -γ_{2k}`, so the numerator
+and the denominator of `β_n` are congruent up to sign, and the denominator is a unit. -/
+theorem not_isSquare_betaSeq_of_dvd_add_two_mul (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
+    (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n) (hn' : n' = radical n)
+    (hk : n = k * n') {m : ℕ} (hdvd : (m : ℤ) ∣ gammaSeq g ε k + gammaSeq g ε (2 * k))
+    (hcop : IsCoprime (m : ℤ) (gammaSeq g ε k)) (hnsq : ¬IsSquare (-1 : ZMod m)) :
+    ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
+  have hn'1 : 1 < n' := hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)
+  have hkpos : 1 ≤ k := by grind
+  have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ m).mpr hdvd
+  have hu := ZMod.isUnit_intCast_of_isCoprime_of_dvd_add hcop hdvd
+  simp only [Int.cast_add, intCast_gammaSeq] at hz hu
+  refine not_isSquare_betaSeq_of_prod_eq_neg_prod hg hε hγ (by lia) hn' hk one_ne_zero
+    (one_mul _).symm (one_mul _).symm (m := m) ?_ ?_ hnsq <;> push_cast [intCast_gammaSeq]
+  · exact prod_gammaSeq_mul_eq_neg_prod (hg.map _) hkpos hz (hn' ▸ squarefree_radical) hn'1
+  · exact isUnit_prod_gammaSeq_mul (hg.map _) hkpos hz hu fun t ht ↦
+      Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht)
+
 /-- Lemma 2.1: if for each `n ≥ 1` the modulus `m n` divides `γ_n + γ_{2n}`, is prime to `γ_n`,
 and `-1` is not a square mod `m n`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
 theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
@@ -479,29 +522,25 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     (hcop : ∀ n ≥ 1, IsCoprime (m n : ℤ) (gammaSeq g ε n))
     (hnsq : ∀ n ≥ 1, ¬IsSquare (-1 : ZMod (m n))) :
     ∀ n ≥ 2, ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
-  intro n hn2
-  set n' := radical n
-  obtain ⟨k, hk⟩ : n' ∣ n := radical_dvd_self
-  rw [mul_comm] at hk
-  have hn'1 : 1 < n' := Nat.one_lt_radical_iff.mpr (by lia)
+  intro n hn
+  obtain ⟨k, hk⟩ : radical n ∣ n := radical_dvd_self
   have hkpos : 1 ≤ k := by grind
-  obtain ⟨Sp, Sm, hdisj, hunion, hcard, hSp, hSm⟩ :=
-    squarefree_radical.exists_disjoint_union_eq_divisors_moebius_div hn'1
-  have hS (t : ℕ) (ht : t ∈ Sp ∪ Sm) : 1 ≤ t := Nat.pos_of_mem_divisors (hunion ▸ ht)
-  have h1 : 1 ∈ Sp ∪ Sm := hunion ▸ Nat.one_mem_divisors.mpr (by lia)
-  rw [intCast_betaSeq hg hε hγ (by lia), moebiusFactorK_eq_prod]
-  simp only [eq_intCast]
-  rw [prod_pow_moebius_eq_div n k n' (by lia) rfl hk (fun d ↦ ((gammaSeq g ε d : ℤ) : ℚ)) hdisj
-    hunion hSp hSm, ← Int.cast_prod, ← Int.cast_prod]
-  -- the two products are `P ≡ -Q` with `Q` a unit modulo `m k`, computed in `ZMod (m k)`
-  have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ (m k)).mpr (hdvd k hkpos)
-  have hu := ZMod.isUnit_intCast_of_isCoprime_of_dvd_add (hcop k hkpos) (hdvd k hkpos)
-  simp only [Int.cast_add, intCast_gammaSeq] at hz hu
-  refine fun hsq ↦ hnsq k hkpos (ZMod.isSquare_neg_one_of_isSquare_div ?_ ?_ hsq) <;>
-    simp only [Int.cast_prod, intCast_gammaSeq]
-  · exact prod_gammaSeq_mul_eq_neg_prod (hg.map _) hkpos hz hdisj hcard hS h1
-  · exact isUnit_prod_gammaSeq_mul (hg.map _) hkpos hz hu fun t ht ↦
-      hS t (Finset.mem_union_right _ ht)
+  exact not_isSquare_betaSeq_of_dvd_add_two_mul hg hε hγ hn rfl (hk.trans (mul_comm _ _))
+    (hdvd k hkpos) (hcop k hkpos) (hnsq k hkpos)
+
+/-- Lemma 2.1 with the modulus `γ_k + γ_{k+1}`, `k = n / rad n` ([Li 2021], Corollary 2.4): if
+`g(0)` is a unit and the modulus `m` divides `γ_k + γ_{k+1}`, then `β_n` is not a square in `ℚ`
+(for `n ≥ 2` and `-1` not a square mod `m`), since `γ_k + γ_{k+1}` divides `γ_k + γ_{2k}` and is
+prime to `γ_k`. -/
+theorem not_isSquare_betaSeq_of_dvd_add_succ (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
+    (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) (h0 : IsUnit (g.eval 0)) {n k n' : ℕ} (hn : 2 ≤ n)
+    (hn' : n' = radical n) (hk : n = k * n') {m : ℕ}
+    (hdvd : (m : ℤ) ∣ gammaSeq g ε k + gammaSeq g ε (k + 1)) (hnsq : ¬IsSquare (-1 : ZMod m)) :
+    ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) :=
+  have hkpos : 1 ≤ k := by grind
+  not_isSquare_betaSeq_of_dvd_add_two_mul hg hε hγ hn hn' hk
+    (hdvd.trans (gammaSeq_add_succ_dvd hg ε hkpos))
+    ((isCoprime_gammaSeq_add_succ ε hkpos h0).of_isCoprime_of_dvd_left hdvd) hnsq
 
 /-- The `ZMod 4` specialization of `gammaSeq_add_succ_eq_three` via `intCast_gammaSeq`. -/
 lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)
@@ -534,19 +573,20 @@ lemma gammaSeq_one_eq_one_of_pos {ε : ℤ} (hε : ε ^ 2 = 1) (h0 : g.eval 0 ^ 
   lia
 
 /-- The reduction of Lemma 2.2 to Lemma 2.1: for positive `γ` and a unit `g(0)`, the positive
-integer `m := γ_n + γ_{n+1}` divides `γ_n + γ_{2n}` and is prime to `γ_n`, so `β_n` is not a
-square in `ℚ` for `n ≥ 2` as soon as `-1` is not a square modulo `γ_n + γ_{n+1}` for all
-`n ≥ 1`. -/
+integer `γ_n + γ_{n+1}` divides `γ_n + γ_{2n}` and is prime to `γ_n`, so `β_n` is not a square in
+`ℚ` for `n ≥ 2` as soon as `-1` is not a square modulo `γ_n + γ_{n+1}` for all `n ≥ 1`. -/
 theorem not_isSquare_betaSeq_of_pos_of_not_isSquare_neg_one (hg : EvenPoly g) {ε : ℤ}
     (hε : ε ^ 2 = 1) (hpos : ∀ n ≥ 1, 0 < gammaSeq g ε n) (h0 : IsUnit (g.eval 0))
     (hnsq : ∀ n ≥ 1, ¬IsSquare (-1 : ZMod (gammaSeq g ε n + gammaSeq g ε (n + 1)).toNat)) :
     ∀ n ≥ 2, ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
-  have hdtn (n : ℕ) (hn : 1 ≤ n) : ((gammaSeq g ε n + gammaSeq g ε (n + 1)).toNat : ℤ)
-      = gammaSeq g ε n + gammaSeq g ε (n + 1) :=
-    Int.toNat_of_nonneg (add_pos (hpos n hn) (hpos (n + 1) (by lia))).le
-  exact not_isSquare_betaSeq hg hε (fun n hn ↦ (hpos n hn).ne')
-    (fun n hn ↦ hdtn n hn ▸ gammaSeq_add_succ_dvd hg ε hn)
-    (fun n hn ↦ hdtn n hn ▸ isCoprime_gammaSeq_add_succ ε hn h0) hnsq
+  intro n hn
+  obtain ⟨k, hk⟩ : radical n ∣ n := radical_dvd_self
+  have hkpos : 1 ≤ k := by grind
+  have hdtn : ((gammaSeq g ε k + gammaSeq g ε (k + 1)).toNat : ℤ)
+      = gammaSeq g ε k + gammaSeq g ε (k + 1) :=
+    Int.toNat_of_nonneg (add_pos (hpos k hkpos) (hpos (k + 1) (by lia))).le
+  exact not_isSquare_betaSeq_of_dvd_add_succ hg hε (fun n hn ↦ (hpos n hn).ne') h0 hn rfl
+    (hk.trans (mul_comm _ _)) (hdtn ▸ dvd_rfl) (hnsq k hkpos)
 
 /-- Lemma 2.2 a): if all `γ_n > 0`, `g(0) = 1` and `g(1) ≡ 2 mod 4`, then `β_n` is not a square
 in `ℚ` for `n ≥ 2`, since `γ_n + γ_{n+1} ≡ 3 mod 4` for all `n ≥ 1`. -/
