@@ -44,20 +44,20 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 * `QuadraticIterates.section1_tfae` (Theorem, part 1): `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are
   2-independent iff `b_1, …, b_n` are 2-independent, where `c_1 = -a`, `c_{n+1} = c_n² + a =
   f_{n+1}(0)` and `b_n = ∏_{d ∣ n} c_d^{μ(n/d)}`;
-* `QuadraticIterates.section1_squarefree` (Theorem, part 2): if none of `|b_2|, …, |b_n|` is a
-  square, then `Ω_n ≅ [C₂]ⁿ`;
+* `QuadraticIterates.section1_of_not_isSquare_abs_bSeq` (Theorem, part 2): if none of
+  `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`;
 * `QuadraticIterates.section3_main` (Section 3): if `a > 0` with `a ≡ 1, 2 mod 4`, or `a < 0`,
   `a ≡ 0 mod 4` and `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`;
-* `QuadraticIterates.odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`;
+* `QuadraticIterates.exists_injective_monoidHom_wreathPower` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`;
 * `QuadraticIterates.irreducible_iteratedPoly` (Corollary 1.3): every `f_n` is irreducible over
   `ℚ`; by Lemma 1.2 (`QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`) this
   only needs that no `c_k` with `k ≤ n` is a rational square;
 * `QuadraticIterates.nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff
   `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`;
-* `QuadraticIterates.degree_criterion` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is
-  not a square in `K_n`;
-* `QuadraticIterates.kummer_extension_criterion` (Lemma 1.5): a rational is a non-square in
-  `K_n` iff it extends the 2-independent family `c_1, …, c_n`.
+* `QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}`
+  iff `c_{n+1}` is not a square in `K_n`;
+* `QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc` (Lemma 1.5): a rational
+  is a non-square in `K_n` iff it extends the 2-independent family `c_1, …, c_n`.
 
 ## Notation
 
@@ -66,8 +66,8 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 
 ## Implementation notes
 
-`QuadraticIterates.degree_criterion` (Lemma 1.6) is proved from the standing assumption that
-`-a` is not a rational square alone, without the paper's maximality hypothesis
+`QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6) is proved from the standing
+assumption that `-a` is not a rational square alone, without the paper's maximality hypothesis
 `[K_n : ℚ] = 2 ^ (2 ^ n - 1)`; for `n ≥ 1` that assumption is equivalent to the irreducibility
 of `f_n`.
 

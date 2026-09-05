@@ -17,23 +17,24 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-open ArithmeticFunction
 open scoped ArithmeticFunction.Moebius ArithmeticFunction.zeta
 
+namespace ArithmeticFunction
+
 /-- `∑_{d ∣ n} μ d = [n = 1]`: the Möbius function is the Dirichlet inverse of `ζ`. -/
-theorem ArithmeticFunction.sum_divisors_moebius (n : ℕ) :
+theorem sum_divisors_moebius (n : ℕ) :
     ∑ d ∈ n.divisors, μ d = if n = 1 then 1 else 0 := by
   simpa [moebius_mul_coe_zeta, one_apply] using (coe_mul_zeta_apply (f := μ) (x := n)).symm
 
 /-- `∑_{ed = n} μ e = 0` for `n ≥ 2`. -/
-theorem moebius_antidiag_sum_zero {n : ℕ} (hn : 2 ≤ n) :
+theorem sum_divisorsAntidiagonal_moebius_eq_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal, μ x.1 = 0 := by
   rw [Nat.sum_divisorsAntidiagonal (fun i _ ↦ μ i), sum_divisors_moebius, if_neg (by lia)]
 
 /-- Rewrites the antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` as a product over the divisors
 of the radical `n' = rad n`: `∏_{t ∣ n'} F (k t) ^ μ (n'/t)`, where `k = n / n'`. -/
-theorem beta_radical {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ) (hn : 1 ≤ n)
-    (hn' : n' = UniqueFactorizationMonoid.radical n) (hk : n = k * n') (F : ℕ → G) :
+theorem prod_pow_moebius_eq_prod_divisors_radical {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ)
+    (hn : 1 ≤ n) (hn' : n' = UniqueFactorizationMonoid.radical n) (hk : n = k * n') (F : ℕ → G) :
     ∏ x ∈ n.divisorsAntidiagonal, F x.2 ^ (μ x.1)
       = ∏ t ∈ n'.divisors, F (k * t) ^ (μ (n' / t)) := by
   have hn0 : n ≠ 0 := by lia
@@ -53,7 +54,8 @@ theorem beta_radical {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ) (hn : 1 �
 
 /-- For squarefree `n' > 1`, the divisors of `n'` split into two halves of equal size according
 to the sign of `μ(n'/t)`. -/
-theorem moebius_sign_partition {n' : ℕ} (hn'1 : 1 < n') (hsf : Squarefree n') :
+theorem _root_.Squarefree.exists_disjoint_union_eq_divisors_moebius_div {n' : ℕ}
+    (hsf : Squarefree n') (hn'1 : 1 < n') :
     ∃ Sp Sm : Finset ℕ, Disjoint Sp Sm ∧ Sp ∪ Sm = n'.divisors ∧ Sp.card = Sm.card ∧
       (∀ t ∈ Sp, μ (n' / t) = 1) ∧ (∀ t ∈ Sm, μ (n' / t) = -1) := by
   have hpm (t : ℕ) (ht : t ∈ n'.divisors) : μ (n' / t) = 1 ∨ μ (n' / t) = -1 :=
@@ -71,22 +73,23 @@ theorem moebius_sign_partition {n' : ℕ} (hn'1 : 1 < n') (hsf : Squarefree n') 
   simpa [Finset.sum_ite, add_neg_eq_zero] using hsum
 
 /-- Under a sign partition `(Sp, Sm)` of the divisors of `n' = rad n` (as produced by
-`moebius_sign_partition`), the antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` splits as the
-quotient `(∏_{t ∈ Sp} F (k t)) / (∏_{t ∈ Sm} F (k t))`, where `k = n / n'`. -/
+`Squarefree.exists_disjoint_union_eq_divisors_moebius_div`), the antidiagonal Möbius product
+`∏_{ed = n} F d ^ μ e` splits as the quotient `(∏_{t ∈ Sp} F (k t)) / (∏_{t ∈ Sm} F (k t))`, where
+`k = n / n'`. -/
 theorem prod_pow_moebius_eq_div {G : Type*} [DivisionCommMonoid G] (n k n' : ℕ) (hn : 1 ≤ n)
     (hn' : n' = UniqueFactorizationMonoid.radical n) (hk : n = k * n') (F : ℕ → G)
     {Sp Sm : Finset ℕ} (hdisj : Disjoint Sp Sm) (hunion : Sp ∪ Sm = n'.divisors)
     (hSp : ∀ t ∈ Sp, μ (n' / t) = 1) (hSm : ∀ t ∈ Sm, μ (n' / t) = -1) :
     ∏ x ∈ n.divisorsAntidiagonal, F x.2 ^ (μ x.1)
       = (∏ t ∈ Sp, F (k * t)) / (∏ t ∈ Sm, F (k * t)) := by
-  rw [beta_radical n k n' hn hn' hk F, ← hunion, Finset.prod_union hdisj, div_eq_mul_inv,
-    ← Finset.prod_inv_distrib]
+  rw [prod_pow_moebius_eq_prod_divisors_radical n k n' hn hn' hk F, ← hunion,
+    Finset.prod_union hdisj, div_eq_mul_inv, ← Finset.prod_inv_distrib]
   exact congrArg₂ (· * ·) (Finset.prod_congr rfl fun t ht ↦ by rw [hSp t ht, zpow_one])
     (Finset.prod_congr rfl fun t ht ↦ by rw [hSm t ht, zpow_neg_one])
 
 /-- The Möbius sum over the antidiagonal pairs `(e, d)` of `n` with `m ∣ d` is `1` if `n = m` and
 `0` otherwise (for `m, n ≥ 1`). -/
-theorem moebius_restricted_sum {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) :
+theorem sum_divisorsAntidiagonal_filter_dvd_moebius {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal with m ∣ x.2, μ x.1 = if n = m then 1 else 0 := by
   by_cases hmn : m ∣ n
   · obtain ⟨N, rfl⟩ := hmn
@@ -102,7 +105,7 @@ theorem moebius_restricted_sum {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) :
 
 /-- For a level set `{d : k ≤ g d}` of a `gcd`-`min` function `g`, the antidiagonal Möbius transform
 of its indicator (in the second coordinate) over `n` is `0` or `1`; in particular nonnegative. -/
-theorem indicator_moebius_nonneg (g : ℕ → ℕ)
+theorem sum_mul_moebius_boole_nonneg (g : ℕ → ℕ)
     (hmin : ∀ x ≥ 1, ∀ y ≥ 1, g (x.gcd y) = min (g x) (g y)) {n : ℕ} (hn : 1 ≤ n) (k : ℕ) :
     0 ≤ ∑ x ∈ n.divisorsAntidiagonal, μ x.1 * (if k ≤ g x.2 then 1 else 0) := by
   have hmem (x : ℕ × ℕ) (hx : x ∈ n.divisorsAntidiagonal) : x.2 ∈ n.divisors :=
@@ -123,13 +126,14 @@ theorem indicator_moebius_nonneg (g : ℕ → ℕ)
       exact Nat.gcd_eq_left_iff_dvd.mp (le_antisymm (Nat.gcd_le_left d hm1) (hmle _ hgcd))
     · rw [Nat.gcd_eq_left hmd] at h
       exact hmk.trans (h ▸ min_le_right _ _)
-  rw [Finset.filter_congr fun x hx ↦ hpred x.2 (hmem x hx), moebius_restricted_sum hm1 hn]
+  rw [Finset.filter_congr fun x hx ↦ hpred x.2 (hmem x hx),
+    sum_divisorsAntidiagonal_filter_dvd_moebius hm1 hn]
   split_ifs <;> decide
 
 /-- **Nonnegativity of the Möbius transform of a `gcd`-`min` function.** If `g` satisfies
 `g (gcd x y) = min (g x) (g y)`, then `∑_{ed = n} μ e · g d ≥ 0`. This is the arithmetic core of the
 integrality of the Möbius factors of a strong divisibility sequence. -/
-theorem moebius_transform_nonneg (g : ℕ → ℕ)
+theorem sum_mul_moebius_nonneg (g : ℕ → ℕ)
     (hmin : ∀ x ≥ 1, ∀ y ≥ 1, g (x.gcd y) = min (g x) (g y)) {n : ℕ} (hn : 1 ≤ n) :
     0 ≤ ∑ x ∈ n.divisorsAntidiagonal, μ x.1 * (g x.2 : ℤ) := by
   have hmono (x : ℕ × ℕ) (hx : x ∈ n.divisorsAntidiagonal) : g x.2 ≤ g n := by
@@ -144,4 +148,6 @@ theorem moebius_transform_nonneg (g : ℕ → ℕ)
     simp
   rw [Finset.sum_congr rfl fun x hx ↦ by rw [hcard (g x.2) (hmono x hx), Finset.mul_sum],
     Finset.sum_comm]
-  exact Finset.sum_nonneg fun k _ ↦ indicator_moebius_nonneg g hmin hn k
+  exact Finset.sum_nonneg fun k _ ↦ sum_mul_moebius_boole_nonneg g hmin hn k
+
+end ArithmeticFunction

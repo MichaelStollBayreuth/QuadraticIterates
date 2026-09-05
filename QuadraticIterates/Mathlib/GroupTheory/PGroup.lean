@@ -22,7 +22,8 @@ subspace therefore contains the all-ones vector.
 
 * `IsPGroup.exists_ne_zero_mem_fixedPoints_of_smul_mem`: the nonzero fixed vector in an
   invariant subspace, from Mathlib's `IsPGroup.exists_fixed_point_of_prime_dvd_card_of_fixed_point`.
-* `invariant_submodule_all_ones`: the all-ones vector under a pretransitive coordinate action.
+* `IsPGroup.one_mem_of_comp_smul_mem_of_ne_bot`: the all-ones vector under a pretransitive
+  coordinate action.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -68,7 +69,7 @@ theorem IsPGroup.exists_ne_zero_mem_fixedPoints_of_smul_mem {p : ℕ} [Fact p.Pr
 
 /-- A nonzero `𝔽_p`-subspace of `ι → 𝔽_p` invariant under a `p`-group `G` acting pretransitively
 on the coordinates `ι` contains the all-ones vector. -/
-theorem invariant_submodule_all_ones {p : ℕ} [Fact p.Prime] {G : Type*} [Group G]
+theorem IsPGroup.one_mem_of_comp_smul_mem_of_ne_bot {p : ℕ} [Fact p.Prime] {G : Type*} [Group G]
     (hG : IsPGroup p G) {ι : Type*} [Finite ι] [MulAction G ι] [IsPretransitive G ι]
     {V : Submodule (ZMod p) (ι → ZMod p)} (hV : ∀ (g : G), ∀ v ∈ V, (fun i ↦ v (g • i)) ∈ V)
     (hne : V ≠ ⊥) : 1 ∈ V := by

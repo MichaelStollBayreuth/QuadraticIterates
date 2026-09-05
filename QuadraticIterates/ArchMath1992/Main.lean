@@ -24,7 +24,7 @@ theorem of the paper.
 
 * `section1_tfae`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are
   2-independent (`section1_a_iff_b`, `section1_b_iff_c`).
-* `section1_squarefree`: if none of `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`.
+* `section1_of_not_isSquare_abs_bSeq`: if none of `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`.
 * `section3_main`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is not a
   square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. The proof rescales `X² + a` to
   `normPoly a = |a| X² + sgn a`, whose `γ`-sequence is `|c_n| / |a|`
@@ -80,8 +80,9 @@ lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn
 /-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on
 `n`: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
 (`nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that `c_{n+1}` is not a
-square in `K_n` (`degree_criterion`, Lemma 1.6), and given `Ω_n ≅ [C₂]ⁿ` this means that
-`c_1, …, c_{n+1}` are 2-independent (`kummer_extension_criterion`, Lemma 1.5). -/
+square in `K_n` (`relfinrank_succ_eq_two_pow_iff`, Lemma 1.6), and given `Ω_n ≅ [C₂]ⁿ` this
+means that `c_1, …, c_{n+1}` are 2-independent (`not_isSquare_algebraMap_iff_twoIndependent_snoc`,
+Lemma 1.5). -/
 theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
@@ -92,10 +93,11 @@ theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     rw [← Fin.snoc_init_self (fun i : Fin (n + 1) ↦ (cSeq a ((i : ℕ) + 1) : ℚ)),
       nonempty_mulEquiv_succ_iff a n]
     refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun h ↦ ?_⟩
-    · exact (kummer_extension_criterion hiso (ih.mp hiso)).mp ((degree_criterion ha n).mp hrel)
+    · exact (not_isSquare_algebraMap_iff_twoIndependent_snoc hiso (ih.mp hiso)).mp
+        ((relfinrank_succ_eq_two_pow_iff ha n).mp hrel)
     · have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr h.of_snoc
-      exact ⟨hiso, (degree_criterion ha n).mpr
-        ((kummer_extension_criterion hiso h.of_snoc).mpr h)⟩
+      exact ⟨hiso, (relfinrank_succ_eq_two_pow_iff ha n).mpr
+        ((not_isSquare_algebraMap_iff_twoIndependent_snoc hiso h.of_snoc).mpr h)⟩
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/
 lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
@@ -146,7 +148,7 @@ theorem section1_tfae (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
 /-- Theorem (Section 1), part 2: if none of `|b_2|, …, |b_n|` is a square, then
 `Ω_n ≅ [C₂]ⁿ`. By pairwise coprimality, the `b_k` are 2-independent as soon as no `b_k` and at
 most one `-b_k` is a square; `-b_1 = a` is the only candidate, since `b_1 = -a` is not a square. -/
-theorem section1_squarefree (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
+theorem section1_of_not_isSquare_abs_bSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     (h : ∀ k ≥ 2, k ≤ n → ¬IsSquare |bSeq a k|) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
   have hzero (i : Fin n) (hi : IsSquare (-bSeq a ((i : ℕ) + 1))) : (i : ℕ) = 0 :=
@@ -223,7 +225,7 @@ not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
 theorem section3_main
     (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) := fun n _ ↦
-  section1_squarefree (not_isSquare_neg_of_cases hcase) n fun _ hk2 _ ↦
+  section1_of_not_isSquare_abs_bSeq (not_isSquare_neg_of_cases hcase) n fun _ hk2 _ ↦
     not_isSquare_abs_bSeq hcase hk2
 
 end

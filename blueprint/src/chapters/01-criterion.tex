@@ -164,7 +164,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
 \begin{lemma}
   \label{lem:1.4}
   \uses{def:galois, def:wreath, facts:1.0}
-  \lean{QuadraticIterates.nonempty_mulEquiv_succ_iff, QuadraticIterates.odoni_embedding,
+  \lean{QuadraticIterates.nonempty_mulEquiv_succ_iff, QuadraticIterates.exists_injective_monoidHom_wreathPower,
     QuadraticIterates.isPGroup_galoisGroup, QuadraticIterates.pow_two_pow_apply_root,
     QuadraticIterates.card_wreathPower_succ, QuadraticIterates.nonempty_mulEquiv_iff_finrank_eq}
   \leanok
@@ -191,7 +191,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
 \begin{lemma}
   \label{lem:1.5}
   \uses{def:cseq, def:galois, def:twoindep, def:wreath}
-  \lean{QuadraticIterates.kummer_extension_criterion,
+  \lean{QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc,
     QuadraticIterates.isSquare_algebraMap_iff_exists_mul_prod,
     QuadraticIterates.isSquare_algebraMap_iff_exists_sq_eq,
     QuadraticIterates.TwoIndependent.finrank_adjoin_range_eq_two_pow,
@@ -239,7 +239,7 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
 \begin{lemma}[cf.\ \cite{odoni}, Lemma 4.3]
   \label{lem:1.6}
   \uses{def:galois, def:cseq, facts:1.0}
-  \lean{QuadraticIterates.degree_criterion, QuadraticIterates.relfinrank_succ_eq_pow,
+  \lean{QuadraticIterates.relfinrank_succ_eq_two_pow_iff, QuadraticIterates.relfinrank_succ_eq_pow,
     QuadraticIterates.rootShift, QuadraticIterates.coe_rootShift,
     QuadraticIterates.rootShift_ne_zero, QuadraticIterates.prod_rootShift_eq_cSeq,
     QuadraticIterates.prod_rootSet_sub_eq_cSeq, QuadraticIterates.prod_aroots_sub_eq_cSeq,
@@ -292,7 +292,7 @@ Summing up, we can now prove the following
   \label{thm:section1}
   \uses{def:galois, def:wreath, def:twoindep, def:cseq, def:bseq}
   \lean{QuadraticIterates.section1_tfae, QuadraticIterates.section1_a_iff_b,
-    QuadraticIterates.section1_b_iff_c, QuadraticIterates.section1_squarefree,
+    QuadraticIterates.section1_b_iff_c, QuadraticIterates.section1_of_not_isSquare_abs_bSeq,
     QuadraticIterates.sqClass_cSeq_eq_sum_divisors,
     QuadraticIterates.sqClass_bSeq_eq_sum_divisorsAntidiagonal,
     linearIndependent_iff_of_span_range_eq}

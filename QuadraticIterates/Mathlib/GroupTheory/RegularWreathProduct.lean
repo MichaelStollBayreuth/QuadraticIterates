@@ -18,7 +18,7 @@ product of a group of order `p`, the Sylow `p`-subgroup of the symmetric group o
 (`IsPGroup.exists_injective_monoidHom_iteratedWreathProduct`).
 
 A homomorphism from `D ≀ᵣ Q` to a commutative group `A` is the same as a pair of homomorphisms
-`D →* A` and `Q →* A` (`RegularWreathProduct.homEquiv`), so
+`D →* A` and `Q →* A` (`RegularWreathProduct.monoidHomEquiv`), so
 `#(D ≀ᵣ Q →* A) = #(D →* A) · #(Q →* A)` and `#(IteratedWreathProduct D n →* A) = #(D →* A) ^ n`.
 Combined with `#(H →* C₂) = #H` for an elementary abelian `2`-group `H`, the maximal elementary
 abelian `2`-quotient of the `n`-fold iterated wreath power of `C₂` has order `2 ^ n`.
@@ -26,12 +26,14 @@ abelian `2`-quotient of the `n`-fold iterated wreath power of `C₂` has order `
 ## Main statements
 
 * `IsPGroup.exists_injective_monoidHom_iteratedWreathProduct`: the embedding above.
-* `RegularWreathProduct.homEquiv`: `(D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A)` for commutative `A`.
-* `RegularWreathProduct.card_hom`, `IteratedWreathProduct.card_hom`: the resulting counts.
+* `RegularWreathProduct.monoidHomEquiv`: `(D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A)` for commutative
+  `A`.
+* `RegularWreathProduct.card_monoidHom`, `IteratedWreathProduct.card_monoidHom`: the resulting
+  counts.
 * `Nat.card_monoidHom_multiplicative_zmod`: `#(H →* Multiplicative (ZMod p)) = #H` for a finite
   abelian group `H` of exponent dividing `p`; `Nat.card_monoidHom_multiplicative_zmod_two` needs
   no commutativity hypothesis.
-* `wreath_max_elem_ab`: `#([C₂]ⁿ →* C₂) = 2 ^ n`.
+* `IteratedWreathProduct.card_monoidHom_multiplicative_zmod_two`: `#([C₂]ⁿ →* C₂) = 2 ^ n`.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -100,7 +102,7 @@ theorem map_inr_eq_prod (φ : D ≀ᵣ Q →* A) (f : Q → D) :
 
 /-- Homomorphisms from `D ≀ᵣ Q` to a commutative group are pairs of a homomorphism on `D` (any
 coordinate of the base group, they all agree by `map_inr_mulSingle`) and one on `Q`. -/
-def homEquiv : (D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A) where
+def monoidHomEquiv : (D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A) where
   toFun φ := (φ.comp (inr.comp (MonoidHom.mulSingle (fun _ ↦ D) 1)), φ.comp inl)
   invFun p := prodLeftHom p.1 * p.2.comp rightHom
   left_inv φ := by
@@ -121,10 +123,11 @@ end Fintype
 
 variable (D Q A) in
 /-- `#(D ≀ᵣ Q →* A) = #(D →* A) · #(Q →* A)` for a finite group `Q` and a commutative group `A`. -/
-theorem card_hom [Finite Q] : Nat.card (D ≀ᵣ Q →* A) = Nat.card (D →* A) * Nat.card (Q →* A) := by
+theorem card_monoidHom [Finite Q] :
+    Nat.card (D ≀ᵣ Q →* A) = Nat.card (D →* A) * Nat.card (Q →* A) := by
   classical
   let := Fintype.ofFinite Q
-  rw [Nat.card_congr homEquiv, Nat.card_prod]
+  rw [Nat.card_congr monoidHomEquiv, Nat.card_prod]
 
 end CommGroup
 
@@ -156,11 +159,12 @@ theorem IsPGroup.exists_injective_monoidHom_iteratedWreathProduct {p : ℕ} [Fac
 
 /-- `#(IteratedWreathProduct D n →* A) = #(D →* A) ^ n` for a finite group `D` and a commutative
 group `A`. -/
-theorem IteratedWreathProduct.card_hom (D A : Type*) [Group D] [CommGroup A] [Finite D] (n : ℕ) :
+theorem IteratedWreathProduct.card_monoidHom (D A : Type*) [Group D] [CommGroup A] [Finite D]
+    (n : ℕ) :
     Nat.card (IteratedWreathProduct D n →* A) = Nat.card (D →* A) ^ n := by
   induction n with
   | zero => exact Nat.card_unique (α := PUnit →* A)
-  | succ n ih => exact (RegularWreathProduct.card_hom _ D A).trans (by rw [ih, pow_succ])
+  | succ n ih => exact (RegularWreathProduct.card_monoidHom _ D A).trans (by rw [ih, pow_succ])
 
 /-- A finite `𝔽_p`-vector space has as many additive characters `V →+ ZMod p` as elements. -/
 theorem Nat.card_addMonoidHom_zmod (p : ℕ) [Fact p.Prime] (V : Type*) [AddCommGroup V]
@@ -191,14 +195,10 @@ theorem Nat.card_monoidHom_multiplicative_zmod_two {H : Type*} [Group H] [Finite
     { ‹Group H› with mul_comm a b := by rw [← hinv (a * b), mul_inv_rev, hinv a, hinv b] }
   exact card_monoidHom_multiplicative_zmod hexp
 
-private theorem card_hom_c2 :
-    Nat.card (Multiplicative (ZMod 2) →* Multiplicative (ZMod 2)) = 2 := by
-  rw [Nat.card_monoidHom_multiplicative_zmod_two (by decide), Nat.card_congr Multiplicative.toAdd,
-    Nat.card_zmod]
-
 /-- `#([C₂]ⁿ →* C₂) = 2^n`: the maximal elementary-abelian 2-quotient of the `n`-fold iterated
 wreath power of `C₂` has `𝔽₂`-dimension `n`. -/
-theorem wreath_max_elem_ab (n : ℕ) :
+theorem IteratedWreathProduct.card_monoidHom_multiplicative_zmod_two (n : ℕ) :
     Nat.card (IteratedWreathProduct (Multiplicative (ZMod 2)) n →* Multiplicative (ZMod 2))
       = 2 ^ n := by
-  rw [IteratedWreathProduct.card_hom, card_hom_c2]
+  rw [IteratedWreathProduct.card_monoidHom, Nat.card_monoidHom_multiplicative_zmod_two (by decide),
+    Nat.card_congr Multiplicative.toAdd, Nat.card_zmod]

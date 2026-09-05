@@ -17,7 +17,7 @@ For a strong divisibility sequence `c` in a UFD `R` (nowhere zero on `n ≥ 1`),
 `∏_{d ∣ n} c_d ^ μ(n/d)`, a priori an element of the fraction field, lies in the image of `R`:
 it is the quotient `numProd c n / denProd c n` of two products in `R`, and the denominator
 divides the numerator because the Möbius transform of `v_p ∘ c` is nonnegative for every prime
-`p` (`moebius_transform_nonneg`). `moebiusFactorR c n` is the unique `R`-preimage; everything
+`p` (`sum_mul_moebius_nonneg`). `moebiusFactorR c n` is the unique `R`-preimage; everything
 about it follows from the identity `moebiusFactorR_mul_denProd`, in particular
 `algebraMap_moebiusFactorR`: its image in any fraction field is the Möbius formula.
 
@@ -52,7 +52,8 @@ since the exponents `μ(e)` sum to zero. -/
 theorem moebiusFactorK_mul_const (c : ℕ → R) {t : R} (ht : algebraMap R K t ≠ 0) {n : ℕ}
     (hn : 2 ≤ n) : moebiusFactorK (K := K) (fun d ↦ c d * t) n = moebiusFactorK c n := by
   simp only [moebiusFactorK_eq_prod, map_mul, mul_zpow, Finset.prod_mul_distrib,
-    Finset.prod_zpow_eq_zpow_sum₀ ht, moebius_antidiag_sum_zero hn, zpow_zero, mul_one]
+    Finset.prod_zpow_eq_zpow_sum₀ ht, sum_divisorsAntidiagonal_moebius_eq_zero hn, zpow_zero,
+    mul_one]
 
 /-- In an ordered field, the absolute value of a Möbius factor of an integer sequence is the
 Möbius factor of the sequence of absolute values. -/
@@ -135,7 +136,7 @@ lemma factorization_numProd_sub_denProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d �
   rcases moebius_eq_or x.1 with h | h | h <;> simp [h]
 
 /-- `v_p ∘ c` is a `gcd`-`min` function when `c` is a strong divisibility sequence. -/
-lemma factorization_c_gcd_min {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
+lemma factorization_apply_gcd_eq_min {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) (p : R) :
     ∀ x ≥ 1, ∀ y ≥ 1, (factorization (c (x.gcd y)) p)
       = min (factorization (c x) p) (factorization (c y) p) := by
@@ -176,8 +177,8 @@ theorem denProd_dvd_numProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     Multiset.le_iff_count]
   intro p
   rw [← factorization_eq_count, ← factorization_eq_count]
-  have hge := moebius_transform_nonneg (fun d ↦ factorization (c d) p)
-    (factorization_c_gcd_min hc hsd p) hn
+  have hge := sum_mul_moebius_nonneg (fun d ↦ factorization (c d) p)
+    (factorization_apply_gcd_eq_min hc hsd p) hn
   have heq := factorization_numProd_sub_denProd hc n p
   omega
 
@@ -249,7 +250,8 @@ theorem factorization_moebiusFactorR_shape {c : ℕ → R} (hc : ∀ d ≥ 1, c 
     rw [factorization_moebiusFactorR hc hsd hn p, Finset.sum_congr rfl fun x hx ↦
         congrArg (μ x.1 * ·) (by rw [hshape x.2 (Nat.pos_of_mem_divisors
           (Nat.snd_mem_divisors_of_mem_antidiagonal hx)), Nat.cast_ite, Nat.cast_zero]),
-      Finset.sum_mul_ite_const n.divisorsAntidiagonal, moebius_restricted_sum hm hn]
+      Finset.sum_mul_ite_const n.divisorsAntidiagonal,
+      sum_divisorsAntidiagonal_filter_dvd_moebius hm hn]
     split_ifs <;> simp
   exact_mod_cast hmain
 

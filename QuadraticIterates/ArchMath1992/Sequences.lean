@@ -115,7 +115,7 @@ end EvenPoly
 this file uses — membership in `R[X²]` and invariance under `X ↦ -X` — agree. -/
 lemma evenPoly_iff_comp_neg_X [NoZeroDivisors R] [NeZero (2 : R)] :
     EvenPoly g ↔ g.comp (-X) = g :=
-  ⟨EvenPoly.comp_neg_X, fun h ↦ ⟨contract 2 g, eq_expand_two_contract_of_comp_neg_X h⟩⟩
+  ⟨EvenPoly.comp_neg_X, fun h ↦ ⟨contract 2 g, eq_expand_two_contract_of_comp_neg_X_eq h⟩⟩
 
 end EvenPoly
 
@@ -486,6 +486,7 @@ lemma intCast_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     ((betaSeq g ε n : ℤ) : ℚ) = moebiusFactorK (gammaSeq g ε) n :=
   algebraMap_moebiusFactorR hγ (gammaSeq_associated_gcd hg hε) hn
 
+open ArithmeticFunction UniqueFactorizationMonoid in
 /-- Lemma 2.1: if for each `n ≥ 1` the modulus `m n` divides `γ_n + γ_{2n}`, is prime to `γ_n`,
 and `-1` is not a square mod `m n`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
 theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
@@ -495,13 +496,13 @@ theorem not_isSquare_betaSeq (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     (hnsq : ∀ n ≥ 1, ¬IsSquare (-1 : ZMod (m n))) :
     ∀ n ≥ 2, ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
   intro n hn2
-  set n' := UniqueFactorizationMonoid.radical n
-  obtain ⟨k, hk⟩ : n' ∣ n := UniqueFactorizationMonoid.radical_dvd_self
+  set n' := radical n
+  obtain ⟨k, hk⟩ : n' ∣ n := radical_dvd_self
   rw [mul_comm] at hk
   have hn'1 : 1 < n' := Nat.one_lt_radical_iff.mpr (by lia)
   have hkpos : 1 ≤ k := by grind
   obtain ⟨Sp, Sm, hdisj, hunion, hcard, hSp, hSm⟩ :=
-    moebius_sign_partition hn'1 UniqueFactorizationMonoid.squarefree_radical
+    squarefree_radical.exists_disjoint_union_eq_divisors_moebius_div hn'1
   have hS (t : ℕ) (ht : t ∈ Sp ∪ Sm) : 1 ≤ t := Nat.pos_of_mem_divisors (hunion ▸ ht)
   have h1 : 1 ∈ Sp ∪ Sm := hunion ▸ Nat.one_mem_divisors.mpr (by lia)
   rw [intCast_betaSeq hg hε hγ (by lia), moebiusFactorK_eq_prod]

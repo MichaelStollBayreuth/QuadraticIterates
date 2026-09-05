@@ -12,14 +12,14 @@ them.
 
 \begin{lemma}[Degree of a multiquadratic extension]
   \label{lem:multiquadratic}
-  \lean{multiquadraticRelations, mem_multiquadraticRelations, multiquadratic_degree,
-    multiquadratic_degree_family, IntermediateField.adjoin_insert,
+  \lean{multiquadraticRelations, mem_multiquadraticRelations, finrank_adjoin_image_eq_two_pow_sub,
+    finrank_adjoin_range_eq_two_pow_sub, IntermediateField.adjoin_insert,
     IntermediateField.finrank_adjoin_insert,
     IntermediateField.finrank_adjoin_insert_of_not_isSquare,
     IntermediateField.finrank_adjoin_sqrt_le, IntermediateField.finrank_adjoin_finset_sqrt_le,
     IntermediateField.finrank_adjoin_sqrt_le_two_pow_ncard,
-    IntermediateField.finrank_adjoin_sqrt_eq, multiquadraticRelations_finrank_le,
-    multiquadraticRelations_insert_finrank}
+    IntermediateField.finrank_adjoin_sqrt_eq, finrank_multiquadraticRelations_le,
+    finrank_multiquadraticRelations_insert}
   \leanok
   Let $F$ be a field of characteristic $\ne 2$ and $(x_i)_{i \in s}$ a finite family of square
   roots of elements $r_i \in F^*$ inside an extension. Then
@@ -38,9 +38,9 @@ them.
 \begin{lemma}[Square descent]
   \label{lem:descent}
   \uses{def:twoindep}
-  \lean{IntermediateField.square_descent,
-    IntermediateField.exists_sq_eq_algebraMap_of_isSquare_mul_prod,
-    IntermediateField.square_descent_step, IntermediateField.isSquare_algebraMap_iff,
+  \lean{IntermediateField.exists_mem_adjoin_sq_eq_algebraMap_iff,
+    IntermediateField.exists_mem_adjoin_sq_eq_algebraMap_of_isSquare_mul_prod,
+    IntermediateField.exists_mem_adjoin_simple_sq_eq_algebraMap_iff, IntermediateField.isSquare_algebraMap_iff,
     IntermediateField.not_isSquare_algebraMap_of_sqrt_notMem,
     IntermediateField.isSquare_algebraMap_bot_iff, IntermediateField.mem_adjoin_sqrt_iff,
     sqClass_mul, sqClass_prod, sqClass_prod_zpow, sqClass_eq_zero_iff,
@@ -58,9 +58,9 @@ them.
 \begin{lemma}[Relations among the shifted roots]
   \label{lem:relations}
   \uses{lem:multiquadratic}
-  \lean{rootRelations, mem_rootRelations, rootRelations_eq_bot_iff, rootRelations_finrank_le,
-    multiquadraticRelations_univ, multiquadraticRelations_finrank_eq_rootRelations,
-    all_ones_mem_rootRelations, Function.ExtendByZero.linearMap_injective,
+  \lean{rootRelations, mem_rootRelations, rootRelations_eq_bot_iff, finrank_rootRelations_le,
+    multiquadraticRelations_univ, finrank_multiquadraticRelations,
+    one_mem_rootRelations_iff, Function.ExtendByZero.linearMap_injective,
     exists_mem_multiquadraticRelations_insert_iff, multiquadraticRelations_insert_inf_ker_proj,
     indicator_mem_multiquadraticRelations_iff}
   \leanok
@@ -79,8 +79,8 @@ them.
 \begin{lemma}[Invariants of a $p$-group]
   \label{lem:invariant}
   \uses{lem:relations}
-  \lean{IsPGroup.exists_ne_zero_mem_fixedPoints_of_smul_mem, invariant_submodule_all_ones,
-    rootRelations_invariant, rootRelations_all_ones}
+  \lean{IsPGroup.exists_ne_zero_mem_fixedPoints_of_smul_mem, IsPGroup.one_mem_of_comp_smul_mem_of_ne_bot,
+    comp_smul_mem_rootRelations, one_mem_rootRelations_of_ne_bot}
   \leanok
   Let a $p$-group $G$ act on an $\FF_p$-vector space $M$, and let $V \subseteq M$ be a finite
   nonzero $G$-stable subspace. Then $V^G \ne 0$. If moreover $M = \FF_p^{\iota}$ and $G$ acts by
@@ -119,8 +119,9 @@ them.
 
 \begin{lemma}[The abelian quotient of $\Ct{n}$]
   \label{lem:wreathab}
-  \lean{wreath_max_elem_ab, IteratedWreathProduct.card_hom, RegularWreathProduct.card_hom,
-    RegularWreathProduct.homEquiv, Nat.card_monoidHom_multiplicative_zmod_two,
+  \lean{IteratedWreathProduct.card_monoidHom_multiplicative_zmod_two,
+    IteratedWreathProduct.card_monoidHom, RegularWreathProduct.card_monoidHom,
+    RegularWreathProduct.monoidHomEquiv, Nat.card_monoidHom_multiplicative_zmod_two,
     Nat.card_monoidHom_multiplicative_zmod, Nat.card_addMonoidHom_zmod,
     IntermediateField.isGalois_adjoin_of_sq_eq_algebraMap,
     IntermediateField.algEquiv_adjoin_sq_eq_one, AlgEquiv.apply_eq_or_eq_neg_of_sq_eq_algebraMap,
@@ -215,8 +216,8 @@ them.
 
 \begin{lemma}[Möbius sums]
   \label{lem:moebiussign}
-  \lean{moebius_sign_partition, prod_pow_moebius_eq_div, moebius_antidiag_sum_zero,
-    beta_radical, moebius_restricted_sum, indicator_moebius_nonneg, moebius_transform_nonneg,
+  \lean{Squarefree.exists_disjoint_union_eq_divisors_moebius_div, ArithmeticFunction.prod_pow_moebius_eq_div, ArithmeticFunction.sum_divisorsAntidiagonal_moebius_eq_zero,
+    ArithmeticFunction.prod_pow_moebius_eq_prod_divisors_radical, ArithmeticFunction.sum_divisorsAntidiagonal_filter_dvd_moebius, ArithmeticFunction.sum_mul_moebius_boole_nonneg, ArithmeticFunction.sum_mul_moebius_nonneg,
     ArithmeticFunction.sum_divisors_moebius, moebiusFactorK_mul_const, abs_moebiusFactorK,
     Finset.prod_zpow_eq_zpow_sum₀}
   \leanok
@@ -269,7 +270,7 @@ them.
 
 \begin{lemma}[Even polynomials are polynomials in $X^2$]
   \label{lem:evenpoly}
-  \lean{Polynomial.even_eq_comp_X_sq_add_C, Polynomial.eq_expand_two_contract_of_comp_neg_X,
+  \lean{Polynomial.exists_eq_comp_X_sq_add_C_of_comp_neg_X_eq, Polynomial.eq_expand_two_contract_of_comp_neg_X_eq,
     Polynomial.expand_two_comp_neg_X, Polynomial.X_sq_add_C_comp_neg_X,
     Polynomial.comp_neg_X_eq_or_eq_neg_of_associated, Polynomial.natDegree_comp_neg_X,
     Polynomial.expand_contract_of_forall_coeff_eq_zero,

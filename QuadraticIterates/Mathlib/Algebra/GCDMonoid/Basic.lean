@@ -32,8 +32,8 @@ variable {R : Type*} [CommRing R] [IsDomain R] [NormalizedGCDMonoid R]
 
 /- TODO:
 add lemmas `gcd a (b + a * c) = gcd a b` and variants at the correct level of generality. -/
-private theorem gcd_seq_add {a : ℕ → R} (hdvd : ∀ m j, a m ∣ a (m + j) - a j) (m n : ℕ) :
-    gcd (a m) (a (n + m)) = gcd (a m) (a n) := by
+private theorem gcd_add_self_right_of_dvd_sub {a : ℕ → R} (hdvd : ∀ m j, a m ∣ a (m + j) - a j)
+    (m n : ℕ) : gcd (a m) (a (n + m)) = gcd (a m) (a n) := by
   obtain ⟨t, ht⟩ := hdvd m n
   rw [add_comm, sub_eq_iff_eq_add'] at ht
   rw [ht]
@@ -43,11 +43,13 @@ private theorem gcd_seq_add {a : ℕ → R} (hdvd : ∀ m j, a m ∣ a (m + j) -
       ((gcd_dvd_left (a m) (a n + a m * t)).mul_right t)
   · exact dvd_add (gcd_dvd_right ..) ((gcd_dvd_left ..).mul_right t)
 
-private theorem gcd_seq_add_mul {a : ℕ → R} (hdvd : ∀ m j, a m ∣ a (m + j) - a j) (m n : ℕ) :
+private theorem gcd_add_mul_self_right_of_dvd_sub {a : ℕ → R}
+    (hdvd : ∀ m j, a m ∣ a (m + j) - a j) (m n : ℕ) :
     ∀ k, gcd (a m) (a (n + k * m)) = gcd (a m) (a n)
   | 0 => by simp
   | k + 1 => by
-    rw [← gcd_seq_add_mul hdvd m n k, add_mul, ← add_assoc, one_mul, gcd_seq_add hdvd]
+    rw [← gcd_add_mul_self_right_of_dvd_sub hdvd m n k, add_mul, ← add_assoc, one_mul,
+      gcd_add_self_right_of_dvd_sub hdvd]
 
 /-- If `a 0 = 0` and `a m ∣ a (m + j) - a j` for all `m, j` (the *translation congruence*), then
 `a` is a strong divisibility sequence: `gcd (a m) (a n) = normalize (a (gcd m n))`. -/
@@ -59,7 +61,7 @@ theorem gcd_eq_normalize_of_dvd_sub {a : ℕ → R} (h0 : a 0 = 0)
   | H1 m n _ ih =>
     rw [Nat.gcd_rec, ← ih]
     conv_lhs => rw [← Nat.mod_add_div' n m]
-    rw [gcd_seq_add_mul hdvd m (n % m) (n / m), gcd_comm]
+    rw [gcd_add_mul_self_right_of_dvd_sub hdvd m (n % m) (n / m), gcd_comm]
 
 /-- The `Associated` form of `gcd_eq_normalize_of_dvd_sub`. -/
 theorem associated_gcd_of_dvd_sub {a : ℕ → R} (h0 : a 0 = 0)

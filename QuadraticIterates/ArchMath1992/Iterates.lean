@@ -36,7 +36,7 @@ the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 
 
 * `splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le` (Facts 1.0):
   `K_{n+1} = K_n(√(α - a) : α root of f_n)`, hence `[K_{n+1} : K_n] ≤ 2^{2^n}`.
-* `odoni_embedding` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group
+* `exists_injective_monoidHom_wreathPower` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group
   (`isPGroup_galoisGroup`) acting faithfully on the at most `2^n` roots of `f_n`; hence
   `Ω_n ≅ [C₂]ⁿ` iff `[K_n : ℚ] = 2^{2^n - 1}` (`nonempty_mulEquiv_iff_finrank_eq`).
 * `nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and
@@ -330,13 +330,13 @@ theorem twoIndependent_iff_linearIndependent [Finite ι] {L : Type*} [Field L] [
     simpa [hiS] using congrFun h0 i
 
 /-- Square roots of a 2-independent family of radicands `r : ι → L` generate an extension of the
-full degree `2^|ι|`: there are no relations in `multiquadratic_degree_family`. -/
+full degree `2^|ι|`: there are no relations in `finrank_adjoin_range_eq_two_pow_sub`. -/
 theorem TwoIndependent.finrank_adjoin_range_eq_two_pow [Fintype ι] {L : Type*} [Field L]
     [NeZero (2 : L)] {E : Type*} [Field E] [Algebra L E] {r : ι → L} (hr : TwoIndependent r)
     {x : ι → E} (hx : ∀ i, x i ^ 2 = algebraMap L E (r i)) :
     Module.finrank L (IntermediateField.adjoin L (Set.range x)) = 2 ^ Fintype.card ι := by
   classical
-  rw [multiquadratic_degree_family hx hr.ne_zero, (rootRelations_eq_bot_iff _).mpr
+  rw [finrank_adjoin_range_eq_two_pow_sub hx hr.ne_zero, (rootRelations_eq_bot_iff _).mpr
     ((twoIndependent_iff_linearIndependent _).mp hr), finrank_bot, Nat.sub_zero]
 
 end TwoIndependent
@@ -472,7 +472,8 @@ theorem isPGroup_galoisGroup (n : ℕ) : IsPGroup 2 (GaloisGroup a n) := by
 
 /-- Odoni's embedding theorem: `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group acting faithfully on
 the at most `2 ^ n` roots of `f_n`. -/
-theorem odoni_embedding (n : ℕ) : ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
+theorem exists_injective_monoidHom_wreathPower (n : ℕ) :
+    ∃ φ : GaloisGroup a n →* WreathPower n, Function.Injective φ :=
   (isPGroup_galoisGroup a n).exists_injective_monoidHom_iteratedWreathProduct
     (Gal.galActionHom_injective fℚ[a, n] (AlgebraicClosure ℚ))
     ((Nat.card_coe_set_eq _).trans_le (ncard_rootSet_iteratedPoly_le a n))
@@ -498,22 +499,22 @@ lemma card_galoisGroup_eq_finrank (n : ℕ) :
     (IsGalois.card_aut_eq_finrank ℚ _)
 
 /-- `Ω_n ≅ [C₂]ⁿ` iff `K_n` has the maximal possible degree `2^{2^n - 1}` over `ℚ`, since `Ω_n`
-embeds into `[C₂]ⁿ` (`odoni_embedding`) and `#Ω_n = [K_n : ℚ]`. -/
+embeds into `[C₂]ⁿ` (`exists_injective_monoidHom_wreathPower`) and `#Ω_n = [K_n : ℚ]`. -/
 theorem nonempty_mulEquiv_iff_finrank_eq (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1) := by
-  obtain ⟨φ, hφ⟩ := odoni_embedding a n
+  obtain ⟨φ, hφ⟩ := exists_injective_monoidHom_wreathPower a n
   rw [φ.nonempty_mulEquiv_iff_card_eq hφ, card_galoisGroup_eq_finrank, card_wreathPower]
 
 /-- Lemma 1.4: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`. Both
-`#Ω_n ≤ #[C₂]ⁿ` (by `odoni_embedding`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`, and the products of the
-two sides agree iff both factors do. -/
+`#Ω_n ≤ #[C₂]ⁿ` (by `exists_injective_monoidHom_wreathPower`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`,
+and the products of the two sides agree iff both factors do. -/
 theorem nonempty_mulEquiv_succ_iff (n : ℕ) :
     Nonempty (GaloisGroup a (n + 1) ≃* WreathPower (n + 1)) ↔
       Nonempty (GaloisGroup a n ≃* WreathPower n) ∧
         (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n := by
-  obtain ⟨φn, hφn⟩ := odoni_embedding a n
-  obtain ⟨φn1, hφn1⟩ := odoni_embedding a (n + 1)
+  obtain ⟨φn, hφn⟩ := exists_injective_monoidHom_wreathPower a n
+  obtain ⟨φn1, hφn1⟩ := exists_injective_monoidHom_wreathPower a (n + 1)
   rw [φn1.nonempty_mulEquiv_iff_card_eq hφn1, φn.nonempty_mulEquiv_iff_card_eq hφn,
     card_wreathPower_succ, card_galoisGroup_eq_finrank a (n + 1),
     ← IntermediateField.finrank_bot_mul_relfinrank (splittingField_le_succ a n),

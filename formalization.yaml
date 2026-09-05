@@ -41,7 +41,7 @@ status:
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: ""
     literature_dependencies: []
-  - declaration: "QuadraticIterates.section1_squarefree"
+  - declaration: "QuadraticIterates.section1_of_not_isSquare_abs_bSeq"
     file: "QuadraticIterates/ArchMath1992/Main.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -103,7 +103,7 @@ automation:
 # fidelity
 fidelity:
   divergences: >
-    Lemma 1.6 (`degree_criterion`) is proved from the standing assumption that -a is not a
+    Lemma 1.6 (`relfinrank_succ_eq_two_pow_iff`) is proved from the standing assumption that -a is not a
     rational square, uniformly in n; for n ≥ 1 that assumption is equivalent to irreducibility
     of f_n, and it is weaker than the paper's maximality hypothesis [K_n : ℚ] = 2^(2^n - 1).
     The sequences c_n, γ_n, β_n, b_n are total functions with junk values at index 0; b_n and
@@ -145,7 +145,7 @@ alignment:
       module: "QuadraticIterates.ArchMath1992.Irreducibility"
       status: "proved"
     - source: "Odoni's embedding theorem"
-      lean: "odoni_embedding"
+      lean: "exists_injective_monoidHom_wreathPower"
       module: "QuadraticIterates.ArchMath1992.Iterates"
       status: "proved"
     - source: "Lemma 1.4"
@@ -153,11 +153,11 @@ alignment:
       module: "QuadraticIterates.ArchMath1992.Iterates"
       status: "proved"
     - source: "Lemma 1.5"
-      lean: "kummer_extension_criterion"
+      lean: "not_isSquare_algebraMap_iff_twoIndependent_snoc"
       module: "QuadraticIterates.ArchMath1992.DegreeCriterion"
       status: "proved"
     - source: "Lemma 1.6"
-      lean: "degree_criterion"
+      lean: "relfinrank_succ_eq_two_pow_iff"
       module: "QuadraticIterates.ArchMath1992.DegreeCriterion"
       status: "proved"
       note: >
@@ -168,7 +168,7 @@ alignment:
       module: "QuadraticIterates.ArchMath1992.Main"
       status: "proved"
     - source: "Theorem (Section 1), part 2"
-      lean: "section1_squarefree"
+      lean: "section1_of_not_isSquare_abs_bSeq"
       module: "QuadraticIterates.ArchMath1992.Main"
       status: "proved"
     - source: "Lemma 2.1"
