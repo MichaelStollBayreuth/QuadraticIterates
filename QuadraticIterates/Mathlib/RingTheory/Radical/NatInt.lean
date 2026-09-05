@@ -27,3 +27,20 @@ theorem Nat.two_le_div_radical_of_not_squarefree {n : ℕ} (hn : n ≠ 0) (h : �
 
 theorem Nat.radical_eq_self_of_squarefree {n : ℕ} (hsf : Squarefree n) : radical n = n :=
   Nat.dvd_antisymm radical_dvd_self (hsf.isRadical.dvd_radical hsf.ne_zero)
+
+/-- For `n ≠ 0`, the cofactor `n / rad n` is even if and only if `4 ∣ n`. -/
+theorem Nat.even_div_radical_iff_four_dvd {n : ℕ} (hn : n ≠ 0) :
+    Even (n / radical n) ↔ 4 ∣ n := by
+  have hmul := Nat.div_mul_cancel (radical_dvd_self (a := n))
+  refine ⟨fun ⟨j, hj⟩ ↦ ?_, fun h4 ↦ ?_⟩
+  · obtain ⟨r, hr⟩ : 2 ∣ radical n := Nat.dvd_of_mem_primeFactors (Nat.primeFactors_radical n ▸
+      Nat.mem_primeFactors.mpr ⟨Nat.prime_two, ⟨j * radical n, hmul.symm.trans (by rw [hj]; ring)⟩,
+        hn⟩)
+    exact ⟨j * r, hmul.symm.trans (by rw [hj, hr]; ring)⟩
+  · rcases Nat.even_or_odd (n / radical n) with h | h
+    · exact h
+    · have h4' : 2 ^ 2 ∣ radical n :=
+        ((Nat.coprime_two_right.mpr h).pow_right 2).symm.dvd_of_dvd_mul_left
+          (by rw [hmul]; exact h4)
+      exact absurd (Nat.isUnit_iff.mp (squarefree_radical (a := n) 2 (by simpa [sq] using h4')))
+        (by decide)

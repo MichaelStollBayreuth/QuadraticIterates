@@ -36,11 +36,14 @@ The three results to be formalized are the following.
 
 \begin{theorem}[\cite{li2021}, Theorem 3.9]
   \label{thm:li-B}
+  \lean{QuadraticIterates.li2021_theorem_3_9}
+  \leanok
   \uses{def:galois, def:wreath}
   Let $a = -\bigl((4k+1)(4k+2) + 1\bigr)$ with $k \ge 0$. Then $\Om_n \cong \Ct{n}$ for all
   $n \ge 1$.
 \end{theorem}
 \begin{proof}
+  \leanok
   \uses{lem:li-sqfree, lem:li-B-odd, lem:li-B-even, thm:section1, def:normpoly}
   $-a = (4k+1)(4k+2) + 1 \equiv 3 \bmod 4$ is not a square, and $a \equiv 1 \bmod 4$. For
   $n \ge 2$: if $n$ is squarefree, Lemma~\ref{lem:li-sqfree}~(3); if not and $4 \nmid n$,
@@ -491,11 +494,14 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[\cite{li2021}, Lemma 3.4]
   \label{lem:li-B-odd}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one, Nat.even_div_radical_iff_four_dvd}
+  \leanok
   \uses{def:normpoly}
   Let $a < 0$, $a \equiv 1 \bmod 4$, and let $n$ be not squarefree with $4 \nmid n$. Then $|b_n|$
   is not a square.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-odd, lem:li-mod8-1, lem:li-cop}
   $k = n/\rad(n)$ is odd (as $4 \nmid n$) and $> 1$ (as $n$ is not squarefree), so $k \ge 3$.
   By Lemma~\ref{lem:li-mod8-1}, $\gamma_k + \gamma_{k+2} \equiv 6 \bmod 8$, so
@@ -518,11 +524,14 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[\cite{li2021}, Lemma 3.6]
   \label{lem:li-B-even}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one}
+  \leanok
   \uses{def:normpoly}
   Let $a = -\bigl((4k+1)(4k+2) + 1\bigr)$, $A := 4k+1$, $B := 4k+2$, $\alpha := -a = AB + 1$, and
   let $n$ be such that $k_0 := n/\rad(n)$ is even. Then $|b_n|$ is not a square.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-even, lem:li-mod8-1, lem:li-modsq, lem:strongdvd}
   \emph{The factorization.} In $\ZZ[y]$, with $g(y) = \alpha y^2 - 1$,
   \[ y + g(g(y))
