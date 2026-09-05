@@ -78,6 +78,12 @@ theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :
   · have := (ZMod.intCast_eq_intCast_iff' (r * r) 1 4).mp (by push_cast; exact h)
     omega
 
+theorem Int.not_isSquare_of_emod_four_eq_two {m : ℤ} (h : m % 4 = 2) : ¬IsSquare m :=
+  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; omega
+
+theorem Int.not_isSquare_of_emod_four_eq_three {m : ℤ} (h : m % 4 = 3) : ¬IsSquare m :=
+  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; omega
+
 theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
     (h2 : m < (e + 1) ^ 2) :
     ¬IsSquare m := by

@@ -7,6 +7,7 @@ public import QuadraticIterates.ArchMath1992.Iterates
 public import QuadraticIterates.ArchMath1992.Main
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Li
+public import QuadraticIterates.Li.ArchMath2021
 public import QuadraticIterates.Li.Residues
 public import QuadraticIterates.Mathlib.Algebra.BigOperators
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic

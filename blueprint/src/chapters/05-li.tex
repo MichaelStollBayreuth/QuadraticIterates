@@ -19,10 +19,13 @@ The three results to be formalized are the following.
 
 \begin{theorem}[\cite{li2021}, Theorem 3.3]
   \label{thm:li-A}
+  \lean{QuadraticIterates.li2021_theorem_3_3, QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq}
+  \leanok
   \uses{def:galois, def:wreath}
   Let $a = -(8k+2)(8k+3)$ with $k \ge 0$. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
 \end{theorem}
 \begin{proof}
+  \leanok
   \uses{lem:li-sqfree, lem:li-A-nonsqfree, thm:section1, def:normpoly}
   $-a = (8k+2)(8k+3) \equiv 6 \bmod 8$ is not a square. For $n \ge 2$, $|b_n| = \beta_n$ is not a
   square: by Lemma~\ref{lem:li-sqfree}~(2) if $n$ is squarefree, by
@@ -439,12 +442,15 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[\cite{li2021}, Lemma 2.2: squarefree indices]
   \label{lem:li-sqfree}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree, QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_pos_of_emod_eight_eq_four, QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_eight_eq_two, QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_one}
+  \leanok
   \uses{def:normpoly}
   Let $n > 1$ be squarefree. Then $|b_n|$ is not a square in each of the cases
   (1) $a > 0$, $a \equiv 4 \bmod 8$; (2) $a < 0$, $a \equiv 2 \bmod 8$; (3) $a < 0$,
   $a \equiv 1 \bmod 4$.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-succ}
   Here $k = 1$, so Lemma~\ref{lem:li-succ} with $m := \gamma_1 + \gamma_2 = 1 + g(1)$ applies as
   soon as $-1$ is not a square mod $m$: $m = a + 2 \equiv 6 \bmod 8$ in case (1), $m = -a \equiv
@@ -460,10 +466,13 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[\cite{li2021}, Lemma 3.1]
   \label{lem:li-A-nonsqfree}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul}
+  \leanok
   \uses{def:normpoly}
   Let $a = -(8k+2)(8k+3)$ and let $n$ be not squarefree. Then $|b_n|$ is not a square.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-succ, lem:li-mod8-2}
   Let $k_0 := n/\rad(n) \ge 2$. Since $|a|\,y^2 + y - 1 = \bigl((8k+3)y - 1\bigr)\bigl((8k+2)y +
   1\bigr)$ (\texttt{ring}), the number $m := (8k+2)\gamma_{k_0} + 1$ divides

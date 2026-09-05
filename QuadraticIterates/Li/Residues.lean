@@ -7,6 +7,8 @@ module
 
 public import QuadraticIterates.ArchMath1992.Main
 
+import QuadraticIterates.Mathlib.Data.Int.Order.Units
+
 /-!
 # Residues of the rescaled sequence for negative `a`
 
@@ -32,9 +34,16 @@ namespace QuadraticIterates
 
 variable {a : ℤ}
 
+/-- `g(0) = sgn a` is a unit for the rescaled polynomial `g = normPoly a`, `a ≠ 0`. -/
+lemma isUnit_eval_zero_normPoly (ha : a ≠ 0) : IsUnit ((normPoly a).eval 0) := by
+  simpa using IsUnit.of_pow_eq_one (Int.sign_sq_of_ne_zero ha) two_ne_zero
+
 /-- For `a < 0`, the rescaled polynomial is `normPoly a = -a X² - 1`. -/
 lemma normPoly_of_neg (ha : a < 0) : normPoly a = C (-a) * X ^ 2 - 1 := by
   rw [normPoly, abs_of_neg ha, Int.sign_eq_neg_one_of_neg ha, C_neg, C_neg, C_1, sub_eq_add_neg]
+
+lemma eval_normPoly_of_neg (ha : a < 0) (x : ℤ) : (normPoly a).eval x = -a * x ^ 2 - 1 := by
+  simp [normPoly_of_neg ha]
 
 /-- The image of `normPoly a`, `a < 0`, in a commutative ring `S`, evaluated at `x`:
 `-a x² - 1`. -/
