@@ -5,6 +5,7 @@ Authors: Michael Stoll
 -/
 module
 
+public import QuadraticIterates.Li.ArchMath2020
 public import QuadraticIterates.Li.ArchMath2021
 public import QuadraticIterates.Li.Residues
 

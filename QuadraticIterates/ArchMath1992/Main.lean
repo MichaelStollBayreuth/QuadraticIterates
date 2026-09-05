@@ -68,6 +68,13 @@ lemma cSeq_eq_prod_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     cSeq a n = ∏ d ∈ n.divisors, bSeq a d :=
   prod_moebiusFactorR (cSeq_ne_zero ha) (cSeq_associated_gcd a) hn
 
+/-- `b_2 = -a - 1`, from `c_2 = b_1 b_2` with `c_2 = a² + a` and `b_1 = -a`. -/
+lemma bSeq_two (ha : ¬IsSquare (-a : ℚ)) : bSeq a 2 = -a - 1 := by
+  have h := cSeq_eq_prod_bSeq ha one_le_two
+  rw [Nat.prime_two.divisors, Finset.prod_pair one_lt_two.ne, bSeq_one, cSeq_two] at h
+  exact mul_left_cancel₀ (neg_ne_zero.mpr (ne_zero_of_not_isSquare_neg ha))
+    (h.symm.trans (by ring))
+
 /-- The integer factors `b_n` are pairwise coprime (Lemma 1.1 b): the valuation of `b_n` at
 each prime is supported on a single index, so no prime divides two distinct factors. -/
 lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n)

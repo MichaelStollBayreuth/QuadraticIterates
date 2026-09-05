@@ -50,12 +50,15 @@ The three results to be formalized are the following.
 
 \begin{theorem}[\cite{li2020}, Theorems 3.4 and 3.5]
   \label{thm:li-C}
+  \lean{QuadraticIterates.li2020_theorem_3_5, QuadraticIterates.li2020_theorem_3_4, QuadraticIterates.bSeq_two}
+  \leanok
   \uses{def:galois, def:wreath, def:bseq}
   Let $a < 0$ with $a \equiv 3 \bmod 4$ and $-a$ not a square. Then $|b_n|$ is not a square for
   all $n \ge 3$, and
   \[ \Om_n \cong \Ct{n} \text{ for all } n \ge 1 \iff -a - 1 \text{ is not a square in } \ZZ. \]
 \end{theorem}
 \begin{proof}
+  \leanok
   \uses{lem:li-C-nonsqfree, lem:li-C-odd, lem:li-C-even, thm:section1, def:normpoly,
     def:twoindep}
   For $n \ge 3$, $|b_n| = \beta_n$ is not a square: Lemma~\ref{lem:li-C-nonsqfree} if $n$ is not
@@ -552,10 +555,13 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[\cite{li2020}, Lemma 3.1]
   \label{lem:li-C-nonsqfree}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three}
+  \leanok
   \uses{def:normpoly}
   Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n$ be not squarefree. Then $|b_n|$ is not a square.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-succ, lem:li-mod4-3}
   $k = n/\rad(n) \ge 2$, so $\gamma_k + \gamma_{k+1} \equiv 3 \bmod 4$ (Lemma~\ref{lem:li-mod4-3});
   Lemma~\ref{lem:li-succ} with $m := \gamma_k + \gamma_{k+1}$.
@@ -563,11 +569,14 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[\cite{li2020}, Lemma 3.2]
   \label{lem:li-C-odd}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three, QuadraticIterates.not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one}
+  \leanok
   \uses{def:normpoly}
   Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n > 1$ be odd and squarefree. Then $|b_n|$ is not a
   square.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-classes, lem:li-PQ, lem:li-mod4-3, lem:moebiussign}
   Here $k = 1$ and all divisors $t$ of $n$ are odd, with $\gamma_t \equiv -1 \bmod 4$ for $t \ge 3$
   (Lemma~\ref{lem:li-mod4-3}) and $\gamma_1 = 1$. Lemma~\ref{lem:li-classes} with one class and
@@ -581,11 +590,14 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[\cite{li2020}, Lemma 3.3]
   \label{lem:li-C-even}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three, QuadraticIterates.not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one}
+  \leanok
   \uses{def:normpoly}
   Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n > 2$ be even and squarefree. Then $|b_n|$ is not a
   square.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-classes, lem:li-parity, lem:li-PQ, lem:li-modsq, lem:li-mod4-3}
   Here $k = 1$; take $m := \gamma_2 = |a| - 1$, which is $\equiv 0 \bmod 4$, so $-1$ is not a
   square mod $m$. By Lemma~\ref{lem:li-modsq}, every even divisor $t$ of $n$ has
