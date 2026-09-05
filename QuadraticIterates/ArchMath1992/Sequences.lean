@@ -9,6 +9,7 @@ public import Mathlib.Algebra.Polynomial.Expand
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 
 import Mathlib.Data.ZMod.Basic
+import Mathlib.Data.ZMod.Units
 import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.BigOperators
@@ -16,6 +17,7 @@ import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 
 /-!
 # The iteration sequence of a polynomial and its Möbius factors
@@ -41,6 +43,9 @@ finally over `ℤ` for Lemmas 2.1 and 2.2 of the paper.
 * `not_isSquare_betaSeq_of_dvd_add_two_mul`, `not_isSquare_betaSeq_of_dvd_add_succ`: Lemma 2.1
   of the paper at a single index `n`, with a modulus dividing `γ_k + γ_{2k}` resp. `γ_k + γ_{k+1}`
   for `k = n / rad n` (Lemma 2.1 and Corollary 2.4 of [Li 2021]).
+* `not_isSquare_betaSeq_of_even_of_dvd_add_two`, `not_isSquare_betaSeq_of_odd_of_dvd_add_two`:
+  Proposition 2.5 of [Li 2021], the same with a modulus dividing `γ_k + γ_{k+2}`, using the
+  `2`-periodicity `gammaSeq_eq_ite_even_of_add_two_eq_zero` of the sequence modulo such an `m`.
 * `not_isSquare_betaSeq`, `not_isSquare_betaSeq_of_pos`: Lemmas 2.1 and 2.2 of the paper, `β_n`
   is not a square in `ℚ` for `n ≥ 2` under congruence conditions on `γ` resp. on `g(0)`, `g(1)`.
 
@@ -352,6 +357,67 @@ theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk :
   rw [mul_comm]
   exact gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)
 
+/-- **2-periodicity.** If `γ_k + γ_{k+2} = 0` (`k ≥ 1`), then the sequence is `2`-periodic from
+index `k + 1` on: `γ_r = -γ_k` for `r ≡ k mod 2` and `γ_r = γ_{k+1}` otherwise, for all
+`r ≥ k + 1` (over any ring, for even `g`). -/
+theorem gammaSeq_eq_ite_even_of_add_two_eq_zero (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤ k)
+    (hzero : gammaSeq g ε k + gammaSeq g ε (k + 2) = 0) :
+    ∀ r ≥ k + 1,
+      gammaSeq g ε r = if Even (r + k) then -gammaSeq g ε k else gammaSeq g ε (k + 1) := by
+  have h1 : g.eval (-gammaSeq g ε k) = gammaSeq g ε (k + 1) := by
+    rw [hg.eval_neg, gammaSeq_succ g ε hk]
+  have h2 : g.eval (gammaSeq g ε (k + 1)) = -gammaSeq g ε k := by
+    rw [← gammaSeq_succ g ε (by lia)]
+    linear_combination hzero
+  intro r hr
+  induction r, hr using Nat.le_induction with
+  | base => grind [Nat.even_add_one]
+  | succ r hr ih => grind [gammaSeq_succ g ε (by lia : 1 ≤ r), Nat.even_add_one]
+
+/-- For odd `k` with `γ_k + γ_{k+2} = 0`, the value `γ_{kt}` for `t ≥ 2` depends only on the parity
+of `t`: it is `γ_{k+1}` for even `t` and `-γ_k` for odd `t`. -/
+theorem gammaSeq_mul_eq_ite_even_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ} (hko : Odd k)
+    (hzero : gammaSeq g ε k + gammaSeq g ε (k + 2) = 0) {t : ℕ} (ht : 2 ≤ t) :
+    gammaSeq g ε (k * t) = if Even t then gammaSeq g ε (k + 1) else -gammaSeq g ε k := by
+  have := Nat.mul_le_mul_left k ht
+  have := hko.pos
+  rw [gammaSeq_eq_ite_even_of_add_two_eq_zero hg hko.pos hzero (k * t) (by lia)]
+  grind [Nat.not_even_iff_odd]
+
+theorem isUnit_prod_gammaSeq_mul_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ} (hko : Odd k)
+    (hzero : gammaSeq g ε k + gammaSeq g ε (k + 2) = 0) (hu : IsUnit (gammaSeq g ε k))
+    (hu1 : IsUnit (gammaSeq g ε (k + 1))) {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) :
+    IsUnit (∏ t ∈ S, gammaSeq g ε (k * t)) := by
+  refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
+  rcases eq_or_ne t 1 with rfl | h1
+  · rwa [mul_one]
+  · rw [gammaSeq_mul_eq_ite_even_of_odd hg hko hzero (by have := hS t ht; lia)]
+    split_ifs
+    · exact hu1
+    · exact hu.neg
+
+/-- For odd `k` with `γ_k + γ_{k+2} = 0`, the products of the `γ_{kt}` over the two halves of the
+sign partition of the divisors `t` of a squarefree `n' ≥ 3` are negatives of each other (over any
+ring, for even `g`): the factors are `γ_{k+1}` for even `t` and `-γ_k` for odd `t`, except `γ_k` at
+`t = 1`, and the two halves contain equally many odd and equally many even divisors. -/
+theorem prod_gammaSeq_mul_eq_neg_prod_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ} (hko : Odd k)
+    (hzero : gammaSeq g ε k + gammaSeq g ε (k + 2) = 0) {n' : ℕ} (hsf : Squarefree n')
+    (hn'3 : 3 ≤ n') :
+    ∏ t ∈ n'.divisors with μ (n' / t) = 1, gammaSeq g ε (k * t)
+      = -∏ t ∈ n'.divisors with μ (n' / t) = -1, gammaSeq g ε (k * t) := by
+  have hunion := hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one
+  refine Finset.prod_eq_neg_prod_of_forall_card_filter_eq (κ := (· % 2))
+    (w := fun i ↦ if i = 0 then gammaSeq g ε (k + 1) else -gammaSeq g ε k)
+    (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by omega)
+    (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia)) (by simp) (fun t ht h1 ↦ ?_)
+    fun i ↦ by
+      simpa [Finset.filter_filter, and_comm] using
+        hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one (Finset.filter_subset _ _)
+          (ArithmeticFunction.sum_divisors_filter_mod_two_moebius_div hn'3 i)
+  have := Nat.pos_of_mem_divisors (hunion ▸ ht)
+  rw [gammaSeq_mul_eq_ite_even_of_odd hg hko hzero (by lia)]
+  simp only [Nat.even_iff]
+
 /-- For even `g`, `γ_n + γ_{n+1}` divides `γ_{n+j} - γ_{n+1}` for all `j ≥ 1` (`n ≥ 1`): modulo
 `γ_n + γ_{n+1}` one has `g(γ_{n+1}) ≡ g(-γ_n) = γ_{n+1}`, so the sequence is constant from index
 `n + 1` on. -/
@@ -541,6 +607,78 @@ theorem not_isSquare_betaSeq_of_dvd_add_succ (hg : EvenPoly g) {ε : ℤ} (hε :
   not_isSquare_betaSeq_of_dvd_add_two_mul hg hε hγ hn hn' hk
     (hdvd.trans (gammaSeq_add_succ_dvd hg ε hkpos))
     ((isCoprime_gammaSeq_add_succ ε hkpos h0).of_isCoprime_of_dvd_left hdvd) hnsq
+
+/-- **Proposition 2.5 of [Li 2021], `k` even.** Let `n ≥ 2`, `n' = rad n` and `k = n / n'` be
+even. If the modulus `m` divides `γ_k + γ_{k+2}`, is prime to `γ_2`, and `-1` is not a square mod
+`m`, then `β_n` is not a square in `ℚ`: by `2`-periodicity `γ_{2k} ≡ -γ_k mod m`, and `m` is prime
+to `γ_k` because a common divisor would divide `γ_{k+2}` and hence `gcd (γ_k) (γ_{k+2}) = γ_2`. -/
+theorem not_isSquare_betaSeq_of_even_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
+    (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n) (hn' : n' = radical n)
+    (hk : n = k * n') (hke : Even k) {m : ℕ}
+    (hdvd : (m : ℤ) ∣ gammaSeq g ε k + gammaSeq g ε (k + 2))
+    (hcop : IsCoprime (m : ℤ) (gammaSeq g ε 2)) (hnsq : ¬IsSquare (-1 : ZMod m)) :
+    ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
+  have hkpos : 1 ≤ k := by grind
+  have hass := gammaSeq_associated_gcd hg hε k (k + 2)
+  rw [Nat.gcd_self_add_right, Nat.gcd_eq_right (even_iff_two_dvd.mp hke)] at hass
+  refine not_isSquare_betaSeq_of_dvd_add_two_mul hg hε hγ hn hn' hk ?_
+    (isCoprime_of_isCoprime_gcd_of_dvd_add (hcop.of_isCoprime_of_dvd_right hass.dvd) hdvd) hnsq
+  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd] at hdvd ⊢
+  push_cast [intCast_gammaSeq] at hdvd ⊢
+  rw [gammaSeq_eq_ite_even_of_add_two_eq_zero (hg.map _) hkpos hdvd (2 * k) (by lia),
+    if_pos (by grind)]
+  ring
+
+/-- For odd `k` (`g` even, `ε = ±1`, `g(0)` a unit), a modulus `m` dividing `γ_k + γ_{k+2}` is
+prime to `γ_k`: a common divisor of `m` and `γ_k` divides `γ_{k+2}`, hence
+`gcd (γ_k) (γ_{k+2}) = γ_{gcd (k, k+2)} = γ_1`, a unit. -/
+theorem isCoprime_gammaSeq_of_odd_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
+    (h0 : IsUnit (g.eval 0)) {k : ℕ} (hko : Odd k) {m : ℤ}
+    (hdvd : m ∣ gammaSeq g ε k + gammaSeq g ε (k + 2)) : IsCoprime m (gammaSeq g ε k) := by
+  have hgcd : k.gcd (k + 2) = 1 := by
+    rw [Nat.gcd_self_add_right]
+    exact Nat.coprime_two_right.mpr hko
+  have hu1 : IsUnit (gammaSeq g ε 1) := by
+    rw [gammaSeq_one]
+    exact (IsUnit.of_pow_eq_one hε two_ne_zero).mul h0
+  exact isCoprime_of_isCoprime_gcd_of_dvd_add (isCoprime_one_right.of_isCoprime_of_dvd_right
+    (((hgcd ▸ gammaSeq_associated_gcd hg hε k (k + 2)).isUnit_iff.mpr hu1).dvd)) hdvd
+
+/-- An odd divisor `k > 1` of `n ≠ 0` contributes an odd prime to `rad n`, so `rad n ≥ 3`. -/
+private lemma three_le_radical_of_odd_dvd {k n : ℕ} (hn : n ≠ 0) (hk : k ∣ n) (hko : Odd k)
+    (hk1 : 1 < k) : 3 ≤ radical n := by
+  by_contra! h
+  have h2 : radical n = 2 := by
+    have := Nat.one_lt_radical_iff.mpr (hk1.trans_le (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hk))
+    lia
+  obtain ⟨p, hp, hpk⟩ := Nat.exists_prime_and_dvd (show k ≠ 1 by lia)
+  have hpn : p ∈ n.primeFactors := Nat.mem_primeFactors.mpr ⟨hp, hpk.trans hk, hn⟩
+  rw [← Nat.primeFactors_radical, h2, Nat.prime_two.primeFactors, Finset.mem_singleton] at hpn
+  exact Nat.not_even_iff_odd.mpr hko (even_iff_two_dvd.mpr (hpn ▸ hpk))
+
+/-- **Proposition 2.5 of [Li 2021], `k` odd.** Let `g(0)` be a unit, `n' = rad n` and
+`k = n / n' > 1` odd. If the modulus `m` divides `γ_k + γ_{k+2}`, is prime to `γ_{k+1}`, and `-1` is
+not a square mod `m`, then `β_n` is not a square in `ℚ`: by `2`-periodicity, `γ_{kt} ≡ -γ_k` for odd
+`t ≥ 3` and `γ_{kt} ≡ γ_{k+1}` for even `t`, and the sign partition of the divisors of `n'` is
+balanced on each parity class. -/
+theorem not_isSquare_betaSeq_of_odd_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
+    (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) (h0 : IsUnit (g.eval 0)) {n k n' : ℕ}
+    (hn' : n' = radical n) (hk : n = k * n') (hko : Odd k) (hk1 : 1 < k) {m : ℕ}
+    (hdvd : (m : ℤ) ∣ gammaSeq g ε k + gammaSeq g ε (k + 2))
+    (hcop : IsCoprime (m : ℤ) (gammaSeq g ε (k + 1))) (hnsq : ¬IsSquare (-1 : ZMod m)) :
+    ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
+  have hn : 2 ≤ n := by nlinarith [Nat.radical_pos n]
+  have hn'3 : 3 ≤ n' := hn' ▸ three_le_radical_of_odd_dvd (by lia) (Dvd.intro _ hk.symm) hko hk1
+  have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ m).mpr hdvd
+  have hu := (ZMod.coe_int_isUnit_iff_isCoprime _ m).mpr
+    (isCoprime_gammaSeq_of_odd_of_dvd_add_two hg hε h0 hko hdvd)
+  have hu1 := (ZMod.coe_int_isUnit_iff_isCoprime _ m).mpr hcop
+  simp only [Int.cast_add, intCast_gammaSeq] at hz hu hu1
+  refine not_isSquare_betaSeq_of_prod_eq_neg_prod hg hε hγ (by lia) hn' hk one_ne_zero
+    (one_mul _).symm (one_mul _).symm (m := m) ?_ ?_ hnsq <;> push_cast [intCast_gammaSeq]
+  · exact prod_gammaSeq_mul_eq_neg_prod_of_odd (hg.map _) hko hz (hn' ▸ squarefree_radical) hn'3
+  · exact isUnit_prod_gammaSeq_mul_of_odd (hg.map _) hko hz hu hu1 fun t ht ↦
+      Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht)
 
 /-- The `ZMod 4` specialization of `gammaSeq_add_succ_eq_three` via `intCast_gammaSeq`. -/
 lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)

@@ -155,7 +155,7 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[Parity-balanced sign partition]
   \label{lem:li-parity}
-  \lean{ArithmeticFunction.sum_divisors_filter_mod_two_moebius_div, ArithmeticFunction.sum_divisors_filter_dvd_moebius_div}
+  \lean{ArithmeticFunction.sum_divisors_filter_mod_two_moebius_div, ArithmeticFunction.sum_divisors_filter_dvd_moebius_div, Squarefree.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one}
   \leanok
   \uses{lem:moebiussign}
   Let $n' > 2$ be squarefree. Then
@@ -253,12 +253,15 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[$2$-periodicity]
   \label{lem:li-period}
+  \lean{QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq_zero, QuadraticIterates.gammaSeq_mul_eq_ite_even_of_odd}
+  \leanok
   \uses{def:gammaseq}
   Over any commutative ring, if $k \ge 1$ and $\gamma_k + \gamma_{k+2} = 0$, then
   $\gamma_{r+2} = \gamma_r$ for all $r \ge k + 1$. In particular $\gamma_{k+2j} = -\gamma_k$ for
   $j \ge 1$ and $\gamma_{k+1+2j} = \gamma_{k+1}$ for $j \ge 0$.
 \end{lemma}
 \begin{proof}
+  \leanok
   $\gamma_{k+2+j} = g^{(j)}(\gamma_{k+2}) = g^{(j)}(-\gamma_k) = g^{(j)}(\gamma_k) = \gamma_{k+j}$
   for $j \ge 1$, since an iterate of the even function $g$ is even
   (\lname{gammaSeq\_add}, \lname{EvenPoly.iterate\_eval\_neg}). This is the argument of
@@ -269,11 +272,14 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{proposition}[\cite{li2021}, Proposition 2.5, $k$ even]
   \label{lem:li-even}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_even_of_dvd_add_two, isCoprime_of_isCoprime_gcd_of_dvd_add}
+  \leanok
   \uses{def:gammaseq}
   Let $n \ge 2$ with $k = n/\rad(n)$ even, and $m$ a modulus with $m \dvd \gamma_k + \gamma_{k+2}$,
   $m$ coprime to $\gamma_2$, and $-1$ not a square mod $m$. Then $\beta_n$ is not a square.
 \end{proposition}
 \begin{proof}
+  \leanok
   \uses{lem:li-period, lem:li-crit, lem:strongdvd}
   Mod $m$, Lemma~\ref{lem:li-period} gives $\gamma_{2k} = \gamma_{k + 2 \cdot k/2} \equiv
   -\gamma_k$, so $m \dvd \gamma_k + \gamma_{2k}$. Strong divisibility (\lname{gammaSeq\_gcd},
@@ -284,12 +290,15 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{proposition}[\cite{li2021}, Proposition 2.5, $k$ odd]
   \label{lem:li-odd}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_odd_of_dvd_add_two, QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod_of_odd, QuadraticIterates.isUnit_prod_gammaSeq_mul_of_odd, QuadraticIterates.isCoprime_gammaSeq_of_odd_of_dvd_add_two}
+  \leanok
   \uses{def:gammaseq}
   Let $g(0)$ be a unit, $n \ge 2$ with $k = n/\rad(n)$ odd and $k > 1$, and $m$ a modulus with
   $m \dvd \gamma_k + \gamma_{k+2}$, $m$ coprime to $\gamma_{k+1}$, and $-1$ not a square mod $m$.
   Then $\beta_n$ is not a square.
 \end{proposition}
 \begin{proof}
+  \leanok
   \uses{lem:li-period, lem:li-parity, lem:li-classes, lem:li-PQ, lem:strongdvd}
   Since $k$ is odd and $> 1$, $n' = \rad(n)$ is neither $1$ nor $2$ ($n' = 2$ would force
   $k = n/2$ to be a power of $2$). Mod $m$, by Lemma~\ref{lem:li-period}: for odd $t \ge 3$,

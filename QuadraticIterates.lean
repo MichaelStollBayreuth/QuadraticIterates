@@ -28,4 +28,5 @@ public import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
+public import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
