@@ -9,13 +9,11 @@ the definitions from the introduction, and Chapter~4 the general-purpose theory 
 formalization develops on the side, in Mathlib generality, under
 \texttt{QuadraticIterates/Mathlib/}.
 
-All statements of Chapters~0--4 are formalized and proved: there is no \texttt{sorry} anywhere,
-so every node of those chapters is green. Chapter~5 is different in kind: it is the \emph{plan}
-for extending the formalization to the results of Li \cite{li2020, li2021}, and none of its
-nodes is formalized yet. Where the formal statement differs from the printed one --- a weaker hypothesis,
-a total function with a junk value, a more general coefficient ring --- this is recorded in a
-\emph{Formalization} paragraph. The Lean names attached to each item are the declarations that
-carry its content; clicking one leads to the generated documentation.
+All statements of Chapters~0--5 are formalized and proved: there is no \texttt{sorry} anywhere,
+so every node of the dependency graph is green. Chapter~5 formalizes the results of Li
+\cite{li2020, li2021} that extend the last theorem of the paper to further values of $a$; it
+records the mathematics in the notation of Chapter~2 and how the proofs reduce to the material
+of Chapters~2--4.
 
 \emph{Standing hypotheses.} Throughout, $a$ is an integer such that $-a$ is not a square in
 $\QQ$, $f := X^2 + a \in \ZZ[X]$, and $f_0 := X$, $f_{n+1} := f(f_n) = f_n^2 + a$ are its

@@ -16,7 +16,9 @@ A complete formalization in [Lean 4](https://lean-lang.org), based on
 > ([DOI: 10.1007/BF01197321](https://doi.org/10.1007/BF01197321)).
 
 For an integer `a` such that `-a` is not a square, the paper determines when the Galois group
-over ℚ of the `n`-th iterate of `X² + a` is the full iterated wreath power `[C₂]ⁿ`.
+over ℚ of the `n`-th iterate of `X² + a` is the full iterated wreath power `[C₂]ⁿ`. The
+extensions of its last result by H.-C. Li (Arch. Math. 2020 and 2021) to further values of `a`
+are formalized as well.
 
 - [Blueprint]({{ site.baseurl }}/blueprint/) — the paper, with each definition and statement
   linked to the declaration that formalizes it

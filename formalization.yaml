@@ -18,6 +18,20 @@ sources:
     license: "© 1992 Birkhäuser Verlag, Basel"
     author_contacted: "yes"    # the source author is the formalization author
     prior_work: ""
+  - title: "Arboreal Galois representation for a certain type of quadratic polynomials"
+    authors: ["Hua-Chieh Li"]
+    id: "10.1007/s00013-019-01390-x"   # Arch. Math. 114 (2020), 265-269
+    type: "journal article"
+    license: "© Springer Nature Switzerland AG 2019"
+    author_contacted: "no"
+    prior_work: ""
+  - title: "On Stoll's criterion for the maximality of quadratic arboreal Galois representations"
+    authors: ["Hua-Chieh Li"]
+    id: "10.1007/s00013-021-01609-w"   # Arch. Math. 117 (2021), 133-140
+    type: "journal article"
+    license: "© Springer Nature Switzerland AG 2021"
+    author_contacted: "no"
+    prior_work: ""
 
 # project status
 status:
@@ -25,11 +39,16 @@ status:
     Complete formalization of the paper: the criterion for the Galois group Ω_n of the n-th
     iterate of X² + a to be the full iterated wreath power [C₂]ⁿ (Theorem of Section 1, both
     parts, including all supporting lemmas 1.0-1.6, 2.1, 2.2 and Odoni's embedding theorem),
-    and the main result of Section 3. Supporting theory (multiquadratic extensions, iterated
-    wreath products, even polynomials and their factorizations, Möbius quotients of strong
-    divisibility sequences, valuations in a UFD) is developed in Mathlib generality in 23 files
-    under QuadraticIterates/Mathlib/ as upstreaming candidates. A LaTeX blueprint with a
-    dependency graph and the generated API documentation are published at
+    and the main result of Section 3. Also formalized are the results of H.-C. Li (Arch. Math.
+    2020 and 2021) extending the Section 3 result: Ω_n is the full wreath power for all n when
+    a = -(8k+2)(8k+3) or a = -((4k+1)(4k+2)+1), and, for a < 0 with a ≡ 3 mod 4 and -a not a
+    square, if and only if -a - 1 is not a square (QuadraticIterates/Li/); the index-2
+    statement of the 2020 paper in the exceptional case and Lemma 3.5 of the 2021 paper are not
+    formalized. Supporting theory (multiquadratic extensions, iterated wreath products, even
+    polynomials and their factorizations, Möbius quotients of strong divisibility sequences,
+    valuations in a UFD) is developed in Mathlib generality in 25 files under
+    QuadraticIterates/Mathlib/ as upstreaming candidates. A LaTeX blueprint with a dependency
+    graph and the generated API documentation are published at
     https://michaelstollbayreuth.github.io/QuadraticIterates/ .
   sorry_count: 0
   sorry_in_definitions: 0
@@ -49,6 +68,30 @@ status:
     literature_dependencies: []
   - declaration: "QuadraticIterates.section3_main"
     file: "QuadraticIterates/ArchMath1992/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2021_theorem_3_3"
+    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2021_theorem_3_9"
+    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2020_theorem_3_4"
+    file: "QuadraticIterates/Li/ArchMath2020.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2020_theorem_3_5"
+    file: "QuadraticIterates/Li/ArchMath2020.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
@@ -83,7 +126,7 @@ automation:
         declaration in the project against the previous round, so that a round changed exactly
         the intended statements.
       cost:
-        wall_time: "~70 hours in 11 interactive sessions between 2026-07-12 and 2026-09-04"
+        wall_time: "~76 hours in 12 interactive sessions between 2026-07-12 and 2026-09-06"
         spend_usd: "Claude Max 20x subscription"
         hardware: "API-only"
       prompting_notes: >
@@ -94,7 +137,10 @@ automation:
         23 supporting files under QuadraticIterates/Mathlib/, then each of the five files of
         the paper proper, each closed by a line-level audit along three lenses (proof length,
         Mathlib duplication and naming, style and documentation) run by parallel sub-agents
-        whose proposals had to compile before being applied.
+        whose proposals had to compile before being applied. The extensions of Li were first
+        planned in a blueprint chapter (statements, proofs reduced to the existing
+        infrastructure, order of work), reviewed by the author, and then formalized in seven
+        verified commits, one per layer or theorem.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
@@ -111,6 +157,13 @@ fidelity:
     proved as Lemma 1.1 b).
     Corollary 1.3 and the degree criterion are extended to n = 0. Supporting material is
     stated in natural Mathlib generality rather than in the paper's ad-hoc setting.
+    For the results of Li: the criteria of his Section 2 (2021) are stated for a modulus m with
+    -1 not a square mod m (the paper uses primes p ≡ 3 mod 4), his Lemmas 3.2 and 3.3 (2020)
+    are one statement proved modulo γ_2, and Lemma 2.2 (2021) is stated with the case
+    a ≡ 1 mod 4 (the printed "3 mod 4" is a misprint; a = -5 is a counterexample). The
+    index-2 statement of the 2020 paper (Ω_n has index 2 in the wreath power when -a - 1 is a
+    square) and Lemma 3.5 of the 2021 paper (not needed for its Theorem 3.9) are not
+    formalized.
 
 # review status
 review:
@@ -183,6 +236,66 @@ alignment:
       lean: "section3_main"
       module: "QuadraticIterates.ArchMath1992.Main"
       status: "proved"
+    - source: "Li 2021, Lemma 2.1 (Stoll's criterion at one index)"
+      lean: "not_isSquare_betaSeq_of_dvd_add_two_mul"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Li 2021, Lemma 2.2"
+      lean: "not_isSquare_abs_bSeq_of_squarefree"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+      note: "case (3) is a ≡ 1 mod 4 (misprinted as 3 mod 4 in the paper)"
+    - source: "Li 2021, Corollary 2.4"
+      lean: "not_isSquare_betaSeq_of_dvd_add_succ"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Li 2021, Proposition 2.5"
+      lean: "not_isSquare_betaSeq_of_even_of_dvd_add_two, not_isSquare_betaSeq_of_odd_of_dvd_add_two"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Li 2021, Lemma 3.1"
+      lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2021, Theorem 3.3"
+      lean: "li2021_theorem_3_3"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2021, Lemma 3.4"
+      lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2021, Lemma 3.5"
+      lean: ""
+      module: ""
+      status: "not formalized"
+      note: "not needed for Theorem 3.9 (Lemma 3.6 covers n / rad n = 2)"
+    - source: "Li 2021, Lemma 3.6"
+      lean: "not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2021, Theorem 3.9"
+      lean: "li2021_theorem_3_9"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2020, Lemma 3.1"
+      lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
+    - source: "Li 2020, Lemmas 3.2 and 3.3"
+      lean: "not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
+      note: "one statement for odd and even squarefree n, proved modulo γ_2"
+    - source: "Li 2020, Theorem 3.4"
+      lean: "li2020_theorem_3_4"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
+    - source: "Li 2020, Theorem 3.5"
+      lean: "li2020_theorem_3_5"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
+      note: "the index-2 statement in the exceptional case is not formalized"
 
 # acknowledgements
 acknowledgements: ""

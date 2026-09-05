@@ -22,6 +22,13 @@ that embedding is an isomorphism: for a given `n` this happens exactly when the 
 or `a < 0` with `a ≡ 0 mod 4` and `-a` not a square. All results of the paper are formalized,
 with no `sorry` and no axioms beyond the three of Mathlib.
 
+Also formalized are the extensions of the last result by H.-C. Li
+(Arch. Math. **114** (2020), 265–269, [DOI: 10.1007/s00013-019-01390-x](https://doi.org/10.1007/s00013-019-01390-x);
+Arch. Math. **117** (2021), 133–140, [DOI: 10.1007/s00013-021-01609-w](https://doi.org/10.1007/s00013-021-01609-w)):
+the embedding is an isomorphism for every `n` when `a = -(8k+2)(8k+3)` or
+`a = -((4k+1)(4k+2)+1)`, and, for `a < 0` with `a ≡ 3 mod 4` and `-a` not a square, exactly when
+`-a - 1` is not a square.
+
 ## Contents
 
 The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
@@ -31,6 +38,9 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
   files — `Sequences` (the γ- and β-sequences over general rings and over `ℤ`), `Iterates` (the
   polynomials `f_n`, the fields `K_n`, the groups `Ω_n`), `Irreducibility`, `DegreeCriterion`
   and `Main` (the three main theorems);
+- [`Li.lean`](QuadraticIterates/Li.lean) and the folder [`QuadraticIterates/Li`](QuadraticIterates/Li):
+  the results of Li — `Residues` (the residues of the rescaled sequence for `a < 0`),
+  `ArchMath2021` and `ArchMath2020` (the theorems of the two papers);
 - [`QuadraticIterates/Mathlib`](QuadraticIterates/Mathlib): auxiliary declarations missing from
   the current version of Mathlib, stated in their natural generality and following Mathlib's
   directory structure; these are candidates for upstreaming.
@@ -39,7 +49,7 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml) format; it
 includes a table aligning each result of the paper with the declaration that formalizes it.
 [`comparator/`](comparator) holds a [comparator](https://github.com/leanprover/comparator)
-harness for the main result of Section 3.
+harness for the main result of Section 3 and for the theorems of Li, one challenge per case.
 
 ## Blueprint
 
@@ -47,9 +57,9 @@ harness for the main result of Section 3.
 blueprint that reproduces the paper — its definitions, statements and proofs — and links each
 item to the declarations that formalize it. Its chapters 1–3 are the three sections of the
 paper, with the numbering of the printed results preserved (Facts 1.0, Lemma 1.1, …, Lemma 2.2);
-chapter 0 collects the definitions of the introduction and chapter 4 the general-purpose theory
-developed under `QuadraticIterates/Mathlib`. Every item is fully formalized, so the dependency
-graph is entirely green.
+chapter 0 collects the definitions of the introduction, chapter 4 the general-purpose theory
+developed under `QuadraticIterates/Mathlib`, and chapter 5 the results of Li. Every item is fully
+formalized, so the dependency graph is entirely green.
 
 To build it, install [leanblueprint](https://github.com/PatrickMassot/leanblueprint) and a TeX
 distribution, then run in the root directory of this repository
