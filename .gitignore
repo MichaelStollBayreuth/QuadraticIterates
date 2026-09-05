@@ -39,3 +39,5 @@
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
+## Internal notes, not part of the project
+comparison.md

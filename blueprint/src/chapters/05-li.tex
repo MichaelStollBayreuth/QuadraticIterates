@@ -1,0 +1,581 @@
+\chapter{\texorpdfstring{Further values of $a$ with $\Om_n \cong \Ct{n}$: the results of Li}{Further
+  values of a with the full wreath power: the results of Li}}
+
+\emph{This chapter is a plan, not a record.} Nothing in it is formalized yet; it isolates the
+results of Li \cite{li2020, li2021} that extend Theorem~\ref{thm:section3}, reduces them to the
+material of Chapters~2--4 plus a small number of new lemmas, and fixes the order in which those
+lemmas should be formalized. Every node below is therefore uncoloured; the arrows into it are
+the point.
+
+\section{The results}
+
+Li's two papers use the notation of Chapter~2 with the rescaled polynomial of
+Definition~\ref{def:normpoly}: $g = |a| X^2 + \sgn(a)$, $\gamma_1 = 1$,
+$\gamma_{n+1} = g(\gamma_n)$, so that $\gamma_n = |c_n|/|a|$ and $\beta_n = |b_n|$ for $n \ge 2$.
+(In \cite{li2020} the polynomial is written $x^2 - a$ with $a > 0$; below, $a$ always denotes the
+coefficient of $f = X^2 + a$, so the case of \cite{li2020} is $a < 0$, $a \equiv 3 \bmod 4$.)
+The three results to be formalized are the following.
+
+\begin{theorem}[\cite{li2021}, Theorem 3.3]
+  \label{thm:li-A}
+  \uses{def:galois, def:wreath}
+  Let $a = -(8k+2)(8k+3)$ with $k \ge 0$. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
+\end{theorem}
+\begin{proof}
+  \uses{lem:li-sqfree, lem:li-A-nonsqfree, thm:section1, def:normpoly}
+  $-a = (8k+2)(8k+3) \equiv 6 \bmod 8$ is not a square. For $n \ge 2$, $|b_n| = \beta_n$ is not a
+  square: by Lemma~\ref{lem:li-sqfree}~(2) if $n$ is squarefree, by
+  Lemma~\ref{lem:li-A-nonsqfree} otherwise. Part~2) of Theorem~\ref{thm:section1}.
+  \formalnote{Same shape as \lname{section3\_main}: a case split on \texttt{Squarefree n} in
+  front of \lname{section1\_of\_not\_isSquare\_abs\_bSeq}.}
+\end{proof}
+
+\begin{theorem}[\cite{li2021}, Theorem 3.9]
+  \label{thm:li-B}
+  \uses{def:galois, def:wreath}
+  Let $a = -\bigl((4k+1)(4k+2) + 1\bigr)$ with $k \ge 0$. Then $\Om_n \cong \Ct{n}$ for all
+  $n \ge 1$.
+\end{theorem}
+\begin{proof}
+  \uses{lem:li-sqfree, lem:li-B-odd, lem:li-B-even, thm:section1, def:normpoly}
+  $-a = (4k+1)(4k+2) + 1 \equiv 3 \bmod 4$ is not a square, and $a \equiv 1 \bmod 4$. For
+  $n \ge 2$: if $n$ is squarefree, Lemma~\ref{lem:li-sqfree}~(3); if not and $4 \nmid n$,
+  Lemma~\ref{lem:li-B-odd}; if $4 \dvd n$, then $n/\rad(n)$ is even and Lemma~\ref{lem:li-B-even}
+  applies. Part~2) of Theorem~\ref{thm:section1}.
+\end{proof}
+
+\begin{theorem}[\cite{li2020}, Theorems 3.4 and 3.5]
+  \label{thm:li-C}
+  \uses{def:galois, def:wreath, def:bseq}
+  Let $a < 0$ with $a \equiv 3 \bmod 4$ and $-a$ not a square. Then $|b_n|$ is not a square for
+  all $n \ge 3$, and
+  \[ \Om_n \cong \Ct{n} \text{ for all } n \ge 1 \iff -a - 1 \text{ is not a square in } \ZZ. \]
+\end{theorem}
+\begin{proof}
+  \uses{lem:li-C-nonsqfree, lem:li-C-odd, lem:li-C-even, thm:section1, def:normpoly,
+    def:twoindep}
+  For $n \ge 3$, $|b_n| = \beta_n$ is not a square: Lemma~\ref{lem:li-C-nonsqfree} if $n$ is not
+  squarefree, Lemma~\ref{lem:li-C-odd} if $n$ is odd and squarefree, Lemma~\ref{lem:li-C-even}
+  if $n$ is even and squarefree (then $n > 2$). Moreover $b_2 = c_2/c_1 = -(a+1) = -a - 1 > 0$.
+  If $-a - 1$ is not a square, no $|b_n|$ with $n \ge 2$ is, and part~2) of
+  Theorem~\ref{thm:section1} gives $\Om_n \cong \Ct{n}$ for all $n$. If $-a - 1 = b_2$ is a
+  square, then $b_1, b_2$ are not $2$-independent, so by part~1) of Theorem~\ref{thm:section1}
+  (the equivalence (a) $\Leftrightarrow$ (c) at $n = 2$), $\Om_2 \not\cong \Ct{2}$.
+  \formalnote{The value $b_2 = -a - 1$ is \lname{bSeq\_eq\_moebiusFactorR} at $n = 2$ with
+  \lname{cSeq\_one}, \lname{cSeq\_two}, or more simply $c_2 = b_1 b_2$ from
+  \lname{cSeq\_eq\_prod\_bSeq}. The direction ``$\Rightarrow$'' uses
+  \lname{section1\_tfae} and \lname{TwoIndependent.not\_isSquare}. As said above, the
+  index-$2$ statement of \cite{li2020} in the exceptional case is not part of the plan.}
+\end{proof}
+
+The first two cover $a = -6, -110, -342, \dots$ and $a = -3, -31, -91, \dots$; the third covers
+$a = -13, -21, -29, \dots$ and identifies the failures $a = -5, -17, -37, \dots$ (where
+$b_2 = -a - 1$ is a square). All three are proved, as Theorem~\ref{thm:section3} is, by showing
+that no $|b_n|$ with $n \ge 2$ (resp.\ $n \ge 3$) is a square and invoking part~2) of
+Theorem~\ref{thm:section1}; what changes is how the non-squareness of $\beta_n$ is established.
+\cite{li2020} also shows that in the exceptional case $-a - 1 = m^2$ the index of $\Om_n$ in
+$\Ct{n}$ is exactly $2$ for all $n \ge 2$; this needs an analysis of the Kummer tower when the
+base is not maximal, which the present infrastructure (Lemma~\ref{lem:1.5} assumes
+$\Om_n \cong \Ct{n}$) does not provide, and it is \emph{not} part of the plan.
+
+\emph{Numerical check.} Before writing this chapter, all congruences and identities below were
+verified in PARI/GP for the first members of each family and $n \le 13$, and the lists of $n$
+with $|b_n|$ a square were computed: empty for $a = -6, -110, -342, -3, -31, -91, -13, -21, -29,
+-33$ and $\{2\}$ for $a = -5, -17, -37$. The check also exposed a misprint in \cite{li2021},
+Lemma~2.2: its third case must read $a \equiv 1 \bmod 4$, not $3 \bmod 4$ (the case
+$a \equiv 3 \bmod 4$ is the one of \cite{li2020}, and $a = -5$ is a counterexample to the
+printed statement).
+
+\section{The plan}
+
+The proof of Lemma~\ref{lem:2.1} has three layers, which the formalization currently keeps in
+one declaration (\lname{not\_isSquare\_betaSeq}) and quantifies over all indices at once. Li's
+arguments reuse the two lower layers with different inputs, so the first step is to take the
+existing proof apart:
+\begin{enumerate}
+  \item \emph{Arithmetic of the Möbius product.} $\beta_n$ is the quotient $P/Q$ of the products
+    of $\gamma_{kt}$ over the divisors $t$ of $n' = \rad(n)$ with $\mu(n'/t) = +1$ resp.\ $-1$,
+    where $k = n/n'$ (Lemma~\ref{lem:moebiussign}). If $P \equiv -Q \bmod m$ with $Q$ a unit
+    mod $m$ and $-1$ not a square mod $m$, then $\beta_n$ is not a square
+    (Lemma~\ref{lem:zmodsquare}). This is Lemma~\ref{lem:li-PQ} below; Li's Lemma~3.3 of
+    \cite{li2020} additionally needs $P$ and $Q$ to carry a common power of $m$, which is
+    cancelled first.
+  \item \emph{Congruence patterns.} $P \equiv -Q$ follows whenever the $\gamma_{kt}$ are
+    congruent, up to a sign at $t = 1$, to values that depend only on a \emph{class} of $t$, and
+    the sign partition is balanced within each class (Lemma~\ref{lem:li-classes}). The
+    existing argument uses one class ($\gamma_{kt} \equiv \gamma_{2k}$ for all $t \ge 2$); Li's
+    Proposition~2.5 needs two classes, the parity of $t$, and hence a parity-balanced sign
+    partition (Lemma~\ref{lem:li-parity}).
+  \item \emph{Sequence facts feeding the pattern.} Where $\gamma_k + \gamma_{2k} \equiv 0$
+    (Lemma~\ref{lem:2.1}) the sequence is eventually constant on the multiples of $k$
+    (\lname{gammaSeq\_mul\_eq\_two\_mul}); where $\gamma_k + \gamma_{k+2} \equiv 0$ it is
+    $2$-periodic from index $k+1$ on (Lemma~\ref{lem:li-period}), which is the new input.
+\end{enumerate}
+With the layers separated, the criteria of \cite{li2021}, Section~2, are four short lemmas
+(\ref{lem:li-crit}--\ref{lem:li-odd}), each stated \emph{for a single index} $n$ with its own
+modulus, and the existing Lemmas~\ref{lem:2.1} and~\ref{lem:2.2} become corollaries. The
+applications then only need residue computations for the rescaled polynomial
+(Section~\ref{sec:li-residues}), of the kind already done for Lemma~\ref{lem:2.2}.
+
+Throughout, $g$ is an even integer polynomial, $\varepsilon = \pm 1$, all $\gamma_n$ ($n \ge 1$)
+are nonzero, and for $n \ge 2$ we write $n' := \rad(n)$ and $k := n/n'$; ``$m$ is a modulus''
+means $m \ge 1$, and ``$x$ is a unit mod $m$'' means that $x$ and $m$ are coprime. Li always
+takes $m$ to be a prime $p \equiv 3 \bmod 4$; the formalization keeps the modulus form of
+Lemma~\ref{lem:2.1}, which needs no prime and turns ``$p \nmid \gamma$'' into coprimality.
+Proposed Lean names are given in typewriter font; the new general material belongs next to the
+existing declarations it generalizes (\texttt{ArchMath1992/Sequences.lean} for the sequence
+lemmas, the Möbius mirror file for Lemma~\ref{lem:li-parity}), and the results specific to
+Li's families in a new directory \texttt{QuadraticIterates/Li/}.
+
+\section{The criterion of Lemma 2.1, one index at a time}
+
+\begin{lemma}[Balanced classes]
+  \label{lem:li-classes}
+  Let $R$ be a commutative ring, $S = S_+ \sqcup S_-$ a finite set of natural numbers with
+  $1 \in S$, $x, w \colon \NN \to R$ and $\kappa \colon \NN \to I$ a ``class'' function such that
+  $x_t = w_{\kappa(t)}$ for $t \in S \setminus \{1\}$ and $x_1 = -w_{\kappa(1)}$. If every class
+  is balanced, i.e.\ $\#\{t \in S_+ : \kappa(t) = i\} = \#\{t \in S_- : \kappa(t) = i\}$ for all
+  $i$, then
+  \[ \prod_{t \in S_+} x_t = -\prod_{t \in S_-} x_t. \]
+\end{lemma}
+\begin{proof}
+  Group each product by classes (\lname{Finset.prod\_fiberwise}): on the class $i$ the product
+  over $S_\pm$ is $w_i^{\#\{t \in S_\pm : \kappa(t) = i\}}$, times $-1$ if $1$ lies in the class
+  and in $S_\pm$. The exponents agree by balance, and exactly one of $S_+$, $S_-$ contains $1$.
+  \formalnote{This generalizes \lname{prod\_gammaSeq\_mul\_eq} and
+  \lname{prod\_gammaSeq\_mul\_eq\_neg\_prod}, which are the case of a single class with
+  $w = \gamma_{2k}$; both become instances (and the second can be deleted). Proposed name
+  \lname{Finset.prod\_eq\_neg\_prod\_of\_forall\_card\_filter\_eq}; with $I = \mathrm{Unit}$ it
+  gives Lemma~\ref{lem:2.1}, with $I = \mathrm{Bool}$ (parity) Lemma~\ref{lem:li-odd}.}
+\end{proof}
+
+\begin{lemma}[Parity-balanced sign partition]
+  \label{lem:li-parity}
+  \uses{lem:moebiussign}
+  Let $n' > 2$ be squarefree. Then
+  \[ \sum_{t \dvd n',\ t \text{ odd}} \mu(n'/t) = 0
+     = \sum_{t \dvd n',\ t \text{ even}} \mu(n'/t), \]
+  and consequently the divisors of $n'$ admit a partition $S_+ \sqcup S_-$ by the sign of
+  $\mu(n'/t)$ that is balanced on the odd and on the even divisors separately.
+\end{lemma}
+\begin{proof}
+  If $n'$ is odd, there are no even divisors and the odd sum is $\sum_{t \dvd n'} \mu(n'/t) = 0$
+  (Lemma~\ref{lem:moebiussign}). If $n' = 2m'$ with $m' > 1$ odd, then $t \mapsto 2t$ is a bijection
+  from the divisors of $m'$ onto the even divisors of $n'$ with $\mu(n'/2t) = \mu(m'/t)$, and the
+  odd divisors of $n'$ are the divisors of $m'$ with $\mu(n'/t) = \mu(2)\mu(m'/t) = -\mu(m'/t)$;
+  both sums are $\pm \sum_{t \dvd m'} \mu(m'/t) = 0$. The partition is obtained from the vanishing
+  sums as in the proof of \lname{Squarefree.exists\_disjoint\_union\_eq\_divisors\_moebius\_div}.
+  \formalnote{The natural statement is the strengthening of that lemma by the two cardinality
+  equations $\#(S_\pm \cap \{\text{odd}\})$ and $\#(S_\pm \cap \{\text{even}\})$; the hypothesis
+  $n' > 2$ only excludes $n' = 2$, where the odd class $\{1\}$ is unbalanced. The divisors of
+  $2m'$ are the divisors $t$ of $m'$ together with their doubles $2t$, and $t \mapsto 2t$ is a
+  bijection between the odd and the even ones.}
+\end{proof}
+
+\begin{lemma}[$\beta_n$ from a numerator/denominator congruence]
+  \label{lem:li-PQ}
+  \uses{def:gammaseq, lem:moebiussign, lem:zmodsquare}
+  Let $n \ge 2$, $n' := \rad(n)$, $k := n/n'$, let $S_+ \sqcup S_-$ be a partition of the divisors
+  of $n'$ by the sign of $\mu(n'/t)$, and put $P := \prod_{t \in S_+} \gamma_{kt}$,
+  $Q := \prod_{t \in S_-} \gamma_{kt}$.
+  Suppose $m$ is a modulus with $-1$ not a square mod $m$, and that $P = m^N P'$, $Q = m^N Q'$ with
+  $N \ge 0$ and integers $P' \equiv -Q' \bmod m$, $Q'$ a unit mod $m$. Then $\beta_n$ is not a
+  square in $\QQ$.
+\end{lemma}
+\begin{proof}
+  $\beta_n = \prod_{d \dvd n} \gamma_d^{\mu(n/d)} = P/Q = P'/Q'$ by
+  Lemma~\ref{lem:moebiussign} (\lname{prod\_pow\_moebius\_eq\_div}), and a quotient of two
+  integers with $P' \equiv -Q'$, $Q'$ a unit, is not a rational square when $-1$ is not a square
+  mod $m$ (Lemma~\ref{lem:zmodsquare}, \lname{ZMod.isSquare\_neg\_one\_of\_isSquare\_div}).
+  \formalnote{This is the last third of the present proof of \lname{not\_isSquare\_betaSeq},
+  with the cancellation of $m^N$ added; $N = 0$ everywhere except in Lemma~\ref{lem:li-C-even}.
+  Proposed name \lname{not\_isSquare\_betaSeq\_of\_prod\_eq\_neg\_prod}. The hypothesis
+  ``$P' \equiv -Q'$ with $Q'$ a unit'' is stated in $\ZZ/m\ZZ$, as in the current code.}
+\end{proof}
+
+\begin{lemma}[\cite{li2021}, Lemma 2.1: Stoll's criterion at one index]
+  \label{lem:li-crit}
+  \uses{def:gammaseq}
+  Let $n \ge 2$, $k := n/\rad(n)$, and let $m$ be a modulus with $m \dvd \gamma_k + \gamma_{2k}$,
+  $m$ coprime to $\gamma_k$, and $-1$ not a square mod $m$. Then $\beta_n$ is not a square in
+  $\QQ$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-classes, lem:li-PQ, lem:moebiussign}
+  Exactly the proof of Lemma~\ref{lem:2.1}: mod $m$, $\gamma_{tk} \equiv \gamma_{2k}$ for all
+  $t \ge 2$ (\lname{gammaSeq\_mul\_eq\_two\_mul}) and $\gamma_k \equiv -\gamma_{2k}$, so
+  Lemma~\ref{lem:li-classes} with a single class gives $P \equiv -Q$, $Q$ is a unit because
+  $\gamma_{2k} \equiv -\gamma_k$ is (\lname{isUnit\_prod\_gammaSeq\_mul}), and
+  Lemma~\ref{lem:li-PQ} concludes.
+  \formalnote{This is \lname{not\_isSquare\_betaSeq} with the family of moduli
+  $m \colon \NN \to \NN$ replaced by the single modulus at the index $k = n/\rad(n)$; the present
+  proof already specializes to that index, so the refactoring is a change of signature, and
+  Lemma~\ref{lem:2.1} is recovered by instantiating $m := m(k)$. Proposed name
+  \lname{not\_isSquare\_betaSeq\_of\_dvd\_add\_two\_mul}.}
+\end{proof}
+
+\begin{lemma}[\cite{li2021}, Corollary 2.4]
+  \label{lem:li-succ}
+  \uses{def:gammaseq}
+  Let $g(0)$ be a unit, $n \ge 2$, $k := n/\rad(n)$, and $m$ a modulus with
+  $m \dvd \gamma_k + \gamma_{k+1}$ and $-1$ not a square mod $m$. Then $\beta_n$ is not a square
+  in $\QQ$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-crit}
+  $\gamma_k + \gamma_{k+1}$ divides $\gamma_k + \gamma_{2k}$ (\lname{gammaSeq\_add\_succ\_dvd})
+  and is coprime to $\gamma_k$ (\lname{isCoprime\_gammaSeq\_add\_succ}); both properties pass to
+  the divisor $m$, and Lemma~\ref{lem:li-crit} applies.
+  \formalnote{The existing
+  \lname{not\_isSquare\_betaSeq\_of\_pos\_of\_not\_isSquare\_neg\_one} is the case
+  $m = \gamma_k + \gamma_{k+1}$ with the hypothesis imposed at every index; it becomes a
+  corollary. The per-index form is what Theorem~\ref{thm:li-C} needs: there
+  $\gamma_1 + \gamma_2 = -a \equiv 1 \bmod 4$ fails the hypothesis, but every
+  $\gamma_k + \gamma_{k+1}$ with $k \ge 2$ satisfies it. Proposed name
+  \lname{not\_isSquare\_betaSeq\_of\_dvd\_add\_succ}.}
+\end{proof}
+
+\begin{lemma}[$2$-periodicity]
+  \label{lem:li-period}
+  \uses{def:gammaseq}
+  Over any commutative ring, if $k \ge 1$ and $\gamma_k + \gamma_{k+2} = 0$, then
+  $\gamma_{r+2} = \gamma_r$ for all $r \ge k + 1$. In particular $\gamma_{k+2j} = -\gamma_k$ for
+  $j \ge 1$ and $\gamma_{k+1+2j} = \gamma_{k+1}$ for $j \ge 0$.
+\end{lemma}
+\begin{proof}
+  $\gamma_{k+2+j} = g^{(j)}(\gamma_{k+2}) = g^{(j)}(-\gamma_k) = g^{(j)}(\gamma_k) = \gamma_{k+j}$
+  for $j \ge 1$, since an iterate of the even function $g$ is even
+  (\lname{gammaSeq\_add}, \lname{EvenPoly.iterate\_eval\_neg}). This is the argument of
+  \lname{gammaSeq\_mul\_eq\_two\_mul} with the step $k$ replaced by $2$.
+  \formalnote{Proposed name \lname{gammaSeq\_add\_two\_eq\_of\_add\_two\_eq\_zero}, applied in
+  $\ZZ/m\ZZ$ through \lname{intCast\_gammaSeq}, as the existing congruence lemmas are.}
+\end{proof}
+
+\begin{proposition}[\cite{li2021}, Proposition 2.5, $k$ even]
+  \label{lem:li-even}
+  \uses{def:gammaseq}
+  Let $n \ge 2$ with $k = n/\rad(n)$ even, and $m$ a modulus with $m \dvd \gamma_k + \gamma_{k+2}$,
+  $m$ coprime to $\gamma_2$, and $-1$ not a square mod $m$. Then $\beta_n$ is not a square.
+\end{proposition}
+\begin{proof}
+  \uses{lem:li-period, lem:li-crit, lem:strongdvd}
+  Mod $m$, Lemma~\ref{lem:li-period} gives $\gamma_{2k} = \gamma_{k + 2 \cdot k/2} \equiv
+  -\gamma_k$, so $m \dvd \gamma_k + \gamma_{2k}$. Strong divisibility (\lname{gammaSeq\_gcd},
+  $\gcd(k, k+2) = 2$) gives $\gcd(\gamma_k, \gamma_{k+2}) = \gamma_2$; a common divisor of $m$
+  and $\gamma_k$ divides $\gamma_{k+2}$, hence $\gamma_2$, hence is $1$. Lemma~\ref{lem:li-crit}.
+  \formalnote{Proposed name \lname{not\_isSquare\_betaSeq\_of\_even\_of\_dvd\_add\_two}.}
+\end{proof}
+
+\begin{proposition}[\cite{li2021}, Proposition 2.5, $k$ odd]
+  \label{lem:li-odd}
+  \uses{def:gammaseq}
+  Let $g(0)$ be a unit, $n \ge 2$ with $k = n/\rad(n)$ odd and $k > 1$, and $m$ a modulus with
+  $m \dvd \gamma_k + \gamma_{k+2}$, $m$ coprime to $\gamma_{k+1}$, and $-1$ not a square mod $m$.
+  Then $\beta_n$ is not a square.
+\end{proposition}
+\begin{proof}
+  \uses{lem:li-period, lem:li-parity, lem:li-classes, lem:li-PQ, lem:strongdvd}
+  Since $k$ is odd and $> 1$, $n' = \rad(n)$ is neither $1$ nor $2$ ($n' = 2$ would force
+  $k = n/2$ to be a power of $2$). Mod $m$, by Lemma~\ref{lem:li-period}: for odd $t \ge 3$,
+  $kt = k + 2j$ with $j \ge 1$, so $\gamma_{kt} \equiv -\gamma_k$; for even $t$,
+  $kt = k + 1 + 2j$, so $\gamma_{kt} \equiv \gamma_{k+1}$. Both values are units mod $m$:
+  $\gamma_{k+1}$ by hypothesis, $\gamma_k$ because $\gcd(\gamma_k, \gamma_{k+2}) = \gamma_1$ is a
+  unit ($\gcd(k, k+2) = 1$), so a common divisor of $m$ and $\gamma_k$ divides $\gamma_{k+2}$ and
+  hence $\gamma_1$. Take the parity-balanced partition of Lemma~\ref{lem:li-parity} and apply
+  Lemma~\ref{lem:li-classes} with the two classes ``odd'' ($w = -\gamma_k$; at $t = 1$ the value
+  $\gamma_k = -w$) and ``even'' ($w = \gamma_{k+1}$): $P \equiv -Q$ with $Q$ a unit.
+  Lemma~\ref{lem:li-PQ}.
+  \formalnote{This is the one genuinely new piece of the criterion. Li derives the coprimality
+  of $p$ and $\gamma_{k+1}$ from $p$ being an odd prime; in modulus form it is a hypothesis,
+  discharged for the rescaled polynomial by Lemma~\ref{lem:li-cop} below. Proposed name
+  \lname{not\_isSquare\_betaSeq\_of\_odd\_of\_dvd\_add\_two}.}
+\end{proof}
+
+\section{Residues of the rescaled sequence}
+\label{sec:li-residues}
+
+In this section $a < 0$, $g = |a| X^2 - 1$ is the rescaled polynomial of
+Definition~\ref{def:normpoly}, so $\gamma_1 = 1$, $\gamma_2 = |a| - 1$, and all $\gamma_n$ are
+positive. The residue computations are done in $\ZZ/8\ZZ$ (or $\ZZ/4\ZZ$) by two-step induction,
+as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
+
+\begin{lemma}[The sequence modulo $\gamma_2^2$]
+  \label{lem:li-modsq}
+  \uses{def:normpoly}
+  For all $j \ge 1$: $\gamma_{2j} \equiv \gamma_2$ and $\gamma_{2j+1} \equiv -1 \bmod \gamma_2^2$.
+\end{lemma}
+\begin{proof}
+  $\gamma_3 = g(\gamma_2) \equiv g(0) = -1$ because $\gamma_2^2 \dvd g(\gamma_2) - g(0)$
+  (\lname{sq\_dvd\_gammaSeq\_succ\_sub}); and if $\gamma_{2j+1} \equiv -1$ then
+  $\gamma_{2j+1}^2 \equiv 1$, so $\gamma_{2j+2} = g(\gamma_{2j+1}) \equiv g(1) = \gamma_2$
+  (\lname{EvenPoly.dvd\_eval\_sub}), and then $\gamma_{2j+3} \equiv g(0) = -1$ again by the first
+  step applied to $\gamma_{2j+2} \equiv \gamma_2 \equiv 0 \bmod \gamma_2$.
+  \formalnote{Only $g(0) = -1$ and $\gamma_1 = 1$ are used, so this holds for every even $g$ with
+  $g(0) = -1$; it is used mod $\gamma_2$ in Lemma~\ref{lem:li-C-even} and mod $(4k+1)^2$ in
+  Lemma~\ref{lem:li-B-even}.}
+\end{proof}
+
+\begin{lemma}[$a \equiv 2 \bmod 8$]
+  \label{lem:li-mod8-2}
+  \uses{def:normpoly}
+  If $a < 0$ and $a \equiv 2 \bmod 8$, then $\gamma_n \equiv 5 \bmod 8$ for all $n \ge 2$.
+\end{lemma}
+\begin{proof}
+  In $\ZZ/8\ZZ$, $g = 6X^2 - 1$, $\gamma_2 = 5$ and $g(5) = 6 \cdot 25 - 1 = 5$: a fixed point.
+  \formalnote{Abstractly: if $g(\gamma_2) = \gamma_2$ in a ring, then $\gamma_n = \gamma_2$ for
+  all $n \ge 2$, by induction with \lname{gammaSeq\_succ}; the fixed-point equation is
+  \texttt{decide} in $\ZZ/8\ZZ$.}
+\end{proof}
+
+\begin{lemma}[$a \equiv 1 \bmod 4$]
+  \label{lem:li-mod8-1}
+  \uses{def:normpoly}
+  If $a < 0$ and $a \equiv 1 \bmod 4$, then $\gamma_n \equiv 3 \bmod 8$ for odd $n \ge 3$ and
+  $\gamma_n \equiv |a| - 1 \bmod 8$ (which is $2$ or $6$) for even $n \ge 2$. Consequently
+  $\gamma_k + \gamma_{k+2} \equiv 6 \bmod 8$ for odd $k \ge 3$, and $\gamma_k \equiv 2 \bmod 4$ for
+  even $k \ge 2$.
+\end{lemma}
+\begin{proof}
+  In $\ZZ/8\ZZ$, $|a| \in \{3, 7\}$, $\gamma_2 = |a| - 1 \in \{2, 6\}$, $\gamma_3 = |a| \cdot 4 - 1
+  = 3$, $\gamma_4 = |a| \cdot 9 - 1 = |a| - 1$, and the pattern repeats with period $2$.
+  \formalnote{A statement of the shape \lname{gammaSeq\_eq\_ite\_even}: for $n \ge 2$,
+  $\gamma_n = \text{if } n \text{ even then } |a| - 1 \text{ else } 3$ in $\ZZ/8\ZZ$, proved by
+  two-step induction; the two evaluations are \texttt{decide} after \texttt{rcases} on
+  $|a| \in \{3, 7\}$.}
+\end{proof}
+
+\begin{lemma}[$a \equiv 3 \bmod 4$]
+  \label{lem:li-mod4-3}
+  \uses{def:normpoly}
+  If $a < 0$ and $a \equiv 3 \bmod 4$, then $\gamma_n \equiv 0 \bmod 4$ for even $n \ge 2$ and
+  $\gamma_n \equiv 3 \bmod 4$ for odd $n \ge 3$; hence $\gamma_k + \gamma_{k+1} \equiv 3 \bmod 4$
+  for all $k \ge 2$.
+\end{lemma}
+\begin{proof}
+  In $\ZZ/4\ZZ$, $g = X^2 - 1$, $\gamma_2 = 0$, $\gamma_3 = -1$, $\gamma_4 = 0$, and the pattern
+  repeats.
+\end{proof}
+
+\begin{lemma}[The quotient $(\gamma_2 + \gamma_4)/\gamma_2$]
+  \label{lem:li-g4}
+  \uses{def:normpoly}
+  Let $a < 0$, $a \equiv 1 \bmod 4$ and $\alpha := |a|$. Then
+  $\gamma_4 = \gamma_2\,(\alpha^3 \gamma_2^3 - 2\alpha^2 \gamma_2 + 1)$, the cofactor is
+  $\equiv 5 \bmod 8$, and $M := (\gamma_2 + \gamma_4)/(2\gamma_2)$ is an integer with
+  $M \equiv 3 \bmod 4$ that is coprime to $\gamma_2$.
+\end{lemma}
+\begin{proof}
+  The identity is polynomial in $\alpha$ once $\gamma_2 = \alpha - 1$, $\gamma_3 = \alpha\gamma_2^2
+  - 1$, $\gamma_4 = \alpha\gamma_3^2 - 1$ are substituted (\texttt{ring}). With $\gamma_2 = 2c$,
+  $c$ odd (Lemma~\ref{lem:li-mod8-1}) and $\alpha$ odd, the cofactor is
+  $8\alpha^3c^3 - 4\alpha^2 c + 1 \equiv 1 - 4c \equiv 5 \bmod 8$. So $1 + \text{cofactor} \equiv
+  6 \bmod 8$, $M = (1 + \text{cofactor})/2 \equiv 3 \bmod 4$, and since
+  $1 + \text{cofactor} \equiv 2 \bmod \gamma_2$, any common divisor of $M$ and $\gamma_2$ divides
+  $2$; $M$ is odd.
+  \formalnote{\cite{li2021} states $\gcd((\gamma_2+\gamma_4)/\gamma_2, \gamma_2) = 1$, which is
+  false ($= 2$, e.g.\ $a = -3$: $182$ and $2$); the odd part $M$ is what the argument uses.}
+\end{proof}
+
+\begin{lemma}[Coprimality at odd indices]
+  \label{lem:li-cop}
+  \uses{def:normpoly}
+  Let $a < 0$, $a \equiv 1 \bmod 4$, and $k \ge 3$ odd. Then $\gcd(\gamma_k + \gamma_{k+2},
+  \gamma_{k+1}) \dvd 2$; in particular the odd number $(\gamma_k + \gamma_{k+2})/2$ (an integer
+  $\equiv 3 \bmod 4$ by Lemma~\ref{lem:li-mod8-1}) is coprime to $\gamma_{k+1}$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-mod8-1}
+  Let $d$ be a common divisor and compute in $\ZZ/d\ZZ$: $\gamma_{k+1} = 0$, so
+  $\gamma_{k+2} = g(0) = -1$ and $\gamma_k = -\gamma_{k+2} = 1$; then
+  $0 = \gamma_{k+1} = g(\gamma_k) = g(1) = |a| - 1$, so $|a| = 1$ and $g = X^2 - 1$ in
+  $\ZZ/d\ZZ$. For this $g$ the sequence is $1, 0, -1, 0, -1, \dots$, so $\gamma_k = -1$ for the
+  odd $k \ge 3$; together with $\gamma_k = 1$ this gives $2 = 0$ in $\ZZ/d\ZZ$.
+  \formalnote{The pattern $1, 0, -1, 0, \dots$ is Lemma~\ref{lem:li-mod4-3}'s computation with
+  $4$ replaced by $d$ (only $g(0) = -1$, $g(1) = 0$ and evenness are used: $g(-1) = g(1)$), so
+  it should be stated once, over a ring with $g(1) = 0$, and used for both.}
+\end{proof}
+
+\section{The applications}
+
+\begin{lemma}[\cite{li2021}, Lemma 2.2: squarefree indices]
+  \label{lem:li-sqfree}
+  \uses{def:normpoly}
+  Let $n > 1$ be squarefree. Then $|b_n|$ is not a square in each of the cases
+  (1) $a > 0$, $a \equiv 4 \bmod 8$; (2) $a < 0$, $a \equiv 2 \bmod 8$; (3) $a < 0$,
+  $a \equiv 1 \bmod 4$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-succ}
+  Here $k = 1$, so Lemma~\ref{lem:li-succ} with $m := \gamma_1 + \gamma_2 = 1 + g(1)$ applies as
+  soon as $-1$ is not a square mod $m$: $m = a + 2 \equiv 6 \bmod 8$ in case (1), $m = -a \equiv
+  6 \bmod 8$ in case (2), and $m = -a \equiv 3 \bmod 4$ in case (3)
+  (\lname{ZMod.not\_isSquare\_neg\_one\_of\_emod\_eight\_eq\_six},
+  \lname{\dots\_of\_emod\_four\_eq\_three}).
+  \formalnote{Case (3) is the misprinted one, see above. Stoll's cases $a > 0$,
+  $a \equiv 1, 2 \bmod 4$ and $a < 0$, $a \equiv 0 \bmod 4$ fit the same statement; they are not
+  repeated here because Lemma~\ref{lem:2.2} already gives them for all $n$.}
+\end{proof}
+
+\subsection*{Theorem A}
+
+\begin{lemma}[\cite{li2021}, Lemma 3.1]
+  \label{lem:li-A-nonsqfree}
+  \uses{def:normpoly}
+  Let $a = -(8k+2)(8k+3)$ and let $n$ be not squarefree. Then $|b_n|$ is not a square.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-succ, lem:li-mod8-2}
+  Let $k_0 := n/\rad(n) \ge 2$. Since $|a|\,y^2 + y - 1 = \bigl((8k+3)y - 1\bigr)\bigl((8k+2)y +
+  1\bigr)$ (\texttt{ring}), the number $m := (8k+2)\gamma_{k_0} + 1$ divides
+  $\gamma_{k_0} + \gamma_{k_0+1} = |a|\gamma_{k_0}^2 + \gamma_{k_0} - 1$, and
+  $m \equiv 2 \cdot 5 + 1 \equiv 3 \bmod 4$ by Lemma~\ref{lem:li-mod8-2}. Lemma~\ref{lem:li-succ}.
+  \formalnote{Here $a \equiv 2 \bmod 8$ because $(8k+2)(8k+3) \equiv 6 \bmod 8$. The
+  discriminant $1 - 4a = (16k+5)^2$ is what makes the quadratic in $y$ split; \cite{li2021},
+  Remark~3.2, notes that the complementary family $-(8k+5)(8k+6)$ is out of reach of this
+  method ($a = -30$: no prime $\equiv 3 \bmod 4$ divides $\gamma_2 + \gamma_3$).}
+\end{proof}
+
+\subsection*{Theorem B}
+
+\begin{lemma}[\cite{li2021}, Lemma 3.4]
+  \label{lem:li-B-odd}
+  \uses{def:normpoly}
+  Let $a < 0$, $a \equiv 1 \bmod 4$, and let $n$ be not squarefree with $4 \nmid n$. Then $|b_n|$
+  is not a square.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-odd, lem:li-mod8-1, lem:li-cop}
+  $k = n/\rad(n)$ is odd (as $4 \nmid n$) and $> 1$ (as $n$ is not squarefree), so $k \ge 3$.
+  By Lemma~\ref{lem:li-mod8-1}, $\gamma_k + \gamma_{k+2} \equiv 6 \bmod 8$, so
+  $m := (\gamma_k + \gamma_{k+2})/2 \equiv 3 \bmod 4$; it is coprime to $\gamma_{k+1}$ by
+  Lemma~\ref{lem:li-cop}. Proposition~\ref{lem:li-odd}.
+\end{proof}
+
+\begin{lemma}[\cite{li2021}, Lemma 3.5]
+  \label{lem:li-B-two}
+  \uses{def:normpoly}
+  Let $a < 0$, $a \equiv 1 \bmod 4$, and $n/\rad(n) = 2$. Then $|b_n|$ is not a square.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-crit, lem:li-g4}
+  With $k = 2$, the modulus $M$ of Lemma~\ref{lem:li-g4} divides $\gamma_2 + \gamma_4 = \gamma_k +
+  \gamma_{2k}$, is coprime to $\gamma_k = \gamma_2$, and $-1$ is not a square mod $M \equiv 3 \bmod
+  4$. Lemma~\ref{lem:li-crit} directly (Li goes through Proposition~2.5, which is not needed
+  here since $2k = k + 2$).
+\end{proof}
+
+\begin{lemma}[\cite{li2021}, Lemma 3.6]
+  \label{lem:li-B-even}
+  \uses{def:normpoly}
+  Let $a = -\bigl((4k+1)(4k+2) + 1\bigr)$, $A := 4k+1$, $B := 4k+2$, $\alpha := -a = AB + 1$, and
+  let $n$ be such that $k_0 := n/\rad(n)$ is even. Then $|b_n|$ is not a square.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-even, lem:li-mod8-1, lem:li-modsq, lem:strongdvd}
+  \emph{The factorization.} In $\ZZ[y]$, with $g(y) = \alpha y^2 - 1$,
+  \[ y + g(g(y))
+     = (\alpha y + A)\,\bigl(\alpha^2 y^3 - A\alpha\, y^2 - (\alpha + B)\, y + B\bigr) \]
+  (\texttt{ring}, using $B = A + 1$ and $\alpha = AB + 1$; the quotient was found by polynomial
+  division in PARI, where it reads $(256k^4 + 384k^3 + 240k^2 + 72k + 9)y^3 - (64k^3 + 64k^2 +
+  24k + 3)y^2 - (16k^2 + 16k + 5)y + (4k + 2)$). Hence
+  $\alpha\gamma_{k_0} + A \dvd \gamma_{k_0} + \gamma_{k_0+2}$.
+
+  \emph{The modulus.} $\gamma_2 = AB$ divides $\gamma_{k_0}$ (strong divisibility, $2 \dvd k_0$),
+  and $\alpha \equiv 1 \bmod A$, so $A \dvd \alpha\gamma_{k_0} + A$; put
+  $m := (\alpha\gamma_{k_0} + A)/A$. Then $m \equiv 3 \bmod 4$: $\gamma_{k_0} \equiv 2 \bmod 4$
+  (Lemma~\ref{lem:li-mod8-1}), $\alpha$ is odd, $A \equiv 1 \bmod 4$.
+
+  \emph{Coprimality with $\gamma_2 = AB$.} Modulo $A^2$: $\gamma_{k_0} \equiv \gamma_2 = AB
+  \equiv A \bmod A^2$ (Lemma~\ref{lem:li-modsq} reduced from $\gamma_2^2$ to $A^2$, and
+  $AB = A^2 + A$), so $\alpha\gamma_{k_0} + A \equiv (\alpha + 1)A$ and $m \equiv \alpha + 1 \equiv
+  2 \bmod A$, coprime to the odd $A$. Modulo $B = 2(2k+1)$: $m$ is odd, and a common divisor $d$
+  of $m$ and $2k+1$ divides $\alpha\gamma_{k_0} + A$ and $B \dvd \gamma_2 \dvd \gamma_{k_0}$, hence
+  divides $A$; but $\gcd(A, B) = 1$.
+
+  Proposition~\ref{lem:li-even} with this $m$.
+  \formalnote{The discriminant $4\alpha - 3 = (8k+3)^2$ is what makes $y + g(g(y))$ split off a
+  linear factor; \cite{li2021}, Remark~3.8, records that $-((4k+2)(4k+3)+1)$ (e.g.\ $a = -507$)
+  is out of reach. The lemma covers $k_0 = 2$ as well, so Lemma~\ref{lem:li-B-two} is not needed
+  for Theorem~\ref{thm:li-B}; it is kept because it holds for every $a \equiv 1 \bmod 4$.}
+\end{proof}
+
+\subsection*{Theorem C}
+
+\begin{lemma}[\cite{li2020}, Lemma 3.1]
+  \label{lem:li-C-nonsqfree}
+  \uses{def:normpoly}
+  Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n$ be not squarefree. Then $|b_n|$ is not a square.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-succ, lem:li-mod4-3}
+  $k = n/\rad(n) \ge 2$, so $\gamma_k + \gamma_{k+1} \equiv 3 \bmod 4$ (Lemma~\ref{lem:li-mod4-3});
+  Lemma~\ref{lem:li-succ} with $m := \gamma_k + \gamma_{k+1}$.
+\end{proof}
+
+\begin{lemma}[\cite{li2020}, Lemma 3.2]
+  \label{lem:li-C-odd}
+  \uses{def:normpoly}
+  Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n > 1$ be odd and squarefree. Then $|b_n|$ is not a
+  square.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-classes, lem:li-PQ, lem:li-mod4-3, lem:moebiussign}
+  Here $k = 1$ and all divisors $t$ of $n$ are odd, with $\gamma_t \equiv -1 \bmod 4$ for $t \ge 3$
+  (Lemma~\ref{lem:li-mod4-3}) and $\gamma_1 = 1$. Lemma~\ref{lem:li-classes} with one class and
+  $w = -1$ gives $P \equiv -Q \bmod 4$ with $Q \equiv \pm 1$ a unit, and $-1$ is not a square
+  mod $4$ (\lname{ZMod.not\_isSquare\_neg\_one\_of\_four\_dvd}). Lemma~\ref{lem:li-PQ} with
+  $m = 4$, $N = 0$.
+  \formalnote{Li counts: the number of divisors $> 1$ is odd, so $\beta_n \equiv (-1)^{\text{odd}}
+  = -1 \bmod 4$. The class formulation replaces the count by the balanced partition, which the
+  formalization already has.}
+\end{proof}
+
+\begin{lemma}[\cite{li2020}, Lemma 3.3]
+  \label{lem:li-C-even}
+  \uses{def:normpoly}
+  Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n > 2$ be even and squarefree. Then $|b_n|$ is not a
+  square.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-classes, lem:li-parity, lem:li-PQ, lem:li-modsq, lem:li-mod4-3}
+  Here $k = 1$; take $m := \gamma_2 = |a| - 1$, which is $\equiv 0 \bmod 4$, so $-1$ is not a
+  square mod $m$. By Lemma~\ref{lem:li-modsq}, every even divisor $t$ of $n$ has
+  $\gamma_t = m\,u_t$ with $u_t \equiv 1 \bmod m$, and every odd divisor $t \ge 3$ has
+  $\gamma_t \equiv -1 \bmod m$; $\gamma_1 = 1$. With the parity-balanced partition of
+  Lemma~\ref{lem:li-parity} ($n > 2$), $P = m^N P'$ and $Q = m^N Q'$ with $N$ the common number of
+  even divisors in $S_+$ and $S_-$, and $P'$, $Q'$ the products of the $\gamma_t$ ($t$ odd) and
+  $u_t$ ($t$ even). Lemma~\ref{lem:li-classes} with the classes ``odd'' ($w = -1$) and ``even''
+  ($w = 1$) gives $P' \equiv -Q'$ with $Q' \equiv \pm 1$; Lemma~\ref{lem:li-PQ}.
+  \formalnote{This is the only use of the power $m^N$ in Lemma~\ref{lem:li-PQ}: Li works modulo
+  $m^{2^{r-1}+1}$ instead, which amounts to the same cancellation. The exact division
+  $u_t = \gamma_t/\gamma_2$ exists by strong divisibility, and $u_t \equiv 1 \bmod \gamma_2$ is
+  the statement $\gamma_t \equiv \gamma_2 \bmod \gamma_2^2$.}
+\end{proof}
+
+\section*{Order of work}
+
+\begin{enumerate}
+  \item Lemmas~\ref{lem:li-classes}, \ref{lem:li-PQ} and~\ref{lem:li-crit}: refactor
+    \lname{not\_isSquare\_betaSeq} into the three layers and re-derive Lemma~\ref{lem:2.1}
+    from them (the type dump must show only the new declarations; the old statement stays as a
+    corollary). Then Lemma~\ref{lem:li-succ} and the corresponding refactoring of
+    \lname{not\_isSquare\_betaSeq\_of\_pos\_of\_not\_isSquare\_neg\_one}.
+  \item Lemma~\ref{lem:li-period} (next to \lname{gammaSeq\_mul\_eq\_two\_mul}) and
+    Proposition~\ref{lem:li-even}; then Lemma~\ref{lem:li-parity} (Möbius mirror) and
+    Proposition~\ref{lem:li-odd}.
+  \item The residue lemmas of Section~\ref{sec:li-residues}, each a short computation in
+    $\ZZ/8\ZZ$, $\ZZ/4\ZZ$ or $\ZZ/\gamma_2^2$.
+  \item Theorem~\ref{thm:li-A} (shortest: one new lemma), then Theorem~\ref{thm:li-C}, then
+    Theorem~\ref{thm:li-B} (the polynomial identity and the coprimality argument of
+    Lemma~\ref{lem:li-B-even} are the longest single step).
+  \item Once a theorem is formalized, add it to the comparator setup
+    (\texttt{comparator/Challenge.lean}, which imports only Mathlib and restates the definitions
+    verbatim, and \texttt{comparator/Solution.lean}): one challenge statement per case, i.e.\
+    separate theorems for the families of Theorems~\ref{thm:li-A} and~\ref{thm:li-B} and for
+    Theorem~\ref{thm:li-C}, rather than one disjunction over all cases --- and the same split
+    is preferable for the three cases of Theorem~\ref{thm:section3}, which the present
+    \lname{challenge\_section3\_main} states as a single disjunction.
+\end{enumerate}
+The new declarations should be added to \texttt{formalization.yaml} (scope and, for the three
+theorems, \texttt{main\_results}) as they land, and the \texttt{\textbackslash lean} lists of this
+chapter filled in at the same time.
