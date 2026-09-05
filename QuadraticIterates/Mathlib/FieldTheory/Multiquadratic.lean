@@ -150,17 +150,34 @@ theorem mem_bot_of_add_mul_eq_zero {x : E} {p q : L} (hq : q ≠ 0)
   rw [map_div₀, map_neg, div_eq_iff ((map_ne_zero _).mpr hq)]
   linear_combination -h
 
+open Polynomial in
+/-- An element of the simple extension `L(y)` with `y² ∈ L` is exactly an `L`-linear combination
+`u + v · y`. -/
+theorem mem_adjoin_sqrt_iff {y : E} {c : L} (hy : y ^ 2 = algebraMap L E c) {z : E} :
+    z ∈ L⟮y⟯ ↔ ∃ u v : L, z = algebraMap L E u + algebraMap L E v * y := by
+  classical
+  have hmonic : (X ^ 2 - C c).Monic := monic_X_pow_sub_C c two_ne_zero
+  have hroot : aeval y (X ^ 2 - C c) = 0 := by simp [hy]
+  rw [← mem_toSubalgebra,
+    adjoin_simple_toSubalgebra_of_isAlgebraic (IsIntegral.isAlgebraic ⟨_, hmonic, hroot⟩),
+    ← Subalgebra.mem_toSubmodule, ← Submodule.span_range_natDegree_eq_adjoin hmonic hroot,
+    natDegree_X_pow_sub_C, show Finset.image (y ^ ·) (Finset.range 2) = {1, y} by
+      simp [show Finset.range 2 = {0, 1} by decide],
+    Finset.coe_pair, Submodule.mem_span_pair]
+  simp [Algebra.smul_def, eq_comm]
+
 /-- One-step square descent: over `L(x)` with `x² = c` and `x ∉ L`, the image of `d ∈ L` is a
 square iff `d` or `d · c` is a square in `L`. -/
 theorem square_descent_step [NeZero (2 : L)] {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c)
     (hx : x ∉ (⊥ : IntermediateField L E)) (d : L) :
-    (∃ u v : L, algebraMap L E d = (algebraMap L E u + algebraMap L E v * x) ^ 2)
-      ↔ (IsSquare d ∨ IsSquare (d * c)) := by
-  refine ⟨fun ⟨u, v, huv⟩ ↦ ?_,
-    fun h ↦ h.elim (fun ⟨w, hw⟩ ↦ ⟨w, 0, by simp [hw, sq]⟩) fun ⟨w, hw⟩ ↦ ?_⟩
-  · have h : algebraMap L E (u ^ 2 + v ^ 2 * c - d) + algebraMap L E (2 * (u * v)) * x = 0 := by
+    (∃ z ∈ L⟮x⟯, z ^ 2 = algebraMap L E d) ↔ IsSquare d ∨ IsSquare (d * c) := by
+  refine ⟨fun ⟨z, hz, hz2⟩ ↦ ?_, fun h ↦ h.elim
+    (fun ⟨w, hw⟩ ↦ ⟨algebraMap L E w, algebraMap_mem _ w, by rw [hw, sq, map_mul]⟩)
+    fun ⟨w, hw⟩ ↦ ?_⟩
+  · obtain ⟨u, v, rfl⟩ := (mem_adjoin_sqrt_iff hc).mp hz
+    have h : algebraMap L E (u ^ 2 + v ^ 2 * c - d) + algebraMap L E (2 * (u * v)) * x = 0 := by
       simp only [map_add, map_sub, map_mul, map_pow, map_ofNat]
-      linear_combination -huv - (algebraMap L E v) ^ 2 * hc
+      linear_combination hz2 - (algebraMap L E v) ^ 2 * hc
     have hq : 2 * (u * v) = 0 :=
       by_contra fun hq ↦ hx (mem_bot_of_add_mul_eq_zero hq h)
     have hd : u ^ 2 + v ^ 2 * c - d = 0 := by
@@ -171,8 +188,9 @@ theorem square_descent_step [NeZero (2 : L)] {x : E} {c : L} (hc : x ^ 2 = algeb
   · have hc0 : c ≠ 0 := by
       rintro rfl
       exact hx ((pow_eq_zero_iff two_ne_zero).mp (hc.trans (map_zero _)) ▸ zero_mem _)
-    refine ⟨0, w / c, ?_⟩
-    rw [map_zero, zero_add, mul_pow, hc, ← map_pow, ← map_mul]
+    refine ⟨algebraMap L E (w / c) * x,
+      mul_mem (algebraMap_mem _ _) (mem_adjoin_simple_self L x), ?_⟩
+    rw [mul_pow, hc, ← map_pow, ← map_mul]
     congr 1
     grind
 
@@ -198,22 +216,6 @@ theorem isSquare_algebraMap_bot_iff (x : L) :
     IsSquare (algebraMap L ↥(⊥ : IntermediateField L E) x) ↔ IsSquare x := by
   rw [← botEquiv_symm]
   exact ⟨fun h ↦ by simpa using h.map (botEquiv L E), fun h ↦ h.map _⟩
-
-open Polynomial in
-/-- An element of the simple extension `L(y)` with `y² ∈ L` is exactly an `L`-linear combination
-`u + v · y`. -/
-theorem mem_adjoin_sqrt_iff {y : E} {c : L} (hy : y ^ 2 = algebraMap L E c) {z : E} :
-    z ∈ L⟮y⟯ ↔ ∃ u v : L, z = algebraMap L E u + algebraMap L E v * y := by
-  classical
-  have hmonic : (X ^ 2 - C c).Monic := monic_X_pow_sub_C c two_ne_zero
-  have hroot : aeval y (X ^ 2 - C c) = 0 := by simp [hy]
-  rw [← mem_toSubalgebra,
-    adjoin_simple_toSubalgebra_of_isAlgebraic (IsIntegral.isAlgebraic ⟨_, hmonic, hroot⟩),
-    ← Subalgebra.mem_toSubmodule, ← Submodule.span_range_natDegree_eq_adjoin hmonic hroot,
-    natDegree_X_pow_sub_C, show Finset.image (y ^ ·) (Finset.range 2) = {1, y} by
-      simp [show Finset.range 2 = {0, 1} by decide],
-    Finset.coe_pair, Submodule.mem_span_pair]
-  simp [Algebra.smul_def, eq_comm]
 
 /-- If `d · ∏_{i ∈ t} r i` is a square in `L` for some `t ⊆ s`, then `d` has a square root in
 `L(x i : i ∈ s)`: divide the root by `∏_{i ∈ t} x i`. -/
@@ -260,12 +262,11 @@ theorem square_descent [NeZero (2 : L)] {ι : Type*} {s : Finset ι} {x : ι →
     · have : NeZero (2 : K) := ⟨map_ofNat (algebraMap L K) 2 ▸ (map_ne_zero _).mpr two_ne_zero⟩
       have hxj : x j ^ 2 = algebraMap K E (algebraMap L K (r j)) :=
         (hx j (Finset.mem_insert_self j s)).trans (IsScalarTower.algebraMap_apply L K E (r j))
-      rw [adjoin_insert, mem_restrictScalars, mem_adjoin_sqrt_iff hxj] at hz
-      obtain ⟨u, v, rfl⟩ := hz
+      rw [adjoin_insert, mem_restrictScalars] at hz
       have hjbot : x j ∉ (⊥ : IntermediateField K E) := by
         rwa [← mem_restrictScalars L, restrictScalars_bot_eq_self]
       rcases (square_descent_step hxj hjbot (algebraMap L K d)).mp
-        ⟨u, v, by rw [← IsScalarTower.algebraMap_apply, hz2]⟩ with h | h
+        ⟨z, hz, by rwa [← IsScalarTower.algebraMap_apply]⟩ with h | h
       · obtain ⟨t, ht, hsq⟩ := ih hx' hr' d ((isSquare_algebraMap_iff K d).mp h)
         exact ⟨t, ht.trans (Finset.subset_insert j s), hsq⟩
       · rw [← map_mul] at h
