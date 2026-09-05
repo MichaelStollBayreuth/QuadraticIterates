@@ -3,19 +3,21 @@ module
 public import Mathlib
 
 /-!
-# Comparator challenge statement (Section 3 main result)
+# Comparator challenge statements
 
-A self-contained restatement of the paper's Section 3 main result (`section3_main` in
-`QuadraticIterates/ArchMath1992/`), with a `sorry` proof, for verification with
-[leanprover/comparator](https://github.com/leanprover/comparator).
+Self-contained restatements, with `sorry` proofs, of the main results for verification with
+[leanprover/comparator](https://github.com/leanprover/comparator): the three cases of the paper's
+Section 3 main result (`section3_main` in `QuadraticIterates/ArchMath1992/`), one challenge per
+case, and the theorems of Li extending it (`li2021_theorem_3_3`, `li2021_theorem_3_9`,
+`li2020_theorem_3_5` in `QuadraticIterates/Li/`).
 
 This file imports **only Mathlib**: the three non-Mathlib definitions the statement refers to
 (`QuadraticIterates.iteratedPoly`, `.GaloisGroup`, `.WreathPower`) are reproduced here from the
 library — under their library names, and with the library's local notation `fℚ[a, n]` spelled out —
 so the challenge does not depend on the repository being formalized. Comparator compares the full
 definition bodies (not just types) between challenge and solution, so a solution that alters any of
-these definitions is rejected. The companion `Solution.lean` discharges the `sorry` with the
-library theorem.
+these definitions is rejected. The companion `Solution.lean` discharges the `sorry`s with the
+library theorems.
 -/
 
 @[expose] public section
@@ -39,10 +41,42 @@ abbrev WreathPower (n : ℕ) : Type :=
 
 end QuadraticIterates
 
-open QuadraticIterates in
-/-- Section 3 main result (`section3_main`): if `a > 0` with `a ≡ 1, 2 mod 4`, or `a < 0`,
-`a ≡ 0 mod 4` and `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_section3_main (a : ℤ)
-    (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
+open QuadraticIterates
+
+/-- Section 3 main result (`section3_main`), case a): if `a > 0` and `a ≡ 1 mod 4`, then
+`Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+theorem challenge_section3_main_pos_emod_four_eq_one (a : ℤ) (ha : 0 < a) (ha4 : a % 4 = 1) :
     ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
+  sorry
+
+/-- Section 3 main result (`section3_main`), case b): if `a > 0` and `a ≡ 2 mod 4`, then
+`Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+theorem challenge_section3_main_pos_emod_four_eq_two (a : ℤ) (ha : 0 < a) (ha4 : a % 4 = 2) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
+  sorry
+
+/-- Section 3 main result (`section3_main`), case c): if `a < 0`, `a ≡ 0 mod 4` and `-a` is not a
+square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+theorem challenge_section3_main_neg_emod_four_eq_zero (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 0)
+    (hsq : ¬IsSquare (-a)) : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
+  sorry
+
+/-- Theorem 3.3 of H.-C. Li, Arch. Math. 117 (2021) (`li2021_theorem_3_3`): for
+`a = -(8k+2)(8k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+theorem challenge_li2021_theorem_3_3 (k : ℕ) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup (-((8 * k + 2) * (8 * k + 3))) n ≃* WreathPower n) :=
+  sorry
+
+/-- Theorem 3.9 of H.-C. Li, Arch. Math. 117 (2021) (`li2021_theorem_3_9`): for
+`a = -((4k+1)(4k+2)+1)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+theorem challenge_li2021_theorem_3_9 (k : ℕ) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup (-((4 * k + 1) * (4 * k + 2) + 1)) n ≃* WreathPower n) :=
+  sorry
+
+/-- Theorem 3.5 of H.-C. Li, Arch. Math. 114 (2020) (`li2020_theorem_3_5`): for `a < 0` with
+`a ≡ 3 mod 4` and `-a` not a square, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` if and only if `-a - 1` is not
+a square. -/
+theorem challenge_li2020_theorem_3_5 (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 3)
+    (hsq : ¬IsSquare (-a)) :
+    (∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) :=
   sorry

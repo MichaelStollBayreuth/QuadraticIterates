@@ -1,21 +1,23 @@
 # Comparator verification harness
 
 This directory lets [Comparator](https://github.com/leanprover/comparator) — "a trustworthy judge
-for Lean proofs" — certify that this repository proves the paper's **Section 3 main result**
-(`section3_main`), independently of the repository's own build and using only the permitted axioms.
+for Lean proofs" — certify that this repository proves the paper's **Section 3 main result** (`section3_main`, one
+challenge per case) and the **theorems of Li** extending it (`li2021_theorem_3_3`,
+`li2021_theorem_3_9`, `li2020_theorem_3_5`), independently of the repository's own build and using
+only the permitted axioms.
 
 ## What is checked
 
 - [`Challenge.lean`](Challenge.lean) imports **only Mathlib**. It reproduces from the library the
   three non-Mathlib definitions the statement mentions — `iteratedPoly`, `GaloisGroup`,
   `WreathPower`, under their library names in the `QuadraticIterates` namespace — and states the
-  result with a `sorry` proof. Because it depends on nothing in this repository, it is a
-  self-contained specification of the claim.
-- [`Solution.lean`](Solution.lean) imports `QuadraticIterates` and proves that statement via the
-  library theorem `QuadraticIterates.section3_main`.
+  results with `sorry` proofs. Because it depends on nothing in this repository, it is a
+  self-contained specification of the claims.
+- [`Solution.lean`](Solution.lean) imports `QuadraticIterates` and proves each statement via the
+  corresponding library theorem.
 
 Comparator builds both modules (the solution in a sandbox), exports them with `lean4export`, and
-checks that `challenge_section3_main` in the solution:
+checks that each challenge theorem in the solution:
 
 1. proves the **same statement** as in the challenge — comparing the full bodies (not just the
    types) of every definition the statement transitively refers to, so a solution that redefines
@@ -28,7 +30,9 @@ Mathlib's `Polynomial.Gal`, so reproducing the three definitions pulls in only M
 
 ## Config
 
-[`section3_main.json`](section3_main.json) — theorem `challenge_section3_main`.
+[`challenges.json`](challenges.json) — the six challenge theorems: the three cases of the Section 3
+main result (`a > 0`, `a ≡ 1 mod 4`; `a > 0`, `a ≡ 2 mod 4`; `a < 0`, `a ≡ 0 mod 4`, `-a` not a
+square) and Li's Theorems 3.3 and 3.9 (2021) and 3.5 (2020).
 
 ## Running
 
@@ -42,11 +46,11 @@ Run from the **repository root** (Comparator uses the current directory as the p
 lake exe cache get           # trusted Mathlib oleans, optional
 lake build QuadraticIterates # so the Solution build reuses the library oleans
 # For the strongest sandbox guarantee, run under systemd-run as in the Comparator README:
-lake env /path/to/comparator comparator/section3_main.json
+lake env /path/to/comparator comparator/challenges.json
 ```
 
 Exit code `0` means the check passed.
 
 The `Challenge`/`Solution` libraries are declared in the root `lakefile.toml` but are excluded from
-`defaultTargets`, so a plain `lake build` does not build them and the deliberate `sorry` in
-`Challenge.lean` never enters the library build.
+`defaultTargets`, so a plain `lake build` does not build them and the deliberate `sorry`s in
+`Challenge.lean` never enter the library build.

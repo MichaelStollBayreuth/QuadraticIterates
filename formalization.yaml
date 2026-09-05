@@ -51,7 +51,7 @@ status:
     file: "QuadraticIterates/ArchMath1992/Main.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
-    comparator_config: "comparator/section3_main.json"
+    comparator_config: "comparator/challenges.json"
     literature_dependencies: []
 
 # how it was produced.
