@@ -253,7 +253,7 @@ Li's families in a new directory \texttt{QuadraticIterates/Li/}.
 
 \begin{lemma}[$2$-periodicity]
   \label{lem:li-period}
-  \lean{QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq_zero, QuadraticIterates.gammaSeq_mul_eq_ite_even_of_odd}
+  \lean{QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq_zero, QuadraticIterates.gammaSeq_mul_eq_ite_even_of_odd, QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq}
   \leanok
   \uses{def:gammaseq}
   Over any commutative ring, if $k \ge 1$ and $\gamma_k + \gamma_{k+2} = 0$, then
@@ -326,10 +326,13 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[The sequence modulo $\gamma_2^2$]
   \label{lem:li-modsq}
+  \lean{QuadraticIterates.gammaSeq_two_sq_dvd_sub_ite_even}
+  \leanok
   \uses{def:normpoly}
   For all $j \ge 1$: $\gamma_{2j} \equiv \gamma_2$ and $\gamma_{2j+1} \equiv -1 \bmod \gamma_2^2$.
 \end{lemma}
 \begin{proof}
+  \leanok
   $\gamma_3 = g(\gamma_2) \equiv g(0) = -1$ because $\gamma_2^2 \dvd g(\gamma_2) - g(0)$
   (\lname{sq\_dvd\_gammaSeq\_succ\_sub}); and if $\gamma_{2j+1} \equiv -1$ then
   $\gamma_{2j+1}^2 \equiv 1$, so $\gamma_{2j+2} = g(\gamma_{2j+1}) \equiv g(1) = \gamma_2$
@@ -403,12 +406,15 @@ as \lname{gammaSeq\_eq\_ite\_even} does for Lemma~\ref{lem:2.2}.
 
 \begin{lemma}[Coprimality at odd indices]
   \label{lem:li-cop}
+  \lean{QuadraticIterates.dvd_two_of_dvd_add_two_of_dvd_succ, QuadraticIterates.isCoprime_gammaSeq_succ_of_odd_of_add_two_eq_two_mul, QuadraticIterates.gammaSeq_eq_ite_even_of_eval_one_eq_zero}
+  \leanok
   \uses{def:normpoly}
   Let $a < 0$, $a \equiv 1 \bmod 4$, and $k \ge 3$ odd. Then $\gcd(\gamma_k + \gamma_{k+2},
   \gamma_{k+1}) \dvd 2$; in particular the odd number $(\gamma_k + \gamma_{k+2})/2$ (an integer
   $\equiv 3 \bmod 4$ by Lemma~\ref{lem:li-mod8-1}) is coprime to $\gamma_{k+1}$.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:li-mod8-1}
   Let $d$ be a common divisor and compute in $\ZZ/d\ZZ$: $\gamma_{k+1} = 0$, so
   $\gamma_{k+2} = g(0) = -1$ and $\gamma_k = -\gamma_{k+2} = 1$; then

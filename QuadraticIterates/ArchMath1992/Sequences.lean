@@ -35,6 +35,9 @@ finally over `ℤ` for Lemmas 2.1 and 2.2 of the paper.
 * `gammaSeq`, `betaSeq`: the sequences `γ` and `β`. `map_gammaSeq` says that `γ` commutes with
   ring homomorphisms, which is how every congruence below is computed in `ZMod m`.
 * `gammaSeq_associated_gcd`: strong divisibility of `γ` for even `g` and `ε² = 1`.
+* `gammaSeq_eq_ite_even_of_add_two_eq`, `gammaSeq_eq_ite_even_of_add_two_eq_zero`,
+  `gammaSeq_two_sq_dvd_sub_ite_even`: the sequence is `2`-periodic from an index `n₀` on once
+  `γ_{n₀+2} = ±γ_{n₀}`, and always modulo `γ_2²` when `γ_1 = 1`.
 * `factorization_gammaSeq_shape`: `v_p(γ_n)` is constant on the multiples of some index and `0`
   elsewhere.
 * `not_isSquare_betaSeq_of_prod_eq_neg_prod`: `β_n` is not a square in `ℚ` when the numerator
@@ -297,6 +300,29 @@ lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 
     _ ∣ gammaSeq g ε n ^ 2 := by rw [pow_mul']; exact pow_dvd_pow_of_dvd hpE 2
     _ ∣ gammaSeq g ε (n + 1) - g.eval 0 := sq_dvd_gammaSeq_succ_sub hg ε hn
 
+/-- If `g` is even with `g(0)² = 1` and `γ_1 = 1`, then modulo `γ_2²` the sequence alternates
+from index `2` on: `γ_n ≡ γ_2` for even `n` and `γ_n ≡ g(0)` for odd `n ≥ 3`. -/
+theorem gammaSeq_two_sq_dvd_sub_ite_even (hg : EvenPoly g) {ε : R} (h0 : g.eval 0 ^ 2 = 1)
+    (h1 : gammaSeq g ε 1 = 1) :
+    ∀ n ≥ 2, gammaSeq g ε 2 ^ 2 ∣ gammaSeq g ε n - if Even n then gammaSeq g ε 2 else g.eval 0 := by
+  have h2 : gammaSeq g ε 2 = g.eval 1 := by rw [gammaSeq_succ g ε le_rfl, h1]
+  intro n hn
+  induction n, hn using Nat.le_induction with
+  | base => simp
+  | succ n hn ih =>
+    simp only [Nat.even_add_one]
+    split_ifs with he
+    · rw [if_pos he] at ih
+      exact (pow_dvd_pow_of_dvd ((dvd_sub_left dvd_rfl).mp ((dvd_pow_self _ two_ne_zero).trans ih))
+        2).trans (sq_dvd_gammaSeq_succ_sub hg ε (by lia))
+    · rw [if_neg he] at ih
+      rw [gammaSeq_succ g ε (n := n) (by lia)]
+      nth_rw 2 [h2]
+      refine hg.dvd_eval_sub ?_
+      rw [show gammaSeq g ε n ^ 2 - 1 ^ 2
+          = (gammaSeq g ε n - g.eval 0) * (gammaSeq g ε n + g.eval 0) by linear_combination h0]
+      exact ih.mul_right _
+
 /-- A divisor `q` of `γ_{m+1} - g(0)` is a period divisor of `γ` from index `2` on, i.e.
 `q ∣ γ_{n+m} - γ_n` for all `n ≥ 2` (for even `g` and `ε² = 1`, so that `γ_1² = g(0)²`). -/
 lemma gammaSeq_period_of_dvd_succ_sub_eval_zero (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
@@ -357,6 +383,20 @@ theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk :
   rw [mul_comm]
   exact gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)
 
+/-- If `γ_{n₀+2} = γ_{n₀}` (`n₀ ≥ 1`), then the sequence is `2`-periodic from index `n₀` on:
+`γ_n = γ_{n₀}` for `n ≡ n₀ mod 2` and `γ_n = γ_{n₀+1}` otherwise, for all `n ≥ n₀`. -/
+theorem gammaSeq_eq_ite_even_of_add_two_eq (g : R[X]) {ε : R} {n₀ : ℕ} (hn₀ : 1 ≤ n₀)
+    (h : gammaSeq g ε (n₀ + 2) = gammaSeq g ε n₀) :
+    ∀ n ≥ n₀,
+      gammaSeq g ε n = if Even (n + n₀) then gammaSeq g ε n₀ else gammaSeq g ε (n₀ + 1) := by
+  have h1 : g.eval (gammaSeq g ε n₀) = gammaSeq g ε (n₀ + 1) := (gammaSeq_succ g ε hn₀).symm
+  have h2 : g.eval (gammaSeq g ε (n₀ + 1)) = gammaSeq g ε n₀ := by
+    rw [← h, gammaSeq_succ g ε (n := n₀ + 1) (by lia)]
+  intro n hn
+  induction n, hn using Nat.le_induction with
+  | base => grind [Nat.even_add_one]
+  | succ n hn ih => grind [gammaSeq_succ g ε (by lia : 1 ≤ n), Nat.even_add_one]
+
 /-- **2-periodicity.** If `γ_k + γ_{k+2} = 0` (`k ≥ 1`), then the sequence is `2`-periodic from
 index `k + 1` on: `γ_r = -γ_k` for `r ≡ k mod 2` and `γ_r = γ_{k+1}` otherwise, for all
 `r ≥ k + 1` (over any ring, for even `g`). -/
@@ -373,6 +413,21 @@ theorem gammaSeq_eq_ite_even_of_add_two_eq_zero (hg : EvenPoly g) {ε : R} {k : 
   induction r, hr using Nat.le_induction with
   | base => grind [Nat.even_add_one]
   | succ r hr ih => grind [gammaSeq_succ g ε (by lia : 1 ≤ r), Nat.even_add_one]
+
+/-- If `g` is even with `g(0)² = 1` and `g(1) = 0`, and `γ_1 = 1`, then the sequence
+`1, 0, g(0), 0, g(0), …` alternates from index `2` on: `γ_n = 0` for even `n` and `γ_n = g(0)` for
+odd `n ≥ 3`. -/
+theorem gammaSeq_eq_ite_even_of_eval_one_eq_zero (hg : EvenPoly g) {ε : R} (h0 : g.eval 0 ^ 2 = 1)
+    (h1 : gammaSeq g ε 1 = 1) (hg1 : g.eval 1 = 0) :
+    ∀ n ≥ 2, gammaSeq g ε n = if Even n then 0 else g.eval 0 := by
+  have h2 : gammaSeq g ε 2 = 0 := by rw [gammaSeq_succ g ε le_rfl, h1, hg1]
+  have h3 : gammaSeq g ε 3 = g.eval 0 := by rw [gammaSeq_succ g ε one_le_two, h2]
+  have h4 : gammaSeq g ε (2 + 2) = gammaSeq g ε 2 := by
+    rw [gammaSeq_succ g ε (by lia), h3, h2]
+    exact (hg.eval_congr (by rw [h0, one_pow])).trans hg1
+  intro n hn
+  rw [gammaSeq_eq_ite_even_of_add_two_eq g one_le_two h4 n hn, h2, h3]
+  simp [Nat.even_add]
 
 /-- For odd `k` with `γ_k + γ_{k+2} = 0`, the value `γ_{kt}` for `t ≥ 2` depends only on the parity
 of `t`: it is `γ_{k+1}` for even `t` and `-γ_k` for odd `t`. -/
@@ -643,6 +698,42 @@ theorem isCoprime_gammaSeq_of_odd_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ} (h
     exact (IsUnit.of_pow_eq_one hε two_ne_zero).mul h0
   exact isCoprime_of_isCoprime_gcd_of_dvd_add (isCoprime_one_right.of_isCoprime_of_dvd_right
     (((hgcd ▸ gammaSeq_associated_gcd hg hε k (k + 2)).isUnit_iff.mpr hu1).dvd)) hdvd
+
+/-- If `g` is even with `g(0)² = 1` and `γ_1 = 1`, and `k ≥ 3` is odd, then a common divisor `d`
+of `γ_k + γ_{k+2}` and `γ_{k+1}` divides `2`: modulo `d`, `γ_{k+1} = 0` forces `γ_{k+2} = g(0)`,
+`γ_k = -g(0)` and `g(1) = g(γ_k) = 0`, so the sequence alternates and `γ_k = g(0)`. -/
+theorem dvd_two_of_dvd_add_two_of_dvd_succ (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 0 ^ 2 = 1)
+    (h1 : gammaSeq g ε 1 = 1) {k : ℕ} (hko : Odd k) (hk1 : 1 < k) {d : ℤ}
+    (hd : d ∣ gammaSeq g ε k + gammaSeq g ε (k + 2)) (hd' : d ∣ gammaSeq g ε (k + 1)) :
+    d ∣ 2 := by
+  rw [← Int.natAbs_dvd, ← ZMod.intCast_zmod_eq_zero_iff_dvd] at hd hd' ⊢
+  push_cast [intCast_gammaSeq] at hd hd' ⊢
+  set g' := g.map (Int.castRingHom (ZMod d.natAbs))
+  have h0' : g'.eval 0 ^ 2 = 1 := by
+    rw [eval_zero_map, eq_intCast, ← Int.cast_pow, h0, Int.cast_one]
+  have h1' : gammaSeq g' ε 1 = 1 := by rw [← intCast_gammaSeq, h1, Int.cast_one]
+  have hk2 : gammaSeq g' ε (k + 2) = g'.eval 0 := by rw [gammaSeq_succ g' ε (by lia), hd']
+  have hk : gammaSeq g' ε k = -g'.eval 0 := by linear_combination hd - hk2
+  have hg1 : g'.eval 1 = 0 := by
+    rw [← hd', gammaSeq_succ g' ε hko.pos, hk, (hg.map _).eval_neg]
+    exact ((hg.map _).eval_congr (by rw [h0', one_pow])).symm
+  have := gammaSeq_eq_ite_even_of_eval_one_eq_zero (hg.map _) h0' h1' hg1 k hk1
+  rw [if_neg (Nat.not_even_iff_odd.mpr hko), hk] at this
+  linear_combination (-g'.eval 0) * this - 2 * h0'
+
+/-- If `g` is even with `g(0)² = 1` and `γ_1 = 1`, and `k ≥ 3` is odd, then the odd part `M` of
+`γ_k + γ_{k+2} = 2M` is coprime to `γ_{k+1}`. -/
+theorem isCoprime_gammaSeq_succ_of_odd_of_add_two_eq_two_mul (hg : EvenPoly g) {ε : ℤ}
+    (h0 : g.eval 0 ^ 2 = 1) (h1 : gammaSeq g ε 1 = 1) {k : ℕ} (hko : Odd k) (hk1 : 1 < k) {M : ℤ}
+    (hM : gammaSeq g ε k + gammaSeq g ε (k + 2) = 2 * M) (hMo : Odd M) :
+    IsCoprime M (gammaSeq g ε (k + 1)) := by
+  refine IsRelPrime.isCoprime fun d hdM hdγ ↦ ?_
+  have hd2 := dvd_two_of_dvd_add_two_of_dvd_succ hg h0 h1 hko hk1 (hM ▸ hdM.mul_left 2) hdγ
+  rcases (Nat.dvd_prime Nat.prime_two).mp (Int.natAbs_dvd_natAbs.mpr hd2) with h | h
+  · exact Int.isUnit_iff_natAbs_eq.mpr h
+  · refine absurd (Int.natAbs_dvd.mpr hdM) fun h2 ↦ Int.not_even_iff_odd.mpr hMo ?_
+    rw [h] at h2
+    exact even_iff_two_dvd.mpr h2
 
 /-- An odd divisor `k > 1` of `n ≠ 0` contributes an odd prime to `rad n`, so `rad n ≥ 3`. -/
 private lemma three_le_radical_of_odd_dvd {k n : ℕ} (hn : n ≠ 0) (hk : k ∣ n) (hko : Odd k)
