@@ -123,8 +123,7 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul {n : ℕ} (hn : 1 
   have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_two (by lia)
   have hk₀2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
   have hpos := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
-  obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := (8 * k + 2) *
-    gammaSeq (normPoly a) a.sign (n / radical n) + 1)
+  obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := (8 * k + 2) * γ[a] (n / radical n) + 1)
     (add_nonneg (mul_nonneg (by positivity) hpos.le) zero_le_one)
   have hm4 : m % 4 = 3 := by
     have := mul_add_one_emod_four_eq_three (k := k)
@@ -134,8 +133,8 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul {n : ℕ} (hn : 1 
     (Nat.div_mul_cancel radical_dvd_self).symm (m := m) ?_
     (ZMod.not_isSquare_neg_one_of_emod_four_eq_three hm4)
   rw [← hm, gammaSeq_succ _ _ (by lia), eval_normPoly_of_neg ha0]
-  exact ⟨(8 * k + 3) * gammaSeq (normPoly a) a.sign (n / radical n) - 1, by
-    linear_combination (-(gammaSeq (normPoly a) a.sign (n / radical n)) ^ 2) * ha⟩
+  exact ⟨(8 * k + 3) * γ[a] (n / radical n) - 1, by
+    linear_combination (-(γ[a] (n / radical n)) ^ 2) * ha⟩
 
 /-- Theorem 3.3 of [Li 2021]: for `a = -(8k+2)(8k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
 theorem li2021_theorem_3_3 : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
@@ -160,8 +159,7 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_
     Nat.not_even_iff_odd.mp fun h ↦ hn4 ((Nat.even_div_radical_iff_four_dvd (by lia)).mp h)
   have h8 := gammaSeq_normPoly_add_two_emod_eight_eq_six ha ha4 hko
     (by obtain ⟨j, hj⟩ := hko; lia)
-  obtain ⟨M, hM⟩ : (2 : ℤ) ∣ gammaSeq (normPoly a) a.sign (n / radical n)
-    + gammaSeq (normPoly a) a.sign (n / radical n + 2) := by lia
+  obtain ⟨M, hM⟩ : (2 : ℤ) ∣ γ[a] (n / radical n) + γ[a] (n / radical n + 2) := by lia
   obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := M) (by
     have := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
     have := gammaSeq_normPoly_pos ha' (n / radical n + 2) (by lia)
@@ -237,7 +235,7 @@ private lemma add_eval_eval_eq_mul (y : ℤ) :
   ring
 
 private lemma gammaSeq_normPoly_two_of_eq_neg_mul_add_one :
-    gammaSeq (normPoly a) a.sign 2 = (4 * (k : ℤ) + 1) * (4 * k + 2) := by
+    γ[a] 2 = (4 * (k : ℤ) + 1) * (4 * k + 2) := by
   rw [gammaSeq_normPoly_two (neg_of_eq_neg_mul_add_one ha), ha]
   ring
 
@@ -245,13 +243,12 @@ private lemma gammaSeq_normPoly_two_of_eq_neg_mul_add_one :
 is `≡ 3 mod 4`. -/
 private lemma exists_mul_eq_and_emod_four_eq_three_of_even {k₀ : ℕ} (hk₀2 : 2 ≤ k₀)
     (hke : Even k₀) :
-    ∃ m : ℕ, (4 * (k : ℤ) + 1) * m = -a * gammaSeq (normPoly a) a.sign k₀ + (4 * k + 1) ∧
-      m % 4 = 3 := by
+    ∃ m : ℕ, (4 * (k : ℤ) + 1) * m = -a * γ[a] k₀ + (4 * k + 1) ∧ m % 4 = 3 := by
   have ha0 := neg_of_eq_neg_mul_add_one ha
   have ha4 := emod_four_eq_one_of_eq_neg_mul_add_one ha
-  have hdvd2 : (4 * (k : ℤ) + 1) * (4 * k + 2) ∣ gammaSeq (normPoly a) a.sign k₀ :=
+  have hdvd2 : (4 * (k : ℤ) + 1) * (4 * k + 2) ∣ γ[a] k₀ :=
     gammaSeq_normPoly_two_of_eq_neg_mul_add_one ha ▸ gammaSeq_normPoly_two_dvd_of_even ha0 hk₀2 hke
-  obtain ⟨m, hm⟩ : (4 * k + 1 : ℤ) ∣ -a * gammaSeq (normPoly a) a.sign k₀ + (4 * k + 1) :=
+  obtain ⟨m, hm⟩ : (4 * k + 1 : ℤ) ∣ -a * γ[a] k₀ + (4 * k + 1) :=
     dvd_add ((Dvd.intro _ rfl).trans hdvd2 |>.mul_left _) dvd_rfl
   have hm4 := emod_four_eq_three_of_mul_eq (by lia)
     (gammaSeq_normPoly_emod_four_eq_two_of_even ha0 ha4 hke hk₀2) hm
@@ -264,8 +261,8 @@ private lemma exists_mul_eq_and_emod_four_eq_three_of_even {k₀ : ℕ} (hk₀2 
 /-- The modulus `m` with `A m = α γ_{k₀} + A` divides `γ_{k₀} + γ_{k₀+2}`, by the factorization
 `add_eval_eval_eq_mul`. -/
 private lemma dvd_add_two_of_mul_eq {k₀ : ℕ} (hk₀ : 1 ≤ k₀) {m : ℤ}
-    (hm : (4 * (k : ℤ) + 1) * m = -a * gammaSeq (normPoly a) a.sign k₀ + (4 * k + 1)) :
-    m ∣ gammaSeq (normPoly a) a.sign k₀ + gammaSeq (normPoly a) a.sign (k₀ + 2) := by
+    (hm : (4 * (k : ℤ) + 1) * m = -a * γ[a] k₀ + (4 * k + 1)) :
+    m ∣ γ[a] k₀ + γ[a] (k₀ + 2) := by
   have ha0 := neg_of_eq_neg_mul_add_one ha
   rw [gammaSeq_succ _ _ (by lia), gammaSeq_succ _ _ hk₀, eval_normPoly_of_neg ha0,
     eval_normPoly_of_neg ha0, add_eval_eval_eq_mul ha, ← hm]
@@ -274,14 +271,14 @@ private lemma dvd_add_two_of_mul_eq {k₀ : ℕ} (hk₀ : 1 ≤ k₀) {m : ℤ}
 /-- For even `k₀ ≥ 2`, an odd `m` with `A m = α γ_{k₀} + A` is coprime to `γ_2 = AB`: the
 coprimality part of Lemma 3.6 of [Li 2021], by `isCoprime_of_mul_eq`. -/
 private lemma isCoprime_gammaSeq_two_of_mul_eq {k₀ : ℕ} (hk₀2 : 2 ≤ k₀) (hke : Even k₀) {m : ℤ}
-    (hm : (4 * (k : ℤ) + 1) * m = -a * gammaSeq (normPoly a) a.sign k₀ + (4 * k + 1))
-    (hmo : Odd m) : IsCoprime m (gammaSeq (normPoly a) a.sign 2) := by
+    (hm : (4 * (k : ℤ) + 1) * m = -a * γ[a] k₀ + (4 * k + 1))
+    (hmo : Odd m) : IsCoprime m (γ[a] 2) := by
   have ha0 := neg_of_eq_neg_mul_add_one ha
   have hγ2 := gammaSeq_normPoly_two_of_eq_neg_mul_add_one ha
   have hsq := gammaSeq_normPoly_two_sq_dvd_sub_ite_even ha0 hk₀2
   rw [if_pos hke, hγ2] at hsq
   rw [hγ2]
-  exact isCoprime_of_mul_eq (by linear_combination hm - gammaSeq (normPoly a) a.sign k₀ * ha) hmo
+  exact isCoprime_of_mul_eq (by linear_combination hm - γ[a] k₀ * ha) hmo
     ((pow_dvd_pow_of_dvd (dvd_mul_right _ _) 2).trans hsq)
     ((dvd_mul_left _ _).trans (hγ2 ▸ gammaSeq_normPoly_two_dvd_of_even ha0 hk₀2 hke))
 

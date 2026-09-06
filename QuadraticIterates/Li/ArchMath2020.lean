@@ -49,8 +49,8 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three (ha
   have ha' : ¬IsSquare (-a : ℚ) := mod_cast hsq
   have hk₀2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
   have h4 := gammaSeq_normPoly_add_succ_emod_four_eq_three ha ha4 hk₀2
-  obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := gammaSeq (normPoly a) a.sign (n / radical n) +
-    gammaSeq (normPoly a) a.sign (n / radical n + 1)) (by
+  obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le
+    (a := γ[a] (n / radical n) + γ[a] (n / radical n + 1)) (by
       have := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
       have := gammaSeq_normPoly_pos ha' (n / radical n + 1) (by lia)
       lia)

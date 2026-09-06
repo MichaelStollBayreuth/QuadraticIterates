@@ -170,15 +170,37 @@ theorem section1_of_not_isSquare_abs_bSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
 
 /-! ### The `γ`-sequence of the rescaled polynomial -/
 
+/-- `γ[a] n` is the `γ`-sequence of the rescaled polynomial `normPoly a` with `ε = sgn a`,
+`gammaSeq (normPoly a) a.sign n`; it is `|c_n| / |a|` (`abs_cSeq_eq_gammaSeq_normPoly_mul`). -/
+scoped notation:max "γ[" a "]" => gammaSeq (normPoly a) (Int.sign a)
+
+open Lean PrettyPrinter in
+/-- Prints `gammaSeq (normPoly a) a.sign` as `γ[a]`. -/
+@[scoped app_unexpander gammaSeq]
+meta def unexpandGammaNormPoly : Unexpander
+  | `($_ $g $s $n) => do `(γ[$(← normPolyArg g s)] $n)
+  | `($_ $g $s) => do `(γ[$(← normPolyArg g s)])
+  | _ => throw ()
+where
+  /-- The `a` with `g = normPoly a` and `s = a.sign` (or `Int.sign a`). -/
+  normPolyArg (g s : Term) : UnexpandM Term := do
+    let `(normPoly $a) := g | throw ()
+    let b ← match s with
+      | `($(b).sign) => pure b
+      | `(Int.sign $b) => pure b
+      | _ => throw ()
+    unless b.raw.structEq a.raw do throw ()
+    return a
+
 /-- `γ_1 = sgn(a) · g(0) = sgn(a)² = 1` for the rescaled polynomial `g = normPoly a`. -/
-lemma gammaSeq_normPoly_one (ha0 : a ≠ 0) : gammaSeq (normPoly a) a.sign 1 = 1 := by
+lemma gammaSeq_normPoly_one (ha0 : a ≠ 0) : γ[a] 1 = 1 := by
   simp [← sq, Int.sign_sq_of_ne_zero ha0]
 
 /-- The `γ`-sequence of the rescaled polynomial `normPoly a` is `|c_n| / |a|`: substituting
 `x ↦ |a| x` turns the recursion `c_{n+1} = c_n² + a` into the `γ`-recursion of `normPoly a`.
 (At `n = 0` both sides vanish.) -/
 theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
-    |cSeq a n| = gammaSeq (normPoly a) a.sign n * |a| := by
+    |cSeq a n| = γ[a] n * |a| := by
   induction n with
   | zero => simp
   | succ k ih =>
@@ -189,8 +211,7 @@ theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
       linear_combination -Int.sign_mul_abs a
 
 /-- The `γ`-sequence of `normPoly a` is positive, as `c_n ≠ 0` for `n ≥ 1`. -/
-lemma gammaSeq_normPoly_pos (ha : ¬IsSquare (-a : ℚ)) :
-    ∀ n ≥ 1, 0 < gammaSeq (normPoly a) a.sign n := fun n hn ↦
+lemma gammaSeq_normPoly_pos (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, 0 < γ[a] n := fun n hn ↦
   (mul_pos_iff_of_pos_right (abs_pos.mpr (ne_zero_of_not_isSquare_neg ha))).mp
     (abs_cSeq_eq_gammaSeq_mul_abs ha n ▸ abs_pos.mpr (cSeq_ne_zero ha n hn))
 
@@ -203,8 +224,7 @@ theorem abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n
   rw [← Int.cast_inj (α := ℚ), Int.cast_abs, intCast_bSeq ha (by lia), abs_moebiusFactorK,
     intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
       (fun d hd ↦ (gammaSeq_normPoly_pos ha d hd).ne') (by lia),
-    ← moebiusFactorK_mul_const (gammaSeq (normPoly a) a.sign)
-      (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
+    ← moebiusFactorK_mul_const γ[a] (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
   simp only [abs_cSeq_eq_gammaSeq_mul_abs ha]
 
 /-! ### Theorem (Section 3) -/

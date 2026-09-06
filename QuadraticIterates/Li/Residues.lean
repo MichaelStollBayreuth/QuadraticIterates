@@ -58,7 +58,7 @@ lemma eval_map_normPoly_of_neg (ha : a < 0) {S : Type*} [CommRing S] (x : S) :
     ((normPoly a).map (Int.castRingHom S)).eval x = -(a : S) * x ^ 2 - 1 := by
   simp [normPoly_of_neg ha]
 
-lemma gammaSeq_normPoly_two (ha : a < 0) : gammaSeq (normPoly a) a.sign 2 = -a - 1 := by
+lemma gammaSeq_normPoly_two (ha : a < 0) : γ[a] 2 = -a - 1 := by
   rw [gammaSeq_succ _ _ le_rfl, gammaSeq_normPoly_one ha.ne, eval_normPoly, abs_of_neg ha,
     Int.sign_eq_neg_one_of_neg ha]
   ring
@@ -66,8 +66,7 @@ lemma gammaSeq_normPoly_two (ha : a < 0) : gammaSeq (normPoly a) a.sign 2 = -a -
 /-- For `a < 0`, the `γ`-sequence of `normPoly a` in `ZMod m` is the `γ`-sequence of
 `-a X² - 1` with `ε = -1`. -/
 lemma intCast_gammaSeq_normPoly (ha : a < 0) (m n : ℕ) :
-    ((gammaSeq (normPoly a) a.sign n : ℤ) : ZMod m)
-      = gammaSeq ((normPoly a).map (Int.castRingHom (ZMod m))) (-1) n := by
+    ((γ[a] n : ℤ) : ZMod m) = gammaSeq ((normPoly a).map (Int.castRingHom (ZMod m))) (-1) n := by
   rw [intCast_gammaSeq, Int.sign_eq_neg_one_of_neg ha, Int.cast_neg, Int.cast_one]
 
 section
@@ -87,14 +86,12 @@ lemma gammaSeq_map_normPoly_one {S : Type*} [CommRing S] :
 
 /-- For `n ≥ 2`: `γ_2² ∣ γ_n - γ_2` for even `n` and `γ_2² ∣ γ_n + 1` for odd `n`. -/
 theorem gammaSeq_normPoly_two_sq_dvd_sub_ite_even {n : ℕ} (hn : 2 ≤ n) :
-    gammaSeq (normPoly a) a.sign 2 ^ 2 ∣
-      gammaSeq (normPoly a) a.sign n - if Even n then gammaSeq (normPoly a) a.sign 2 else -1 := by
+    γ[a] 2 ^ 2 ∣ γ[a] n - if Even n then γ[a] 2 else -1 := by
   have h := gammaSeq_two_sq_dvd_sub_ite_even (evenPoly_normPoly a)
     (by rw [eval_normPoly_of_neg ha]; ring) (gammaSeq_normPoly_one ha.ne) n hn
   rwa [eval_normPoly_of_neg ha, zero_pow two_ne_zero, mul_zero, zero_sub] at h
 
-theorem gammaSeq_normPoly_two_dvd_of_even {n : ℕ} (hn : 2 ≤ n) (hne : Even n) :
-    gammaSeq (normPoly a) a.sign 2 ∣ gammaSeq (normPoly a) a.sign n :=
+theorem gammaSeq_normPoly_two_dvd_of_even {n : ℕ} (hn : 2 ≤ n) (hne : Even n) : γ[a] 2 ∣ γ[a] n :=
   gammaSeq_two_dvd_of_even (evenPoly_normPoly a) (by rw [eval_normPoly_of_neg ha]; ring)
     (gammaSeq_normPoly_one ha.ne) hn hne
 
@@ -103,7 +100,7 @@ end
 /-- **Lemma 2.2 of [Li 2021], residues:** for even `a < 0`, `γ_n ≡ -a - 1 mod 8` for all `n ≥ 2`
 (the residue `-a - 1` is odd, so its square is `1 mod 8`, and `g(-a - 1) ≡ -a - 1`). -/
 theorem gammaSeq_normPoly_zmod_eight_of_even (ha : a < 0) (ha2 : Even a) :
-    ∀ n ≥ 2, ((gammaSeq (normPoly a) a.sign n : ℤ) : ZMod 8) = ((-a - 1 : ℤ) : ZMod 8) := by
+    ∀ n ≥ 2, ((γ[a] n : ℤ) : ZMod 8) = ((-a - 1 : ℤ) : ZMod 8) := by
   intro n hn
   obtain ⟨b, rfl⟩ := ha2
   have h1 : (((normPoly (b + b)).map (Int.castRingHom (ZMod 8))).eval 1) ^ 2 = 1 := by
@@ -119,8 +116,7 @@ theorem gammaSeq_normPoly_zmod_eight_of_even (ha : a < 0) (ha2 : Even a) :
 /-- **Lemma 2.2 of [Li 2021], residues:** for `a < 0` with `a ≡ 1 mod 4`, the sequence
 `γ_n mod 8` alternates from `n = 2` on between `-a - 1` (even `n`) and `3` (odd `n`). -/
 theorem gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one (ha : a < 0) (ha4 : a % 4 = 1) :
-    ∀ n ≥ 2, ((gammaSeq (normPoly a) a.sign n : ℤ) : ZMod 8)
-      = if Even n then ((-a - 1 : ℤ) : ZMod 8) else 3 := by
+    ∀ n ≥ 2, ((γ[a] n : ℤ) : ZMod 8) = if Even n then ((-a - 1 : ℤ) : ZMod 8) else 3 := by
   intro n hn
   set g' := (normPoly a).map (Int.castRingHom (ZMod 8))
   have hα : (a : ZMod 8) = 5 ∨ (a : ZMod 8) = 1 :=
@@ -143,7 +139,7 @@ theorem gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one (ha : a < 0) (ha4 : a %
 /-- **Lemma 3.1 of [Li 2020], residues:** for `a < 0` with `a ≡ 3 mod 4`, the sequence
 `γ_n mod 4` alternates from `n = 2` on between `0` (even `n`) and `3` (odd `n`). -/
 theorem gammaSeq_normPoly_zmod_four_of_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 = 3) :
-    ∀ n ≥ 2, ((gammaSeq (normPoly a) a.sign n : ℤ) : ZMod 4) = if Even n then 0 else 3 := by
+    ∀ n ≥ 2, ((γ[a] n : ℤ) : ZMod 4) = if Even n then 0 else 3 := by
   intro n hn
   have hα : (a : ZMod 4) = 3 := (ZMod.intCast_eq_intCast_iff' a 3 4).mpr ha4
   rw [intCast_gammaSeq_normPoly ha, gammaSeq_eq_ite_even_of_eval_one_eq_zero
@@ -153,9 +149,8 @@ theorem gammaSeq_normPoly_zmod_four_of_emod_four_eq_three (ha : a < 0) (ha4 : a 
   split_ifs <;> decide
 
 theorem gammaSeq_normPoly_add_two_emod_eight_eq_six (ha : a < 0) (ha4 : a % 4 = 1) {k : ℕ}
-    (hko : Odd k)
-    (hk : 3 ≤ k) :
-    (gammaSeq (normPoly a) a.sign k + gammaSeq (normPoly a) a.sign (k + 2)) % 8 = 6 := by
+    (hko : Odd k) (hk : 3 ≤ k) :
+    (γ[a] k + γ[a] (k + 2)) % 8 = 6 := by
   have h := gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one ha ha4
   have hk1 := h k (by lia)
   have hk2 := h (k + 2) (by lia)
@@ -166,22 +161,21 @@ theorem gammaSeq_normPoly_add_two_emod_eight_eq_six (ha : a < 0) (ha4 : a % 4 = 
   lia
 
 theorem gammaSeq_normPoly_emod_four_eq_two_of_even (ha : a < 0) (ha4 : a % 4 = 1) {k : ℕ}
-    (hke : Even k)
-    (hk : 2 ≤ k) : gammaSeq (normPoly a) a.sign k % 4 = 2 := by
+    (hke : Even k) (hk : 2 ≤ k) : γ[a] k % 4 = 2 := by
   have h := gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one ha ha4 k hk
   rw [if_pos hke] at h
   have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp h
   lia
 
 theorem gammaSeq_normPoly_emod_four_eq_one_of_emod_eight_eq_two (ha : a < 0) (ha8 : a % 8 = 2)
-    {n : ℕ} (hn : 2 ≤ n) : gammaSeq (normPoly a) a.sign n % 4 = 1 := by
+    {n : ℕ} (hn : 2 ≤ n) : γ[a] n % 4 = 1 := by
   have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp
     (gammaSeq_normPoly_zmod_eight_of_even ha (Int.even_iff.mpr (by lia)) n hn)
   lia
 
 theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 = 3) {k : ℕ}
     (hk : 2 ≤ k) :
-    (gammaSeq (normPoly a) a.sign k + gammaSeq (normPoly a) a.sign (k + 1)) % 4 = 3 := by
+    (γ[a] k + γ[a] (k + 1)) % 4 = 3 := by
   have h := gammaSeq_normPoly_zmod_four_of_emod_four_eq_three ha ha4
   have hk1 := h k hk
   have hk2 := h (k + 1) (by lia)
@@ -199,8 +193,7 @@ theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 
 /-- Corollary 2.4 of [Li 2021] for `|b_n|`: with `k = n / rad n`, a modulus `m` dividing
 `γ_k + γ_{k+1}`, `-1` not a square mod `m`, makes `|b_n|` a non-square (`n ≥ 2`). -/
 theorem not_isSquare_abs_bSeq_of_dvd_add_succ (ha : ¬IsSquare (-a : ℚ)) {n k : ℕ} (hn : 2 ≤ n)
-    (hk : n = k * radical n) {m : ℕ}
-    (hdvd : (m : ℤ) ∣ gammaSeq (normPoly a) a.sign k + gammaSeq (normPoly a) a.sign (k + 1))
+    (hk : n = k * radical n) {m : ℕ} (hdvd : (m : ℤ) ∣ γ[a] k + γ[a] (k + 1))
     (hnsq : ¬IsSquare (-1 : ZMod m)) : ¬IsSquare |bSeq a n| := by
   have ha0 := ne_zero_of_not_isSquare_neg ha
   rw [abs_bSeq_eq_betaSeq ha hn, ← Rat.isSquare_intCast_iff]
@@ -212,8 +205,7 @@ theorem not_isSquare_abs_bSeq_of_dvd_add_succ (ha : ¬IsSquare (-a : ℚ)) {n k 
 `γ_k + γ_{k+2}` and coprime to `γ_2`, `-1` not a square mod `m`, makes `|b_n|` a non-square. -/
 theorem not_isSquare_abs_bSeq_of_even_of_dvd_add_two (ha : ¬IsSquare (-a : ℚ)) {n k : ℕ}
     (hn : 2 ≤ n) (hk : n = k * radical n) (hke : Even k) {m : ℕ}
-    (hdvd : (m : ℤ) ∣ gammaSeq (normPoly a) a.sign k + gammaSeq (normPoly a) a.sign (k + 2))
-    (hcop : IsCoprime (m : ℤ) (gammaSeq (normPoly a) a.sign 2))
+    (hdvd : (m : ℤ) ∣ γ[a] k + γ[a] (k + 2)) (hcop : IsCoprime (m : ℤ) (γ[a] 2))
     (hnsq : ¬IsSquare (-1 : ZMod m)) : ¬IsSquare |bSeq a n| := by
   rw [abs_bSeq_eq_betaSeq ha hn, ← Rat.isSquare_intCast_iff]
   exact not_isSquare_betaSeq_of_even_of_dvd_add_two (evenPoly_normPoly a)
@@ -225,8 +217,7 @@ theorem not_isSquare_abs_bSeq_of_even_of_dvd_add_two (ha : ¬IsSquare (-a : ℚ)
 non-square. -/
 theorem not_isSquare_abs_bSeq_of_odd_of_dvd_add_two (ha : ¬IsSquare (-a : ℚ)) {n k : ℕ}
     (hk : n = k * radical n) (hko : Odd k) (hk1 : 1 < k) {m : ℕ}
-    (hdvd : (m : ℤ) ∣ gammaSeq (normPoly a) a.sign k + gammaSeq (normPoly a) a.sign (k + 2))
-    (hcop : IsCoprime (m : ℤ) (gammaSeq (normPoly a) a.sign (k + 1)))
+    (hdvd : (m : ℤ) ∣ γ[a] k + γ[a] (k + 2)) (hcop : IsCoprime (m : ℤ) (γ[a] (k + 1)))
     (hnsq : ¬IsSquare (-1 : ZMod m)) : ¬IsSquare |bSeq a n| := by
   have ha0 := ne_zero_of_not_isSquare_neg ha
   have hn : 2 ≤ n := hk ▸ hk1.trans_le (Nat.le_mul_of_pos_right k (Nat.radical_pos n))
