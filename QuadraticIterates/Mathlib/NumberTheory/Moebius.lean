@@ -17,7 +17,7 @@ import QuadraticIterates.Mathlib.Algebra.BigOperators
 Restricted Möbius sums over divisors and divisor antidiagonals; the sign partition of the divisors
 `t` of a squarefree `n'` by `μ (n'/t) = ±1`, which is balanced on every set of divisors with
 vanishing Möbius sum (all divisors, the odd ones, the even ones), and the resulting quotient form
-`prod_pow_moebius_eq_div` of Möbius products.
+`ArithmeticFunction.prod_pow_moebius_eq_div` of Möbius products.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -113,8 +113,9 @@ theorem sum_divisorsAntidiagonal_filter_dvd_moebius {m n : ℕ} (hm : 1 ≤ m) (
       (Nat.dvd_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx))), Finset.sum_empty,
       if_neg fun h ↦ hmn (dvd_of_eq h.symm)]
 
-/-- The divisor form of `sum_divisorsAntidiagonal_filter_dvd_moebius`: `∑ μ (n/t)` over the
-divisors `t` of `n` that are multiples of `m` is `1` if `n = m` and `0` otherwise. -/
+/-- The divisor form of `ArithmeticFunction.sum_divisorsAntidiagonal_filter_dvd_moebius`:
+`∑ μ (n/t)` over the divisors `t` of `n` that are multiples of `m` is `1` if `n = m` and `0`
+otherwise. -/
 theorem sum_divisors_filter_dvd_moebius_div {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) :
     ∑ t ∈ n.divisors with m ∣ t, μ (n / t) = if n = m then 1 else 0 := by
   rw [← sum_divisorsAntidiagonal_filter_dvd_moebius hm hn, Finset.sum_filter, Finset.sum_filter,

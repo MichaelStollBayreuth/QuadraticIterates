@@ -22,14 +22,17 @@ theorem of the paper.
 
 ## Main statements
 
-* `section1_tfae`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are
-  2-independent (`section1_a_iff_b`, `section1_b_iff_c`).
-* `section1_of_not_isSquare_abs_bSeq`: if none of `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`.
-* `section3_main`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is not a
-  square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. The proof rescales `X² + a` to
+* `QuadraticIterates.section1_tfae`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff
+  `b_1, …, b_n` are 2-independent (`QuadraticIterates.section1_a_iff_b`,
+  `QuadraticIterates.section1_b_iff_c`).
+* `QuadraticIterates.section1_of_not_isSquare_abs_bSeq`: if none of `|b_2|, …, |b_n|` is a square,
+  then `Ω_n ≅ [C₂]ⁿ`.
+* `QuadraticIterates.section3_main`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and
+  `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. The proof rescales `X² + a` to
   `normPoly a = |a| X² + sgn a`, whose `γ`-sequence is `|c_n| / |a|`
-  (`abs_cSeq_eq_gammaSeq_mul_abs`) and whose `β`-sequence is `|b_n|` (`abs_bSeq_eq_betaSeq`), and
-  applies Lemma 2.2 (`not_isSquare_abs_bSeq`).
+  (`QuadraticIterates.abs_cSeq_eq_gammaSeq_mul_abs`) and whose `β`-sequence is `|b_n|`
+  (`QuadraticIterates.abs_bSeq_eq_betaSeq`), and applies Lemma 2.2
+  (`QuadraticIterates.not_isSquare_abs_bSeq`).
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -47,8 +50,9 @@ variable {a : ℤ}
 
 /-! ### Lemma 1.1 b): the integer factors `b_n` -/
 
-/-- The constant-valuation shape for `c`: the specialization of `factorization_gammaSeq_shape`
-to `X² + a`, `ε = -1`, in the form consumed by `moebiusFactorR_isRelPrime`. -/
+/-- The constant-valuation shape for `c`: the specialization of
+`QuadraticIterates.factorization_gammaSeq_shape` to `X² + a`, `ε = -1`, in the form consumed by
+`moebiusFactorR_isRelPrime`. -/
 lemma factorization_cSeq_shape (ha : ¬IsSquare (-a : ℚ)) :
     ∀ q : ℤ, Prime q → normalize q = q →
       ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (cSeq a k) q = if m ∣ k then E else 0 :=
@@ -84,12 +88,12 @@ lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn
 
 /-! ### Theorem (Section 1) -/
 
-/-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on
-`n`: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
-(`nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that `c_{n+1}` is not a
-square in `K_n` (`relfinrank_succ_eq_two_pow_iff`, Lemma 1.6), and given `Ω_n ≅ [C₂]ⁿ` this
-means that `c_1, …, c_{n+1}` are 2-independent (`not_isSquare_algebraMap_iff_twoIndependent_snoc`,
-Lemma 1.5). -/
+/-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on `n`:
+`Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
+(`QuadraticIterates.nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that
+`c_{n+1}` is not a square in `K_n` (`QuadraticIterates.relfinrank_succ_eq_two_pow_iff`, Lemma 1.6),
+and given `Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent
+(`QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc`, Lemma 1.5). -/
 theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
@@ -171,7 +175,8 @@ theorem section1_of_not_isSquare_abs_bSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
 /-! ### The `γ`-sequence of the rescaled polynomial -/
 
 /-- `γ[a] n` is the `γ`-sequence of the rescaled polynomial `normPoly a` with `ε = sgn a`,
-`gammaSeq (normPoly a) a.sign n`; it is `|c_n| / |a|` (`abs_cSeq_eq_gammaSeq_normPoly_mul`). -/
+`gammaSeq (normPoly a) a.sign n`; it is `|c_n| / |a|`
+(`QuadraticIterates.abs_cSeq_eq_gammaSeq_mul_abs`). -/
 scoped notation:max "γ[" a "]" => gammaSeq (normPoly a) (Int.sign a)
 
 open Lean PrettyPrinter in

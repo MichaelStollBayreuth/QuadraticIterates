@@ -19,11 +19,11 @@ import QuadraticIterates.Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 # Integrality of Möbius factors of strong divisibility sequences
 
 For a strong divisibility sequence `c` in a UFD `R` (nowhere zero on `n ≥ 1`), the Möbius factor
-`∏_{d ∣ n} c_d ^ μ(n/d)`, a priori an element of the fraction field, lies in the image of `R`:
-it is the quotient `numProd c n / denProd c n` of two products in `R`, and the denominator
-divides the numerator because the Möbius transform of `v_p ∘ c` is nonnegative for every prime
-`p` (`sum_mul_moebius_nonneg`). `moebiusFactorR c n` is the unique `R`-preimage; everything
-about it follows from the identity `moebiusFactorR_mul_denProd`, in particular
+`∏_{d ∣ n} c_d ^ μ(n/d)`, a priori an element of the fraction field, lies in the image of `R`: it is
+the quotient `numProd c n / denProd c n` of two products in `R`, and the denominator divides the
+numerator because the Möbius transform of `v_p ∘ c` is nonnegative for every prime `p`
+(`ArithmeticFunction.sum_mul_moebius_nonneg`). `moebiusFactorR c n` is the unique `R`-preimage;
+everything about it follows from the identity `moebiusFactorR_mul_denProd`, in particular
 `algebraMap_moebiusFactorR`: its image in any fraction field is the Möbius formula.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated

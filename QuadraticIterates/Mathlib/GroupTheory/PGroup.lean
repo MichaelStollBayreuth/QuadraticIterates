@@ -36,8 +36,8 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 ## Implementation notes
 
 The eventual Mathlib home of these results is not obvious (they sit between
-`GroupTheory.PGroup`, `RepresentationTheory`, and the linear-algebra `Module` files); they are
-grouped here for now and will be placed during upstreaming.
+`Mathlib.GroupTheory.PGroup`, `Mathlib.RepresentationTheory`, and the linear-algebra `Module`
+files); they are grouped here for now and will be placed during upstreaming.
 -/
 
 @[expose] public section

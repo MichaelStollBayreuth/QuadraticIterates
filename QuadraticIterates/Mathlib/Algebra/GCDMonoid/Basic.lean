@@ -19,7 +19,7 @@ Normalizing before applying a monoid homomorphism does not change the normalized
 A sequence `a` in a GCD domain with `a 0 = 0` satisfying the *translation congruence*
 `a m ∣ a (m + j) - a j` for all `m, j` is a strong divisibility sequence:
 `gcd (a m) (a n) = normalize (a (gcd m n))`. This is the arithmetic engine behind the
-Fibonacci-style `Int.gcd_fib`, isolated from the specific recurrence.
+Fibonacci-style `Nat.fib_gcd`, isolated from the specific recurrence.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.

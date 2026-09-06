@@ -34,17 +34,19 @@ the integer sequences `c_n` and `b_n` and the rescaled polynomial `normPoly a`; 
 
 ## Main statements
 
-* `splittingField_succ_eq_sup_adjoin`, `relfinrank_succ_le` (Facts 1.0):
-  `K_{n+1} = K_n(√(α - a) : α root of f_n)`, hence `[K_{n+1} : K_n] ≤ 2^{2^n}`.
-* `exists_injective_monoidHom_wreathPower` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`, being a `2`-group
-  (`isPGroup_galoisGroup`) acting faithfully on the at most `2^n` roots of `f_n`; hence
-  `Ω_n ≅ [C₂]ⁿ` iff `[K_n : ℚ] = 2^{2^n - 1}` (`nonempty_mulEquiv_iff_finrank_eq`).
-* `nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and
-  `[K_{n+1} : K_n] = 2^{2^n}`.
-* `twoIndependent_iff_linearIndependent`: a family is 2-independent iff its classes in
-  `Lˣ/(Lˣ)²` are `𝔽₂`-linearly independent.
-* `twoIndependent_iff_of_pairwise_isCoprime`: a pairwise coprime family of integers is
-  2-independent iff none of its members is a square and at most one of their negatives is.
+* `QuadraticIterates.splittingField_succ_eq_sup_adjoin`, `QuadraticIterates.relfinrank_succ_le`
+  (Facts 1.0): `K_{n+1} = K_n(√(α - a) : α root of f_n)`, hence `[K_{n+1} : K_n] ≤ 2^{2^n}`.
+* `QuadraticIterates.exists_injective_monoidHom_wreathPower` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`,
+  being a `2`-group (`QuadraticIterates.isPGroup_galoisGroup`) acting faithfully on the at most
+  `2^n` roots of `f_n`; hence `Ω_n ≅ [C₂]ⁿ` iff `[K_n : ℚ] = 2^{2^n - 1}`
+  (`QuadraticIterates.nonempty_mulEquiv_iff_finrank_eq`).
+* `QuadraticIterates.nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff
+  `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`.
+* `QuadraticIterates.twoIndependent_iff_linearIndependent`: a family is 2-independent iff its
+  classes in `Lˣ/(Lˣ)²` are `𝔽₂`-linearly independent.
+* `QuadraticIterates.twoIndependent_iff_of_pairwise_isCoprime`: a pairwise coprime family of
+  integers is 2-independent iff none of its members is a square and at most one of their negatives
+  is.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -87,7 +89,8 @@ lemma map_eval_iteratedPoly {S : Type*} [CommSemiring S] (φ : R →+* S) (x : R
     φ ((iteratedPoly a n).eval x) = (iteratedPoly (φ a) n).eval (φ x) := by
   rw [← map_iteratedPoly, eval_map, eval₂_at_apply]
 
-/-- `f_{n+1} = f_n ∘ (X² + a)`: the iterate can also grow on the right. -/
+/-- `f_{n+1} = f_n ∘ (X² + a)`: the iterate grows on the right as well as on the left
+(`QuadraticIterates.iteratedPoly_succ`, `f_{n+1} = f_n ^ 2 + a`). -/
 lemma iteratedPoly_succ_comp (n : ℕ) :
     iteratedPoly a (n + 1) = (iteratedPoly a n).comp (X ^ 2 + C a) := by
   induction n with
@@ -139,7 +142,8 @@ lemma iteratedPoly_succ_comp_neg_X {R : Type*} [CommRing R] (a : R) (n : ℕ) :
 /-- `fℚ[a, n]` denotes the `n`-th iterate `f_n` of `X² + a` over `ℚ`, `iteratedPoly (a : ℚ) n`. -/
 scoped notation "fℚ[" a ", " n "]" => iteratedPoly (a : ℚ) n
 
-/-- `intCast_eval_iteratedPoly` for the iterate over `ℚ` evaluated in a `ℚ`-algebra. -/
+/-- `QuadraticIterates.intCast_eval_iteratedPoly` for the iterate over `ℚ` evaluated in a
+`ℚ`-algebra. -/
 lemma aeval_intCast_iteratedPoly {S : Type*} [CommRing S] [Algebra ℚ S] (a x : ℤ) (n : ℕ) :
     aeval (x : S) (fℚ[a, n]) = (((iteratedPoly a n).eval x : ℤ) : S) := by
   rw [aeval_def, ← eval_map, map_iteratedPoly, map_intCast, ← intCast_eval_iteratedPoly]
@@ -212,14 +216,15 @@ theorem cSeq_succ_eq_neg_one_pow_mul_eval_zero (a : ℤ) (n : ℕ) :
     cSeq a (n + 1) = (-1) ^ 2 ^ n * (iteratedPoly a (n + 1)).eval 0 := by
   rw [eval_zero_iteratedPoly_succ, cSeq_succ_eq_neg_one_pow_mul_eval]
 
-/-- `cSeq_succ_eq_neg_one_pow_mul_eval_zero` after casting to a commutative ring `S`. -/
+/-- `QuadraticIterates.cSeq_succ_eq_neg_one_pow_mul_eval_zero` after casting to a commutative ring
+`S`. -/
 lemma intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero {S : Type*} [CommRing S] (a : ℤ) (n : ℕ) :
     (cSeq a (n + 1) : S) = (-1) ^ 2 ^ n * (iteratedPoly (a : S) (n + 1)).eval 0 := by
   simp [cSeq_succ_eq_neg_one_pow_mul_eval_zero, intCast_eval_iteratedPoly]
 
 /-- The Möbius factors `b_n = ∏_{d ∣ n} c_d^{μ(n/d)} ∈ ℤ` of the `c`-sequence: the specialization
 of the general `β`-sequence to `X² + a`, `ε = -1` (an integer by strong divisibility, see
-`intCast_bSeq`). -/
+`QuadraticIterates.intCast_bSeq`). -/
 noncomputable def bSeq (a : ℤ) (n : ℕ) : ℤ := betaSeq (X ^ 2 + C a) (-1) n
 
 lemma bSeq_eq_moebiusFactorR (a : ℤ) (n : ℕ) : bSeq a n = moebiusFactorR (cSeq a) n := rfl
@@ -228,8 +233,8 @@ lemma bSeq_eq_moebiusFactorR (a : ℤ) (n : ℕ) : bSeq a n = moebiusFactorR (cS
 
 /-- The rescaling `|a|·X² + sign a` of `X² + a`. Substituting `x ↦ |a|·x` turns the recursion
 `c_{n+1} = c_n² + a` into the `γ`-recursion of `normPoly a`, whose sequence is therefore
-`|c_n| / |a|` (`abs_cSeq_eq_gammaSeq_mul_abs`) — in particular positive, which is what
-Lemma 2.2 needs and `X² + a` itself does not provide. -/
+`|c_n| / |a|` (`QuadraticIterates.abs_cSeq_eq_gammaSeq_mul_abs`) — in particular positive, which is
+what Lemma 2.2 needs and `X² + a` itself does not provide. -/
 noncomputable def normPoly (a : ℤ) : ℤ[X] := C |a| * X ^ 2 + C a.sign
 
 @[simp] lemma eval_normPoly (a x : ℤ) : (normPoly a).eval x = |a| * x ^ 2 + a.sign := by
@@ -245,7 +250,7 @@ variable {ι M : Type*}
 
 /-- A family of elements of a commutative monoid is *2-independent* if no nonempty subfamily has
 a square product. For nonzero rationals this says that the classes in `ℚ*/(ℚ*)²` are
-`𝔽₂`-linearly independent (`twoIndependent_iff_linearIndependent`). -/
+`𝔽₂`-linearly independent (`QuadraticIterates.twoIndependent_iff_linearIndependent`). -/
 def TwoIndependent [CommMonoid M] (v : ι → M) : Prop :=
   ∀ S : Finset ι, S.Nonempty → ¬IsSquare (∏ i ∈ S, v i)
 
@@ -487,7 +492,8 @@ lemma card_galoisGroup_eq_finrank (n : ℕ) :
     (IsGalois.card_aut_eq_finrank ℚ _)
 
 /-- `Ω_n ≅ [C₂]ⁿ` iff `K_n` has the maximal possible degree `2^{2^n - 1}` over `ℚ`, since `Ω_n`
-embeds into `[C₂]ⁿ` (`exists_injective_monoidHom_wreathPower`) and `#Ω_n = [K_n : ℚ]`. -/
+embeds into `[C₂]ⁿ` (`QuadraticIterates.exists_injective_monoidHom_wreathPower`) and
+`#Ω_n = [K_n : ℚ]`. -/
 theorem nonempty_mulEquiv_iff_finrank_eq (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       Module.finrank ℚ ↥(splittingField a n) = 2 ^ (2 ^ n - 1) := by
@@ -495,8 +501,8 @@ theorem nonempty_mulEquiv_iff_finrank_eq (n : ℕ) :
   rw [φ.nonempty_mulEquiv_iff_card_eq hφ, card_galoisGroup_eq_finrank, card_wreathPower]
 
 /-- Lemma 1.4: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`. Both
-`#Ω_n ≤ #[C₂]ⁿ` (by `exists_injective_monoidHom_wreathPower`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`,
-and the products of the two sides agree iff both factors do. -/
+`#Ω_n ≤ #[C₂]ⁿ` (by `QuadraticIterates.exists_injective_monoidHom_wreathPower`) and
+`[K_{n+1} : K_n] ≤ 2^{2^n}`, and the products of the two sides agree iff both factors do. -/
 theorem nonempty_mulEquiv_succ_iff (n : ℕ) :
     Nonempty (GaloisGroup a (n + 1) ≃* WreathPower (n + 1)) ↔
       Nonempty (GaloisGroup a n ≃* WreathPower n) ∧

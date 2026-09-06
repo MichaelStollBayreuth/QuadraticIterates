@@ -31,29 +31,34 @@ finally over `ℤ` for Lemmas 2.1 and 2.2 of the paper.
 
 ## Main statements
 
-* `EvenPoly`: `g` is even, i.e. `g ∈ R[X²]`; over a domain of characteristic `≠ 2` this is
-  `g(-X) = g` (`evenPoly_iff_comp_neg_X`).
-* `gammaSeq`, `betaSeq`: the sequences `γ` and `β`. `map_gammaSeq` says that `γ` commutes with
-  ring homomorphisms, which is how every congruence below is computed in `ZMod m`.
-* `gammaSeq_associated_gcd`: strong divisibility of `γ` for even `g` and `ε² = 1`.
-* `gammaSeq_eq_ite_even_of_add_two_eq`, `gammaSeq_eq_ite_even_of_add_two_eq_zero`,
-  `gammaSeq_two_sq_dvd_sub_ite_even`: the sequence is `2`-periodic from an index `n₀` on once
-  `γ_{n₀+2} = ±γ_{n₀}`, and always modulo `γ_2²` when `γ_1 = 1`.
-* `factorization_gammaSeq_shape`: `v_p(γ_n)` is constant on the multiples of some index and `0`
-  elsewhere.
-* `not_isSquare_betaSeq_of_prod_eq_neg_prod`: `β_n` is not a square in `ℚ` when the numerator
-  and denominator of its Möbius product are congruent up to sign modulo an `m` with `-1` not a
-  square mod `m`.
-* `not_isSquare_betaSeq_of_dvd_add_two_mul`, `not_isSquare_betaSeq_of_dvd_add_succ`: Lemma 2.1
-  of the paper at a single index `n`, with a modulus dividing `γ_k + γ_{2k}` resp. `γ_k + γ_{k+1}`
-  for `k = n / rad n` (Lemma 2.1 and Corollary 2.4 of [Li 2021]).
-* `not_isSquare_betaSeq_of_even_of_dvd_add_two`, `not_isSquare_betaSeq_of_odd_of_dvd_add_two`:
-  Proposition 2.5 of [Li 2021], the same with a modulus dividing `γ_k + γ_{k+2}`, using the
-  `2`-periodicity `gammaSeq_eq_ite_even_of_add_two_eq_zero` of the sequence modulo such an `m`.
-* `not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one`: Lemma 3.3 of [Li 2020], `β_n`
-  for squarefree `n ≥ 3` with the modulus `γ_2`, when `g(0) = -1` and `γ_1 = 1`.
-* `not_isSquare_betaSeq`, `not_isSquare_betaSeq_of_pos`: Lemmas 2.1 and 2.2 of the paper, `β_n`
-  is not a square in `ℚ` for `n ≥ 2` under congruence conditions on `γ` resp. on `g(0)`, `g(1)`.
+* `QuadraticIterates.EvenPoly`: `g` is even, i.e. `g ∈ R[X²]`; over a domain of characteristic `≠ 2`
+  this is `g(-X) = g` (`QuadraticIterates.evenPoly_iff_comp_neg_X`).
+* `QuadraticIterates.gammaSeq`, `QuadraticIterates.betaSeq`: the sequences `γ` and `β`.
+  `QuadraticIterates.map_gammaSeq` says that `γ` commutes with ring homomorphisms, which is how the
+  congruences of this file are computed in `ZMod m`.
+* `QuadraticIterates.gammaSeq_associated_gcd`: strong divisibility of `γ` for even `g` and `ε² = 1`.
+* `QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq`,
+  `QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq_zero`,
+  `QuadraticIterates.gammaSeq_two_sq_dvd_sub_ite_even`: the sequence is `2`-periodic from an index
+  `n₀` on once `γ_{n₀+2} = ±γ_{n₀}`, and always modulo `γ_2²` when `γ_1 = 1`.
+* `QuadraticIterates.factorization_gammaSeq_shape`: `v_p(γ_n)` is constant on the multiples of some
+  index and `0` elsewhere.
+* `QuadraticIterates.not_isSquare_betaSeq_of_prod_eq_neg_prod`: `β_n` is not a square in `ℚ` when
+  the numerator and denominator of its Möbius product are congruent up to sign modulo an `m` with
+  `-1` not a square mod `m`.
+* `QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_two_mul`,
+  `QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_succ`: Lemma 2.1 of the paper at a single index
+  `n`, with a modulus dividing `γ_k + γ_{2k}` resp. `γ_k + γ_{k+1}` for `k = n / rad n` (Lemma 2.1
+  and Corollary 2.4 of [Li 2021]).
+* `QuadraticIterates.not_isSquare_betaSeq_of_even_of_dvd_add_two`,
+  `QuadraticIterates.not_isSquare_betaSeq_of_odd_of_dvd_add_two`: Proposition 2.5 of [Li 2021],
+  `β_n` is not a square with a modulus dividing `γ_k + γ_{k+2}`, using the `2`-periodicity
+  `QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq_zero` of the sequence modulo such an `m`.
+* `QuadraticIterates.not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one`: Lemma 3.3 of
+  [Li 2020], `β_n` for squarefree `n ≥ 3` with the modulus `γ_2`, when `g(0) = -1` and `γ_1 = 1`.
+* `QuadraticIterates.not_isSquare_betaSeq`, `QuadraticIterates.not_isSquare_betaSeq_of_pos`:
+  Lemmas 2.1 and 2.2 of the paper, `β_n` is not a square in `ℚ` for `n ≥ 2` under congruence
+  conditions on `γ` resp. on `g(0)`, `g(1)`.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -123,8 +128,9 @@ lemma comp_neg_X (hg : EvenPoly g) : g.comp (-X) = g := by
 
 end EvenPoly
 
-/-- Over a domain of characteristic `≠ 2` the converse holds too, so the two notions of evenness
-this file uses — membership in `R[X²]` and invariance under `X ↦ -X` — agree. -/
+/-- Over a domain of characteristic `≠ 2`, `g` lies in `R[X²]` (`QuadraticIterates.EvenPoly g`) iff
+it is invariant under `X ↦ -X`; the forward implication, `QuadraticIterates.EvenPoly.comp_neg_X`,
+holds over every commutative ring. -/
 lemma evenPoly_iff_comp_neg_X [NoZeroDivisors R] [NeZero (2 : R)] :
     EvenPoly g ↔ g.comp (-X) = g :=
   ⟨EvenPoly.comp_neg_X, fun h ↦ ⟨contract 2 g, eq_expand_two_contract_of_comp_neg_X_eq h⟩⟩
@@ -202,7 +208,8 @@ theorem gammaSeq_eq_ite_even (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0
   | base => simp [h0]
   | succ k hk ih => grind [gammaSeq_succ g 1 hk, Nat.even_add_one]
 
-/-- Consecutive terms of the alternating sequence of `gammaSeq_eq_ite_even` sum to `3`. -/
+/-- Consecutive terms of the alternating sequence of `QuadraticIterates.gammaSeq_eq_ite_even` sum to
+`3`. -/
 theorem gammaSeq_add_succ_eq_three (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0 = 1)
     (h1 : g.eval 1 = 2) : ∀ n ≥ 1, gammaSeq g 1 n + gammaSeq g 1 (n + 1) = 3 := fun n hn ↦ by
   rw [gammaSeq_eq_ite_even hg h4 h0 h1 n hn, gammaSeq_eq_ite_even hg h4 h0 h1 (n + 1) (by lia)]
@@ -221,8 +228,8 @@ theorem gammaSeq_eq_eval_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1) (h0 :
     rw [gammaSeq_succ g ε (by lia), ih]
     exact hg.eval_congr (by rw [h1, one_pow])
 
-/-- Consecutive terms of the eventually constant sequence of `gammaSeq_eq_eval_one` sum to
-`2·g(1)` (`n ≥ 2`). -/
+/-- Consecutive terms of the eventually constant sequence of
+`QuadraticIterates.gammaSeq_eq_eval_one` sum to `2·g(1)` (`n ≥ 2`). -/
 theorem gammaSeq_add_succ_eq_two_mul_eval_one (hg : EvenPoly g) {ε : R} (hε : ε ^ 2 = 1)
     (h0 : g.eval 0 ^ 2 = 1) (h1 : g.eval 1 ^ 2 = 1) :
     ∀ n ≥ 2, gammaSeq g ε n + gammaSeq g ε (n + 1) = 2 * g.eval 1 := fun n hn ↦ by
@@ -294,8 +301,9 @@ lemma sq_dvd_gammaSeq_succ_sub (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ 
   rw [gammaSeq_succ g ε hn]
   exact hg.dvd_eval_sub (by simp)
 
-/-- `sq_dvd_gammaSeq_succ_sub` in the form the valuation argument consumes: `p ^ E ∣ γ_n` with
-`E ≥ 1` gives `p ^ (E + 1) ∣ γ_{n+1} - g(0)`, since `2E ≥ E + 1` (for any `p`, prime or not). -/
+/-- `QuadraticIterates.sq_dvd_gammaSeq_succ_sub` in the form the valuation argument consumes:
+`p ^ E ∣ γ_n` with `E ≥ 1` gives `p ^ (E + 1) ∣ γ_{n+1} - g(0)`, since `2E ≥ E + 1` (for any `p`,
+prime or not). -/
 lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 1 ≤ n) {p : R}
     {E : ℕ} (hE : 1 ≤ E) (hpE : p ^ E ∣ gammaSeq g ε n) :
     p ^ (E + 1) ∣ gammaSeq g ε (n + 1) - g.eval 0 :=
@@ -627,7 +635,8 @@ theorem not_isSquare_betaSeq_of_prod_eq_neg_prod (hg : EvenPoly g) {ε : ℤ} (h
     mul_div_mul_left _ _ (Int.cast_ne_zero.mpr hc)]
   exact fun hsq ↦ hnsq (ZMod.isSquare_neg_one_of_isSquare_div hPQ hQu hsq)
 
-/-- The squarefree case of `not_isSquare_betaSeq_of_prod_eq_neg_prod`: `n' = n` and `k = 1`. -/
+/-- The squarefree case of `QuadraticIterates.not_isSquare_betaSeq_of_prod_eq_neg_prod`: `n' = n`
+and `k = 1`. -/
 theorem not_isSquare_betaSeq_of_squarefree_of_prod_eq_neg_prod (hg : EvenPoly g) {ε : ℤ}
     (hε : ε ^ 2 = 1) (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) {n : ℕ} (hsf : Squarefree n) {c P Q : ℤ}
     (hc : c ≠ 0) (hP : ∏ t ∈ n.divisors with μ (n / t) = 1, gammaSeq g ε t = c * P)
@@ -869,7 +878,8 @@ theorem not_isSquare_betaSeq_of_odd_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ} 
   · exact isUnit_prod_gammaSeq_mul_of_odd (hg.map _) hko hz hu hu1 fun t ht ↦
       Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht)
 
-/-- The `ZMod 4` specialization of `gammaSeq_add_succ_eq_three` via `intCast_gammaSeq`. -/
+/-- The `ZMod 4` specialization of `QuadraticIterates.gammaSeq_add_succ_eq_three` via
+`QuadraticIterates.intCast_gammaSeq`. -/
 lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)
     (h1 : ((g.eval 1 : ℤ) : ZMod 4) = 2) :
     ∀ n ≥ 1, ((gammaSeq g 1 n + gammaSeq g 1 (n + 1) : ℤ) : ZMod 4) = 3 := by
@@ -878,9 +888,9 @@ lemma gammaSeq_add_succ_zmod_four_eq_three (hg : EvenPoly g) (h0 : g.eval 0 = 1)
   exact gammaSeq_add_succ_eq_three (hg.map _) (by decide) (by rw [eval_zero_map, h0, map_one])
     (by rwa [eval_one_map]) n hn
 
-/-- The `ZMod 8` specialization of `gammaSeq_add_succ_eq_two_mul_eval_one` via
-`intCast_gammaSeq`; the mod-4 hypothesis on `g(1)` transfers through the canonical map
-`ZMod 8 → ZMod 4`. -/
+/-- The `ZMod 8` specialization of `QuadraticIterates.gammaSeq_add_succ_eq_two_mul_eval_one` via
+`QuadraticIterates.intCast_gammaSeq`; the mod-4 hypothesis on `g(1)` transfers through the canonical
+map `ZMod 8 → ZMod 4`. -/
 lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε ^ 2 = 1)
     (h0 : g.eval 0 ^ 2 = 1) (h1 : ((g.eval 1 : ℤ) : ZMod 4) = 3) :
     ∀ n ≥ 2, ((gammaSeq g ε n + gammaSeq g ε (n + 1) : ℤ) : ZMod 8) = 6 := by

@@ -18,19 +18,22 @@ For `a < 0`, the rescaled polynomial is `normPoly a = -a X² - 1`, and its `γ`-
 `γ_1 = 1`, `γ_2 = -a - 1`. The residues of `γ_n` modulo `8` and `4` follow from the `2`-periodicity
 lemmas of `QuadraticIterates.ArchMath1992.Sequences`:
 
-* `gammaSeq_normPoly_zmod_eight_of_even`: for even `a`, `γ_n ≡ -a - 1 mod 8` for all `n ≥ 2`;
-* `gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one`: for `a ≡ 1 mod 4`, `γ_n mod 8` alternates
-  between `-a - 1` (even `n`) and `3` (odd `n`) from `n = 2` on;
-* `gammaSeq_normPoly_zmod_four_of_emod_four_eq_three`: for `a ≡ 3 mod 4`, `γ_n mod 4` alternates
-  between `0` (even `n`) and `3` (odd `n`) from `n = 2` on;
-* `gammaSeq_normPoly_two_sq_dvd_sub_ite_even`, `gammaSeq_normPoly_two_dvd_of_even`: the
-  `γ_2`-divisibility of `γ_n - γ_2` (even `n`), `γ_n + 1` (odd `n`) and `γ_n` (even `n`).
+* `QuadraticIterates.gammaSeq_normPoly_zmod_eight_of_even`: for even `a`, `γ_n ≡ -a - 1 mod 8` for
+  all `n ≥ 2`;
+* `QuadraticIterates.gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one`: for `a ≡ 1 mod 4`,
+  `γ_n mod 8` alternates between `-a - 1` (even `n`) and `3` (odd `n`) from `n = 2` on;
+* `QuadraticIterates.gammaSeq_normPoly_zmod_four_of_emod_four_eq_three`: for `a ≡ 3 mod 4`,
+  `γ_n mod 4` alternates between `0` (even `n`) and `3` (odd `n`) from `n = 2` on;
+* `QuadraticIterates.gammaSeq_normPoly_two_sq_dvd_sub_ite_even`,
+  `QuadraticIterates.gammaSeq_normPoly_two_dvd_of_even`: the `γ_2`-divisibility of `γ_n - γ_2` (even
+  `n`), `γ_n + 1` (odd `n`) and `γ_n` (even `n`).
 
-The single-index criteria of `QuadraticIterates.ArchMath1992.Sequences` are restated for `|b_n|`
-and the rescaled polynomial (`not_isSquare_abs_bSeq_of_dvd_add_succ`,
-`not_isSquare_abs_bSeq_of_even_of_dvd_add_two`, `not_isSquare_abs_bSeq_of_odd_of_dvd_add_two`).
-These are the residue computations and criteria behind the results of H.-C. Li extending the
-Section 3 theorem of the paper to further values of `a`; see `QuadraticIterates.Li`.
+The single-index criteria of `QuadraticIterates.ArchMath1992.Sequences` are restated for `|b_n|` and
+the rescaled polynomial (`QuadraticIterates.not_isSquare_abs_bSeq_of_dvd_add_succ`,
+`QuadraticIterates.not_isSquare_abs_bSeq_of_even_of_dvd_add_two`,
+`QuadraticIterates.not_isSquare_abs_bSeq_of_odd_of_dvd_add_two`). These are the residue computations
+and criteria behind the results of H.-C. Li extending the Section 3 theorem of the paper to further
+values of `a`; see `QuadraticIterates.Li`.
 -/
 
 @[expose] public section

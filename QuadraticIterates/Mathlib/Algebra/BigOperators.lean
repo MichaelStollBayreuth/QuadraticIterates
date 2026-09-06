@@ -13,7 +13,7 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 # Big-operator lemmas
 
 Sums and products with `if`s, and the balanced-classes lemma
-`prod_eq_neg_prod_of_forall_card_filter_eq` for products over a partitioned index set.
+`Finset.prod_eq_neg_prod_of_forall_card_filter_eq` for products over a partitioned index set.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.

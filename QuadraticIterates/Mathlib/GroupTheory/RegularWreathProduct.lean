@@ -106,7 +106,8 @@ theorem map_inr_eq_prod (φ : D ≀ᵣ Q →* A) (f : Q → D) :
       (Finset.map_noncommProd _ _ _ φ).trans (Finset.noncommProd_eq_prod _ _)
 
 /-- Homomorphisms from `D ≀ᵣ Q` to a commutative group are pairs of a homomorphism on `D` (any
-coordinate of the base group, they all agree by `map_inr_mulSingle`) and one on `Q`. -/
+coordinate of the base group, they all agree by `RegularWreathProduct.map_inr_mulSingle`) and one on
+`Q`. -/
 def monoidHomEquiv : (D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A) where
   toFun φ := (φ.comp (inr.comp (MonoidHom.mulSingle (fun _ ↦ D) 1)), φ.comp inl)
   invFun p := prodLeftHom p.1 * p.2.comp rightHom

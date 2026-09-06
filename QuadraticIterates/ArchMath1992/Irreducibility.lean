@@ -14,15 +14,17 @@ import QuadraticIterates.Mathlib.Algebra.Squares
 # Irreducibility of the iterates over `ℚ`
 
 If none of `c_1, …, c_n` is a rational square, then `f_n` is irreducible over `ℚ` (Lemma 1.2,
-`irreducible_iteratedPoly_of_not_isSquare_cSeq`): `f_{n+1} = f_n ∘ (X² + a)` is even and, `f_n`
-being irreducible, has no nontrivial even divisor, so a factorization of it would have the shape
-`g · g(-X) = ± f_{n+1}` (`Polynomial.Monic.exists_mul_comp_neg_X_eq_of_not_irreducible`) and
-exhibit `c_{n+1} = ± f_{n+1}(0)` as a square. Since `|c_n| ≥ |a|` places `c_{n+1} = c_n² + a`
-strictly between consecutive squares, no `c_n` is a square when `-a` is not one, and every `f_n`
-is irreducible (Corollary 1.3, `irreducible_iteratedPoly`); conversely, irreducibility of a single
-`f_n` with `n ≥ 1` already forces `-a` to be a non-square (`not_isSquare_neg_of_irreducible`). The
-consequences for the roots of `f_n` needed by the degree criterion
-(`sub_intCast_ne_zero_of_mem_rootSet`, `card_rootSet_iteratedPoly`) close the file.
+`QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`): `f_{n+1} = f_n ∘ (X² + a)` is
+even and, `f_n` being irreducible, has no nontrivial even divisor, so a factorization of it would
+have the shape `g · g(-X) = ± f_{n+1}`
+(`Polynomial.Monic.exists_mul_comp_neg_X_eq_of_not_irreducible`) and exhibit
+`c_{n+1} = ± f_{n+1}(0)` as a square. Since `|c_n| ≥ |a|` places `c_{n+1} = c_n² + a` strictly
+between consecutive squares, no `c_n` is a square when `-a` is not one, and every `f_n` is
+irreducible (Corollary 1.3, `QuadraticIterates.irreducible_iteratedPoly`); conversely,
+irreducibility of a single `f_n` with `n ≥ 1` already forces `-a` to be a non-square
+(`QuadraticIterates.not_isSquare_neg_of_irreducible`). The consequences for the roots of `f_n`
+needed by the degree criterion (`QuadraticIterates.sub_intCast_ne_zero_of_mem_rootSet`,
+`QuadraticIterates.card_rootSet_iteratedPoly`) close the file.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.

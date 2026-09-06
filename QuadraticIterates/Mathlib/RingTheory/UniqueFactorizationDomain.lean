@@ -105,8 +105,9 @@ section GCD
 variable {R : Type*} [CommMonoidWithZero R] [UniqueFactorizationMonoid R]
     [NormalizedGCDMonoid R] [DecidableEq R]
 
-/-- The normalized factors of a gcd form the intersection of the normalized factors: the gcd is
-the meet in the divisibility lattice, which `normalizedFactors` embeds into the multisets. -/
+/-- The normalized factors of a gcd form the intersection of the normalized factors: the gcd is the
+meet in the divisibility lattice, which `UniqueFactorizationMonoid.normalizedFactors` embeds into
+the multisets. -/
 theorem UniqueFactorizationMonoid.normalizedFactors_gcd {a b : R} (ha : a ≠ 0) (hb : b ≠ 0) :
     normalizedFactors (gcd a b) = normalizedFactors a ⊓ normalizedFactors b := by
   have := nontrivial_of_ne a 0 ha

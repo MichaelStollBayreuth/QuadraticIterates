@@ -22,20 +22,22 @@ single-index criteria of `QuadraticIterates.ArchMath1992.Sequences` with suitabl
 
 ## Main statements
 
-* `li2021_theorem_3_3`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when `a = -(8k+2)(8k+3)`.
-* `not_isSquare_abs_bSeq_of_squarefree` (Lemma 2.2): for squarefree `n > 1`, `|b_n|` is not a
-  square once `-1` is not a square modulo `γ_1 + γ_2`; its three cases
-  `not_isSquare_abs_bSeq_of_squarefree_of_pos_of_emod_eight_eq_four`,
+* `QuadraticIterates.li2021_theorem_3_3`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when `a = -(8k+2)(8k+3)`.
+* `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree` (Lemma 2.2): for squarefree `n > 1`,
+  `|b_n|` is not a square once `-1` is not a square modulo `γ_1 + γ_2`; its three cases
+  `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_pos_of_emod_eight_eq_four`,
   `…_of_neg_of_emod_eight_eq_two` and `…_of_neg_of_emod_four_eq_one`.
-* `nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq`: the common shape of both theorems, a case
-  split on `Squarefree n` in front of part 2 of the Section 1 theorem.
-* `not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul` (Lemma 3.1): for `a = -(8k+2)(8k+3)`
-  and `n` not squarefree, `|b_n|` is not a square.
-* `li2021_theorem_3_9`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when `a = -((4k+1)(4k+2)+1)`.
-* `not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one` (Lemma 3.4):
-  for `a < 0`, `a ≡ 1 mod 4` and `n` not squarefree with `4 ∤ n`, `|b_n|` is not a square.
-* `not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one` (Lemma 3.6): for
-  `a = -((4k+1)(4k+2)+1)` and `n / rad n` even, `|b_n|` is not a square.
+* `QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq`: the common shape of both
+  theorems, a case split on `Squarefree n` in front of part 2 of the Section 1 theorem.
+* `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul` (Lemma 3.1): for
+  `a = -(8k+2)(8k+3)` and `n` not squarefree, `|b_n|` is not a square.
+* `QuadraticIterates.li2021_theorem_3_9`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when
+  `a = -((4k+1)(4k+2)+1)`.
+* `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one`
+  (Lemma 3.4): for `a < 0`, `a ≡ 1 mod 4` and `n` not squarefree with `4 ∤ n`, `|b_n|` is not a
+  square.
+* `QuadraticIterates.not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one` (Lemma 3.6):
+  for `a = -((4k+1)(4k+2)+1)` and `n / rad n` even, `|b_n|` is not a square.
 
 Part of the formalization of the results of Li extending M. Stoll, *Galois groups over ℚ of some
 iterated polynomials*, Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.Li`.

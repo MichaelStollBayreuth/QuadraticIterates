@@ -27,13 +27,15 @@ determined by `c_1, …, c_n` (Lemma 1.5).
 
 ## Main statements
 
-* `relfinrank_succ_eq_pow`: `[K_{n+1} : K_n] = 2^{2^n - dim rootRelations (rootShift a n)}`.
-* `prod_rootShift_eq_cSeq`, `isSquare_algebraMap_cSeq`: the norm identity `∏_β (β - a) = c_{n+1}`
-  in `K_n`; hence `c_1, …, c_n` are squares in `K_n`.
-* `relfinrank_succ_eq_two_pow_iff` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a
-  square in `K_n`, through `rootRelations_rootShift_eq_bot_iff`.
-* `not_isSquare_algebraMap_iff_twoIndependent_snoc` (Lemma 1.5): if `Ω_n ≅ [C₂]ⁿ` and
-  `c_1, …, c_n` are 2-independent, a rational `c` is a non-square in `K_n` iff `c_1, …, c_n, c`
+* `QuadraticIterates.relfinrank_succ_eq_pow`:
+  `[K_{n+1} : K_n] = 2^{2^n - dim rootRelations (rootShift a n)}`.
+* `QuadraticIterates.prod_rootShift_eq_cSeq`, `QuadraticIterates.isSquare_algebraMap_cSeq`: the norm
+  identity `∏_β (β - a) = c_{n+1}` in `K_n`; hence `c_1, …, c_n` are squares in `K_n`.
+* `QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}` iff
+  `c_{n+1}` is not a square in `K_n`, through
+  `QuadraticIterates.rootRelations_rootShift_eq_bot_iff`.
+* `QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc` (Lemma 1.5): if `Ω_n ≅ [C₂]ⁿ`
+  and `c_1, …, c_n` are 2-independent, a rational `c` is a non-square in `K_n` iff `c_1, …, c_n, c`
   are 2-independent.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
@@ -150,7 +152,8 @@ lemma rootRelations_rootShift_eq_bot_iff [DecidableEq (AlgebraicClosure ℚ)]
   exact congrFun hmem (Classical.arbitrary _)
 
 /-- Lemma 1.6: `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a square in `K_n`, by
-`relfinrank_succ_eq_pow` and `rootRelations_rootShift_eq_bot_iff`. -/
+`QuadraticIterates.relfinrank_succ_eq_pow` and
+`QuadraticIterates.rootRelations_rootShift_eq_bot_iff`. -/
 theorem relfinrank_succ_eq_two_pow_iff (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n ↔
       ¬IsSquare (algebraMap ℚ ↥(splittingField a n) (cSeq a (n + 1) : ℚ)) := by

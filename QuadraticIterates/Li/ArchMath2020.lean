@@ -23,11 +23,11 @@ a square) is not formalized.
 
 ## Main statements
 
-* `li2020_theorem_3_4`, `li2020_theorem_3_5`: the two theorems.
-* `not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three` (Lemma 3.1): `n` not
-  squarefree, with the modulus `γ_k + γ_{k+1} ≡ 3 mod 4`, `k = n / rad n ≥ 2`.
-* `not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three` (Lemmas 3.2 and 3.3): `n`
-  squarefree and `> 2`, with the modulus `γ_2 = -a - 1 ≡ 0 mod 4`.
+* `QuadraticIterates.li2020_theorem_3_4`, `QuadraticIterates.li2020_theorem_3_5`: the two theorems.
+* `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three`
+  (Lemma 3.1): `n` not squarefree, with the modulus `γ_k + γ_{k+1} ≡ 3 mod 4`, `k = n / rad n ≥ 2`.
+* `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three` (Lemmas 3.2
+  and 3.3): `n` squarefree and `> 2`, with the modulus `γ_2 = -a - 1 ≡ 0 mod 4`.
 
 Part of the formalization of the results of Li extending M. Stoll, *Galois groups over ℚ of some
 iterated polynomials*, Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.Li`.
