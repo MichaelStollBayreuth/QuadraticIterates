@@ -156,33 +156,51 @@ theorem mem_adjoin_sqrt_iff {y : E} {c : L} (hy : y ^ 2 = algebraMap L E c) {z :
     Finset.coe_pair, Submodule.mem_span_pair]
   simp [Algebra.smul_def, eq_comm]
 
+theorem ne_zero_of_sq_eq_algebraMap_of_notMem_bot {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c)
+    (hx : x ∉ (⊥ : IntermediateField L E)) : c ≠ 0 := by
+  rintro rfl
+  exact hx ((pow_eq_zero_iff two_ne_zero).mp (hc.trans (map_zero _)) ▸ zero_mem _)
+
+/-- If `d · c` is a square in `L`, then `d` has a square root in `L(x)` for `x² = c ≠ 0`: divide
+the root by `x`. -/
+theorem exists_mem_adjoin_simple_sq_eq_algebraMap_of_isSquare_mul {x : E} {c : L}
+    (hc : x ^ 2 = algebraMap L E c) (hc0 : c ≠ 0) {d : L} (h : IsSquare (d * c)) :
+    ∃ z ∈ L⟮x⟯, z ^ 2 = algebraMap L E d := by
+  obtain ⟨w, hw⟩ := h
+  refine ⟨algebraMap L E (w / c) * x,
+    mul_mem (algebraMap_mem _ _) (mem_adjoin_simple_self L x), ?_⟩
+  rw [mul_pow, hc, ← map_pow, ← map_mul]
+  congr 1
+  grind
+
+/-- Square descent along `L(x)`, `x² = c`, `x ∉ L`: if some `z ∈ L(x)` squares to `d ∈ L`, then `d`
+or `d · c` is a square in `L`. -/
+theorem isSquare_or_isSquare_mul_of_mem_adjoin_simple_of_sq_eq_algebraMap [NeZero (2 : L)] {x : E}
+    {c : L} (hc : x ^ 2 = algebraMap L E c) (hx : x ∉ (⊥ : IntermediateField L E)) {d : L} {z : E}
+    (hz : z ∈ L⟮x⟯) (hz2 : z ^ 2 = algebraMap L E d) : IsSquare d ∨ IsSquare (d * c) := by
+  obtain ⟨u, v, rfl⟩ := (mem_adjoin_sqrt_iff hc).mp hz
+  have h : algebraMap L E (u ^ 2 + v ^ 2 * c - d) + algebraMap L E (2 * (u * v)) * x = 0 := by
+    simp only [map_add, map_sub, map_mul, map_pow, map_ofNat]
+    linear_combination hz2 - (algebraMap L E v) ^ 2 * hc
+  have hq : 2 * (u * v) = 0 :=
+    by_contra fun hq ↦ hx (mem_bot_of_add_mul_eq_zero hq h)
+  have hd : u ^ 2 + v ^ 2 * c - d = 0 := by
+    rwa [hq, map_zero, zero_mul, add_zero, map_eq_zero] at h
+  rcases (by simpa [two_ne_zero] using hq : u = 0 ∨ v = 0) with rfl | rfl
+  · exact .inr ⟨v * c, by grind⟩
+  · exact .inl ⟨u, by grind⟩
+
 /-- One-step square descent: over `L(x)` with `x² = c` and `x ∉ L`, the image of `d ∈ L` is a
 square iff `d` or `d · c` is a square in `L`. -/
 theorem exists_mem_adjoin_simple_sq_eq_algebraMap_iff [NeZero (2 : L)] {x : E} {c : L}
     (hc : x ^ 2 = algebraMap L E c) (hx : x ∉ (⊥ : IntermediateField L E)) (d : L) :
-    (∃ z ∈ L⟮x⟯, z ^ 2 = algebraMap L E d) ↔ IsSquare d ∨ IsSquare (d * c) := by
-  refine ⟨fun ⟨z, hz, hz2⟩ ↦ ?_, fun h ↦ h.elim
-    (fun ⟨w, hw⟩ ↦ ⟨algebraMap L E w, algebraMap_mem _ w, by rw [hw, sq, map_mul]⟩)
-    fun ⟨w, hw⟩ ↦ ?_⟩
-  · obtain ⟨u, v, rfl⟩ := (mem_adjoin_sqrt_iff hc).mp hz
-    have h : algebraMap L E (u ^ 2 + v ^ 2 * c - d) + algebraMap L E (2 * (u * v)) * x = 0 := by
-      simp only [map_add, map_sub, map_mul, map_pow, map_ofNat]
-      linear_combination hz2 - (algebraMap L E v) ^ 2 * hc
-    have hq : 2 * (u * v) = 0 :=
-      by_contra fun hq ↦ hx (mem_bot_of_add_mul_eq_zero hq h)
-    have hd : u ^ 2 + v ^ 2 * c - d = 0 := by
-      rwa [hq, map_zero, zero_mul, add_zero, map_eq_zero] at h
-    rcases (by simpa [two_ne_zero] using hq : u = 0 ∨ v = 0) with rfl | rfl
-    · exact .inr ⟨v * c, by grind⟩
-    · exact .inl ⟨u, by grind⟩
-  · have hc0 : c ≠ 0 := by
-      rintro rfl
-      exact hx ((pow_eq_zero_iff two_ne_zero).mp (hc.trans (map_zero _)) ▸ zero_mem _)
-    refine ⟨algebraMap L E (w / c) * x,
-      mul_mem (algebraMap_mem _ _) (mem_adjoin_simple_self L x), ?_⟩
-    rw [mul_pow, hc, ← map_pow, ← map_mul]
-    congr 1
-    grind
+    (∃ z ∈ L⟮x⟯, z ^ 2 = algebraMap L E d) ↔ IsSquare d ∨ IsSquare (d * c) :=
+  ⟨fun ⟨z, hz, hz2⟩ ↦
+      isSquare_or_isSquare_mul_of_mem_adjoin_simple_of_sq_eq_algebraMap hc hx hz hz2,
+    fun h ↦ h.elim
+      (fun ⟨w, hw⟩ ↦ ⟨algebraMap L E w, algebraMap_mem _ w, by rw [hw, sq, map_mul]⟩)
+      (exists_mem_adjoin_simple_sq_eq_algebraMap_of_isSquare_mul hc
+        (ne_zero_of_sq_eq_algebraMap_of_notMem_bot hc hx))⟩
 
 theorem isSquare_algebraMap_iff (K : IntermediateField L E) (e : L) :
     IsSquare (algebraMap L ↥K e) ↔ ∃ z ∈ K, z ^ 2 = algebraMap L E e := by
@@ -217,6 +235,37 @@ theorem exists_mem_adjoin_sq_eq_algebraMap_of_isSquare_mul_prod {ι : Type*} {s 
     (prod_mem fun i hi ↦ subset_adjoin L _ ⟨i, ht hi, rfl⟩), ?_⟩
   rw [div_pow, hP, div_eq_iff hrne, ← map_pow, ← map_mul, hw, sq]
 
+/-- The induction step of `exists_mem_adjoin_sq_eq_algebraMap_iff`: descent from
+`L(x i : i ∈ insert j s)` to `K = L(x i : i ∈ s)`, by the one-step descent over `K` when
+`x j ∉ K`. -/
+private lemma exists_subset_insert_isSquare_mul_prod_of_sq_eq_algebraMap [NeZero (2 : L)]
+    {ι : Type*} [DecidableEq ι] {s : Finset ι} {x : ι → E} {r : ι → L} {j : ι} (hjs : j ∉ s)
+    (hxj : x j ^ 2 = algebraMap L E (r j))
+    (ih : ∀ d : L, (∃ z ∈ adjoin L (x '' s), z ^ 2 = algebraMap L E d) →
+      ∃ t ⊆ s, IsSquare (d * ∏ i ∈ t, r i))
+    {d : L} {z : E} (hz : z ∈ adjoin L (x '' ↑(insert j s))) (hz2 : z ^ 2 = algebraMap L E d) :
+    ∃ t ⊆ insert j s, IsSquare (d * ∏ i ∈ t, r i) := by
+  set K := adjoin L (x '' s)
+  rw [Finset.coe_insert, Set.image_insert_eq] at hz
+  by_cases hjK : x j ∈ K
+  · exact (ih d ⟨z, adjoin_le_iff.mpr (Set.insert_subset hjK (subset_adjoin L _)) hz, hz2⟩).imp
+      fun t ht ↦ ⟨ht.1.trans (Finset.subset_insert j s), ht.2⟩
+  have : NeZero (2 : K) := ⟨map_ofNat (algebraMap L K) 2 ▸ (map_ne_zero _).mpr two_ne_zero⟩
+  have hxj : x j ^ 2 = algebraMap K E (algebraMap L K (r j)) :=
+    hxj.trans (IsScalarTower.algebraMap_apply L K E (r j))
+  rw [adjoin_insert, mem_restrictScalars] at hz
+  have hjbot : x j ∉ (⊥ : IntermediateField K E) := by
+    rwa [← mem_restrictScalars L, restrictScalars_bot_eq_self]
+  rw [IsScalarTower.algebraMap_apply L K E] at hz2
+  rcases isSquare_or_isSquare_mul_of_mem_adjoin_simple_of_sq_eq_algebraMap hxj hjbot hz hz2
+    with h | h
+  · exact (ih d ((isSquare_algebraMap_iff K d).mp h)).imp
+      fun t ht ↦ ⟨ht.1.trans (Finset.subset_insert j s), ht.2⟩
+  · rw [← map_mul] at h
+    obtain ⟨t, ht, hsq⟩ := ih (d * r j) ((isSquare_algebraMap_iff K _).mp h)
+    refine ⟨insert j t, Finset.insert_subset_insert j ht, ?_⟩
+    rwa [Finset.prod_insert fun h ↦ hjs (ht h), ← mul_assoc]
+
 /-- Iterated square descent: some element of `L(x i : i ∈ s)` squares to `d` iff
 `d * ∏_{i ∈ t} r i` is a square in `L` for some subset `t ⊆ s`. -/
 theorem exists_mem_adjoin_sq_eq_algebraMap_iff [NeZero (2 : L)] {ι : Type*} {s : Finset ι}
@@ -229,36 +278,13 @@ theorem exists_mem_adjoin_sq_eq_algebraMap_iff [NeZero (2 : L)] {ι : Type*} {s 
     fun ⟨t, ht, hsq⟩ ↦ exists_mem_adjoin_sq_eq_algebraMap_of_isSquare_mul_prod hx hr ht hsq⟩
   induction s using Finset.induction_on generalizing d with
   | empty =>
-    refine fun ⟨z, hz, hz2⟩ ↦ ?_
-    rw [Finset.coe_empty, Set.image_empty, adjoin_empty, mem_bot] at hz
-    obtain ⟨w, rfl⟩ := hz
-    refine ⟨∅, Finset.empty_subset _, w, (algebraMap L E).injective ?_⟩
-    simpa [sq] using hz2.symm
+    refine fun ⟨z, hz, hz2⟩ ↦ ⟨∅, Finset.empty_subset _, ?_⟩
+    rw [Finset.coe_empty, Set.image_empty, adjoin_empty] at hz
+    simpa using (isSquare_algebraMap_bot_iff d).mp ((isSquare_algebraMap_iff _ d).mpr ⟨z, hz, hz2⟩)
   | insert j s hjs ih =>
-    refine fun ⟨z, hz, hz2⟩ ↦ ?_
-    have hx' : ∀ i ∈ s, x i ^ 2 = algebraMap L E (r i) :=
-      fun i hi ↦ hx i (Finset.mem_insert_of_mem hi)
-    have hr' : ∀ i ∈ s, r i ≠ 0 := fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)
-    set K := adjoin L (x '' s)
-    rw [Finset.coe_insert, Set.image_insert_eq] at hz
-    by_cases hjK : x j ∈ K
-    · obtain ⟨t, ht, hsq⟩ := ih hx' hr' d
-        ⟨z, adjoin_le_iff.mpr (Set.insert_subset hjK (subset_adjoin L _)) hz, hz2⟩
-      exact ⟨t, ht.trans (Finset.subset_insert j s), hsq⟩
-    · have : NeZero (2 : K) := ⟨map_ofNat (algebraMap L K) 2 ▸ (map_ne_zero _).mpr two_ne_zero⟩
-      have hxj : x j ^ 2 = algebraMap K E (algebraMap L K (r j)) :=
-        (hx j (Finset.mem_insert_self j s)).trans (IsScalarTower.algebraMap_apply L K E (r j))
-      rw [adjoin_insert, mem_restrictScalars] at hz
-      have hjbot : x j ∉ (⊥ : IntermediateField K E) := by
-        rwa [← mem_restrictScalars L, restrictScalars_bot_eq_self]
-      rcases (exists_mem_adjoin_simple_sq_eq_algebraMap_iff hxj hjbot (algebraMap L K d)).mp
-        ⟨z, hz, by rwa [← IsScalarTower.algebraMap_apply]⟩ with h | h
-      · obtain ⟨t, ht, hsq⟩ := ih hx' hr' d ((isSquare_algebraMap_iff K d).mp h)
-        exact ⟨t, ht.trans (Finset.subset_insert j s), hsq⟩
-      · rw [← map_mul] at h
-        obtain ⟨t, ht, hsq⟩ := ih hx' hr' (d * r j) ((isSquare_algebraMap_iff K _).mp h)
-        refine ⟨insert j t, Finset.insert_subset_insert j ht, ?_⟩
-        rwa [Finset.prod_insert fun h ↦ hjs (ht h), ← mul_assoc]
+    exact fun ⟨z, hz, hz2⟩ ↦ exists_subset_insert_isSquare_mul_prod_of_sq_eq_algebraMap hjs
+      (hx j (Finset.mem_insert_self j s)) (ih (fun i hi ↦ hx i (Finset.mem_insert_of_mem hi))
+        fun i hi ↦ hr i (Finset.mem_insert_of_mem hi)) hz hz2
 
 theorem algEquiv_adjoin_sq_eq_one {S : Set E} (hS : ∀ y ∈ S, ∃ q : L, y ^ 2 = algebraMap L E q)
     (τ : adjoin L S ≃ₐ[L] adjoin L S) : τ ^ 2 = 1 := by
