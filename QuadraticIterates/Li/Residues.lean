@@ -22,7 +22,9 @@ lemmas of `QuadraticIterates.ArchMath1992.Sequences`:
 * `gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one`: for `a ≡ 1 mod 4`, `γ_n mod 8` alternates
   between `-a - 1` (even `n`) and `3` (odd `n`) from `n = 2` on;
 * `gammaSeq_normPoly_zmod_four_of_emod_four_eq_three`: for `a ≡ 3 mod 4`, `γ_n mod 4` alternates
-  between `0` (even `n`) and `3` (odd `n`) from `n = 2` on.
+  between `0` (even `n`) and `3` (odd `n`) from `n = 2` on;
+* `gammaSeq_normPoly_two_sq_dvd_sub_ite_even`, `gammaSeq_normPoly_two_dvd_of_even`: the
+  `γ_2`-divisibility of `γ_n - γ_2` (even `n`), `γ_n + 1` (odd `n`) and `γ_n` (even `n`).
 
 The single-index criteria of `QuadraticIterates.ArchMath1992.Sequences` are restated for `|b_n|`
 and the rescaled polynomial (`not_isSquare_abs_bSeq_of_dvd_add_succ`,
@@ -82,6 +84,19 @@ lemma gammaSeq_map_normPoly_one (S : Type*) [CommRing S] :
     gammaSeq ((normPoly a).map (Int.castRingHom S)) (-1) 1 = 1 := by
   rw [gammaSeq_one, eval_map_normPoly_of_neg ha]
   ring
+
+/-- For `n ≥ 2`: `γ_2² ∣ γ_n - γ_2` for even `n` and `γ_2² ∣ γ_n + 1` for odd `n`. -/
+theorem gammaSeq_normPoly_two_sq_dvd_sub_ite_even {n : ℕ} (hn : 2 ≤ n) :
+    gammaSeq (normPoly a) a.sign 2 ^ 2 ∣
+      gammaSeq (normPoly a) a.sign n - if Even n then gammaSeq (normPoly a) a.sign 2 else -1 := by
+  have h := gammaSeq_two_sq_dvd_sub_ite_even (evenPoly_normPoly a)
+    (by rw [eval_normPoly_of_neg ha]; ring) (gammaSeq_normPoly_one ha.ne) n hn
+  rwa [eval_normPoly_of_neg ha, zero_pow two_ne_zero, mul_zero, zero_sub] at h
+
+theorem gammaSeq_normPoly_two_dvd_of_even {n : ℕ} (hn : 2 ≤ n) (hne : Even n) :
+    gammaSeq (normPoly a) a.sign 2 ∣ gammaSeq (normPoly a) a.sign n :=
+  gammaSeq_two_dvd_of_even (evenPoly_normPoly a) (by rw [eval_normPoly_of_neg ha]; ring)
+    (gammaSeq_normPoly_one ha.ne) hn hne
 
 end
 
@@ -156,6 +171,12 @@ theorem gammaSeq_normPoly_emod_four_eq_two_of_even (ha : a < 0) (ha4 : a % 4 = 1
   have h := gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one ha ha4 k hk
   rw [if_pos hke] at h
   have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp h
+  lia
+
+theorem gammaSeq_normPoly_emod_four_eq_one_of_emod_eight_eq_two (ha : a < 0) (ha8 : a % 8 = 2)
+    {n : ℕ} (hn : 2 ≤ n) : gammaSeq (normPoly a) a.sign n % 4 = 1 := by
+  have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp
+    (gammaSeq_normPoly_zmod_eight_of_even ha (Int.even_iff.mpr (by lia)) n hn)
   lia
 
 theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 = 3) {k : ℕ}

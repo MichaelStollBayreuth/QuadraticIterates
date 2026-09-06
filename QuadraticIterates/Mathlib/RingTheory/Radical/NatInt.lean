@@ -23,6 +23,9 @@ theorem Nat.squarefree_iff_radical_eq_self {n : ℕ} : Squarefree n ↔ radical 
   ⟨fun hsf ↦ associated_iff_eq.mp (radical_associated hsf.isRadical hsf.ne_zero),
     fun h ↦ h ▸ squarefree_radical⟩
 
+theorem Nat.div_radical_pos {n : ℕ} (hn : 0 < n) : 0 < n / radical n :=
+  Nat.div_pos (Nat.le_of_dvd hn radical_dvd_self) (Nat.radical_pos n)
+
 /-- If `n ≠ 0` is not squarefree, then `n / rad n ≥ 2`. -/
 theorem Nat.two_le_div_radical_of_not_squarefree {n : ℕ} (hn : n ≠ 0) (h : ¬Squarefree n) :
     2 ≤ n / radical n := by

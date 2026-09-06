@@ -627,6 +627,17 @@ theorem not_isSquare_betaSeq_of_prod_eq_neg_prod (hg : EvenPoly g) {ε : ℤ} (h
     mul_div_mul_left _ _ (Int.cast_ne_zero.mpr hc)]
   exact fun hsq ↦ hnsq (ZMod.isSquare_neg_one_of_isSquare_div hPQ hQu hsq)
 
+/-- The squarefree case of `not_isSquare_betaSeq_of_prod_eq_neg_prod`: `n' = n` and `k = 1`. -/
+theorem not_isSquare_betaSeq_of_squarefree_of_prod_eq_neg_prod (hg : EvenPoly g) {ε : ℤ}
+    (hε : ε ^ 2 = 1) (hγ : ∀ n ≥ 1, gammaSeq g ε n ≠ 0) {n : ℕ} (hsf : Squarefree n) {c P Q : ℤ}
+    (hc : c ≠ 0) (hP : ∏ t ∈ n.divisors with μ (n / t) = 1, gammaSeq g ε t = c * P)
+    (hQ : ∏ t ∈ n.divisors with μ (n / t) = -1, gammaSeq g ε t = c * Q) {m : ℕ}
+    (hPQ : (P : ZMod m) = -(Q : ZMod m)) (hQu : IsUnit (Q : ZMod m))
+    (hnsq : ¬IsSquare (-1 : ZMod m)) : ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) :=
+  not_isSquare_betaSeq_of_prod_eq_neg_prod hg hε hγ (Nat.pos_of_ne_zero hsf.ne_zero)
+    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm hc (by simpa using hP)
+    (by simpa using hQ) hPQ hQu hnsq
+
 /-- **Lemma 2.1 at a single index.** Let `n ≥ 2`, `n' = rad n` and `k = n / n'`. If the modulus `m`
 divides `γ_k + γ_{2k}`, is prime to `γ_k`, and `-1` is not a square mod `m`, then `β_n` is not a
 square in `ℚ`: modulo `m`, `γ_{kt} ≡ γ_{2k}` for all `t ≥ 2` and `γ_k ≡ -γ_{2k}`, so the numerator
@@ -678,6 +689,21 @@ private lemma intCast_oddPart (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 0 = -1)
     exact_mod_cast ZMod.intCast_eq_neg_intCast_of_dvd_add
       (hm ▸ (dvd_pow_self _ two_ne_zero).trans hd)
 
+private lemma prod_gammaSeq_eq_pow_mul_prod_oddPart (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 0 = -1)
+    (h1 : gammaSeq g ε 1 = 1) {n : ℕ} {S : Finset ℕ} (hS : S ⊆ n.divisors) :
+    ∏ t ∈ S, gammaSeq g ε t = gammaSeq g ε 2 ^ #{t ∈ S | t % 2 = 0} * ∏ t ∈ S, oddPart g ε t := by
+  rw [Finset.prod_congr rfl fun t ht ↦ gammaSeq_eq_mul_oddPart hg (by rw [h0]; ring) h1
+      (Nat.pos_of_mem_divisors (hS ht)),
+    Finset.prod_mul_distrib, Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one]
+
+private lemma isUnit_intCast_oddPart (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 0 = -1)
+    (h1 : gammaSeq g ε 1 = 1) (h2 : gammaSeq g ε 2 ≠ 0) {m : ℕ} (hm : (m : ℤ) = gammaSeq g ε 2)
+    {t : ℕ} (ht : 1 ≤ t) : IsUnit ((oddPart g ε t : ℤ) : ZMod m) := by
+  rcases ht.eq_or_lt with rfl | ht
+  · simp [oddPart, h1]
+  · rw [intCast_oddPart hg h0 h1 h2 hm ht]
+    split_ifs <;> simp
+
 /-- **Lemma 3.3 of [Li 2020], abstractly.** For even `g` with `g(0) = -1` and `γ_1 = 1`, and
 squarefree `n ≥ 3`, `β_n` is not a square in `ℚ` as soon as `-1` is not a square modulo `γ_2`:
 modulo `γ_2²`, `γ_t ≡ γ_2` for even `t` and `γ_t ≡ -1` for odd `t ≥ 3`, so after cancelling the
@@ -689,35 +715,23 @@ theorem not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one (hg : EvenPol
     (hnsq : ¬IsSquare (-1 : ZMod m)) {n : ℕ} (hsf : Squarefree n) (hn : 3 ≤ n) :
     ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
   have h2 : gammaSeq g ε 2 ≠ 0 := hγ 2 one_le_two
-  have hsplit (S : Finset ℕ) (hS : S ⊆ n.divisors) : ∏ t ∈ S, gammaSeq g ε (1 * t)
-      = gammaSeq g ε 2 ^ #{t ∈ S | t % 2 = 0} * ∏ t ∈ S, oddPart g ε t := by
-    simp only [one_mul]
-    rw [Finset.prod_congr rfl fun t ht ↦ gammaSeq_eq_mul_oddPart hg (by rw [h0]; ring) h1
-        (Nat.pos_of_mem_divisors (hS ht)),
-      Finset.prod_mul_distrib, Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one]
   have hcard (i : ℕ) : #{t ∈ {t ∈ n.divisors | μ (n / t) = 1} | t % 2 = i}
       = #{t ∈ {t ∈ n.divisors | μ (n / t) = -1} | t % 2 = i} := by
     simpa [Finset.filter_filter, and_comm] using
       hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one (Finset.filter_subset _ _)
         (sum_divisors_filter_mod_two_moebius_div hn i)
-  have hu (t : ℕ) (ht : t ∈ n.divisors) (h1t : t ≠ 1) :
-      ((oddPart g ε t : ℤ) : ZMod m) = if t % 2 = 0 then 1 else -1 :=
-    intCast_oddPart hg h0 h1 h2 hm (by have := Nat.pos_of_mem_divisors ht; lia)
   have hunion := hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one
-  refine not_isSquare_betaSeq_of_prod_eq_neg_prod hg hε hγ (by lia)
-    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm (pow_ne_zero _ h2)
-    (hsplit _ (Finset.filter_subset _ _))
-    ((hsplit _ (Finset.filter_subset _ _)).trans (by rw [hcard 0])) (m := m) ?_ ?_ hnsq <;>
-    push_cast
+  refine not_isSquare_betaSeq_of_squarefree_of_prod_eq_neg_prod hg hε hγ hsf (pow_ne_zero _ h2)
+    (prod_gammaSeq_eq_pow_mul_prod_oddPart hg h0 h1 (Finset.filter_subset _ _))
+    ((prod_gammaSeq_eq_pow_mul_prod_oddPart hg h0 h1 (Finset.filter_subset _ _)).trans
+      (by rw [hcard 0])) (m := m) ?_ ?_ hnsq <;> push_cast
   · refine Finset.prod_eq_neg_prod_of_forall_card_filter_eq (κ := (· % 2))
       (w := fun i ↦ if i = 0 then 1 else -1) (Finset.disjoint_filter.mpr fun _ _ _ _ ↦ by lia)
       (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia)) (by simp [oddPart, h1])
-      (fun t ht h1t ↦ hu t (hunion ▸ ht) h1t) hcard
-  · refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
-    rcases eq_or_ne t 1 with rfl | h1t
-    · simp [oddPart, h1]
-    · rw [hu t (Finset.mem_of_mem_filter t ht) h1t]
-      split_ifs <;> simp
+      (fun t ht h1t ↦ intCast_oddPart hg h0 h1 h2 hm
+        (by have := Nat.pos_of_mem_divisors (hunion ▸ ht); lia)) hcard
+  · exact IsUnit.prod_iff.mpr fun t ht ↦ isUnit_intCast_oddPart hg h0 h1 h2 hm
+      (Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht))
 
 /-- Lemma 2.1: if for each `n ≥ 1` the modulus `m n` divides `γ_n + γ_{2n}`, is prime to `γ_n`,
 and `-1` is not a square mod `m n`, then `β_n` is not a square in `ℚ` for `n ≥ 2`. -/
