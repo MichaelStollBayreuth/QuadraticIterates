@@ -75,12 +75,12 @@ section
 variable (ha : a < 0)
 include ha
 
-lemma eval_zero_map_normPoly_sq (S : Type*) [CommRing S] :
+lemma eval_zero_map_normPoly_sq {S : Type*} [CommRing S] :
     ((normPoly a).map (Int.castRingHom S)).eval 0 ^ 2 = 1 := by
   rw [eval_map_normPoly_of_neg ha]
   ring
 
-lemma gammaSeq_map_normPoly_one (S : Type*) [CommRing S] :
+lemma gammaSeq_map_normPoly_one {S : Type*} [CommRing S] :
     gammaSeq ((normPoly a).map (Int.castRingHom S)) (-1) 1 = 1 := by
   rw [gammaSeq_one, eval_map_normPoly_of_neg ha]
   ring
@@ -112,7 +112,7 @@ theorem gammaSeq_normPoly_zmod_eight_of_even (ha : a < 0) (ha2 : Even a) :
     generalize (b : ZMod 8) = y
     decide +revert
   rw [intCast_gammaSeq_normPoly ha, gammaSeq_eq_eval_one ((evenPoly_normPoly _).map _) (by ring)
-    (eval_zero_map_normPoly_sq ha _) h1 n hn, eval_map_normPoly_of_neg ha]
+    (eval_zero_map_normPoly_sq ha) h1 n hn, eval_map_normPoly_of_neg ha]
   push_cast
   ring
 
@@ -147,7 +147,7 @@ theorem gammaSeq_normPoly_zmod_four_of_emod_four_eq_three (ha : a < 0) (ha4 : a 
   intro n hn
   have hα : (a : ZMod 4) = 3 := (ZMod.intCast_eq_intCast_iff' a 3 4).mpr ha4
   rw [intCast_gammaSeq_normPoly ha, gammaSeq_eq_ite_even_of_eval_one_eq_zero
-    ((evenPoly_normPoly _).map _) (eval_zero_map_normPoly_sq ha _) (gammaSeq_map_normPoly_one ha _)
+    ((evenPoly_normPoly _).map _) (eval_zero_map_normPoly_sq ha) (gammaSeq_map_normPoly_one ha)
     (by rw [eval_map_normPoly_of_neg ha, hα]; decide) n hn, eval_map_normPoly_of_neg ha,
     zero_pow two_ne_zero, mul_zero, zero_sub]
   split_ifs <;> decide
@@ -229,7 +229,7 @@ theorem not_isSquare_abs_bSeq_of_odd_of_dvd_add_two (ha : ¬IsSquare (-a : ℚ))
     (hcop : IsCoprime (m : ℤ) (gammaSeq (normPoly a) a.sign (k + 1)))
     (hnsq : ¬IsSquare (-1 : ZMod m)) : ¬IsSquare |bSeq a n| := by
   have ha0 := ne_zero_of_not_isSquare_neg ha
-  have hn : 2 ≤ n := by nlinarith [Nat.radical_pos n]
+  have hn : 2 ≤ n := hk ▸ hk1.trans_le (Nat.le_mul_of_pos_right k (Nat.radical_pos n))
   rw [abs_bSeq_eq_betaSeq ha hn, ← Rat.isSquare_intCast_iff]
   exact not_isSquare_betaSeq_of_odd_of_dvd_add_two (evenPoly_normPoly a)
     (Int.sign_sq_of_ne_zero ha0) (fun d hd ↦ (gammaSeq_normPoly_pos ha d hd).ne')

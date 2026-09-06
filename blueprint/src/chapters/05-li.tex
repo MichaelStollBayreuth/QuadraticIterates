@@ -499,8 +499,12 @@ of Lemma~\ref{lem:li-period}.
   $k_0 = 2$ for arbitrary $a \equiv 1 \bmod 4$, with the modulus $(\gamma_2 + \gamma_4)/(2\gamma_2)$)
   is not needed and is not formalized; note that its printed claim
   $\gcd((\gamma_2+\gamma_4)/\gamma_2, \gamma_2) = 1$ is false (the gcd is $2$, e.g.\ $a = -3$:
-  $182$ and $2$), and the odd part is what the argument uses. The coprimality argument above is
-  the Bézout-style \lname{isCoprime\_of\_mul\_eq} inside the Lean proof.}
+  $182$ and $2$), and the odd part is what the argument uses. The Lean proof follows the three
+  paragraphs above: the factorization is \lname{add\_eval\_eval\_eq\_mul}, the modulus with
+  its residue is \lname{exists\_mul\_eq\_and\_emod\_four\_eq\_three\_of\_even}, its
+  divisibility property \lname{dvd\_add\_two\_of\_mul\_eq}, and the coprimality argument is
+  the Bézout-style \lname{isCoprime\_of\_mul\_eq}, applied in
+  \lname{isCoprime\_gammaSeq\_two\_of\_mul\_eq}.}
 \end{proof}
 
 \subsection*{Theorem C}

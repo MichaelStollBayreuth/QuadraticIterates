@@ -856,7 +856,7 @@ theorem not_isSquare_betaSeq_of_odd_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ} 
     (hdvd : (m : ℤ) ∣ gammaSeq g ε k + gammaSeq g ε (k + 2))
     (hcop : IsCoprime (m : ℤ) (gammaSeq g ε (k + 1))) (hnsq : ¬IsSquare (-1 : ZMod m)) :
     ¬IsSquare ((betaSeq g ε n : ℤ) : ℚ) := by
-  have hn : 2 ≤ n := by nlinarith [Nat.radical_pos n]
+  have hn : 2 ≤ n := hk ▸ hk1.trans_le (Nat.le_mul_of_pos_right k (hn' ▸ Nat.radical_pos n))
   have hn'3 : 3 ≤ n' := hn' ▸ three_le_radical_of_odd_dvd (by lia) (Dvd.intro _ hk.symm) hko hk1
   have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ m).mpr hdvd
   have hu := (ZMod.coe_int_isUnit_iff_isCoprime _ m).mpr

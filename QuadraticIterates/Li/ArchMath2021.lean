@@ -105,9 +105,7 @@ section
 variable {k : ℕ} (ha : a = -((8 * k + 2) * (8 * k + 3)))
 include ha
 
-private lemma neg_of_eq_neg_mul : a < 0 := by
-  rw [ha]
-  nlinarith
+private lemma neg_of_eq_neg_mul : a < 0 := ha ▸ neg_lt_zero.mpr (by positivity)
 
 private lemma emod_eight_eq_two_of_eq_neg_mul : a % 8 = 2 := by
   rw [ha, show -((8 * (k : ℤ) + 2) * (8 * k + 3)) = 2 + 8 * (-(8 * k ^ 2 + 5 * k + 1)) by ring,
@@ -223,9 +221,7 @@ section
 variable {k : ℕ} (ha : a = -((4 * k + 1) * (4 * k + 2) + 1))
 include ha
 
-private lemma neg_of_eq_neg_mul_add_one : a < 0 := by
-  rw [ha]
-  nlinarith
+private lemma neg_of_eq_neg_mul_add_one : a < 0 := ha ▸ neg_lt_zero.mpr (by positivity)
 
 private lemma emod_four_eq_one_of_eq_neg_mul_add_one : a % 4 = 1 := by
   rw [ha, show -((4 * (k : ℤ) + 1) * (4 * k + 2) + 1) = 1 + 4 * (-(4 * k ^ 2 + 3 * k + 1)) by ring,
@@ -261,7 +257,8 @@ private lemma exists_mul_eq_and_emod_four_eq_three_of_even {k₀ : ℕ} (hk₀2 
     (gammaSeq_normPoly_emod_four_eq_two_of_even ha0 ha4 hke hk₀2) hm
   have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_three (by lia)
   have hpos := gammaSeq_normPoly_pos ha' k₀ (by lia)
-  obtain ⟨m', rfl⟩ := Int.eq_ofNat_of_zero_le (a := m) (by nlinarith)
+  obtain ⟨m', rfl⟩ := Int.eq_ofNat_of_zero_le (a := m) (pos_of_mul_pos_right
+    (hm ▸ add_pos (mul_pos (neg_pos.mpr ha0) hpos) (by positivity)) (by positivity)).le
   exact ⟨m', hm.symm, by lia⟩
 
 /-- The modulus `m` with `A m = α γ_{k₀} + A` divides `γ_{k₀} + γ_{k₀+2}`, by the factorization
@@ -274,8 +271,8 @@ private lemma dvd_add_two_of_mul_eq {k₀ : ℕ} (hk₀ : 1 ≤ k₀) {m : ℤ}
     eval_normPoly_of_neg ha0, add_eval_eval_eq_mul ha, ← hm]
   exact (dvd_mul_left _ _).mul_right _
 
-/-- Lemma 3.5 of [Li 2021], as used: for even `k₀ ≥ 2`, an odd `m` with `A m = α γ_{k₀} + A` is
-coprime to `γ_2 = AB`. -/
+/-- For even `k₀ ≥ 2`, an odd `m` with `A m = α γ_{k₀} + A` is coprime to `γ_2 = AB`: the
+coprimality part of Lemma 3.6 of [Li 2021], by `isCoprime_of_mul_eq`. -/
 private lemma isCoprime_gammaSeq_two_of_mul_eq {k₀ : ℕ} (hk₀2 : 2 ≤ k₀) (hke : Even k₀) {m : ℤ}
     (hm : (4 * (k : ℤ) + 1) * m = -a * gammaSeq (normPoly a) a.sign k₀ + (4 * k + 1))
     (hmo : Odd m) : IsCoprime m (gammaSeq (normPoly a) a.sign 2) := by
