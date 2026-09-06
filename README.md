@@ -29,6 +29,14 @@ the embedding is an isomorphism for every `n` when `a = -(8k+2)(8k+3)` or
 `a = -((4k+1)(4k+2)+1)`, and, for `a < 0` with `a ≡ 3 mod 4` and `-a` not a square, exactly when
 `-a - 1` is not a square.
 
+These three papers are everything that is unconditionally known: no further value of `a` has been
+settled since 2021.
+[Maximality for `x² + a`](https://michaelstollbayreuth.github.io/QuadraticIterates/literature.html)
+(source: [`website/literature.html`](website/literature.html)) surveys the literature — it maps
+the eight sign-and-residue classes of `a` against what is proved in each, links every box to the
+declaration that formalizes it, and collects the neighbouring work that moves the basepoint off
+the critical point, bounds finitely many levels, or assumes *abc* or Vojta.
+
 ## Contents
 
 The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
@@ -88,7 +96,8 @@ this cannot be narrowed to the project's own modules. On CI it takes about 80 mi
 generated HTML is around 1.3 GB.
 
 The [Pages workflow](.github/workflows/deploy-pages.yml) builds the blueprint and the
-documentation and publishes them alongside the project website, under `/blueprint` and `/docs`,
+documentation and publishes them alongside the project website — the sources of which are in
+[`website/`](website), the literature survey among them — under `/blueprint` and `/docs`,
 at <https://michaelstollbayreuth.github.io/QuadraticIterates/>. It runs on every push to `main`,
 and can also be triggered by hand.
 

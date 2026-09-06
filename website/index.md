@@ -24,6 +24,9 @@ are formalized as well.
   linked to the declaration that formalizes it
   ([PDF version]({{ site.baseurl }}/blueprint.pdf))
 - [API documentation]({{ site.baseurl }}/docs/) — generated from the Lean sources
+- [Maximality for `x² + a`]({{ site.baseurl }}/literature.html) — a survey of the literature:
+  which values of `a` are settled, by which paper, and how much of the parameter line is still
+  open
 - [Source code](https://github.com/MichaelStollBayreuth/QuadraticIterates) on GitHub
 
 <!-- To re-enable the upstreaming dashboard, restore the paragraph and
