@@ -136,6 +136,21 @@ theorem sum_divisors_filter_mod_two_moebius_div {n : ℕ} (hn : 3 ≤ n) (i : �
     exact h
   · rw [Finset.filter_false_of_mem fun _ _ h ↦ by lia, Finset.sum_empty]
 
+/-- For a `gcd`-`min` function `g` and a least element `m` of the level set `{d ∣ n : k ≤ g d}`,
+that level set consists of the multiples of `m` among the divisors of `n`. -/
+theorem le_iff_dvd_of_forall_gcd_eq_min (g : ℕ → ℕ)
+    (hmin : ∀ x ≥ 1, ∀ y ≥ 1, g (x.gcd y) = min (g x) (g y)) {n k m : ℕ} (hmn : m ∈ n.divisors)
+    (hmk : k ≤ g m) (hmle : ∀ d ∈ n.divisors, k ≤ g d → m ≤ d) {d : ℕ} (hd : d ∈ n.divisors) :
+    k ≤ g d ↔ m ∣ d := by
+  have hm := Nat.pos_of_mem_divisors hmn
+  have h := hmin m hm d (Nat.pos_of_mem_divisors hd)
+  refine ⟨fun hkd ↦ Nat.gcd_eq_left_iff_dvd.mp (le_antisymm (Nat.gcd_le_left d hm)
+    (hmle _ ?_ (h ▸ le_min hmk hkd))), fun hmd ↦ ?_⟩
+  · exact Nat.mem_divisors.mpr
+      ⟨(Nat.gcd_dvd_right m d).trans (Nat.dvd_of_mem_divisors hd), (Nat.mem_divisors.mp hd).2⟩
+  · rw [Nat.gcd_eq_left hmd] at h
+    exact hmk.trans (h ▸ min_le_right _ _)
+
 /-- For a level set `{d : k ≤ g d}` of a `gcd`-`min` function `g`, the antidiagonal Möbius transform
 of its indicator (in the second coordinate) over `n` is `0` or `1`; in particular nonnegative. -/
 theorem sum_mul_moebius_boole_nonneg (g : ℕ → ℕ)
@@ -149,18 +164,9 @@ theorem sum_mul_moebius_boole_nonneg (g : ℕ → ℕ)
       Finset.notMem_empty x.2 (he ▸ Finset.mem_filter.mpr ⟨hmem x hx, hkx⟩), Finset.sum_empty]
   obtain ⟨m, hmS, hmle⟩ := Finset.exists_min_image _ id hne
   obtain ⟨hmn, hmk⟩ := Finset.mem_filter.mp hmS
-  have hm1 : 1 ≤ m := Nat.pos_of_mem_divisors hmn
-  have hpred (d : ℕ) (hd : d ∈ n.divisors) : k ≤ g d ↔ m ∣ d := by
-    have h := hmin m hm1 d (Nat.pos_of_mem_divisors hd)
-    refine ⟨fun hkd ↦ ?_, fun hmd ↦ ?_⟩
-    · have hgcd : m.gcd d ∈ n.divisors.filter (k ≤ g ·) := Finset.mem_filter.mpr
-        ⟨Nat.mem_divisors.mpr ⟨(Nat.gcd_dvd_right m d).trans (Nat.dvd_of_mem_divisors hd), by lia⟩,
-          h ▸ le_min hmk hkd⟩
-      exact Nat.gcd_eq_left_iff_dvd.mp (le_antisymm (Nat.gcd_le_left d hm1) (hmle _ hgcd))
-    · rw [Nat.gcd_eq_left hmd] at h
-      exact hmk.trans (h ▸ min_le_right _ _)
-  rw [Finset.filter_congr fun x hx ↦ hpred x.2 (hmem x hx),
-    sum_divisorsAntidiagonal_filter_dvd_moebius hm1 hn]
+  rw [Finset.filter_congr fun x hx ↦ le_iff_dvd_of_forall_gcd_eq_min g hmin hmn hmk
+      (fun d hd hkd ↦ hmle d (Finset.mem_filter.mpr ⟨hd, hkd⟩)) (hmem x hx),
+    sum_divisorsAntidiagonal_filter_dvd_moebius (Nat.pos_of_mem_divisors hmn) hn]
   split_ifs <;> decide
 
 /-- **Nonnegativity of the Möbius transform of a `gcd`-`min` function.** If `g` satisfies
@@ -174,9 +180,9 @@ theorem sum_mul_moebius_nonneg (g : ℕ → ℕ)
     have h := hmin x.2 (Nat.pos_of_mem_divisors hx2) n (by lia)
     rw [Nat.gcd_eq_left (Nat.dvd_of_mem_divisors hx2)] at h
     lia
-  have hcard (a : ℕ) (ha : a ≤ g n) :
-      (a : ℤ) = ∑ k ∈ Finset.Icc 1 (g n), if k ≤ a then (1 : ℤ) else 0 := by
-    rw [Finset.sum_boole, show (Finset.Icc 1 (g n)).filter (· ≤ a) = Finset.Icc 1 a from by
+  have hcard (j : ℕ) (hj : j ≤ g n) :
+      (j : ℤ) = ∑ k ∈ Finset.Icc 1 (g n), if k ≤ j then (1 : ℤ) else 0 := by
+    rw [Finset.sum_boole, show (Finset.Icc 1 (g n)).filter (· ≤ j) = Finset.Icc 1 j by
       ext k; simp only [Finset.mem_filter, Finset.mem_Icc]; lia, Nat.card_Icc]
     simp
   rw [Finset.sum_congr rfl fun x hx ↦ by rw [hcard (g x.2) (hmono x hx), Finset.mul_sum],
