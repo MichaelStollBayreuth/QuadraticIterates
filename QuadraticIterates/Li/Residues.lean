@@ -32,8 +32,9 @@ The single-index criteria of `QuadraticIterates.ArchMath1992.Sequences` are rest
 the rescaled polynomial (`QuadraticIterates.not_isSquare_abs_bSeq_of_dvd_add_succ`,
 `QuadraticIterates.not_isSquare_abs_bSeq_of_even_of_dvd_add_two`,
 `QuadraticIterates.not_isSquare_abs_bSeq_of_odd_of_dvd_add_two`). These are the residue computations
-and criteria behind the results of H.-C. Li extending the Section 3 theorem of the paper to further
-values of `a`; see `QuadraticIterates.Li`.
+and criteria behind the results of H.-C. Li extending the Section 3 theorem of M. Stoll, *Galois
+groups over ℚ of some iterated polynomials*, Arch. Math. **59** (1992), 239-244, to further values
+of `a`; see `QuadraticIterates.Li`.
 -/
 
 @[expose] public section
@@ -191,7 +192,7 @@ theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 
     have := (ZMod.intCast_eq_intCast_iff' _ 0 4).mp hk2
     lia
 
-/-! ### The criteria of Chapter 2 for `|b_n|` -/
+/-! ### The single-index criteria for `|b_n|` -/
 
 /-- Corollary 2.4 of [Li 2021] for `|b_n|`: with `k = n / rad n`, a modulus `m` dividing
 `γ_k + γ_{k+1}`, `-1` not a square mod `m`, makes `|b_n|` a non-square (`n ≥ 2`). -/

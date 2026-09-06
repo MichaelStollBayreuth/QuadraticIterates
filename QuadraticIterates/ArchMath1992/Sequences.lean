@@ -301,9 +301,9 @@ lemma sq_dvd_gammaSeq_succ_sub (hg : EvenPoly g) (ε : R) {n : ℕ} (hn : 1 ≤ 
   rw [gammaSeq_succ g ε hn]
   exact hg.dvd_eval_sub (by simp)
 
-/-- `QuadraticIterates.sq_dvd_gammaSeq_succ_sub` in the form the valuation argument consumes:
-`p ^ E ∣ γ_n` with `E ≥ 1` gives `p ^ (E + 1) ∣ γ_{n+1} - g(0)`, since `2E ≥ E + 1` (for any `p`,
-prime or not). -/
+/-- `QuadraticIterates.sq_dvd_gammaSeq_succ_sub` in the form
+`QuadraticIterates.factorization_gammaSeq_shape` consumes: `p ^ E ∣ γ_n` with `E ≥ 1` gives
+`p ^ (E + 1) ∣ γ_{n+1} - g(0)`, since `2E ≥ E + 1` (for any `p`, prime or not). -/
 lemma pow_succ_dvd_gammaSeq_succ_sub (hg : EvenPoly g) {ε : R} {n : ℕ} (hn : 1 ≤ n) {p : R}
     {E : ℕ} (hE : 1 ≤ E) (hpE : p ^ E ∣ gammaSeq g ε n) :
     p ^ (E + 1) ∣ gammaSeq g ε (n + 1) - g.eval 0 :=

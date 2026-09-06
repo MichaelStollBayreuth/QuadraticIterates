@@ -154,8 +154,9 @@ lemma denProd_ne_zero {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) (n : ℕ) : 
   Finset.prod_ne_zero_iff.mpr fun x hx ↦
     ne_zero_of_mem_divisorsAntidiagonal hc (Finset.mem_of_mem_filter x hx)
 
-/-- The `R`-valued Möbius factor: the (unique, by injectivity) preimage of the fraction-field
-factor. Junk value if the factor is not integral. -/
+/-- The `R`-valued Möbius factor: the preimage under `algebraMap R (FractionRing R)` (unique, by
+injectivity) of the fraction-field factor `moebiusFactorK c n`. Junk value if the factor is not
+integral. -/
 noncomputable def moebiusFactorR (c : ℕ → R) (n : ℕ) : R :=
   Function.invFun (algebraMap R (FractionRing R)) (moebiusFactorK c n)
 

@@ -500,7 +500,8 @@ theorem multiquadraticRelations_univ [Fintype ι] {r : ι → L} (hr : ∀ i, r 
   ext ε
   simp [mem_multiquadraticRelations fun i _ ↦ hr i, mem_rootRelations hr]
 
-/-- Intersecting `V (insert j s)` with the hyperplane `ε j = 0` recovers `V s`. -/
+/-- Intersecting the relation space `multiquadraticRelations (insert j s) r` with the hyperplane
+`ε j = 0` recovers `multiquadraticRelations s r`. -/
 theorem multiquadraticRelations_insert_inf_ker_proj [DecidableEq ι] {s : Finset ι} {j : ι}
     (hjs : j ∉ s) {r : ι → L} (hr : ∀ i ∈ insert j s, r i ≠ 0) :
     multiquadraticRelations (insert j s) r ⊓ LinearMap.ker (LinearMap.proj j)
@@ -534,8 +535,8 @@ theorem exists_mem_multiquadraticRelations_insert_iff [DecidableEq ι] {s : Fins
       by simp⟩
     rwa [Finset.prod_insert fun h ↦ hjs (hts h)]
 
-/-- Adjoining `x j` raises `dim V` by `1` when `r j` is a square in `L(x i : i ∈ s)`, and leaves
-it unchanged otherwise. -/
+/-- Adjoining `x j` raises the dimension of the relation space `multiquadraticRelations s r` by `1`
+when `r j` is a square in `L(x i : i ∈ s)`, and leaves it unchanged otherwise. -/
 theorem finrank_multiquadraticRelations_insert [DecidableEq ι] {s : Finset ι} {j : ι} (hjs : j ∉ s)
     {x : ι → E} {r : ι → L} (hx : ∀ i ∈ insert j s, x i ^ 2 = algebraMap L E (r i))
     (hr : ∀ i ∈ insert j s, r i ≠ 0)

@@ -20,6 +20,6 @@ when `a = -(8k+2)(8k+3)` or `a = -((4k+1)(4k+2)+1)`, and, for `a < 0` with `a �
 not a square, if and only if `-a - 1` is not a square.
 
 The proofs follow the pattern of the Section 3 theorem: none of the `|b_n|`, `n ≥ 2` (resp.
-`n ≥ 3`), is a square, by the single-index criteria of Chapter 2 with suitable moduli, whose
-residues are computed in `QuadraticIterates.Li.Residues`.
+`n ≥ 3`), is a square, by the single-index criteria of `QuadraticIterates.ArchMath1992.Sequences`
+with suitable moduli, whose residues are computed in `QuadraticIterates.Li.Residues`.
 -/
