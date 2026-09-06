@@ -5,6 +5,14 @@ defaultTargets = ["QuadraticIterates"]
 pp.unicode.fun = true
 autoImplicit = false
 relaxedAutoImplicit = false
+# Mathlib's standard style linters (the `weak.` prefix is needed for options that Mathlib, not
+# Lean, registers), plus the two `omega` analyzers: every `omega` that `lia` can replace is
+# reported, and every `omega` that `lia` cannot replace is reported too (a `lia` bug to minimize).
+weak.linter.mathlibStandardSet = true
+weak.linter.style.header = true
+weak.linter.style.longFile = 1500
+weak.linter.tacticAnalysis.omegaToLia = true
+weak.linter.tacticAnalysis.regressions.omegaToLia = true
 
 [[require]]
 name = "mathlib"

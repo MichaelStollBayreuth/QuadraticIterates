@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Michael Stoll. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Michael Stoll
+-/
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -60,7 +65,7 @@ theorem ZMod.not_isSquare_neg_one_of_emod_four_eq_three {m : ℕ} (hm : m % 4 = 
 /-- If `m ≡ 6 mod 8`, then `-1` is not a square in `ZMod m`, as `m / 2 ≡ 3 mod 4` divides `m`. -/
 theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6) :
     ¬IsSquare (-1 : ZMod m) :=
-  not_isSquare_neg_one_of_dvd (Nat.div_dvd_of_dvd (show 2 ∣ m by omega)) (by omega)
+  not_isSquare_neg_one_of_dvd (Nat.div_dvd_of_dvd (show 2 ∣ m by lia)) (by lia)
 
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
@@ -70,15 +75,15 @@ theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :
     m % 4 = 0 ∨ m % 4 = 1 := by
   obtain ⟨r, rfl⟩ := h
   rw [Int.mul_emod]
-  rcases (show r % 4 = 0 ∨ r % 4 = 1 ∨ r % 4 = 2 ∨ r % 4 = 3 by omega) with h | h | h | h <;>
+  rcases (show r % 4 = 0 ∨ r % 4 = 1 ∨ r % 4 = 2 ∨ r % 4 = 3 by lia) with h | h | h | h <;>
     rw [h] <;> decide
 
 /-- The `IsSquare` form of Mathlib's `Int.sq_ne_two_mod_four`. -/
 theorem Int.not_isSquare_of_emod_four_eq_two {m : ℤ} (h : m % 4 = 2) : ¬IsSquare m :=
-  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; omega
+  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; lia
 
 theorem Int.not_isSquare_of_emod_four_eq_three {m : ℤ} (h : m % 4 = 3) : ¬IsSquare m :=
-  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; omega
+  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; lia
 
 theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
     (h2 : m < (e + 1) ^ 2) :

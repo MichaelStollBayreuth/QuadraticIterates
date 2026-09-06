@@ -56,7 +56,7 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three (ha
       lia)
   exact not_isSquare_abs_bSeq_of_dvd_add_succ ha' (hk₀2.trans (Nat.div_le_self n _))
     (Nat.div_mul_cancel radical_dvd_self).symm (dvd_of_eq hm.symm)
-    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by omega))
+    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by lia))
 
 /-- Lemmas 3.2 and 3.3 of [Li 2020]: for `a < 0` with `a ≡ 3 mod 4` and squarefree `n > 2`,
 `|b_n|` is not a square (modulo `γ_2 = -a - 1 ≡ 0 mod 4`). -/
@@ -69,7 +69,7 @@ theorem not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three (ha : a
     (Int.sign_sq_of_ne_zero ha.ne) (fun d hd ↦ (gammaSeq_normPoly_pos ha' d hd).ne')
     (by rw [eval_normPoly_of_neg ha]; ring) (gammaSeq_normPoly_one ha.ne)
     (m := (-a - 1).toNat) (by rw [Int.toNat_of_nonneg (by lia), gammaSeq_normPoly_two ha])
-    (ZMod.not_isSquare_neg_one_of_four_dvd (by omega)) hsf hn
+    (ZMod.not_isSquare_neg_one_of_four_dvd (by lia)) hsf hn
 
 /-- Theorem 3.4 of [Li 2020]: for `a < 0` with `a ≡ 3 mod 4` and `-a` not a square, `|b_n|` is not
 a square for all `n ≥ 3`. -/
@@ -90,7 +90,7 @@ theorem li2020_theorem_3_5 (ha : a < 0) (ha4 : a % 4 = 3) (hsq : ¬IsSquare (-a)
     exact hind.not_isSquare 1 (by simpa [bSeq_two ha'] using Rat.isSquare_intCast_iff.mpr hsq2)
   · rcases eq_or_ne k 2 with rfl | hk2
     · have : a ≠ -1 := fun h ↦ hsq ⟨1, by rw [h]; norm_num⟩
-      rwa [bSeq_two ha', abs_of_pos (by omega)]
-    · exact li2020_theorem_3_4 ha ha4 hsq (by omega)
+      rwa [bSeq_two ha', abs_of_pos (by lia)]
+    · exact li2020_theorem_3_4 ha ha4 hsq (by lia)
 
 end QuadraticIterates

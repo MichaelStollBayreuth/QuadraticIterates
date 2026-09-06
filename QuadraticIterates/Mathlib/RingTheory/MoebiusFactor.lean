@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Michael Stoll. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Michael Stoll
+-/
 module
 
 public import Mathlib.RingTheory.Localization.FractionRing
@@ -173,7 +178,7 @@ theorem denProd_dvd_numProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
   have hge := sum_mul_moebius_nonneg (fun d ↦ factorization (c d) p)
     (factorization_apply_gcd_eq_min hc hsd p) hn
   have heq := factorization_numProd_sub_denProd hc n p
-  omega
+  lia
 
 /-- **Integrality.** For a nowhere-zero strong divisibility sequence `c` in a UFD `R`, the
 fraction-field Möbius factor `moebiusFactorK c n` lies in the image of `R`. -/
@@ -232,7 +237,7 @@ theorem factorization_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 
     rw [← Finsupp.add_apply, ← factorization_mul (moebiusFactorR_ne_zero hc hsd hn)
       (denProd_ne_zero hc n), moebiusFactorR_mul_denProd hc hsd hn]
   have := factorization_numProd_sub_denProd hc n p
-  omega
+  lia
 
 /-- If `v_p ∘ c` has the constant-valuation shape (value `E` exactly on the multiples of `m`),
 then `v_p(β_n)` is supported at the single index `n = m`. -/

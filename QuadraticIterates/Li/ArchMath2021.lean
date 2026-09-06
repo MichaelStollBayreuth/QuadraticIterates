@@ -75,25 +75,25 @@ theorem not_isSquare_abs_bSeq_of_squarefree_of_pos_of_emod_eight_eq_four (ha : 0
     (ha8 : a % 8 = 4) {n : ℕ} (hsf : Squarefree n) (hn : 1 < n) : ¬IsSquare |bSeq a n| :=
   not_isSquare_abs_bSeq_of_squarefree (mod_cast not_isSquare_of_neg (by lia)) (m := (a + 2).toNat)
     (by rw [Int.toNat_of_nonneg (by lia), abs_of_pos ha, Int.sign_eq_one_of_pos ha]; ring)
-    (ZMod.not_isSquare_neg_one_of_emod_eight_eq_six (by omega)) hsf hn
+    (ZMod.not_isSquare_neg_one_of_emod_eight_eq_six (by lia)) hsf hn
 
 /-- Lemma 2.2 (2) of [Li 2021]: for `a < 0` with `a ≡ 2 mod 8`, `|b_n|` is not a square for
 squarefree `n > 1` (`-1` is not a square modulo `γ_1 + γ_2 = -a ≡ 6 mod 8`). -/
 theorem not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_eight_eq_two (ha : a < 0)
     (ha8 : a % 8 = 2) {n : ℕ} (hsf : Squarefree n) (hn : 1 < n) : ¬IsSquare |bSeq a n| :=
-  not_isSquare_abs_bSeq_of_squarefree (mod_cast Int.not_isSquare_of_emod_four_eq_two (by omega))
+  not_isSquare_abs_bSeq_of_squarefree (mod_cast Int.not_isSquare_of_emod_four_eq_two (by lia))
     (m := (-a).toNat)
     (by rw [Int.toNat_of_nonneg (by lia), abs_of_neg ha, Int.sign_eq_neg_one_of_neg ha]; ring)
-    (ZMod.not_isSquare_neg_one_of_emod_eight_eq_six (by omega)) hsf hn
+    (ZMod.not_isSquare_neg_one_of_emod_eight_eq_six (by lia)) hsf hn
 
 /-- Lemma 2.2 (3) of [Li 2021]: for `a < 0` with `a ≡ 1 mod 4`, `|b_n|` is not a square for
 squarefree `n > 1` (`-1` is not a square modulo `γ_1 + γ_2 = -a ≡ 3 mod 4`). -/
 theorem not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_one (ha : a < 0)
     (ha4 : a % 4 = 1) {n : ℕ} (hsf : Squarefree n) (hn : 1 < n) : ¬IsSquare |bSeq a n| :=
-  not_isSquare_abs_bSeq_of_squarefree (mod_cast Int.not_isSquare_of_emod_four_eq_three (by omega))
+  not_isSquare_abs_bSeq_of_squarefree (mod_cast Int.not_isSquare_of_emod_four_eq_three (by lia))
     (m := (-a).toNat)
     (by rw [Int.toNat_of_nonneg (by lia), abs_of_neg ha, Int.sign_eq_neg_one_of_neg ha]; ring)
-    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by omega)) hsf hn
+    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by lia)) hsf hn
 
 section
 
@@ -117,19 +117,19 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul {n : ℕ} (hn : 1 
     (hsf : ¬Squarefree n) : ¬IsSquare |bSeq a n| := by
   have ha0 := neg_of_eq_neg_mul ha
   have ha8 := emod_eight_eq_two_of_eq_neg_mul ha
-  have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_two (by omega)
+  have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_two (by lia)
   have hk₀2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
   have hγ4 : ((gammaSeq (normPoly a) a.sign (n / radical n) : ℤ) : ZMod 4) = 1 := by
     have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp
-      (gammaSeq_normPoly_zmod_eight_of_even ha0 (Int.even_iff.mpr (by omega)) _ hk₀2)
-    exact (ZMod.intCast_eq_intCast_iff' _ 1 4).mpr (by omega)
+      (gammaSeq_normPoly_zmod_eight_of_even ha0 (Int.even_iff.mpr (by lia)) _ hk₀2)
+    exact (ZMod.intCast_eq_intCast_iff' _ 1 4).mpr (by lia)
   obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := (8 * k + 2) *
     gammaSeq (normPoly a) a.sign (n / radical n) + 1)
     (by nlinarith [gammaSeq_normPoly_pos ha' (n / radical n) (by lia)])
   have hm4 : m % 4 = 3 := by
     have := (ZMod.intCast_eq_intCast_iff' (m : ℤ) 3 4).mp (by
       rw [← hm]; push_cast; rw [hγ4]; generalize (k : ZMod 4) = x; decide +revert)
-    omega
+    lia
   refine not_isSquare_abs_bSeq_of_dvd_add_succ ha' (hk₀2.trans (Nat.div_le_self n _))
     (Nat.div_mul_cancel radical_dvd_self).symm (m := m) ?_
     (ZMod.not_isSquare_neg_one_of_emod_four_eq_three hm4)
@@ -141,7 +141,7 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul {n : ℕ} (hn : 1 
 theorem li2021_theorem_3_3 : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
   have ha8 := emod_eight_eq_two_of_eq_neg_mul ha
   nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq
-    (mod_cast Int.not_isSquare_of_emod_four_eq_two (by omega))
+    (mod_cast Int.not_isSquare_of_emod_four_eq_two (by lia))
     (fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_eight_eq_two
       (neg_of_eq_neg_mul ha) ha8 hsf hn)
     fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul ha hn hsf
@@ -154,25 +154,25 @@ odd part `M ≡ 3 mod 4` of `γ_k + γ_{k+2}` is coprime to `γ_{k+1}`. -/
 theorem not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one (ha : a < 0)
     (ha4 : a % 4 = 1) {n : ℕ} (hn : 1 ≤ n) (hsf : ¬Squarefree n) (hn4 : ¬4 ∣ n) :
     ¬IsSquare |bSeq a n| := by
-  have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_three (by omega)
+  have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_three (by lia)
   have hk₀2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
   have hko : Odd (n / radical n) :=
     Nat.not_even_iff_odd.mp fun h ↦ hn4 ((Nat.even_div_radical_iff_four_dvd (by lia)).mp h)
   have h8 := gammaSeq_normPoly_add_two_emod_eight_eq_six ha ha4 hko
-    (by obtain ⟨j, hj⟩ := hko; omega)
+    (by obtain ⟨j, hj⟩ := hko; lia)
   obtain ⟨M, hM⟩ : (2 : ℤ) ∣ gammaSeq (normPoly a) a.sign (n / radical n)
-    + gammaSeq (normPoly a) a.sign (n / radical n + 2) := by omega
+    + gammaSeq (normPoly a) a.sign (n / radical n + 2) := by lia
   obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := M) (by
     have := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
     have := gammaSeq_normPoly_pos ha' (n / radical n + 2) (by lia)
     lia)
   refine not_isSquare_abs_bSeq_of_odd_of_dvd_add_two ha'
     (Nat.div_mul_cancel radical_dvd_self).symm hko (by lia) ⟨2, by rw [← hm, hM]; ring⟩ ?_
-    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by omega))
+    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by lia))
   rw [← hm]
   exact isCoprime_gammaSeq_succ_of_odd_of_add_two_eq_two_mul (evenPoly_normPoly a)
     (by rw [eval_normPoly_of_neg ha]; ring) (gammaSeq_normPoly_one ha.ne) hko (by lia) hM
-    (Int.odd_iff.mpr (by omega))
+    (Int.odd_iff.mpr (by lia))
 
 /-- With `A = 4k + 1`: if `α ≡ 3` and `γ ≡ 2 mod 4`, then `m` with `A m = α γ + A` is
 `≡ 3 mod 4`. -/
@@ -187,7 +187,7 @@ private lemma emod_four_eq_three_of_mul_eq {k : ℕ} {α γ m : ℤ} (hα : α %
     generalize (k : ZMod 4) = x at this
     generalize (m : ZMod 4) = y at this ⊢
     decide +revert)
-  omega
+  lia
 
 /-- The modulus `m = (α γ + A) / A` is coprime to `γ_2 = AB`: modulo `A` it is `2`, and modulo
 `B = 2(2k+1)` it is odd and `≡ 1 mod 2k+1`. -/
@@ -245,11 +245,11 @@ theorem not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one {n : ℕ
     (hke : Even (n / radical n)) : ¬IsSquare |bSeq a n| := by
   have ha0 := neg_of_eq_neg_mul_add_one ha
   have ha4 := emod_four_eq_one_of_eq_neg_mul_add_one ha
-  have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_three (by omega)
+  have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_three (by lia)
   have hk₀2 : 2 ≤ n / radical n := by
     have := Nat.div_pos (Nat.le_of_dvd hn radical_dvd_self) (Nat.radical_pos n)
     obtain ⟨j, hj⟩ := hke
-    omega
+    lia
   have hγ2 : gammaSeq (normPoly a) a.sign 2 = (4 * (k : ℤ) + 1) * (4 * k + 2) := by
     rw [gammaSeq_normPoly_two ha0, ha]
     ring
@@ -263,12 +263,12 @@ theorem not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one {n : ℕ
   obtain ⟨m, hm⟩ :
       (4 * k + 1 : ℤ) ∣ -a * gammaSeq (normPoly a) a.sign (n / radical n) + (4 * k + 1) :=
     dvd_add ((Dvd.intro _ rfl).trans hdvd2 |>.mul_left _) dvd_rfl
-  have hm4 := emod_four_eq_three_of_mul_eq (by omega)
+  have hm4 := emod_four_eq_three_of_mul_eq (by lia)
     (gammaSeq_normPoly_emod_four_eq_two_of_even ha0 ha4 hke hk₀2) hm
   obtain ⟨m', hm'⟩ := Int.eq_ofNat_of_zero_le (a := m) (by nlinarith)
   refine not_isSquare_abs_bSeq_of_even_of_dvd_add_two ha' (hk₀2.trans (Nat.div_le_self n _))
     (Nat.div_mul_cancel radical_dvd_self).symm hke (m := m') ?_ ?_
-    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by omega))
+    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by lia))
   · rw [← hm', gammaSeq_succ _ _ (by lia), gammaSeq_succ _ _ (by lia), eval_normPoly_of_neg ha0,
       eval_normPoly_of_neg ha0, add_eval_eval_eq_mul ha, hm]
     exact (dvd_mul_left _ _).mul_right _
@@ -276,7 +276,7 @@ theorem not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one {n : ℕ
         gammaSeq (normPoly a) a.sign (n / radical n) + (4 * k + 1) := by
       linear_combination hm.symm - gammaSeq (normPoly a) a.sign (n / radical n) * ha
     rw [← hm', hγ2]
-    exact isCoprime_of_mul_eq hmα (Int.odd_iff.mpr (by omega))
+    exact isCoprime_of_mul_eq hmα (Int.odd_iff.mpr (by lia))
       ((pow_dvd_pow_of_dvd (dvd_mul_right _ _) 2).trans hsq) ((dvd_mul_left _ _).trans hdvd2)
 
 /-- Theorem 3.9 of [Li 2021]: for `a = -((4k+1)(4k+2)+1)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
@@ -284,7 +284,7 @@ theorem li2021_theorem_3_9 : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathP
   have ha0 := neg_of_eq_neg_mul_add_one ha
   have ha4 := emod_four_eq_one_of_eq_neg_mul_add_one ha
   nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq
-    (mod_cast Int.not_isSquare_of_emod_four_eq_three (by omega))
+    (mod_cast Int.not_isSquare_of_emod_four_eq_three (by lia))
     (fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_one ha0 ha4 hsf hn)
     fun n hsf hn ↦ (em (4 ∣ n)).elim
       (fun h4 ↦ not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one ha hn

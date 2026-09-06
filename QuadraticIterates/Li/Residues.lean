@@ -109,7 +109,7 @@ theorem gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one (ha : a < 0) (ha4 : a %
   intro n hn
   set g' := (normPoly a).map (Int.castRingHom (ZMod 8))
   have hα : (a : ZMod 8) = 5 ∨ (a : ZMod 8) = 1 :=
-    (show a % 8 = 5 ∨ a % 8 = 1 by omega).imp (ZMod.intCast_eq_intCast_iff' a 5 8).mpr
+    (show a % 8 = 5 ∨ a % 8 = 1 by lia).imp (ZMod.intCast_eq_intCast_iff' a 5 8).mpr
       (ZMod.intCast_eq_intCast_iff' a 1 8).mpr
   have h2 : gammaSeq g' (-1) 2 = -(a : ZMod 8) - 1 := by
     rw [gammaSeq_succ _ _ le_rfl, gammaSeq_map_normPoly_one ha, eval_map_normPoly_of_neg ha]
@@ -148,7 +148,7 @@ theorem gammaSeq_normPoly_add_two_emod_eight_eq_six (ha : a < 0) (ha4 : a % 4 = 
   rw [if_neg (Nat.not_even_iff_odd.mpr (by grind))] at hk2
   have := (ZMod.intCast_eq_intCast_iff' _ 3 8).mp hk1
   have := (ZMod.intCast_eq_intCast_iff' _ 3 8).mp hk2
-  omega
+  lia
 
 theorem gammaSeq_normPoly_emod_four_eq_two_of_even (ha : a < 0) (ha4 : a % 4 = 1) {k : ℕ}
     (hke : Even k)
@@ -156,7 +156,7 @@ theorem gammaSeq_normPoly_emod_four_eq_two_of_even (ha : a < 0) (ha4 : a % 4 = 1
   have h := gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one ha ha4 k hk
   rw [if_pos hke] at h
   have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp h
-  omega
+  lia
 
 theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 = 3) {k : ℕ}
     (hk : 2 ≤ k) :
@@ -168,10 +168,10 @@ theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 
   split_ifs at hk1 hk2 with he
   · have := (ZMod.intCast_eq_intCast_iff' _ 0 4).mp hk1
     have := (ZMod.intCast_eq_intCast_iff' _ 3 4).mp hk2
-    omega
+    lia
   · have := (ZMod.intCast_eq_intCast_iff' _ 3 4).mp hk1
     have := (ZMod.intCast_eq_intCast_iff' _ 0 4).mp hk2
-    omega
+    lia
 
 /-! ### The criteria of Chapter 2 for `|b_n|` -/
 

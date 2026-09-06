@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Michael Stoll. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Michael Stoll
+-/
 module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
@@ -127,9 +132,9 @@ theorem sum_divisors_filter_mod_two_moebius_div {n : ℕ} (hn : 3 ≤ n) (i : �
     exact h0
   · have h := Finset.sum_filter_add_sum_filter_not n.divisors (· % 2 = 0) fun t ↦ μ (n / t)
     rw [sum_divisors_moebius_div_eq_zero (by lia), h0, zero_add,
-      Finset.filter_congr (q := (· % 2 = 1)) fun t _ ↦ by omega] at h
+      Finset.filter_congr (q := (· % 2 = 1)) fun t _ ↦ by lia] at h
     exact h
-  · rw [Finset.filter_false_of_mem fun _ _ h ↦ by omega, Finset.sum_empty]
+  · rw [Finset.filter_false_of_mem fun _ _ h ↦ by lia, Finset.sum_empty]
 
 /-- For a level set `{d : k ≤ g d}` of a `gcd`-`min` function `g`, the antidiagonal Möbius transform
 of its indicator (in the second coordinate) over `n` is `0` or `1`; in particular nonnegative. -/
@@ -168,11 +173,11 @@ theorem sum_mul_moebius_nonneg (g : ℕ → ℕ)
     have hx2 : x.2 ∈ n.divisors := Nat.snd_mem_divisors_of_mem_antidiagonal hx
     have h := hmin x.2 (Nat.pos_of_mem_divisors hx2) n (by lia)
     rw [Nat.gcd_eq_left (Nat.dvd_of_mem_divisors hx2)] at h
-    omega
+    lia
   have hcard (a : ℕ) (ha : a ≤ g n) :
       (a : ℤ) = ∑ k ∈ Finset.Icc 1 (g n), if k ≤ a then (1 : ℤ) else 0 := by
     rw [Finset.sum_boole, show (Finset.Icc 1 (g n)).filter (· ≤ a) = Finset.Icc 1 a from by
-      ext k; simp only [Finset.mem_filter, Finset.mem_Icc]; omega, Nat.card_Icc]
+      ext k; simp only [Finset.mem_filter, Finset.mem_Icc]; lia, Nat.card_Icc]
     simp
   rw [Finset.sum_congr rfl fun x hx ↦ by rw [hcard (g x.2) (hmono x hx), Finset.mul_sum],
     Finset.sum_comm]

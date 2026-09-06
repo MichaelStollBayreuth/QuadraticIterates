@@ -383,7 +383,7 @@ theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk :
       = -∏ t ∈ n'.divisors with μ (n' / t) = -1, gammaSeq g ε (k * t) := by
   have hunion := hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one
   refine Finset.prod_eq_neg_prod_of_forall_card_filter_eq (κ := fun _ ↦ ())
-    (w := fun _ ↦ gammaSeq g ε (2 * k)) (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by omega)
+    (w := fun _ ↦ gammaSeq g ε (2 * k)) (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia)
     (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia))
     (by rw [mul_one]; linear_combination hzero)
     (fun t ht h1 ↦ ?_) fun _ ↦ by
@@ -474,7 +474,7 @@ theorem prod_gammaSeq_mul_eq_neg_prod_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ
   have hunion := hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one
   refine Finset.prod_eq_neg_prod_of_forall_card_filter_eq (κ := (· % 2))
     (w := fun i ↦ if i = 0 then gammaSeq g ε (k + 1) else -gammaSeq g ε k)
-    (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by omega)
+    (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia)
     (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia)) (by simp) (fun t ht h1 ↦ ?_)
     fun i ↦ by
       simpa [Finset.filter_filter, and_comm] using
@@ -656,7 +656,7 @@ private lemma gammaSeq_eq_mul_oddPart (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 
     gammaSeq g ε t = (if t % 2 = 0 then gammaSeq g ε 2 else 1) * oddPart g ε t := by
   rw [oddPart]
   split_ifs with he
-  · exact (Int.mul_ediv_cancel' (gammaSeq_two_dvd_of_even hg h0 h1 (by omega)
+  · exact (Int.mul_ediv_cancel' (gammaSeq_two_dvd_of_even hg h0 h1 (by lia)
       (Nat.even_iff.mpr he))).symm
   · rw [one_mul]
 
@@ -702,7 +702,7 @@ theorem not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one (hg : EvenPol
         (sum_divisors_filter_mod_two_moebius_div hn i)
   have hu (t : ℕ) (ht : t ∈ n.divisors) (h1t : t ≠ 1) :
       ((oddPart g ε t : ℤ) : ZMod m) = if t % 2 = 0 then 1 else -1 :=
-    intCast_oddPart hg h0 h1 h2 hm (by have := Nat.pos_of_mem_divisors ht; omega)
+    intCast_oddPart hg h0 h1 h2 hm (by have := Nat.pos_of_mem_divisors ht; lia)
   have hunion := hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one
   refine not_isSquare_betaSeq_of_prod_eq_neg_prod hg hε hγ (by lia)
     (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm (pow_ne_zero _ h2)
@@ -710,7 +710,7 @@ theorem not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one (hg : EvenPol
     ((hsplit _ (Finset.filter_subset _ _)).trans (by rw [hcard 0])) (m := m) ?_ ?_ hnsq <;>
     push_cast
   · refine Finset.prod_eq_neg_prod_of_forall_card_filter_eq (κ := (· % 2))
-      (w := fun i ↦ if i = 0 then 1 else -1) (Finset.disjoint_filter.mpr fun _ _ _ _ ↦ by omega)
+      (w := fun i ↦ if i = 0 then 1 else -1) (Finset.disjoint_filter.mpr fun _ _ _ _ ↦ by lia)
       (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia)) (by simp [oddPart, h1])
       (fun t ht h1t ↦ hu t (hunion ▸ ht) h1t) hcard
   · refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
