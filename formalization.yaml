@@ -121,12 +121,14 @@ automation:
         Mathlib conventions); all proofs were then re-proved from scratch, followed by
         multi-round review/refactor passes (parallel audit sub-agents, per-round improvement).
         Each refactoring round was gated by a scripted verification chain: warning-free build of
-        the library and of the comparator challenge/solution, line-length check, blueprint
-        rebuild and declaration check, and a diff of the pretty-printed types of every
-        declaration in the project against the previous round, so that a round changed exactly
-        the intended statements.
+        the library and of the comparator challenge/solution (from 2026-09-06 with Mathlib's
+        standard linter set and its omega-to-lia analyzers enabled in the lakefile), a project
+        style lint for the conventions no linter covers (omega, lambda arrows, bare rintro,
+        proofs over 20 lines, ...), line-length check, blueprint rebuild and declaration check,
+        and a diff of the pretty-printed types of every declaration in the project against the
+        previous round, so that a round changed exactly the intended statements.
       cost:
-        wall_time: "~76 hours in 12 interactive sessions between 2026-07-12 and 2026-09-06"
+        wall_time: "~78 hours in 13 interactive sessions between 2026-07-12 and 2026-09-06"
         spend_usd: "Claude Max 20x subscription"
         hardware: "API-only"
       prompting_notes: >
