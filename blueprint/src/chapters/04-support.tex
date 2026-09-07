@@ -167,18 +167,24 @@ them.
   \lean{moebiusFactorK, moebiusFactorK_eq_div, moebiusFactorK_eq_prod, moebiusFactorR, numProd,
     denProd, denProd_dvd_numProd, moebiusFactorK_isInteger, algebraMap_moebiusFactorR,
     prod_moebiusFactorR, moebiusFactorR_ne_zero, moebiusFactorR_mul_denProd,
-    factorization_gcd_min, UniqueFactorizationMonoid.normalizedFactors_gcd, isInteger_div_iff_dvd}
+    moebiusFactorR_mul_denProd_of_dvd, algebraMap_moebiusFactorR_of_dvd,
+    prod_moebiusFactorR_of_dvd, moebiusFactorR_ne_zero_of_dvd, map_moebiusFactorR, map_numProd,
+    map_denProd, factorization_gcd_min, UniqueFactorizationMonoid.normalizedFactors_gcd,
+    isInteger_div_iff_dvd}
   \leanok
-  Let $R$ be a UFD and $(c_n)$ a sequence in $R \setminus \{0\}$ (on positive indices) which is a
-  strong divisibility sequence. Then each Möbius quotient
-  $b_n := \prod_{d \dvd n} c_d^{\mu(n/d)}$ lies in $R$ and is nonzero, and Möbius inversion
-  holds: $c_n = \prod_{d \dvd n} b_d$.
+  Let $R$ be a domain and $(c_n)$ a sequence in $R \setminus \{0\}$ (on positive indices). Write
+  the Möbius quotient $b_n := \prod_{d \dvd n} c_d^{\mu(n/d)}$ as $N/D$ with $N$ the product of the
+  $c_d$ with $\mu(n/d) = 1$ and $D$ the product of those with $\mu(n/d) = -1$. If $D \dvd N$, then
+  $b_n$ lies in $R$ and is nonzero, and a ring homomorphism into a domain that kills no $c_d$
+  commutes with $b_n$; if $D \dvd N$ at every divisor of $n$, Möbius inversion holds:
+  $c_n = \prod_{d \dvd n} b_d$. If $R$ is a UFD and $(c_n)$ is a strong divisibility sequence,
+  then $D \dvd N$ for every $n$.
 \end{lemma}
 \begin{proof}
   \uses{lem:moebiussign}
   \leanok
-  Write the quotient as $N/D$ with $N$ the product of the $c_d$ with $\mu(n/d) = 1$ and $D$ the
-  product of those with $\mu(n/d) = -1$. At each prime $p$, strong divisibility bounds
+  Given $D \dvd N$, the $R$-valued quotient is the solution of $b_n D = N$, which the
+  homomorphism preserves. For the last sentence: at each prime $p$, strong divisibility bounds
   $v_p(c_{\gcd(d,d')})$ below by $\min(v_p(c_d), v_p(c_{d'}))$, and a counting argument on the
   divisor lattice shows $v_p(D) \le v_p(N)$; hence $D \dvd N$.
 \end{proof}

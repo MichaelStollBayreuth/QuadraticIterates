@@ -84,6 +84,16 @@ theorem moebiusFactorK_eq_div (c : ℕ → R) (n : ℕ) :
     moebiusFactorK (K := K) c 1 = algebraMap R K (c 1) := by
   simp [moebiusFactorK]
 
+section map
+
+variable {S : Type*} [CommRing S] (φ : R →+* S) (c : ℕ → R) (n : ℕ)
+
+lemma map_numProd : φ (numProd c n) = numProd (fun d ↦ φ (c d)) n := map_prod φ _ _
+
+lemma map_denProd : φ (denProd c n) = denProd (fun d ↦ φ (c d)) n := map_prod φ _ _
+
+end map
+
 section IsFractionRing
 
 variable [IsFractionRing R K]
@@ -164,6 +174,63 @@ noncomputable def moebiusFactorR (c : ℕ → R) (n : ℕ) : R :=
   rw [moebiusFactorR, moebiusFactorK_one,
     Function.leftInverse_invFun (FaithfulSMul.algebraMap_injective R (FractionRing R))]
 
+/-- The defining identity of the `R`-valued factor, `β_n · denProd = numProd`, given that the
+denominator product divides the numerator product. -/
+theorem moebiusFactorR_mul_denProd_of_dvd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ}
+    (hdvd : denProd c n ∣ numProd c n) : moebiusFactorR c n * denProd c n = numProd c n := by
+  obtain ⟨r, hr⟩ := (isInteger_div_iff_dvd (K := FractionRing R) (numProd c n)
+    (denProd_ne_zero hc n)).mpr hdvd
+  apply FaithfulSMul.algebraMap_injective R (FractionRing R)
+  rw [map_mul, moebiusFactorR, moebiusFactorK_eq_div c, ← hr,
+    Function.leftInverse_invFun (FaithfulSMul.algebraMap_injective R (FractionRing R)) r, hr,
+    div_mul_cancel₀ _
+      ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective R _)).mpr (denProd_ne_zero hc n))]
+
+theorem moebiusFactorR_ne_zero_of_dvd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ}
+    (hdvd : denProd c n ∣ numProd c n) : moebiusFactorR c n ≠ 0 := fun h0 ↦
+  numProd_ne_zero hc n (by rw [← moebiusFactorR_mul_denProd_of_dvd hc hdvd, h0, zero_mul])
+
+section map
+
+variable {S : Type*} [CommRing S] [IsDomain S] (φ : R →+* S) {c : ℕ → R} {n : ℕ}
+
+/-- A ring homomorphism into a domain commutes with the `R`-valued Möbius factor, given that the
+denominator product divides the numerator product: both images are the solution of
+`β · denProd = numProd`. -/
+theorem map_moebiusFactorR (hφ : ∀ d ≥ 1, φ (c d) ≠ 0) (hdvd : denProd c n ∣ numProd c n) :
+    φ (moebiusFactorR c n) = moebiusFactorR (fun d ↦ φ (c d)) n := by
+  have hc (d : ℕ) (hd : 1 ≤ d) : c d ≠ 0 := fun h ↦ hφ d hd (h ▸ map_zero φ)
+  refine mul_right_cancel₀ (denProd_ne_zero hφ n) ?_
+  rw [moebiusFactorR_mul_denProd_of_dvd hφ (map_denProd φ c n ▸ map_numProd φ c n ▸ map_dvd φ hdvd),
+    ← map_denProd, ← map_mul, moebiusFactorR_mul_denProd_of_dvd hc hdvd, map_numProd]
+
+end map
+
+section IsFractionRing
+
+variable [IsFractionRing R K]
+
+/-- In any fraction field `K` of `R`, not only in the `FractionRing R` used to define it, the image
+of `moebiusFactorR c n` is the Möbius product `moebiusFactorK c n`, given that the denominator
+product divides the numerator product. -/
+theorem algebraMap_moebiusFactorR_of_dvd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ}
+    (hdvd : denProd c n ∣ numProd c n) :
+    algebraMap R K (moebiusFactorR c n) = moebiusFactorK (K := K) c n := by
+  rw [moebiusFactorK_eq_div c, eq_div_iff ((map_ne_zero_iff _
+    (FaithfulSMul.algebraMap_injective R K)).mpr (denProd_ne_zero hc n)), ← map_mul,
+    moebiusFactorR_mul_denProd_of_dvd hc hdvd]
+
+/-- Möbius inversion in `R`: `c n = ∏_{d ∣ n} moebiusFactorR c d`, given that the denominator
+product divides the numerator product at every divisor of `n`. -/
+theorem prod_moebiusFactorR_of_dvd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ} (hn : 1 ≤ n)
+    (hdvd : ∀ d ∈ n.divisors, denProd c d ∣ numProd c d) :
+    c n = ∏ d ∈ n.divisors, moebiusFactorR c d := by
+  apply FaithfulSMul.algebraMap_injective R (FractionRing R)
+  rw [map_prod, Finset.prod_congr rfl fun d hd ↦ algebraMap_moebiusFactorR_of_dvd hc (hdvd d hd),
+    prod_moebiusFactorK hc hn]
+
+end IsFractionRing
+
 variable [IsFractionRing R K] [UniqueFactorizationMonoid R] [NormalizedGCDMonoid R]
 
 /-- The denominator product of a nowhere-zero strong divisibility sequence divides the numerator
@@ -193,38 +260,29 @@ theorem moebiusFactorK_isInteger {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
 /-- The defining identity of the `R`-valued factor: `β_n · denProd = numProd`. -/
 theorem moebiusFactorR_mul_denProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
-    moebiusFactorR c n * denProd c n = numProd c n := by
-  obtain ⟨r, hr⟩ := moebiusFactorK_isInteger (K := FractionRing R) hc hsd hn
-  apply FaithfulSMul.algebraMap_injective R (FractionRing R)
-  rw [map_mul, moebiusFactorR, ← hr,
-    Function.leftInverse_invFun (FaithfulSMul.algebraMap_injective R (FractionRing R)) r, hr,
-    moebiusFactorK_eq_div c, div_mul_cancel₀ _
-      ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective R _)).mpr (denProd_ne_zero hc n))]
+    moebiusFactorR c n * denProd c n = numProd c n :=
+  moebiusFactorR_mul_denProd_of_dvd hc (denProd_dvd_numProd hc hsd hn)
 
 /-- In any fraction field `K` of `R`, not only in the `FractionRing R` used to define it, the image
 of `moebiusFactorR c n` is the Möbius product `moebiusFactorK c n` (for a nowhere-zero strong
 divisibility sequence). -/
 theorem algebraMap_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
-    algebraMap R K (moebiusFactorR c n) = moebiusFactorK (K := K) c n := by
-  rw [moebiusFactorK_eq_div c, eq_div_iff ((map_ne_zero_iff _
-    (FaithfulSMul.algebraMap_injective R K)).mpr (denProd_ne_zero hc n)), ← map_mul,
-    moebiusFactorR_mul_denProd hc hsd hn]
+    algebraMap R K (moebiusFactorR c n) = moebiusFactorK (K := K) c n :=
+  algebraMap_moebiusFactorR_of_dvd hc (denProd_dvd_numProd hc hsd hn)
 
 theorem moebiusFactorR_ne_zero {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
-    moebiusFactorR c n ≠ 0 := fun h0 ↦
-  numProd_ne_zero hc n (by rw [← moebiusFactorR_mul_denProd hc hsd hn, h0, zero_mul])
+    moebiusFactorR c n ≠ 0 :=
+  moebiusFactorR_ne_zero_of_dvd hc (denProd_dvd_numProd hc hsd hn)
 
 /-- Möbius inversion in `R`: `c n = ∏_{d ∣ n} moebiusFactorR c d` for a nowhere-zero strong
 divisibility sequence. -/
 theorem prod_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     (hsd : ∀ m n, Associated (gcd (c m) (c n)) (c (m.gcd n))) {n : ℕ} (hn : 1 ≤ n) :
-    c n = ∏ d ∈ n.divisors, moebiusFactorR c d := by
-  apply FaithfulSMul.algebraMap_injective R (FractionRing R)
-  rw [map_prod, Finset.prod_congr rfl fun d hd ↦
-      algebraMap_moebiusFactorR hc hsd (Nat.pos_of_mem_divisors hd),
-    prod_moebiusFactorK hc hn]
+    c n = ∏ d ∈ n.divisors, moebiusFactorR c d :=
+  prod_moebiusFactorR_of_dvd hc hn fun _ hd ↦
+    denProd_dvd_numProd hc hsd (Nat.pos_of_mem_divisors hd)
 
 variable [DecidableEq R]
 
