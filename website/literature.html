@@ -424,7 +424,7 @@
     <div>
       <div class="eyebrow">QuadraticIterates · Lean 4 + Mathlib</div>
       <h1>Maximality for <em>x</em>² + <em>a</em></h1>
-      <p class="standfirst">When is the Galois group of every iterate the full automorphism group of the binary tree? Three papers answer that over&nbsp;ℚ. This library formalizes all three — and there is nothing else to formalize.</p>
+      <p class="standfirst">When is the Galois group of every iterate the full automorphism group of the binary tree? Three papers answer that over&nbsp;ℚ. This library formalizes all three — there is nothing else in the literature to formalize — and adds two theorems of its own, one of them for rational <em>a</em>.</p>
     </div>
     <div class="tree-mark" aria-hidden="true">
       <svg viewBox="0 0 160 104" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -575,7 +575,7 @@
       <div class="eyebrow">The library</div>
       <h2>What is formalized, and where</h2>
     </div>
-    <p class="col">Seven named results carry the mathematics, one of them not from the papers; the criterion below them is stated once, in the generality the papers use, and shared.</p>
+    <p class="col">Nine named results carry the mathematics, three of them not from the papers; the criterion below them is stated once, for a rational parameter, and shared.</p>
 
     <div class="table-wrap">
       <table>
@@ -626,6 +626,16 @@
             <td class="what">Maximality for <var>a</var> = −((4<var>k</var>+1)(4<var>k</var>+2)+1)</td>
             <td class="who">Li 2021, Thm 3.9</td>
             <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_9">li2021_theorem_3_9</a></td>
+          </tr>
+          <tr>
+            <td class="what">Maximality for rational <var>a</var> = <var>r</var>/<var>s</var> &gt; −1 in explicit classes of (<var>r</var>, <var>s</var>) modulo 8, under a squarefree-level certificate</td>
+            <td class="who">this formalization, Theorem R⁺</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Rational/Main.html#QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert">nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert</a></td>
+          </tr>
+          <tr>
+            <td class="what">The same for rational <var>a</var> = <var>r</var>/<var>s</var> ≤ −2</td>
+            <td class="who">this formalization, Theorem R⁻</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Rational/Main.html#QuadraticIterates.nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert">nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert</a></td>
           </tr>
         </tbody>
       </table>
@@ -693,6 +703,8 @@
       <p>Li reached the same verdict from the other side in 2021: <em>"there seems to be no method other than Stoll's criterion which can show the non-squareness of |b<sub>n</sub>| for infinitely many n."</em> Five years on, that is still true.</p>
 
       <p>One small exception has since appeared, and it comes out of the formalization itself: Li's family <code>a = −(8k+2)(8k+3)</code> is the even-<var>k</var> half of <code>a = −(4k+2)(4k+3)</code>, and the odd half goes through by his own argument once the residue of the rescaled sequence is read modulo 8 rather than modulo 4 — the <var>a</var> ≡ 2 (mod 4) box above. It is a half-family, not a new class: the verdicts of Jones and Li stand.</p>
+
+      <p>A second addition leaves the integers. For rational <var>a</var> = <var>r</var>/<var>s</var> the rescaled critical orbit still has integer numerators, and the same reflection argument goes through once <var>r</var> and <var>s</var> are read modulo 4 separately: for <var>a</var> &gt; −1 and for <var>a</var> ≤ −2, in explicit residue classes of (<var>r</var>, <var>s</var>) and under a <em>squarefree-level certificate</em> (a modulus modulo which <var>r</var>, −<var>s</var> or ±<var>s</var> is not a square, or a residue condition modulo 8), every level is maximal — Theorems R⁺ and R⁻ in the table above, Chapter 6 of the blueprint. For <var>s</var> = 1 they reduce to Stoll's three classes and to the sufficient half of Li's dichotomy; the classes with <var>s</var> ≡ 3 (mod 4) are new — 5/3 and 4/3 are maximal, for instance. No integer value of <var>a</var> is added: the lattice above is unchanged.</p>
     </div>
   </section>
 
@@ -724,7 +736,7 @@
         <div class="when">2026</div>
         <div>
           <h3>Henderson, Juul, Lattin, Mercado &amp; Schaefer — rational parameters</h3>
-          <p>The one recent paper working over ℚ rather than ℤ: infinitely many surjective examples for <var>c</var> = −<var>a</var> − <var>a</var>² and <var>c</var> = −1 + <var>a</var> − <var>a</var>², with the tree rooted at the strictly preperiodic point <var>a</var>. Rational parameters buy small height — they can land <var>c</var> inside the Mandelbrot set.</p>
+          <p>The one recent paper working over ℚ rather than ℤ: infinitely many surjective examples for <var>c</var> = −<var>a</var> − <var>a</var>² and <var>c</var> = −1 + <var>a</var> − <var>a</var>², with the tree rooted at the strictly preperiodic point <var>a</var>. Rational parameters buy small height — they can land <var>c</var> inside the Mandelbrot set. The rational extension in this library (Theorems R⁺ and R⁻ above) is the complementary case: the tree stays rooted at 0, and the question is which <var>r</var>/<var>s</var> the residue method reaches.</p>
         </div>
       </div>
 
@@ -765,7 +777,7 @@
 
   <footer>
     <div>
-      Survey of 6 September 2026 — OpenAlex citation graph, arXiv metadata sweeps, and direct computation with the criterion.
+      Survey of 6 September 2026, the rational-parameter theorems added on 7 September 2026 — OpenAlex citation graph, arXiv metadata sweeps, and direct computation with the criterion.
     </div>
     <div class="links">
       <a href="https://github.com/MichaelStollBayreuth/QuadraticIterates">Repository</a>

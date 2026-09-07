@@ -23,9 +23,13 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 
 \begin{theorem}[Section 1 for rational $a$]
   \label{thm:rat-section1}
-  \uses{def:galois, def:wreath, def:twoindep}
+  \uses{def:galois, def:wreath, def:twoindep, def:cseq, def:bseq}
   \lean{QuadraticIterates.section1_tfae_of_irreducible,
-    QuadraticIterates.section1_a_iff_b_of_irreducible, QuadraticIterates.section1_b_iff_c}
+    QuadraticIterates.section1_a_iff_b_of_irreducible, QuadraticIterates.section1_b_iff_c,
+    QuadraticIterates.cSeq_ne_zero_of_irreducible,
+    QuadraticIterates.sqClass_cSeq_eq_sum_divisors,
+    QuadraticIterates.sqClass_bSeq_eq_sum_divisorsAntidiagonal,
+    linearIndependent_iff_of_span_range_eq}
   \leanok
   Let $a \in \QQ^\times$ and suppose that $f_k$ is irreducible over $\QQ$ for all $k \le n$.
   Then $\Om_n \cong \Ct{n}$ if and only if $c_1, \dots, c_n$ are $2$-independent in
@@ -41,8 +45,7 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
   irreducible, hence separable with $2^n$ roots, and $c_{n+1} = f_n(a) \ne 0$, which follows from
   the irreducibility of $f_{n+1}$: otherwise $X \mid f_{n+1}$); Lemma~\ref{lem:1.5} turns that
   into $2$-independence. If no $c_k$ is a square, all $f_k$ are irreducible by Lemma~\ref{lem:1.2}.
-  \formalnote{Done as planned (2026-09-07, with the author's approval of the change of the
-  comparator challenge): \lname{splittingField}, \lname{GaloisGroup}, \lname{rootShift} take a
+  \formalnote{\lname{splittingField}, \lname{GaloisGroup}, \lname{rootShift} take a
   rational $a$; \lname{cSeq} is polymorphic in a commutative ring and \lname{bSeq} in a domain,
   $c$ being the $\gamma$-sequence of $X^2 + a$ with $\varepsilon = -1$ over that ring, with the
   cast lemmas \lname{intCast\_cSeq}, \lname{ratCast\_cSeq}, \lname{intCast\_bSeq} and
@@ -64,7 +67,7 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 
 \begin{definition}[the $w$-sequence]
   \label{def:wseq}
-  \uses{def:cseq}
+  \uses{def:gammaseq}
   \lean{QuadraticIterates.wSeq, QuadraticIterates.wSeq_succ, QuadraticIterates.intCast_wSeq,
     QuadraticIterates.wSeq_pos_of_pos, QuadraticIterates.wSeq_pos_of_neg_lt,
     QuadraticIterates.pow_le_wSeq_of_two_mul_le, QuadraticIterates.wSeq_pos_of_two_mul_le}
@@ -129,8 +132,8 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
   factors.
   \formalnote{Since Mathlib v4.34.0-rc2 a localization of a unique factorization monoid is one
   (\lname{UniqueFactorizationMonoid (Localization S)}); \lname{Localization.Away s} is a domain
-  since $s \ne 0$ (\lname{Localization.Away.isDomain}, to be registered as an instance for
-  \lname{[NeZero s]}). The API of Chapter~2 (\lname{gammaSeq\_associated\_gcd},
+  since $s \ne 0$ (Mathlib's \lname{Localization.Away.isDomain}, registered as the instance
+  \lname{Localization.Away.instIsDomain} for \lname{[NeZero x]} in the mirror file). The API of Chapter~2 (\lname{gammaSeq\_associated\_gcd},
   \lname{factorization\_gammaSeq\_shape}) and \lname{moebiusFactorR\_isRelPrime} need a
   \lname{NormalizedGCDMonoid} instance, a \lname{DecidableEq} instance and normalized primes;
   Mathlib has neither instance for the localization (its \lname{DecidableEq} instance needs
@@ -148,20 +151,18 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 \end{proof}
 
 \paragraph{The alternative not taken.}
-One can avoid $\ZZ[1/s]$ and prove the shape of $w$ over $\ZZ$ directly: the twisted rigidity
+The shape of $w$ could be proved over $\ZZ$ directly: the twisted rigidity
 $w_d^2 \mid w_{d+j} - s^{2^{j-1}(2^d-1)} w_j$ (an induction like that of Lemma~\ref{lem:2.1}),
 then the Euclidean and periodic-shape arguments of Chapter~4 with the twist $s^{(\cdot)}$, a
 unit modulo any $p \nmid s$; this needs twisted generalizations of the two supporting lemmas
 (\lname{gcd\_eq\_normalize\_of\_dvd\_sub}, \lname{factorization\_periodic\_shape}) with a unit
-factor in the congruence, about a hundred lines against about a hundred and fifty for the
-localization route, whose surplus consists of general lemmas on localizations (a domain instance,
-the transfer of primes and of divisibility) and of the descent below. The localization route is
-chosen because it reuses Chapter~2 verbatim instead of re-deriving it with a twist, and because
-its new lemmas are of Mathlib generality.
+factor in the congruence. The localization route reuses Chapter~2 verbatim instead of
+re-deriving it with a twist, and its own new lemmas (a domain instance, the transfer of primes
+and of divisibility, the descent below) are of Mathlib generality.
 
 \begin{definition}[the integer Möbius factors]
   \label{def:betaint}
-  \uses{def:wseq}
+  \uses{def:wseq, lem:moebiusfactor}
   \lean{QuadraticIterates.betaInt, QuadraticIterates.betaInt_eq_moebiusFactorR}
   \leanok
   $\beta_n := \prod_{d \mid n} w_d^{\mu(n/d)}$ and $E(n) := \sum_{d \mid n} (2^{d-1} - 1)\mu(n/d)$,
@@ -175,9 +176,12 @@ its new lemmas are of Mathlib generality.
   \lname{\_of\_dvd} with the hypothesis $D \mid N$, of which the strong-divisibility forms are
   corollaries, and \lname{map\_moebiusFactorR}: for $D \mid N$ and a ring homomorphism $\varphi$
   into a domain killing no $w_d$, $\varphi(\beta_n)$ is the Möbius factor of $\varphi \circ w$,
-  both being the solution of $\beta D = N$. Still to come: \lname{twistExp}, the integer $E(n)$
-  as a sum over \lname{n.divisorsAntidiagonal}, with \lname{twistExp\_emod\_two}
-  ($E(n) \equiv \mu(n) \bmod 2$ for $n \ge 2$).}
+  both being the solution of $\beta D = N$. The twist exponent $E(n)$ has no definition of its
+  own: the proofs need the parity of the exponents $F = \sum_{t \mid n} (2^{kt-1} - 1)$ of $s$
+  that the denominators produce, \lname{even\_sum\_two\_pow\_mul\_sub\_one\_of\_squarefree}
+  ($k \ge 2$) and \lname{odd\_sum\_two\_pow\_sub\_one\_of\_squarefree} ($k = 1$) in
+  \lname{Reflection.lean}, from the balanced sign partition
+  \lname{card\_divisors\_eq\_two\_mul\_of\_squarefree}.}
 \end{definition}
 
 \begin{lemma}[the $\beta_n$ are integers, pairwise coprime, coprime to $rs$]
@@ -234,7 +238,7 @@ its new lemmas are of Mathlib generality.
 
 \begin{lemma}[square classes]
   \label{lem:rat-sqclass}
-  \uses{def:betaint, def:bseq, def:wseq}
+  \uses{def:betaint, def:bseq, def:wseq, def:gammaseq, def:twoindep}
   \lean{QuadraticIterates.cSeq_div_eq, QuadraticIterates.cSeq_div_ne_zero,
     QuadraticIterates.sqClass_cSeq_div, QuadraticIterates.sqClass_neg_div,
     QuadraticIterates.sqClass_betaInt, QuadraticIterates.sqClass_bSeq_div,
@@ -247,7 +251,8 @@ its new lemmas are of Mathlib generality.
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{def:cseq, lem:w-gamma-zmod, lem:moebiussign}
+  \uses{def:cseq, lem:w-gamma-zmod, lem:moebiussign, lem:betaint, lem:moebiusfactor, lem:descent,
+    thm:rat-section1}
   $c_d = r w_d / s^{2^{d-1}} \sim r w_d$ for $d \ge 2$ (even exponent), so
   $b_n \sim (-rs)^{\mu(n)} \prod_{d \mid n, d \ge 2} (r w_d)^{\mu(n/d)} = (-s)^{\mu(n)} r^{\sum_{d \mid n}
   \mu(n/d)} \beta_n$ with $w_1 = 1$ and $\sum_{d \mid n} \mu(n/d) = 0$.
@@ -272,7 +277,7 @@ its new lemmas are of Mathlib generality.
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:betaint, lem:rat-sqclass, lem:1.2, lem:coprimesquare}
+  \uses{lem:betaint, lem:rat-sqclass, lem:1.2, lem:coprimesquare, lem:zmodsquare}
   A nonempty $S$ with $\prod_{n \in S} b_n$ a square has, by pairwise coprimality and coprimality to
   $rs$, $|\beta_n|$ a square for each $n \in S$, $n \ge 2$; so $S = \{1\}$, but $b_1 \sim -rs$ is not
   a square. The $b$'s are $2$-independent, hence the $c$'s (Möbius inversion in $\QQ^\times$), and
@@ -302,14 +307,14 @@ its new lemmas are of Mathlib generality.
   \leanok
   Let $M \ge 1$ be coprime to $s$, and let $\bar a = \bar r \bar s^{-1} \in \ZZ/M\ZZ$. Then
   $\bar w_n = \bar s^{\,2^{n-1} - 1} \gamma_n(\bar a)$ in $\ZZ/M\ZZ$, where $\gamma(\bar a)$ is the
-  $\gamma$-sequence of $\bar a X^2 + 1$ (with $\varepsilon = 1$) over $\ZZ/M\ZZ$.
+  $\gamma$-sequence of $\bar a X^2 + \varepsilon$ with sign $\varepsilon$ over $\ZZ/M\ZZ$.
 \end{lemma}
 \begin{proof}
   \leanok
   Induction on $n$ from the recursions.
   \formalnote{The instance of \lname{intCast\_wSeq} (Definition~\ref{def:wseq})
   at $S = \ZZ/M\ZZ$, $\varphi$ the cast and $u$ the inverse of the unit $\bar s$; the
-  $\gamma$-sequence over \lname{ZMod M} is \lname{gammaSeq} of $\bar a X^2 + 1$ with
+  $\gamma$-sequence over \lname{ZMod M} is \lname{gammaSeq} of $\bar a X^2 + \varepsilon$ with
   $\bar a = \bar r \bar s^{-1}$.}
 \end{proof}
 
@@ -330,7 +335,8 @@ its new lemmas are of Mathlib generality.
   modulo $M$.
 \end{lemma}
 \begin{proof}
-  \uses{lem:w-gamma-zmod, lem:betaint, lem:2.1, lem:2.2, lem:moebiussign, lem:zmodsquare}
+  \uses{lem:w-gamma-zmod, lem:betaint, lem:2.1, lem:2.2, lem:moebiussign, lem:zmodsquare,
+    lem:li-crit}
   \leanok
   In $\ZZ/M\ZZ$, $\gamma_{n_0+1} = -\gamma_{n_0}$, so $\gamma_{n_0 t} = -\gamma_{n_0}$ for all
   $t \ge 2$ (Lemma~\ref{lem:li-succ}: \lname{gammaSeq\_mul\_eq\_two\_mul} and evenness), and
@@ -364,7 +370,7 @@ its new lemmas are of Mathlib generality.
 
 \begin{proposition}[the classes (C${}^\pm$)]
   \label{prop:rat-twoadic}
-  \uses{def:wseq, lem:li-mod8-2}
+  \uses{def:wseq, def:betaint, lem:rat-reflection}
   \lean{QuadraticIterates.TwoAdicClass, QuadraticIterates.reflNum_emod_of_odd,
     QuadraticIterates.reflNum_emod_four_of_even,
     QuadraticIterates.not_isSquare_neg_one_zmod_reflNum,
@@ -390,8 +396,8 @@ its new lemmas are of Mathlib generality.
   (\lname{gammaSeq\_eq\_eval\_one}) and $N \equiv 2(r+s)$; for odd $\bar a$ it has period $2$ from
   $n = 2$ on with $\gamma_3 \in \{5, 1\}$ (\lname{gammaSeq\_eq\_ite\_even\_of\_add\_two\_eq}) and
   $N \equiv r + 2 \pmod 4$. For even $s$, $w_n \equiv r \pmod 8$ for $n \ge 3$ and $N \equiv r
-  \pmod 4$. The listed classes are exactly those where the residue is as claimed (working notes,
-  Proposition~5.1).
+  \pmod 4$. The listed classes are exactly those where the residue is as claimed (the
+  proposition on the $2$-adic classes of the working notes).
   \formalnote{In terms of $(r, s, \varepsilon)$, both worlds at once: $s$ odd with
   $r \equiv 1$ or $r + \varepsilon s \equiv 3 \pmod 4$, or $s$ even with $r \equiv 3 \pmod 4$
   (\lname{TwoAdicClass r s ε}, a \lname{Prop}, so that no signature grows). Odd $s$:
@@ -422,7 +428,7 @@ its new lemmas are of Mathlib generality.
   squarefree $n \ge 2$ (with $|r|$ in place of $r$ and $w^S$ in place of $w$ when $a \le -2$).
 \end{lemma}
 \begin{proof}
-  \uses{lem:betaint, lem:moebiussign, lem:zmodsquare}
+  \uses{lem:betaint, lem:moebiussign, lem:zmodsquare, lem:rat-reflection}
   \leanok
   $w_{n+1} \equiv r w_n^2 \pmod p$; $E(n)$ is odd for squarefree $n \ge 2$.
   \formalnote{\lname{intCast\_wSeq\_zmod\_of\_dvd}: $w_n \equiv r^{2^{n-1}-1}$ modulo any $M \mid s$,
@@ -454,11 +460,9 @@ its new lemmas are of Mathlib generality.
 \begin{lemma}[the modulus $8$ for even $s$]
   \label{lem:rat-mod8}
   \uses{def:wseq, def:betaint}
-  \lean{QuadraticIterates.intCast_wSeq_zmod_eight_of_even,
-    QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_odd_of_even,
+  \lean{QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_odd_of_even,
     QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_even_of_even,
-    QuadraticIterates.not_isSquare_intCast_zmod_eight_of_odd_of_emod_ne_one,
-    Int.isSquare_mul_of_isSquare_div}
+    QuadraticIterates.not_isSquare_intCast_zmod_eight_of_odd_of_emod_ne_one}
   \leanok
   Let $s$ be even and $r \equiv 3 \pmod 4$. Then $w_n \equiv r \pmod 8$ for $n \ge 3$, $w_2 = r + s$,
   and for squarefree $n \ge 2$, $\beta_n \equiv r^{\pm 1}$ ($n$ odd) resp.\ $(r+s)^{\pm 1}$ ($n$ even)
@@ -466,7 +470,7 @@ its new lemmas are of Mathlib generality.
   1 \pmod 8$ (with $|r|$, $|r| - s$ when $a \le -2$).
 \end{lemma}
 \begin{proof}
-  \uses{lem:betaint, lem:moebiussign}
+  \uses{lem:betaint, lem:moebiussign, lem:rat-reflection, prop:rat-twoadic, lem:zmodsquare}
   \leanok
   $s^{2^n-1} \equiv 0 \pmod 8$ for $n \ge 2$ and $w_n$ is odd. Instead of the exponent of $r$ in
   $\beta_n$ one can look at the product $PQ$ of the numerator and the denominator of $\beta_n$,
@@ -487,7 +491,7 @@ its new lemmas are of Mathlib generality.
 
 \begin{theorem}[Theorem R${}^+$]
   \label{thm:rat-pos}
-  \uses{def:galois, def:wreath, def:wseq}
+  \uses{def:galois, def:wreath, def:wseq, prop:rat-twoadic}
   \lean{QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert,
     QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCert,
     QuadraticIterates.SquarefreeCert}
@@ -526,7 +530,7 @@ its new lemmas are of Mathlib generality.
 
 \begin{theorem}[Theorem R${}^-$]
   \label{thm:rat-neg}
-  \uses{def:galois, def:wreath, def:wseq}
+  \uses{def:galois, def:wreath, def:wseq, prop:rat-twoadic, thm:rat-pos}
   \lean{QuadraticIterates.nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert}
   \leanok
   Let $a = r/s \le -2$, $R = |r|$, $-rs$ not a square, $(R, s)$ in a class of
@@ -572,7 +576,8 @@ its new lemmas are of Mathlib generality.
   for $s = 1$.
 \end{lemma}
 \begin{proof}
-  \uses{lem:li-modsq, lem:betaint, lem:gamma-away, lem:moebiussign}
+  \uses{lem:li-modsq, lem:betaint, lem:gamma-away, lem:moebiussign, lem:rat-reflection,
+    lem:li-parity, lem:zmodsquare}
   \leanok
   Over $\ZZ[1/s]$, where $M \mid \gamma_2$, Lemma~\ref{lem:li-modsq} gives $\gamma_t \equiv
   \gamma_2 \pmod{\gamma_2^2}$ for even $t$ and $\gamma_t \equiv g(0) = \varepsilon$ for odd
