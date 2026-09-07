@@ -616,39 +616,3 @@ and of divisibility, the descent below) are of Mathlib generality.
   \lname{Squarefree.even\_card\_filter\_divisors\_mod\_two}.}
 \end{proof}
 
-\section{The files}
-
-The order below is the order in which the material was formalized, one verified commit per
-item.
-\begin{enumerate}
-\item The supporting lemmas, in the mirror files: the domain instance and the transfer of
-  primes and of divisibility for \lname{Localization.Away} (Lemmas \ref{lem:gamma-away},
-  \ref{lem:betaint}) in \lname{Mathlib/RingTheory/Localization/Away/Basic.lean}; the
-  \lname{\_of\_dvd} primary forms and \lname{map\_moebiusFactorR} in
-  \lname{Mathlib/RingTheory/MoebiusFactor.lean} (Definition~\ref{def:betaint}).
-\item \lname{Rational/Sequence.lean}: Definition~\ref{def:wseq} with the identity over a general
-  ring, Lemma~\ref{lem:w-coprime}, Lemma~\ref{lem:gamma-away} (with the local instances),
-  Definition~\ref{def:betaint}, Lemma~\ref{lem:betaint}, the sign worlds.
-\item \lname{Rational/Reflection.lean}: Lemmas \ref{lem:w-gamma-zmod}, \ref{lem:rat-reflection}.
-\item \lname{Rational/Residues.lean}: Proposition~\ref{prop:rat-twoadic}, Lemmas \ref{lem:rat-ps},
-  \ref{lem:rat-refl1}, \ref{lem:rat-mod8}.
-\item \lname{Rational/GammaTwo.lean}: Lemma~\ref{lem:rat-g2}, independent of the Galois side.
-\item The Galois side for $a \in \QQ$ (Theorem~\ref{thm:rat-section1}), in the four files
-  \lname{Iterates.lean} (polymorphic \lname{cSeq}, \lname{bSeq}; rational
-  \lname{splittingField}, \lname{GaloisGroup}; cast lemmas), \lname{Irreducibility.lean}
-  (Lemma~1.2 general, growth integral), \lname{DegreeCriterion.lean} (hypothesis swap) and
-  \lname{Main.lean} (Section~1 over $\QQ$, integer corollaries) of Chapter~1, together with the
-  comparator challenges, after the author's approval of the change of \lname{GaloisGroup}.
-\item \lname{Rational/SquareClasses.lean}: Lemmas \ref{lem:rat-sqclass}, \ref{lem:rat-shared}
-  (with the new integer lemma in \lname{Squares.lean}).
-\item \lname{Rational/Main.lean}: the certificate predicate \lname{SquarefreeCertificate}, the uniform
-  theorem \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_squarefreeCertificate}, and Theorems
-  \ref{thm:rat-pos} and \ref{thm:rat-neg} as its two sign instances.
-\item The audit of the chapter's code, in four verified rounds of one idea each: certificates
-  derived from the divisibility data instead of assumed (the unit $s u = 1$ modulo $M$); the
-  general facts extracted from the proofs into the mirror files (exponent identities, the sign
-  partition, squares times powers of units, coprimality and positivity of the Möbius products);
-  placement and naming (\lname{SquarefreeCertificate}, the reflection lemma named after
-  \lname{reflNum}, the residue lemmas modulo $8$ in \lname{Mathlib/Data/ZMod.lean} in the
-  \lname{Odd}/\lname{Even} currency); style and documentation.
-\end{enumerate}
