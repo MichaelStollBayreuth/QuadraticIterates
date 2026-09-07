@@ -9,6 +9,7 @@ public import QuadraticIterates.Rational.GammaTwo
 public import QuadraticIterates.Rational.Reflection
 public import QuadraticIterates.Rational.Residues
 public import QuadraticIterates.Rational.Sequence
+public import QuadraticIterates.Rational.SquareClasses
 
 /-!
 # Rational parameters `a = r/s`
@@ -22,5 +23,7 @@ modulo suitable moduli (`QuadraticIterates.Rational.Reflection`), which exist fo
 non-squarefree level in the 2-adic classes and, under the squarefree-level certificates, for the
 squarefree levels (`QuadraticIterates.Rational.Residues`); a second mechanism for the squarefree
 levels works modulo divisors of the numerator of `γ_2` (`QuadraticIterates.Rational.GammaTwo`).
-Work in progress; the plan is Chapter 6 of the blueprint.
+The shared-part lemma (`QuadraticIterates.Rational.SquareClasses`) turns the non-squareness of
+all `|β_n|`, `n ≥ 2`, into `Ω_n ≅ [C₂]ⁿ` for all `n`, through the Section 1 theorem for a rational
+parameter. Work in progress; the plan is Chapter 6 of the blueprint.
 -/

@@ -215,6 +215,22 @@ theorem cSeq_succ_eq_neg_one_pow_mul_eval_zero (n : ℕ) :
     cSeq a (n + 1) = (-1) ^ 2 ^ n * (iteratedPoly a (n + 1)).eval 0 := by
   rw [eval_zero_iteratedPoly_succ, cSeq_succ_eq_neg_one_pow_mul_eval]
 
+/-- Rescaling: for `ε² = 1`, `c_n = εa · γ_n` for `n ≥ 2`, where `γ` is the `γ`-sequence of
+`(εa) X² + ε` with sign `ε`; e.g. `ε = sgn a` gives the rescaled polynomial `|a| X² + sgn a`, and
+`a = εr/s` gives `(r/s) X² + ε`, the polynomial of the sequence `QuadraticIterates.wSeq r s ε`. -/
+theorem cSeq_eq_mul_gammaSeq {ε : R} (hε : ε ^ 2 = 1) {n : ℕ} (hn : 2 ≤ n) :
+    cSeq a n = ε * a * gammaSeq (C (ε * a) * X ^ 2 + C ε) ε n := by
+  induction n, hn using Nat.le_induction with
+  | base =>
+    rw [cSeq_two, gammaSeq_succ _ _ le_rfl, gammaSeq_one]
+    simp only [eval_add, eval_mul, eval_C, eval_pow, eval_X, zero_pow two_ne_zero, mul_zero,
+      zero_add]
+    linear_combination (-(a ^ 2 * (1 + ε ^ 2 + ε ^ 4) + a)) * hε
+  | succ k hk ih =>
+    rw [cSeq_succ a (by lia), ih, gammaSeq_succ _ _ (by lia)]
+    simp only [eval_add, eval_mul, eval_C, eval_pow, eval_X]
+    linear_combination (-a) * hε
+
 lemma map_cSeq {S : Type*} [CommRing S] (φ : R →+* S) (n : ℕ) : φ (cSeq a n) = cSeq (φ a) n := by
   simp [cSeq_eq_gammaSeq, map_gammaSeq]
 

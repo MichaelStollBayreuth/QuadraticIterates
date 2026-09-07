@@ -234,28 +234,45 @@ its new lemmas are of Mathlib generality.
 
 \begin{lemma}[square classes]
   \label{lem:rat-sqclass}
-  \uses{def:betaint, def:bseq}
+  \uses{def:betaint, def:bseq, def:wseq}
+  \lean{QuadraticIterates.cSeq_div_eq, QuadraticIterates.cSeq_div_ne_zero,
+    QuadraticIterates.sqClass_cSeq_div, QuadraticIterates.sqClass_neg_div,
+    QuadraticIterates.sqClass_betaInt, QuadraticIterates.sqClass_bSeq_div,
+    QuadraticIterates.cSeq_eq_mul_gammaSeq}
+  \leanok
   In $\QQ^\times/(\QQ^\times)^2$: $c_1 = b_1 \sim -rs$ and $b_n \sim (-s)^{\mu(n)} \beta_n$ for
-  $n \ge 2$.
+  $n \ge 2$ (positive world); in general, for $a = \varepsilon r / s$ and the sequence $w$ of
+  $(r/s)X^2 + \varepsilon$, $b_1 \sim -\varepsilon r s$ and $b_n \sim (-\varepsilon s)^{\mu(n)}
+  \beta_n$ for $n \ge 2$.
 \end{lemma}
 \begin{proof}
+  \leanok
+  \uses{def:cseq, lem:w-gamma-zmod, lem:moebiussign}
   $c_d = r w_d / s^{2^{d-1}} \sim r w_d$ for $d \ge 2$ (even exponent), so
   $b_n \sim (-rs)^{\mu(n)} \prod_{d \mid n, d \ge 2} (r w_d)^{\mu(n/d)} = (-s)^{\mu(n)} r^{\sum_{d \mid n}
   \mu(n/d)} \beta_n$ with $w_1 = 1$ and $\sum_{d \mid n} \mu(n/d) = 0$.
   \formalnote{Stated with \lname{sqClass} (\lname{QuadraticIterates.Mathlib.FieldTheory.Multiquadratic}),
-  additively: \lname{sqClass\_bSeq\_eq}, $[b_n] = \mu(n)\,[-s] + [\beta_n]$; the proof is
-  \lname{sqClass\_bSeq\_eq\_sum\_divisorsAntidiagonal} plus \lname{sqClass\_cSeq\_eq},
-  $[c_d] = [r w_d]$ for $d \ge 2$.}
+  additively, for a general sign: \lname{sqClass\_bSeq\_div}, $[b_n] = \mu(n)\,[-\varepsilon s]
+  + [\beta_n]$ for $n \ge 2$; the proof is \lname{sqClass\_bSeq\_eq\_sum\_divisorsAntidiagonal}
+  plus \lname{sqClass\_cSeq\_div}, $[c_d] = [r w_d]$ for $d \ge 2$, which comes from
+  $c_d = r w_d / s^{2^{d-1}}$ (\lname{cSeq\_div\_eq}, the rescaling identity
+  \lname{cSeq\_eq\_mul\_gammaSeq} $c_n = \varepsilon a\, \gamma_n$ over any ring together with
+  \lname{intCast\_wSeq}), and the balanced sign partition.}
 \end{proof}
 
 \begin{lemma}[shared-part lemma]
   \label{lem:rat-shared}
   \uses{lem:rat-sqclass, lem:betaint, thm:rat-section1}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_betaInt,
+    QuadraticIterates.twoIndependent_bSeq_div}
+  \leanok
   If $-rs$ is not a square and $|\beta_n|$ is not a square for every $n \ge 2$, then
-  $c_1, \dots, c_n$ are $2$-independent for every $n$, hence $\Om_n \cong \Ct{n}$ for all $n$.
+  $c_1, \dots, c_n$ are $2$-independent for every $n$, hence $\Om_n \cong \Ct{n}$ for all $n$
+  (in general, for $a = \varepsilon r/s$: if $-\varepsilon r s$ is not a square).
 \end{lemma}
 \begin{proof}
-  \uses{lem:betaint, lem:rat-sqclass}
+  \leanok
+  \uses{lem:betaint, lem:rat-sqclass, lem:1.2, lem:coprimesquare}
   A nonempty $S$ with $\prod_{n \in S} b_n$ a square has, by pairwise coprimality and coprimality to
   $rs$, $|\beta_n|$ a square for each $n \in S$, $n \ge 2$; so $S = \{1\}$, but $b_1 \sim -rs$ is not
   a square. The $b$'s are $2$-independent, hence the $c$'s (Möbius inversion in $\QQ^\times$), and
@@ -268,7 +285,11 @@ its new lemmas are of Mathlib generality.
   $|\beta_i|$, $i \in S$, is a square
   (\lname{Int.isSquare\_abs\_of\_isSquare\_mul\_prod\_of\_pairwise\_isCoprime} in
   \lname{QuadraticIterates/Mathlib/Algebra/Squares.lean}, from
-  \lname{Int.isSquare\_abs\_of\_isSquare\_mul\_of\_isCoprime}; here $u = (-s)^e$).}
+  \lname{Int.isSquare\_abs\_of\_isSquare\_mul\_of\_isCoprime}); here $u = (-\varepsilon s)^k
+  r^c$, where $r^c$ accounts for $b_1 \sim (-\varepsilon s) r$ (\lname{twoIndependent\_bSeq\_div}).
+  The passage from the $2$-independence of the $b$'s to the irreducibility of all iterates and
+  then to $\Om_n \cong \Ct{n}$ is \lname{section1\_b\_iff\_c}, Lemma~\ref{lem:1.2} and
+  \lname{section1\_tfae\_of\_irreducible}.}
 \end{proof}
 
 \section{Reflection with the twist}
@@ -574,7 +595,7 @@ its new lemmas are of Mathlib generality.
   ring, Lemma~\ref{lem:w-coprime}, Lemma~\ref{lem:gamma-away} (with the local instances),
   Definition~\ref{def:betaint}, Lemma~\ref{lem:betaint}.
 \item \lname{Rational/SquareClasses.lean}: Lemmas \ref{lem:rat-sqclass}, \ref{lem:rat-shared}
-  (with the new integer lemma in \lname{Squares.lean}).
+  (with the new integer lemma in \lname{Squares.lean}); done after the Galois side.
 \item \lname{Rational/Reflection.lean}: Lemmas \ref{lem:w-gamma-zmod}, \ref{lem:rat-reflection}.
 \item \lname{Rational/Residues.lean}: Proposition~\ref{prop:rat-twoadic}, Lemmas \ref{lem:rat-ps},
   \ref{lem:rat-refl1}, \ref{lem:rat-mod8}.

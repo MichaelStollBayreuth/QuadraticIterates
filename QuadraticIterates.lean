@@ -42,3 +42,4 @@ public import QuadraticIterates.Rational.GammaTwo
 public import QuadraticIterates.Rational.Reflection
 public import QuadraticIterates.Rational.Residues
 public import QuadraticIterates.Rational.Sequence
+public import QuadraticIterates.Rational.SquareClasses

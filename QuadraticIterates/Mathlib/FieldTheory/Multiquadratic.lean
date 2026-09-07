@@ -352,6 +352,15 @@ instance : Module (ZMod 2) (SquareClasses L) :=
       exact (QuotientGroup.eq_one_iff _).mpr ⟨u, rfl⟩
     simpa [two_nsmul, pow_two] using hsq
 
+/-- In a `ZMod 2`-module an integer scalar acts through its absolute value. -/
+theorem zsmul_eq_natAbs_nsmul {M : Type*} [AddCommGroup M] [Module (ZMod 2) M] (k : ℤ) (v : M) :
+    k • v = k.natAbs • v := by
+  have h2 (w : M) : (2 : ℕ) • w = 0 := by
+    rw [← Nat.cast_smul_eq_nsmul (ZMod 2), ZMod.natCast_self, zero_smul]
+  rcases Int.natAbs_eq k with h | h <;> nth_rw 1 [h]
+  · rw [natCast_zsmul]
+  · rw [neg_zsmul, natCast_zsmul, neg_eq_iff_add_eq_zero, ← two_nsmul, h2]
+
 variable [DecidableEq L]
 
 /-- The class of a nonzero field element in `Lˣ/(Lˣ)²` (junk value `0` at `r = 0`). -/
@@ -397,6 +406,19 @@ theorem sqClass_zpow (x : L) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
     show Units.mk0 (x ^ k) (zpow_ne_zero k hx) = (Units.mk0 x hx) ^ k from
       Units.ext (by push_cast; simp),
     QuotientGroup.mk_zpow, ofMul_zpow]
+
+theorem sqClass_pow (x : L) (n : ℕ) : sqClass (x ^ n) = n • sqClass x := by
+  rw [← zpow_natCast, sqClass_zpow, natCast_zsmul]
+
+theorem sqClass_mul_sq (x : L) {y : L} (hy : y ≠ 0) : sqClass (x * y ^ 2) = sqClass x := by
+  rcases eq_or_ne x 0 with rfl | hx
+  · simp
+  · rw [sqClass_mul hx (pow_ne_zero 2 hy), (sqClass_eq_zero_iff _).mpr ⟨y, sq y⟩]
+    exact add_zero (sqClass x)
+
+theorem sqClass_div_sq (x : L) {y : L} (hy : y ≠ 0) : sqClass (x / y ^ 2) = sqClass x := by
+  rw [div_eq_mul_inv, ← inv_pow]
+  exact sqClass_mul_sq x (inv_ne_zero hy)
 
 theorem isSquare_prod_iff_sum_sqClass_eq_zero {ι : Type*} {s : Finset ι} {r : ι → L}
     (hr : ∀ i ∈ s, r i ≠ 0) : IsSquare (∏ i ∈ s, r i) ↔ ∑ i ∈ s, sqClass (r i) = 0 := by
