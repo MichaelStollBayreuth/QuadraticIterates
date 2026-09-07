@@ -133,17 +133,32 @@ theorem isSquare_abs_iff {α : Type*} [Ring α] [LinearOrder α] [IsOrderedRing 
     fun h ↦ h.elim (fun h ↦ (congrArg IsSquare (abs_of_nonneg h.nonneg)).mpr h) fun h ↦
       (congrArg IsSquare (abs_of_nonpos (neg_nonneg.mp h.nonneg))).mpr h⟩
 
+/-- If `a b` is a square and `a` is coprime to `b`, then `|a|` is a square. -/
+theorem Int.isSquare_abs_of_isSquare_mul_of_isCoprime {a b : ℤ} (h : IsCoprime a b)
+    (hsq : IsSquare (a * b)) : IsSquare |a| := by
+  obtain ⟨c, hc⟩ := hsq
+  obtain ⟨a0, ha0⟩ := Int.sq_of_isCoprime h (hc.trans (sq c).symm)
+  refine ⟨|a0|, ?_⟩
+  rcases ha0 with h | h <;> simpa [sq, abs_mul, abs_neg] using congrArg abs h
+
+open Function in
+/-- For a pairwise coprime family `f` on `S` and `u` coprime to every `f i`, `i ∈ S`: if
+`u ∏_{i ∈ S} f i` is a square, then so is every `|f i|`, `i ∈ S`. -/
+theorem Int.isSquare_abs_of_isSquare_mul_prod_of_pairwise_isCoprime {ι : Type*} {f : ι → ℤ}
+    {S : Finset ι} {u : ℤ} (hcop : (S : Set ι).Pairwise (IsCoprime on f))
+    (hu : ∀ i ∈ S, IsCoprime (f i) u) (hsq : IsSquare (u * ∏ i ∈ S, f i)) {i : ι} (hi : i ∈ S) :
+    IsSquare |f i| := by
+  classical
+  refine Int.isSquare_abs_of_isSquare_mul_of_isCoprime ((hu i hi).mul_right (IsCoprime.prod_right
+    fun j hj ↦ hcop hi (Finset.mem_erase.mp hj).2 (Finset.mem_erase.mp hj).1.symm)) ?_
+  rwa [mul_left_comm, Finset.mul_prod_erase S f hi]
+
 open Function in
 /-- If a family `f` is pairwise coprime on a finite set `S` and `∏_{i ∈ S} f i` is a square, then
 `|f i|` is a square for every `i ∈ S`. -/
 theorem Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime {ι : Type*} {f : ι → ℤ}
     {S : Finset ι} (hcop : (S : Set ι).Pairwise (IsCoprime on f)) (hsq : IsSquare (∏ i ∈ S, f i))
-    {i : ι} (hi : i ∈ S) : IsSquare |f i| := by
-  classical
-  have hcopb : IsCoprime (f i) (∏ j ∈ S.erase i, f j) := IsCoprime.prod_right fun j hj ↦
-    hcop hi (Finset.mem_erase.mp hj).2 (Finset.mem_erase.mp hj).1.symm
-  obtain ⟨c, hc⟩ := hsq
-  obtain ⟨a0, ha0⟩ := Int.sq_of_isCoprime hcopb (by rw [Finset.mul_prod_erase S f hi, hc, sq])
-  refine ⟨|a0|, ?_⟩
-  rcases ha0 with h | h <;> simpa [sq, abs_mul, abs_neg] using congrArg abs h
+    {i : ι} (hi : i ∈ S) : IsSquare |f i| :=
+  isSquare_abs_of_isSquare_mul_prod_of_pairwise_isCoprime hcop (fun _ _ ↦ isCoprime_one_right)
+    (by rwa [one_mul]) hi
 

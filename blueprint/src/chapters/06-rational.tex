@@ -264,11 +264,12 @@ its new lemmas are of Mathlib generality.
   \formalnote{\lname{nonempty\_mulEquiv\_of\_forall\_not\_isSquare\_abs\_betaInt}, the rational
   analogue of \lname{section1\_of\_not\_isSquare\_abs\_bSeq}. The integer argument uses
   \lname{twoIndependent\_iff\_of\_pairwise\_isCoprime}; here the family
-  $i \mapsto (-s)^{\mu(i+1)} \beta_{i+1}$ is not pairwise coprime, so the lemma to prove is: for
-  pairwise coprime $\beta_i$ coprime to $u$, if $u^e \prod_{i \in S} \beta_i$ is a square then each
+  $i \mapsto (-s)^{\mu(i+1)} \beta_{i+1}$ is not pairwise coprime, so the lemma to use is: for
+  pairwise coprime $\beta_i$ coprime to $u$, if $u \prod_{i \in S} \beta_i$ is a square then each
   $|\beta_i|$, $i \in S$, is a square
-  (\lname{Int.isSquare\_abs\_of\_isSquare\_mul\_prod\_of\_pairwise\_isCoprime}, for
-  \lname{QuadraticIterates/Mathlib/Algebra/Squares.lean}).}
+  (\lname{Int.isSquare\_abs\_of\_isSquare\_mul\_prod\_of\_pairwise\_isCoprime} in
+  \lname{QuadraticIterates/Mathlib/Algebra/Squares.lean}, from
+  \lname{Int.isSquare\_abs\_of\_isSquare\_mul\_of\_isCoprime}; here $u = (-s)^e$).}
 \end{proof}
 
 \section{Reflection with the twist}
