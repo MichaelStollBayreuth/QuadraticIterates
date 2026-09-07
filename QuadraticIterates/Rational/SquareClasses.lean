@@ -44,15 +44,30 @@ namespace QuadraticIterates
 
 variable {r s ε : ℤ}
 
-/-! ### The sequences `c` and `b` of `a = εr/s` -/
-
 private lemma isUnit_intCast_of_sq_eq_one (hε : ε ^ 2 = 1) : IsUnit (ε : ℚ) :=
   IsUnit.of_pow_eq_one (mod_cast hε : (ε : ℚ) ^ 2 = 1) two_ne_zero
+
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+include hs
+
+/-! ### The sequences `c` and `b` of `a = εr/s` -/
+
+/-- The square class of `-a = -εr/s` is that of `-εs · r`. -/
+theorem sqClass_neg_div : sqClass (-(ε * r / s) : ℚ) = sqClass ((-(ε * s) * r : ℤ) : ℚ) := by
+  have hs' : (s : ℚ) ≠ 0 := mod_cast hs
+  rw [← sqClass_div_sq (((-(ε * s) * r : ℤ) : ℚ)) hs']
+  congr 1
+  push_cast
+  field
+
+section
+
+include hε
 
 /-- For `a = εr/s`, `c_n = r w_n / s^(2^(n-1))` for `n ≥ 2`:
 `QuadraticIterates.cSeq_eq_mul_gammaSeq` with `εa = r/s`, and `QuadraticIterates.intCast_wSeq`
 over `ℚ`. -/
-theorem cSeq_div_eq (hs : s ≠ 0) (hε : ε ^ 2 = 1) {n : ℕ} (hn : 2 ≤ n) :
+theorem cSeq_div_eq {n : ℕ} (hn : 2 ≤ n) :
     cSeq (ε * r / s : ℚ) n = r * wSeq r s ε n / s ^ 2 ^ (n - 1) := by
   have hs' : (s : ℚ) ≠ 0 := mod_cast hs
   have hu : (s : ℚ) * (s : ℚ)⁻¹ = 1 := mul_inv_cancel₀ hs'
@@ -64,18 +79,9 @@ theorem cSeq_div_eq (hs : s ≠ 0) (hε : ε ^ 2 = 1) {n : ℕ} (hn : 2 ≤ n) :
   have := pow_ne_zero (2 ^ (n - 1) - 1) hs'
   field
 
-lemma cSeq_div_ne_zero (hs : s ≠ 0) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
-    (hr : r ≠ 0) : ∀ k ≥ 1, cSeq (ε * r / s : ℚ) k ≠ 0 := fun k hk ↦ by
-  rcases (show k = 1 ∨ 2 ≤ k by lia) with rfl | hk2
-  · have := (isUnit_intCast_of_sq_eq_one hε).ne_zero
-    simp [hr, hs, this]
-  · rw [cSeq_div_eq hs hε hk2]
-    exact div_ne_zero (mul_ne_zero (mod_cast hr) (mod_cast hw k hk))
-      (pow_ne_zero _ (mod_cast hs))
-
 /-- The square class of `c_n`, `n ≥ 2`, is that of `r w_n`: the denominator `s^(2^(n-1))` is a
 square. -/
-theorem sqClass_cSeq_div (hs : s ≠ 0) (hε : ε ^ 2 = 1) {n : ℕ} (hn : 2 ≤ n) :
+theorem sqClass_cSeq_div {n : ℕ} (hn : 2 ≤ n) :
     sqClass (cSeq (ε * r / s : ℚ) n) = sqClass ((r * wSeq r s ε n : ℤ) : ℚ) := by
   have h2 : 2 ^ (n - 1) = 2 ^ (n - 2) * 2 := by
     rw [← pow_succ]
@@ -85,29 +91,25 @@ theorem sqClass_cSeq_div (hs : s ≠ 0) (hε : ε ^ 2 = 1) {n : ℕ} (hn : 2 ≤
   push_cast
   rfl
 
-/-- The square class of `-a = -εr/s` is that of `-εs · r`. -/
-theorem sqClass_neg_div (hs : s ≠ 0) :
-    sqClass (-(ε * r / s) : ℚ) = sqClass ((-(ε * s) * r : ℤ) : ℚ) := by
-  have hs' : (s : ℚ) ≠ 0 := mod_cast hs
-  rw [← sqClass_div_sq (((-(ε * s) * r : ℤ) : ℚ)) hs']
-  congr 1
-  push_cast
-  field
+section
+
+include hw
+
+lemma cSeq_div_ne_zero (hr : r ≠ 0) : ∀ k ≥ 1, cSeq (ε * r / s : ℚ) k ≠ 0 := fun k hk ↦ by
+  rcases (show k = 1 ∨ 2 ≤ k by lia) with rfl | hk2
+  · have := (isUnit_intCast_of_sq_eq_one hε).ne_zero
+    simp [hr, hs, this]
+  · rw [cSeq_div_eq hs hε hk2]
+    exact div_ne_zero (mul_ne_zero (mod_cast hr) (mod_cast hw k hk))
+      (pow_ne_zero _ (mod_cast hs))
+
+private lemma bSeq_div_ne_zero (hr : r ≠ 0) (n : ℕ) : bSeq (ε * r / s : ℚ) n ≠ 0 :=
+  bSeq_ne_zero_of_forall_cSeq_ne_zero (cSeq_div_ne_zero hs hε hw hr) n
 
 /-! ### The square classes of `b_n` and `β_n` -/
 
-/-- In `ℚˣ/(ℚˣ)²`, the class of `β_n` is the Möbius-weighted sum of the classes of the `w_d`. -/
-theorem sqClass_betaInt (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
-    sqClass (betaInt r s ε n : ℚ) =
-      ∑ x ∈ n.divisorsAntidiagonal, (μ x.1) • sqClass (wSeq r s ε x.2 : ℚ) := by
-  rw [intCast_betaInt hs hrs hε hw hn, moebiusFactorK_eq_prod]
-  simp only [eq_intCast]
-  exact sqClass_prod_zpow _ fun x hx ↦ mod_cast ne_zero_of_mem_divisorsAntidiagonal hw hx
-
 /-- On the divisors `d ≥ 2` of `n`, the class of `c_d` is `[r] + [w_d]`. -/
-private lemma sum_erase_sqClass_cSeq_div (hs : s ≠ 0) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (hr : r ≠ 0) (n : ℕ) :
+private lemma sum_erase_sqClass_cSeq_div (hr : r ≠ 0) (n : ℕ) :
     ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), (μ x.1) • sqClass (cSeq (ε * r / s : ℚ) x.2) =
       (∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), μ x.1) • sqClass (r : ℚ) +
         ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), (μ x.1) • sqClass (wSeq r s ε x.2 : ℚ) := by
@@ -123,9 +125,20 @@ private lemma sum_erase_sqClass_cSeq_div (hs : s ≠ 0) (hε : ε ^ 2 = 1)
   rw [sqClass_cSeq_div hs hε hx2, Int.cast_mul, sqClass_mul (mod_cast hr)
     (mod_cast hw _ (by lia)), zsmul_add]
 
+section
+
+include hrs
+
+/-- In `ℚˣ/(ℚˣ)²`, the class of `β_n` is the Möbius-weighted sum of the classes of the `w_d`. -/
+theorem sqClass_betaInt {n : ℕ} (hn : 1 ≤ n) :
+    sqClass (betaInt r s ε n : ℚ) =
+      ∑ x ∈ n.divisorsAntidiagonal, (μ x.1) • sqClass (wSeq r s ε x.2 : ℚ) := by
+  rw [intCast_betaInt hs hrs hε hw hn, moebiusFactorK_eq_prod]
+  simp only [eq_intCast]
+  exact sqClass_prod_zpow _ fun x hx ↦ mod_cast ne_zero_of_mem_divisorsAntidiagonal hw hx
+
 /-- **Square classes.** For `a = εr/s` and `n ≥ 2`, `[b_n] = μ(n) [-εs] + [β_n]` in `ℚˣ/(ℚˣ)²`. -/
-theorem sqClass_bSeq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (hr : r ≠ 0) {n : ℕ} (hn : 2 ≤ n) :
+theorem sqClass_bSeq_div (hr : r ≠ 0) {n : ℕ} (hn : 2 ≤ n) :
     sqClass (bSeq (ε * r / s : ℚ) n) =
       (μ n) • sqClass (-(ε * s) : ℚ) + sqClass (betaInt r s ε n : ℚ) := by
   have hmem : (n, 1) ∈ n.divisorsAntidiagonal :=
@@ -143,13 +156,8 @@ theorem sqClass_bSeq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
 
 /-! ### The shared-part lemma -/
 
-private lemma bSeq_div_ne_zero (hs : s ≠ 0) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
-    (hr : r ≠ 0) (n : ℕ) : bSeq (ε * r / s : ℚ) n ≠ 0 :=
-  bSeq_ne_zero_of_forall_cSeq_ne_zero (cSeq_div_ne_zero hs hε hw hr) n
-
 /-- The class of `b_{i+1}` uniformly in `i`: `μ(i+1) [-εs] + [β_{i+1}]`, plus `[r]` at `i = 0`. -/
-private lemma sqClass_bSeq_div_succ (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (hr : r ≠ 0) (i : ℕ) :
+private lemma sqClass_bSeq_div_succ (hr : r ≠ 0) (i : ℕ) :
     sqClass (bSeq (ε * r / s : ℚ) (i + 1)) = (μ (i + 1)) • sqClass (-(ε * s) : ℚ) +
       sqClass (betaInt r s ε (i + 1) : ℚ) + if i = 0 then sqClass (r : ℚ) else 0 := by
   rcases Nat.eq_zero_or_pos i with rfl | hi
@@ -162,8 +170,7 @@ private lemma sqClass_bSeq_div_succ (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : 
   · rw [sqClass_bSeq_div hs hrs hε hw hr (by lia), ite_eq_right (by lia)]
     exact (add_zero _).symm
 
-private lemma isCoprime_betaInt_unit (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 1 ≤ n) (k c : ℕ) :
+private lemma isCoprime_betaInt_unit {n : ℕ} (hn : 1 ≤ n) (k c : ℕ) :
     IsCoprime (betaInt r s ε n) ((-(ε * s)) ^ k * r ^ c) :=
   ((((isCoprime_one_right (x := betaInt r s ε n)).of_isCoprime_of_dvd_right
     (IsUnit.of_pow_eq_one hε two_ne_zero).dvd).mul_right
@@ -172,8 +179,7 @@ private lemma isCoprime_betaInt_unit (hs : s ≠ 0) (hrs : IsCoprime r s) (hε :
 
 /-- If a subproduct of the `b_{i+1}` is a square, then `(-εs)^k r^c ∏ β_{i+1}` is a square in `ℤ`
 for suitable `k`, `c`. -/
-private lemma exists_isSquare_mul_prod_betaInt (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (hr : r ≠ 0) {m : ℕ} {S : Finset (Fin m)}
+private lemma exists_isSquare_mul_prod_betaInt (hr : r ≠ 0) {m : ℕ} {S : Finset (Fin m)}
     (hsq : IsSquare (∏ i ∈ S, bSeq (ε * r / s : ℚ) ((i : ℕ) + 1))) :
     ∃ k c : ℕ, IsSquare ((-(ε * s)) ^ k * r ^ c * ∏ i ∈ S, betaInt r s ε ((i : ℕ) + 1)) := by
   have hβ (i : Fin m) : (betaInt r s ε ((i : ℕ) + 1) : ℚ) ≠ 0 :=
@@ -192,8 +198,7 @@ private lemma exists_isSquare_mul_prod_betaInt (hs : s ≠ 0) (hrs : IsCoprime r
 
 /-- **The shared part, 2-independence.** For `a = εr/s` with `-εrs` not a square and `|β_n|` not a
 square for every `n ≥ 2`, the `b_1, …, b_m` are 2-independent for every `m`. -/
-theorem twoIndependent_bSeq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (ha : ¬IsSquare (-(ε * r * s)))
+theorem twoIndependent_bSeq_div (ha : ¬IsSquare (-(ε * r * s)))
     (hβ : ∀ n ≥ 2, ¬IsSquare |betaInt r s ε n|) (m : ℕ) :
     TwoIndependent (fun i : Fin m ↦ bSeq (ε * r / s : ℚ) ((i : ℕ) + 1)) := fun S hS hsq ↦ by
   have hr : r ≠ 0 := fun h ↦ ha (by simp [h])
@@ -214,8 +219,7 @@ theorem twoIndependent_bSeq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^
 /-- **The shared-part lemma.** For `a = εr/s` with `-εrs` not a square and `|β_n|` not a square for
 every `n ≥ 2`, `Ω_n ≅ [C₂]ⁿ` for all `n`: the `b_k` are 2-independent, hence the `c_k`, so no `c_k`
 is a square and all iterates are irreducible (Lemma 1.2), and the Section 1 theorem applies. -/
-theorem nonempty_mulEquiv_of_forall_not_isSquare_abs_betaInt (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (ha : ¬IsSquare (-(ε * r * s)))
+theorem nonempty_mulEquiv_of_forall_not_isSquare_abs_betaInt (ha : ¬IsSquare (-(ε * r * s)))
     (hβ : ∀ n ≥ 2, ¬IsSquare |betaInt r s ε n|) (n : ℕ) :
     Nonempty (GaloisGroup (ε * r / s : ℚ) n ≃* WreathPower n) := by
   have hr : r ≠ 0 := fun h ↦ ha (by simp [h])
@@ -226,6 +230,12 @@ theorem nonempty_mulEquiv_of_forall_not_isSquare_abs_betaInt (hs : s ≠ 0) (hrs
     irreducible_iteratedPoly_of_not_isSquare_cSeq fun j hj _ ↦ by
       simpa [Nat.sub_add_cancel hj] using (hc j).not_isSquare ⟨j - 1, by lia⟩
   exact ((section1_tfae_of_irreducible hirr n).out 1 3).mpr (hb n)
+
+end
+
+end
+
+end
 
 end QuadraticIterates
 

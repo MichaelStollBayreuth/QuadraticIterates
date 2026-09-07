@@ -53,10 +53,14 @@ namespace QuadraticIterates
 
 variable {r s ε : ℤ}
 
+section
+
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+include hs hrs hε hw
+
 /-- `β_n` as the quotient of the products of `w_{kt}` over the two halves of the divisors `t` of
 `n' = rad n`, `k = n / n'`, by the sign of `μ(n'/t)`. -/
-theorem intCast_betaInt_eq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 1 ≤ n) (hn' : n' = radical n)
+theorem intCast_betaInt_eq_div {n k n' : ℕ} (hn : 1 ≤ n) (hn' : n' = radical n)
     (hk : n = k * n') : (betaInt r s ε n : ℚ) =
       ((∏ t ∈ n'.divisors with μ (n' / t) = 1, wSeq r s ε (k * t) : ℤ) : ℚ) /
         ((∏ t ∈ n'.divisors with μ (n' / t) = -1, wSeq r s ε (k * t) : ℤ) : ℚ) := by
@@ -67,12 +71,13 @@ theorem intCast_betaInt_eq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 
 
 /-- `β_n` for squarefree `n` as the quotient of the products of `w_t` over the two halves of the
 divisors `t` of `n` by the sign of `μ(n/t)`. -/
-theorem intCast_betaInt_eq_div_of_squarefree (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hsf : Squarefree n) : (betaInt r s ε n : ℚ) =
+theorem intCast_betaInt_eq_div_of_squarefree {n : ℕ} (hsf : Squarefree n) : (betaInt r s ε n : ℚ) =
       ((∏ t ∈ n.divisors with μ (n / t) = 1, wSeq r s ε t : ℤ) : ℚ) /
         ((∏ t ∈ n.divisors with μ (n / t) = -1, wSeq r s ε t : ℤ) : ℚ) := by
   simpa using intCast_betaInt_eq_div hs hrs hε hw (Nat.pos_of_ne_zero hsf.ne_zero)
     (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm
+
+end
 
 section zmod
 
@@ -133,12 +138,16 @@ private lemma isUnit_intCast_prod_wSeq_zmod (hu : (s : ZMod M) * u = 1) (hε : �
     (isUnit_prod_gammaSeq_mul evenPoly_gZ hk (gammaSeq_zmod_add_two_mul_eq_zero hu hε hk hdvd)
       (isUnit_gammaSeq_zmod_two_mul hu hε hk hdvd) hS)
 
+section
+
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+include hs hrs hε hw
+
 /-- **Reflection with the twist.** Let `n ≥ 2`, `n' = rad n`, `k = n / n'`, and let `M` divide
 the numerator `N_k` of `γ_k + γ_{k+1}` (so that `M` is coprime to `s`). Then
 `β_n ≡ -s^F · (unit)² mod M` with `F = ∑_{t ∣ n'} (2^(kt-1) - 1)`, so `β_n` is not a square if
 `-s^F` is not a square mod `M`. -/
-theorem not_isSquare_betaInt_of_dvd_reflNum (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n) (hn' : n' = radical n)
+theorem not_isSquare_betaInt_of_dvd_reflNum {n k n' : ℕ} (hn : 2 ≤ n) (hn' : n' = radical n)
     (hk : n = k * n') (hdvd : (M : ℤ) ∣ reflNum r s ε k)
     (hnsq : ¬IsSquare (-(s : ZMod M) ^ ∑ t ∈ n'.divisors, (2 ^ (k * t - 1) - 1))) :
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
@@ -164,8 +173,7 @@ theorem not_isSquare_betaInt_of_dvd_reflNum (hs : s ≠ 0) (hrs : IsCoprime r s)
 /-- `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum` for `n` not squarefree
 (`k = n / rad n ≥ 2`): the twist `s^F` is a square, so it suffices that `-1` is not a square
 mod `M`. -/
-theorem not_isSquare_betaInt_of_dvd_reflNum_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n)
+theorem not_isSquare_betaInt_of_dvd_reflNum_of_two_le {n k n' : ℕ} (hn : 2 ≤ n)
     (hn' : n' = radical n) (hk : n = k * n') (hk2 : 2 ≤ k) (hdvd : (M : ℤ) ∣ reflNum r s ε k)
     (hnsq : ¬IsSquare (-1 : ZMod M)) : ¬IsSquare (betaInt r s ε n) := by
   have hsu : IsUnit (s : ZMod M) := ZMod.isUnit_intCast_of_isCoprime_of_dvd
@@ -178,9 +186,8 @@ theorem not_isSquare_betaInt_of_dvd_reflNum_of_two_le (hs : s ≠ 0) (hrs : IsCo
 modulus divides `N_1`, the numerator `r + (1 + ε) s` of `γ_1 + γ_2`
 (`QuadraticIterates.reflNum_one`), and the twist is `s` times a square, so it suffices that `-s`
 is not a square mod `M`. -/
-theorem not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n) (hsf : Squarefree n)
-    (hdvd : (M : ℤ) ∣ reflNum r s ε 1) (hnsq : ¬IsSquare (-(s : ZMod M))) :
+theorem not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one {n : ℕ} (hn : 2 ≤ n)
+    (hsf : Squarefree n) (hdvd : (M : ℤ) ∣ reflNum r s ε 1) (hnsq : ¬IsSquare (-(s : ZMod M))) :
     ¬IsSquare (betaInt r s ε n) := by
   have hsu : IsUnit (s : ZMod M) :=
     ZMod.isUnit_intCast_of_isCoprime_of_dvd (isCoprime_reflNum_right hrs le_rfl).symm hdvd
@@ -189,6 +196,8 @@ theorem not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one (hs : s ≠ 0) (hr
   simp only [one_mul] at h
   rwa [← neg_one_mul, hsu.isSquare_mul_pow_iff_of_odd (hsf.odd_sum_two_pow_sub_one (by lia)),
     neg_one_mul] at h
+
+end
 
 end zmod
 

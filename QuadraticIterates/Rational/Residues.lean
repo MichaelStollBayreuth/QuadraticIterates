@@ -143,16 +143,20 @@ private lemma odd_of_isCoprime_of_even {x y : ℤ} (h : IsCoprime x y) (hy : Eve
   Int.not_even_iff_odd.mp fun hx ↦
     Int.prime_two.not_isUnit (h.isUnit_of_dvd' hx.two_dvd hy.two_dvd)
 
+section
+
+variable (hs : s % 2 = 0) (hrs : IsCoprime r s)
+include hs hrs
+
 /-- For even `s` (and `r` coprime to `s`), `w_n` is odd, so `w_n² = 1` in `ZMod 8`. -/
-private lemma intCast_wSeq_sq_zmod_eight_of_even (hs : s % 2 = 0) (hrs : IsCoprime r s) {n : ℕ}
-    (hn : 1 ≤ n) : (wSeq r s ε n : ZMod 8) ^ 2 = 1 :=
+private lemma intCast_wSeq_sq_zmod_eight_of_even {n : ℕ} (hn : 1 ≤ n) :
+    (wSeq r s ε n : ZMod 8) ^ 2 = 1 :=
   ZMod.intCast_sq_eight_eq_one_of_odd
     (odd_of_isCoprime_of_even (isCoprime_wSeq_right hrs hn) (Int.even_iff.mpr hs))
 
 /-- For even `s` (and `r` coprime to `s`), `w_n ≡ r mod 8` for all `n ≥ 3`: `w_n` is odd, so
 `w_n² ≡ 1`, and `8 ∣ s^(2^n - 1)` for `n ≥ 2`. -/
-theorem intCast_wSeq_zmod_eight_of_even (hs : s % 2 = 0) (hrs : IsCoprime r s) :
-    ∀ n ≥ 3, (wSeq r s ε n : ZMod 8) = r := fun n hn ↦ by
+theorem intCast_wSeq_zmod_eight_of_even : ∀ n ≥ 3, (wSeq r s ε n : ZMod 8) = r := fun n hn ↦ by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   have h3 : 3 ≤ 2 ^ m - 1 := by
     have := Nat.pow_le_pow_right two_pos (by lia : 2 ≤ m)
@@ -165,8 +169,8 @@ theorem intCast_wSeq_zmod_eight_of_even (hs : s % 2 = 0) (hrs : IsCoprime r s) :
 
 /-- **The 2-adic classes, even `s`.** If `s` is even and `r ≡ 3 mod 4`, then `N_k ≡ 3 mod 4` for
 every `k ≥ 2`: `4 ∣ s^(2^(k-1))` and `w_{k+1} ≡ r mod 8`. -/
-theorem reflNum_emod_four_of_even (hs : s % 2 = 0) (hrs : IsCoprime r s) (hr : r % 4 = 3)
-    {k : ℕ} (hk : 2 ≤ k) : reflNum r s ε k % 4 = 3 := by
+theorem reflNum_emod_four_of_even (hr : r % 4 = 3) {k : ℕ} (hk : 2 ≤ k) :
+    reflNum r s ε k % 4 = 3 := by
   have h1 := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp
     (intCast_wSeq_zmod_eight_of_even (ε := ε) hs hrs (k + 1) (by lia))
   have h4 : (4 : ℤ) ∣ wSeq r s ε k * s ^ 2 ^ (k - 1) :=
@@ -174,6 +178,8 @@ theorem reflNum_emod_four_of_even (hs : s % 2 = 0) (hrs : IsCoprime r s) (hr : r
       (pow_dvd_pow_of_dvd (Int.dvd_of_emod_eq_zero hs) _)).mul_left _
   rw [reflNum_eq]
   lia
+
+end
 
 /-! ### The corollary: `β_n` for `n` not squarefree -/
 
@@ -234,10 +240,14 @@ private lemma intCast_prod_wSeq_zmod_of_dvd (hM : (M : ℤ) ∣ s) {S : Finset �
   rw [Finset.prod_congr rfl fun t ht ↦ intCast_wSeq_zmod_of_dvd hM t (hS t ht),
     Finset.prod_pow_eq_pow_sum]
 
+section
+
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+include hs hrs hε hw
+
 /-- For squarefree `n` and `M ∣ s`, if `β_n` is a square then `r^F` is a square modulo `M`,
 `F = ∑_{t ∣ n} (2^(t-1) - 1)` the twist exponent: `β_n = P/Q` with `P ≡ r^(F⁺)`, `Q ≡ r^(F⁻)`. -/
-private lemma isSquare_intCast_pow_of_isSquare_betaInt (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hsf : Squarefree n)
+private lemma isSquare_intCast_pow_of_isSquare_betaInt {n : ℕ} (hsf : Squarefree n)
     (hM : (M : ℤ) ∣ s) (hsq : IsSquare (betaInt r s ε n)) :
     IsSquare ((r : ZMod M) ^ ∑ t ∈ n.divisors, (2 ^ (t - 1) - 1)) := by
   have hpos (S : Finset ℕ) (hS : S ⊆ n.divisors) : ∀ t ∈ S, 1 ≤ t :=
@@ -255,13 +265,14 @@ private lemma isSquare_intCast_pow_of_isSquare_betaInt (hs : s ≠ 0) (hrs : IsC
 /-- **The primes of `s`.** If `M ∣ s` and `r` is not a square modulo `M`, then `β_n` is not a
 square for every squarefree `n ≥ 2`: modulo `M`, `β_n ≡ r^F · (unit)²` with the odd twist exponent
 `F = ∑_{t ∣ n} (2^(t-1) - 1)`. -/
-theorem not_isSquare_betaInt_of_squarefree_of_dvd_of_not_isSquare (hs : s ≠ 0)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n)
+theorem not_isSquare_betaInt_of_squarefree_of_dvd_of_not_isSquare {n : ℕ} (hn : 2 ≤ n)
     (hsf : Squarefree n) (hM : (M : ℤ) ∣ s) (hnsq : ¬IsSquare (r : ZMod M)) :
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦
   hnsq (((ZMod.isUnit_intCast_of_isCoprime_of_dvd hrs hM).isSquare_pow_iff_of_odd
     (hsf.odd_sum_two_pow_sub_one (by lia))).mp
       (isSquare_intCast_pow_of_isSquare_betaInt hs hrs hε hw hsf hM hsq))
+
+end
 
 end dvd
 

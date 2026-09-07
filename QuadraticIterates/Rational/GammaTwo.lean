@@ -75,9 +75,13 @@ private lemma intCast_dvd_gammaSeq_normPolyAway_two (hε : ε ^ 2 = 1) {M : ℕ}
 
 end away
 
+section descent
+
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
+include hs hrs hε
+
 /-- For even `t ≥ 2`, `w_2` divides `w_t`: in `ℤ[1/s]`, `γ_2 ∣ γ_t`, and `w_2` is coprime to `s`. -/
-lemma wSeq_two_dvd_wSeq_of_even (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) {t : ℕ}
-    (hte : Even t) : wSeq r s ε 2 ∣ wSeq r s ε t := by
+lemma wSeq_two_dvd_wSeq_of_even {t : ℕ} (hte : Even t) : wSeq r s ε 2 ∣ wSeq r s ε t := by
   rcases Nat.eq_zero_or_pos t with rfl | ht
   · simp
   have := NeZero.mk hs
@@ -86,16 +90,17 @@ lemma wSeq_two_dvd_wSeq_of_even (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^
   rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _)]
   exact wSeqAway_two_dvd_wSeqAway_of_even hε (Nat.le_of_dvd ht hte.two_dvd) hte
 
-private lemma intCast_dvd_intCast_ediv_sub_pow [NeZero s] (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw2 : wSeq r s ε 2 ≠ 0) {M : ℕ} (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t)
-    (hte : Even t) : (M : Localization.Away s) ∣
+private lemma intCast_dvd_intCast_ediv_sub_pow (hw2 : wSeq r s ε 2 ≠ 0) {M : ℕ}
+    (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t) (hte : Even t) :
+    (M : Localization.Away s) ∣
       ((wSeq r s ε t / wSeq r s ε 2 : ℤ) : Localization.Away s) -
         (s : Localization.Away s) ^ (2 ^ (t - 1) - 2) := by
+  have := NeZero.mk hs
   obtain ⟨z, hz⟩ := gammaSeq_two_sq_dvd_sub_ite_even (evenPoly_normPolyAway r s ε)
     (eval_zero_normPolyAway_sq hε) (gammaSeq_normPolyAway_one hε) t ht
   rw [ite_eq_left hte] at hz
   have hv := congrArg (Int.cast : ℤ → Localization.Away s)
-    (Int.mul_ediv_cancel' (wSeq_two_dvd_wSeq_of_even (NeZero.ne s) hrs hε hte))
+    (Int.mul_ediv_cancel' (wSeq_two_dvd_wSeq_of_even hs hrs hε hte))
   push_cast at hv
   rw [← wSeqAway_eq_intCast, ← wSeqAway_eq_intCast, wSeqAway_two hε, wSeqAway_eq_mul_gammaSeq hε]
     at hv
@@ -110,14 +115,16 @@ private lemma intCast_dvd_intCast_ediv_sub_pow [NeZero s] (hrs : IsCoprime r s) 
 
 /-- Modulo a divisor `M` of `w_2` (which is coprime to `s`), the quotient `w_t / w_2` for even
 `t` is `s^(2^(t-1) - 2)`: in `ℤ[1/s]`, `γ_t ≡ γ_2 mod γ_2²`, so `γ_t / γ_2 ≡ 1 mod M`. -/
-lemma dvd_wSeq_ediv_wSeq_two_sub_pow_of_even (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw2 : wSeq r s ε 2 ≠ 0) {M : ℕ} (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t)
-    (hte : Even t) : (M : ℤ) ∣ wSeq r s ε t / wSeq r s ε 2 - s ^ (2 ^ (t - 1) - 2) := by
+lemma dvd_wSeq_ediv_wSeq_two_sub_pow_of_even (hw2 : wSeq r s ε 2 ≠ 0) {M : ℕ}
+    (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t) (hte : Even t) :
+    (M : ℤ) ∣ wSeq r s ε t / wSeq r s ε 2 - s ^ (2 ^ (t - 1) - 2) := by
   have := NeZero.mk hs
   refine IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime (S := Localization.Away s) ?_
     ((isCoprime_wSeq_right hrs one_le_two).of_isCoprime_of_dvd_left hdvd)
   rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _)]
-  simpa using intCast_dvd_intCast_ediv_sub_pow hrs hε hw2 hdvd ht hte
+  simpa using intCast_dvd_intCast_ediv_sub_pow hs hrs hε hw2 hdvd ht hte
+
+end descent
 
 /-! ### The `w_2`-free part and its residues -/
 
@@ -152,24 +159,27 @@ private lemma gammaSeq_zmod_eq_of_odd (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 
 private def wOddPart (r s ε : ℤ) (t : ℕ) : ℤ :=
   if t % 2 = 0 then wSeq r s ε t / wSeq r s ε 2 else wSeq r s ε t
 
-private lemma wSeq_eq_mul_wOddPart (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (t : ℕ) :
+section
+
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
+include hs hrs hε
+
+private lemma wSeq_eq_mul_wOddPart (t : ℕ) :
     wSeq r s ε t = (if t % 2 = 0 then wSeq r s ε 2 else 1) * wOddPart r s ε t := by
   rw [wOddPart]
   split_ifs with he
   · exact (Int.mul_ediv_cancel' (wSeq_two_dvd_wSeq_of_even hs hrs hε (Nat.even_iff.mpr he))).symm
   · rw [one_mul]
 
-private lemma prod_wSeq_eq_pow_mul_prod_wOddPart (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (S : Finset ℕ) :
+private lemma prod_wSeq_eq_pow_mul_prod_wOddPart (S : Finset ℕ) :
     ∏ t ∈ S, wSeq r s ε t = wSeq r s ε 2 ^ #{t ∈ S | t % 2 = 0} * ∏ t ∈ S, wOddPart r s ε t := by
   rw [Finset.prod_congr rfl fun t _ ↦ wSeq_eq_mul_wOddPart hs hrs hε t, Finset.prod_mul_distrib,
     Finset.prod_ite, Finset.prod_const, Finset.prod_const_one, mul_one]
 
 /-- Modulo `M ∣ w_2` with `s u = 1`, the `w_2`-free part of `w_t` is `u s^(2^(t-1)-1)` for even
 `t` and `ε s^(2^(t-1)-1)` for odd `t ≥ 3`. -/
-private lemma intCast_wOddPart_zmod (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw2 : wSeq r s ε 2 ≠ 0) (hu : (s : ZMod M) * u = 1) (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ}
-    (ht : 2 ≤ t) : (wOddPart r s ε t : ZMod M) =
+private lemma intCast_wOddPart_zmod (hw2 : wSeq r s ε 2 ≠ 0) (hu : (s : ZMod M) * u = 1)
+    (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t) : (wOddPart r s ε t : ZMod M) =
       (if t % 2 = 0 then u else (ε : ZMod M)) * (s : ZMod M) ^ (2 ^ (t - 1) - 1) := by
   rw [wOddPart]
   split_ifs with he
@@ -183,9 +193,9 @@ private lemma intCast_wOddPart_zmod (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : 
       mul_comm]
 
 /-- The product of the `w_2`-free parts over the divisors of `n` modulo `M ∣ w_2`. -/
-private lemma intCast_prod_wOddPart_zmod (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw2 : wSeq r s ε 2 ≠ 0) (hu : (s : ZMod M) * u = 1) (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {n : ℕ}
-    (hn : 1 ≤ n) : ((∏ t ∈ n.divisors, wOddPart r s ε t : ℤ) : ZMod M) =
+private lemma intCast_prod_wOddPart_zmod (hw2 : wSeq r s ε 2 ≠ 0) (hu : (s : ZMod M) * u = 1)
+    (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {n : ℕ} (hn : 1 ≤ n) :
+    ((∏ t ∈ n.divisors, wOddPart r s ε t : ℤ) : ZMod M) =
       u ^ #{t ∈ n.divisors | t % 2 = 0} * (ε : ZMod M) ^ (#{t ∈ n.divisors | t % 2 = 1} - 1) *
         (s : ZMod M) ^ ∑ t ∈ n.divisors, (2 ^ (t - 1) - 1) := by
   rw [← Finset.mul_prod_erase _ _ (Nat.one_mem_divisors.mpr (by lia)), wOddPart,
@@ -204,9 +214,9 @@ private lemma intCast_prod_wOddPart_zmod (hs : s ≠ 0) (hrs : IsCoprime r s) (h
 /-- For squarefree `n ≥ 3`, the product of the `w_2`-free parts over the divisors of `n` is
 `ε s · (unit)²` modulo `M ∣ w_2`: evenly many even and evenly many odd divisors, and the odd twist
 exponent. -/
-private lemma exists_isUnit_intCast_prod_wOddPart_zmod_eq (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw2 : wSeq r s ε 2 ≠ 0) (hu : (s : ZMod M) * u = 1)
-    (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {n : ℕ} (hn : 3 ≤ n) (hsf : Squarefree n) :
+private lemma exists_isUnit_intCast_prod_wOddPart_zmod_eq (hw2 : wSeq r s ε 2 ≠ 0)
+    (hu : (s : ZMod M) * u = 1) (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {n : ℕ} (hn : 3 ≤ n)
+    (hsf : Squarefree n) :
     ∃ v : ZMod M, IsUnit v ∧
       ((∏ t ∈ n.divisors, wOddPart r s ε t : ℤ) : ZMod M) = ε * s * v ^ 2 := by
   obtain ⟨N, hN⟩ := hsf.even_card_filter_divisors_mod_two hn 0
@@ -221,9 +231,9 @@ private lemma exists_isUnit_intCast_prod_wOddPart_zmod_eq (hs : s ≠ 0) (hrs : 
     hε, Int.cast_one, one_pow, one_mul]
   ring
 
-private lemma isSquare_intCast_prod_wOddPart_of_isSquare_betaInt (hs : s ≠ 0)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 3 ≤ n)
-    (hsf : Squarefree n) (hsq : IsSquare (betaInt r s ε n)) :
+private lemma isSquare_intCast_prod_wOddPart_of_isSquare_betaInt
+    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 3 ≤ n) (hsf : Squarefree n)
+    (hsq : IsSquare (betaInt r s ε n)) :
     IsSquare ((∏ t ∈ n.divisors, wOddPart r s ε t : ℤ) : ZMod M) := by
   have hβ := intCast_betaInt_eq_div_of_squarefree hs hrs hε hw hsf
   have hcard : #{t ∈ {t ∈ n.divisors | μ (n / t) = 1} | t % 2 = 0}
@@ -245,9 +255,9 @@ square when `ε s` is not a square modulo `M`. Modulo
 of `β_n` contain the same power of `w_2` (the sign partition of the divisors of `n` is balanced
 on the even divisors), and after cancelling it their product is `ε s^F · (unit)²` with the odd
 twist exponent `F = ∑_{t ∣ n} (2^(t-1) - 1)`. Rational form of Lemmas 3.2 and 3.3 of [Li 2020]. -/
-theorem not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 3 ≤ n) (hsf : Squarefree n)
-    (hdvd : (M : ℤ) ∣ wSeq r s ε 2) (hnsq : ¬IsSquare ((ε : ZMod M) * s)) :
+theorem not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+    {n : ℕ} (hn : 3 ≤ n) (hsf : Squarefree n) (hdvd : (M : ℤ) ∣ wSeq r s ε 2)
+    (hnsq : ¬IsSquare ((ε : ZMod M) * s)) :
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
   obtain ⟨u, hu⟩ := (ZMod.isUnit_intCast_of_isCoprime_of_dvd
     (isCoprime_wSeq_right hrs one_le_two).symm hdvd).exists_right_inv
@@ -255,6 +265,8 @@ theorem not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two (hs : s ≠ 0) (hrs :
     exists_isUnit_intCast_prod_wOddPart_zmod_eq hs hrs hε (hw 2 one_le_two) hu hdvd hn hsf
   exact hnsq ((hv.isSquare_mul_sq_iff _).mp
     (h ▸ isSquare_intCast_prod_wOddPart_of_isSquare_betaInt hs hrs hε hw hn hsf hsq))
+
+end
 
 end zmod
 

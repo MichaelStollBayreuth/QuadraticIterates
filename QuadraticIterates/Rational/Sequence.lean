@@ -243,18 +243,6 @@ section betaInt
 
 variable {r s ε : ℤ}
 
-/-- The denominator product of the Möbius factor of `w` divides the numerator product: in
-`ℤ[1/s]`, where `w` is a strong divisibility sequence up to units, this is `denProd_dvd_numProd`,
-and it descends to `ℤ` because the denominator product is coprime to `s`. -/
-theorem denProd_wSeq_dvd_numProd_wSeq (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
-    denProd (wSeq r s ε) n ∣ numProd (wSeq r s ε) n := by
-  have := NeZero.mk hs
-  refine IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime (S := Localization.Away s) ?_
-    (isCoprime_denProd (fun _ hd ↦ isCoprime_wSeq_right hrs hd) n)
-  rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _), map_denProd, map_numProd]
-  exact denProd_wSeqAway_dvd_numProd_wSeqAway hε hw hn
-
 /-- The integer Möbius factors `β_n = ∏_{d ∣ n} w_d^{μ(n/d)}` of the sequence `w`, as elements of
 `ℤ` (`QuadraticIterates.intCast_betaInt`). -/
 noncomputable def betaInt (r s ε : ℤ) (n : ℕ) : ℤ := moebiusFactorR (wSeq r s ε) n
@@ -265,6 +253,17 @@ lemma betaInt_eq_moebiusFactorR (n : ℕ) : betaInt r s ε n = moebiusFactorR (w
 
 variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
 include hs hrs hε hw
+
+/-- The denominator product of the Möbius factor of `w` divides the numerator product: in
+`ℤ[1/s]`, where `w` is a strong divisibility sequence up to units, this is `denProd_dvd_numProd`,
+and it descends to `ℤ` because the denominator product is coprime to `s`. -/
+theorem denProd_wSeq_dvd_numProd_wSeq {n : ℕ} (hn : 1 ≤ n) :
+    denProd (wSeq r s ε) n ∣ numProd (wSeq r s ε) n := by
+  have := NeZero.mk hs
+  refine IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime (S := Localization.Away s) ?_
+    (isCoprime_denProd (fun _ hd ↦ isCoprime_wSeq_right hrs hd) n)
+  rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _), map_denProd, map_numProd]
+  exact denProd_wSeqAway_dvd_numProd_wSeqAway hε hw hn
 
 theorem betaInt_mul_denProd {n : ℕ} (hn : 1 ≤ n) :
     betaInt r s ε n * denProd (wSeq r s ε) n = numProd (wSeq r s ε) n :=

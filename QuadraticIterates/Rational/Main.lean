@@ -111,11 +111,20 @@ theorem not_isSquare_betaInt_of_squarefree_of_squarefreeCertificate (hs : s ≠ 
 
 /-! ### The uniform theorem and its two sign instances -/
 
+section
+
+variable (hs : 0 < s) (hrs : IsCoprime r s)
+include hs hrs
+
+section
+
+variable (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n)
+include hε hw
+
 /-- **Non-squarefree levels.** In the 2-adic classes, `β_n` is not a square for every `n ≥ 2`
 that is not squarefree: `QuadraticIterates.not_isSquare_betaInt_of_twoAdicClass_of_two_le` with
 `k = n / rad n ≥ 2`. -/
-theorem not_isSquare_betaInt_of_twoAdicClass_of_not_squarefree (hs : 0 < s) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) (hc : TwoAdicClass r s ε) {n : ℕ}
+theorem not_isSquare_betaInt_of_twoAdicClass_of_not_squarefree (hc : TwoAdicClass r s ε) {n : ℕ}
     (hn : 2 ≤ n) (hsf : ¬Squarefree n) : ¬IsSquare (betaInt r s ε n) := by
   have hk2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
   exact not_isSquare_betaInt_of_twoAdicClass_of_two_le hs.ne' hrs hε (fun n hn ↦ (hw n hn).ne') hc
@@ -124,10 +133,8 @@ theorem not_isSquare_betaInt_of_twoAdicClass_of_not_squarefree (hs : 0 < s) (hrs
 
 /-- In the 2-adic classes and under a squarefree-level certificate, `β_n` is not a square for any
 `n ≥ 2`. -/
-theorem not_isSquare_betaInt_of_twoAdicClass_of_squarefreeCertificate (hs : 0 < s)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n)
-    (hc : TwoAdicClass r s ε) (hcert : SquarefreeCertificate r s ε) {n : ℕ} (hn : 2 ≤ n) :
-    ¬IsSquare (betaInt r s ε n) :=
+theorem not_isSquare_betaInt_of_twoAdicClass_of_squarefreeCertificate (hc : TwoAdicClass r s ε)
+    (hcert : SquarefreeCertificate r s ε) {n : ℕ} (hn : 2 ≤ n) : ¬IsSquare (betaInt r s ε n) :=
   (em (Squarefree n)).elim
     (not_isSquare_betaInt_of_squarefree_of_squarefreeCertificate hs.ne' hrs hε
       (fun n hn ↦ (hw n hn).ne') hcert hn)
@@ -137,22 +144,22 @@ theorem not_isSquare_betaInt_of_twoAdicClass_of_squarefreeCertificate (hs : 0 < 
 class, `-εrs` not a square and a squarefree-level certificate, `Ω_n ≅ [C₂]ⁿ` for all `n`: the
 shared-part lemma `QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_betaInt`, with
 `|β_n| = β_n`. Theorems R⁺ and R⁻ are its two sign instances. -/
-theorem nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate (hs : 0 < s)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n)
-    (hc : TwoAdicClass r s ε) (ha : ¬IsSquare (-(ε * r * s)))
-    (hcert : SquarefreeCertificate r s ε) (n : ℕ) :
+theorem nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate (hc : TwoAdicClass r s ε)
+    (ha : ¬IsSquare (-(ε * r * s))) (hcert : SquarefreeCertificate r s ε) (n : ℕ) :
     Nonempty (GaloisGroup (ε * r / s : ℚ) n ≃* WreathPower n) :=
   nonempty_mulEquiv_of_forall_not_isSquare_abs_betaInt hs.ne' hrs hε (fun n hn ↦ (hw n hn).ne') ha
     (fun _ hn ↦ (abs_of_pos (betaInt_pos hs.ne' hrs hε hw (one_le_two.trans hn))).symm ▸
       not_isSquare_betaInt_of_twoAdicClass_of_squarefreeCertificate hs hrs hε hw hc hcert hn) n
 
+end
+
 /-- **Theorem R⁺** (the positive world). Let `a = r/s` with `s > 0`, `r` coprime to `s` and
 `a > -1`, `-rs` not a square, `(r, s, 1)` in a 2-adic class (`QuadraticIterates.TwoAdicClass`),
 and a squarefree-level certificate (`QuadraticIterates.SquarefreeCertificate`). Then
 `Ω_n ≅ [C₂]ⁿ` for all `n`. The sequence `w` of `a` is positive for `a > 0` and for `-1 < a < 0`. -/
-theorem nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate (hs : 0 < s)
-    (hrs : IsCoprime r s) (hr : -s < r) (hc : TwoAdicClass r s 1) (ha : ¬IsSquare (-(r * s)))
-    (hcert : SquarefreeCertificate r s 1) (n : ℕ) :
+theorem nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate (hr : -s < r)
+    (hc : TwoAdicClass r s 1) (ha : ¬IsSquare (-(r * s))) (hcert : SquarefreeCertificate r s 1)
+    (n : ℕ) :
     Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) := by
   have hr0 : r ≠ 0 := fun h ↦ ha (by simp [h])
   have hw : ∀ n ≥ 1, 0 < wSeq r s 1 n :=
@@ -166,13 +173,15 @@ theorem nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate (hs
 squarefree-level certificate (`QuadraticIterates.SquarefreeCertificate`) for `(-r, s, -1)`. Then
 `Ω_n ≅ [C₂]ⁿ` for all `n`. The sequence `w` of `(-r, s, -1)` is the sequence of `a` in Stoll's
 normalization `a = -|r|/s`, positive for `a ≤ -2`. -/
-theorem nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate (hs : 0 < s)
-    (hrs : IsCoprime r s) (hr : 2 * s ≤ -r) (hc : TwoAdicClass (-r) s (-1))
-    (ha : ¬IsSquare (-(r * s))) (hcert : SquarefreeCertificate (-r) s (-1)) (n : ℕ) :
+theorem nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate
+    (hr : 2 * s ≤ -r) (hc : TwoAdicClass (-r) s (-1)) (ha : ¬IsSquare (-(r * s)))
+    (hcert : SquarefreeCertificate (-r) s (-1)) (n : ℕ) :
     Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
   (show ((-1 : ℤ) : ℚ) * ((-r : ℤ) : ℚ) / s = (r / s : ℚ) by simp) ▸
     nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate hs hrs.neg_left neg_one_sq
       (wSeq_pos_of_two_mul_le hs hr) hc (by simpa using ha) hcert n
+
+end
 
 end QuadraticIterates
 
