@@ -51,7 +51,11 @@ lake build QuadraticIterates # so the Solution build reuses the library oleans
 lake env /path/to/comparator comparator/challenges.json
 ```
 
-Exit code `0` means the check passed.
+Exit code `0` and the line `Your solution is okay!` mean the check passed.
+[`scripts/run-comparator.sh`](../scripts/run-comparator.sh) wraps the last two steps: it locates
+the three binaries (override with `COMPARATOR_BIN`, `COMPARATOR_LEAN4EXPORT`, `COMPARATOR_LANDRUN`;
+`lean4export` must be built at this project's Lean version), builds the library, and runs the
+check on `comparator/challenges.json` or on the config given as its argument.
 
 The `Challenge`/`Solution` libraries are declared in the root `lakefile.toml` but are excluded from
 `defaultTargets`, so a plain `lake build` does not build them and the deliberate `sorry`s in
