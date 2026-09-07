@@ -67,7 +67,9 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 \begin{definition}[the $w$-sequence]
   \label{def:wseq}
   \uses{def:cseq}
-  \lean{QuadraticIterates.wSeq, QuadraticIterates.wSeq_succ, QuadraticIterates.intCast_wSeq}
+  \lean{QuadraticIterates.wSeq, QuadraticIterates.wSeq_succ, QuadraticIterates.intCast_wSeq,
+    QuadraticIterates.wSeq_pos_of_pos, QuadraticIterates.wSeq_pos_of_neg_lt,
+    QuadraticIterates.pow_le_wSeq_of_two_mul_le, QuadraticIterates.wSeq_pos_of_two_mul_le}
   \leanok
   For coprime $r, s \in \ZZ$, $s \ge 1$, and a sign $\varepsilon = \pm 1$, let $w_1 = 1$ and
   $w_{n+1} = r w_n^2 + \varepsilon s^{2^n - 1}$ (junk value $w_0 = 0$). For the $\gamma$-sequence
@@ -186,7 +188,7 @@ its new lemmas are of Mathlib generality.
     QuadraticIterates.intCast_betaInt, QuadraticIterates.betaInt_ne_zero,
     QuadraticIterates.wSeq_eq_prod_betaInt, QuadraticIterates.isCoprime_betaInt,
     QuadraticIterates.isCoprime_betaInt_left, QuadraticIterates.isCoprime_betaInt_right,
-    IsLocalization.Away.isRelPrime_of_isRelPrime_algebraMap,
+    QuadraticIterates.betaInt_pos, IsLocalization.Away.isRelPrime_of_isRelPrime_algebraMap,
     IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime,
     IsLocalization.Away.prime_algebraMap_of_not_dvd, IsLocalization.prime_algebraMap_of_prime,
     IsLocalization.dvd_of_algebraMap_dvd}
@@ -296,7 +298,9 @@ its new lemmas are of Mathlib generality.
   \lean{QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ,
     QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ_of_two_le,
     QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd,
-    QuadraticIterates.intCast_betaInt_eq_div}
+    QuadraticIterates.intCast_betaInt_eq_div, QuadraticIterates.reflNum,
+    QuadraticIterates.isCoprime_reflNum_right, QuadraticIterates.reflNum_pos,
+    QuadraticIterates.reflNum_one}
   \leanok
   Let $n \ge 2$, $n_0 = n/\rad(n)$, and $M$ coprime to $s$ and to $w_{n_0}$. If $M$ divides the
   numerator $w_{n_0} s^{2^{n_0-1}} + w_{n_0+1}$ of $\gamma_{n_0} + \gamma_{n_0+1}$, then
@@ -314,7 +318,8 @@ its new lemmas are of Mathlib generality.
   For $n$ not squarefree $E(n)$ is even, for $n$ squarefree odd.
   \formalnote{\lname{not\_isSquare\_betaInt\_of\_dvd\_add\_succ}: hypotheses $n \ge 2$,
   $n' = \rad(n)$, $n = k n'$, an element $u$ of $\ZZ/M\ZZ$ with $s u = 1$ (the inverse of the unit
-  $\bar s$, passed as a certificate), $M \mid w_k s^{2^{k-1}} + w_{k+1}$, and $-\bar s^{F}$ not a
+  $\bar s$, passed as a certificate), $M \mid N_k$ (\lname{reflNum r s ε k}, the numerator
+  $w_k s^{2^{k-1}} + w_{k+1}$, coprime to $s$ and positive when $w$ is), and $-\bar s^{F}$ not a
   square in \lname{ZMod M}, where $F = \sum_{t \mid n'} (2^{kt-1} - 1)$ is the exponent the
   denominators produce ($F \equiv E(n) \bmod 2$); conclusion $\beta_n$ is not a square in $\ZZ$.
   The proof: \lname{intCast\_betaInt\_eq\_div} writes $\beta_n = P/Q$ with $P$, $Q$ the products

@@ -40,6 +40,12 @@ integers (`QuadraticIterates.intCast_betaInt`), nonzero, pairwise coprime
   `QuadraticIterates.intCast_betaInt`, `QuadraticIterates.wSeq_eq_prod_betaInt`,
   `QuadraticIterates.isCoprime_betaInt`, `QuadraticIterates.isCoprime_betaInt_left`,
   `QuadraticIterates.isCoprime_betaInt_right`.
+* The sign worlds: `w_n > 0` for `a > 0` (`QuadraticIterates.wSeq_pos_of_pos`), for
+  `-1 < a < 0` (`QuadraticIterates.wSeq_pos_of_neg_lt`) and, in Stoll's normalization `ε = -1`
+  with `|r|` in place of `r`, for `a ≤ -2` (`QuadraticIterates.wSeq_pos_of_two_mul_le`); then
+  `β_n > 0` (`QuadraticIterates.betaInt_pos`).
+* `QuadraticIterates.reflNum`: the numerator `N_k = w_k s^(2^(k-1)) + w_{k+1}` of `γ_k + γ_{k+1}`,
+  coprime to `s`, whose divisors are the moduli of the reflection lemma.
 
 Part of the extension of the Section 3 theorem of M. Stoll, *Galois groups over ℚ of some
 iterated polynomials*, Arch. Math. **59** (1992), 239-244, to rational parameters `a`; see
@@ -288,6 +294,101 @@ theorem isCoprime_betaInt {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) (hmn : m ≠
   exact isRelPrime_moebiusFactorR_wSeqAway hε hw hm hn hmn
 
 end betaInt
+
+section sign
+
+variable {r s ε : ℤ}
+
+/-- `s^(2^n - 1) = (s^(2^(n-1) - 1))² · s` for `n ≥ 1`. -/
+private lemma pow_two_pow_sub_one_eq {n : ℕ} (hn : 1 ≤ n) :
+    s ^ (2 ^ n - 1) = (s ^ (2 ^ (n - 1) - 1)) ^ 2 * s := by
+  rw [two_pow_sub_one_eq hn, pow_succ, pow_mul']
+
+/-! ### The sign worlds -/
+
+/-- For `a > 0` (and `ε = 1`), `w_n > 0` for all `n ≥ 1`. -/
+lemma wSeq_pos_of_pos (hr : 0 < r) (hs : 0 < s) : ∀ n ≥ 1, 0 < wSeq r s 1 n := by
+  intro n hn
+  induction n, hn using Nat.le_induction with
+  | base => simp
+  | succ n hn ih =>
+    rw [wSeq_succ r s 1 hn]
+    positivity
+
+/-- For `-1 < a < 0`, i.e. `-s < r < 0` (and `ε = 1`), `0 < w_n ≤ s^(2^(n-1) - 1)`: the
+`γ`-sequence stays in `(0, 1]`. -/
+private lemma wSeq_pos_and_le_of_neg_lt (hr : r < 0) (hrs : -s < r) :
+    ∀ n ≥ 1, 0 < wSeq r s 1 n ∧ wSeq r s 1 n ≤ s ^ (2 ^ (n - 1) - 1) := by
+  intro n hn
+  induction n, hn using Nat.le_induction with
+  | base => simp
+  | succ n hn ih =>
+    have hs : 0 < s := by lia
+    have h1 : r * (s ^ (2 ^ (n - 1) - 1)) ^ 2 ≤ r * wSeq r s 1 n ^ 2 :=
+      mul_le_mul_of_nonpos_left (pow_le_pow_left₀ ih.1.le ih.2 2) hr.le
+    have h2 : 0 < s ^ (2 ^ (n - 1) - 1) := pow_pos hs _
+    have h3 : 0 ≤ wSeq r s 1 n ^ 2 := sq_nonneg _
+    rw [wSeq_succ r s 1 hn, Nat.add_sub_cancel, pow_two_pow_sub_one_eq hn, one_mul]
+    constructor <;> nlinarith
+
+lemma wSeq_pos_of_neg_lt (hr : r < 0) (hrs : -s < r) : ∀ n ≥ 1, 0 < wSeq r s 1 n :=
+  fun n hn ↦ (wSeq_pos_and_le_of_neg_lt hr hrs n hn).1
+
+/-- For `a ≤ -2`, i.e. `2s ≤ |r|`, in Stoll's normalization (`ε = -1`, `|r|` in place of `r`):
+`w_n ≥ s^(2^(n-1) - 1)`, the `γ`-sequence stays `≥ 1`. -/
+lemma pow_le_wSeq_of_two_mul_le (hs : 0 < s) (hr : 2 * s ≤ r) :
+    ∀ n ≥ 1, s ^ (2 ^ (n - 1) - 1) ≤ wSeq r s (-1) n := by
+  intro n hn
+  induction n, hn using Nat.le_induction with
+  | base => simp
+  | succ n hn ih =>
+    have h2 : 0 < s ^ (2 ^ (n - 1) - 1) := pow_pos hs _
+    have h1 : 2 * s * (s ^ (2 ^ (n - 1) - 1)) ^ 2 ≤ r * wSeq r s (-1) n ^ 2 :=
+      mul_le_mul hr (pow_le_pow_left₀ h2.le ih 2) (by positivity) (by lia)
+    have h3 : 0 < s * (s ^ (2 ^ (n - 1) - 1)) ^ 2 := by positivity
+    rw [wSeq_succ r s (-1) hn, Nat.add_sub_cancel, pow_two_pow_sub_one_eq hn]
+    nlinarith
+
+lemma wSeq_pos_of_two_mul_le (hs : 0 < s) (hr : 2 * s ≤ r) : ∀ n ≥ 1, 0 < wSeq r s (-1) n :=
+  fun n hn ↦ (pow_pos hs _).trans_le (pow_le_wSeq_of_two_mul_le hs hr n hn)
+
+/-- If all `w_n > 0`, then `β_n > 0`: `β_n` is a quotient of products of the `w_d`. -/
+theorem betaInt_pos (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
+    (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {n : ℕ} (hn : 1 ≤ n) : 0 < betaInt r s ε n := by
+  have hpos (S : Finset (ℕ × ℕ)) (hS : S ⊆ n.divisorsAntidiagonal) : 0 < ∏ x ∈ S, wSeq r s ε x.2 :=
+    Finset.prod_pos fun x hx ↦ hw _ (Nat.pos_of_mem_divisors
+      (Nat.snd_mem_divisors_of_mem_antidiagonal (hS hx)))
+  have hD : 0 < denProd (wSeq r s ε) n := hpos _ (Finset.filter_subset _ _)
+  have hN : 0 < numProd (wSeq r s ε) n := hpos _ (Finset.filter_subset _ _)
+  exact (pos_iff_pos_of_mul_pos
+    (betaInt_mul_denProd hs hrs hε (fun n hn ↦ (hw n hn).ne') hn ▸ hN)).mpr hD
+
+/-! ### The numerator of `γ_k + γ_{k+1}` -/
+
+/-- `N_k = w_k s^(2^(k-1)) + w_{k+1}`, the numerator of `γ_k + γ_{k+1}`
+(`QuadraticIterates.intCast_wSeq`): its divisors coprime to `s` are the moduli of the reflection
+lemma `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ`. -/
+def reflNum (r s ε : ℤ) (k : ℕ) : ℤ := wSeq r s ε k * s ^ 2 ^ (k - 1) + wSeq r s ε (k + 1)
+
+/-- `N_k ≡ w_{k+1} mod s` is coprime to `s`. -/
+lemma isCoprime_reflNum_right (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
+    IsCoprime (reflNum r s ε k) s := by
+  rw [reflNum, add_comm, show s ^ 2 ^ (k - 1) = s * s ^ (2 ^ (k - 1) - 1) by
+    rw [← pow_succ', Nat.sub_add_cancel Nat.one_le_two_pow], mul_left_comm]
+  exact (isCoprime_wSeq_right hrs (Nat.le_succ_of_le hk)).add_mul_left_left _
+
+lemma reflNum_one : reflNum r s ε 1 = r + (1 + ε) * s := by
+  rw [reflNum, wSeq_succ r s ε le_rfl, wSeq_one]
+  ring
+
+lemma reflNum_pos (hs : 0 < s) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {k : ℕ} (hk : 1 ≤ k) :
+    0 < reflNum r s ε k := by
+  have := hw k hk
+  have := hw (k + 1) (by lia)
+  rw [reflNum]
+  positivity
+
+end sign
 
 end QuadraticIterates
 
