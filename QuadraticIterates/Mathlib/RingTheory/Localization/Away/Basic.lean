@@ -50,14 +50,14 @@ theorem dvd_of_algebraMap_dvd_of_isCoprime {a b : R} (h : algebraMap R S a ∣ a
     (hax : IsCoprime a x) : a ∣ b :=
   IsLocalization.dvd_of_algebraMap_dvd (Submonoid.powers x) h fun _ ⟨_, hn⟩ ↦ hn ▸ hax.pow_right
 
-variable [IsDomain R]
+variable [IsDomain R] [NeZero x]
 
 /-- A prime not dividing `x` stays prime in a localization away from `x`. -/
-theorem prime_algebraMap_of_not_dvd (hx : x ≠ 0) {p : R} (hp : Prime p) (hpx : ¬p ∣ x) :
+theorem prime_algebraMap_of_not_dvd {p : R} (hp : Prime p) (hpx : ¬p ∣ x) :
     Prime (algebraMap R S p) :=
   IsLocalization.prime_algebraMap_of_prime (Submonoid.powers x) hp
     (fun h ↦ hp.ne_zero (IsLocalization.injective S
-      (powers_le_nonZeroDivisors_of_noZeroDivisors hx) (h.trans (map_zero _).symm)))
+      (powers_le_nonZeroDivisors_of_noZeroDivisors (NeZero.ne x)) (h.trans (map_zero _).symm)))
     fun h ↦ hpx (((IsLocalization.Away.algebraMap_isUnit_iff x).mp h).elim
       fun _ hn ↦ hp.dvd_of_dvd_pow hn)
 
@@ -65,7 +65,7 @@ variable [UniqueFactorizationMonoid R]
 
 /-- Relative primality descends from a localization away from `x` to elements the first of which
 is coprime to `x`: a common prime factor would stay prime in the localization. -/
-theorem isRelPrime_of_isRelPrime_algebraMap (hx : x ≠ 0) {a b : R}
+theorem isRelPrime_of_isRelPrime_algebraMap {a b : R}
     (h : IsRelPrime (algebraMap R S a) (algebraMap R S b)) (hax : IsCoprime a x) :
     IsRelPrime a b := by
   rcases eq_or_ne a 0 with rfl | ha
@@ -74,7 +74,7 @@ theorem isRelPrime_of_isRelPrime_algebraMap (hx : x ≠ 0) {a b : R}
     exact isRelPrime_zero_left.mpr (isUnit_of_dvd_unit hn ((isCoprime_zero_left.mp hax).pow n))
   refine (UniqueFactorizationMonoid.isRelPrime_iff_no_prime_factors ha).mpr fun p hpa hpb hp ↦ ?_
   have hpx : ¬p ∣ x := fun hpx ↦ hp.not_isUnit (hax.isUnit_of_dvd' hpa hpx)
-  exact (prime_algebraMap_of_not_dvd hx hp hpx).not_isUnit (h (map_dvd _ hpa) (map_dvd _ hpb))
+  exact (prime_algebraMap_of_not_dvd hp hpx).not_isUnit (h (map_dvd _ hpa) (map_dvd _ hpb))
 
 end IsLocalization.Away
 

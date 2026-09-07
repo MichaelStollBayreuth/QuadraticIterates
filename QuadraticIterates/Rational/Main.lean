@@ -55,38 +55,36 @@ inductive SquarefreeCert (r s ε : ℤ) : Prop
   /-- A divisor `M` of `s` modulo which `r` is not a square
   (`QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_of_not_isSquare`). -/
   | dvd (M : ℕ) (hM : (M : ℤ) ∣ s) (h : ¬IsSquare (r : ZMod M))
-  /-- A divisor `M` of `r + (1 + ε)s`, the numerator of `γ_1 + γ_2`, modulo which `s` is a unit
-  and `-s` is not a square (`QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd`). -/
-  | reflNum (M : ℕ) (hu : IsUnit (s : ZMod M)) (hM : (M : ℤ) ∣ r + (1 + ε) * s)
-    (h : ¬IsSquare (-(s : ZMod M)))
+  /-- A divisor `M` of `r + (1 + ε)s`, the numerator of `γ_1 + γ_2`, modulo which `-s` is not a
+  square (`QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd`). -/
+  | reflNum (M : ℕ) (hM : (M : ℤ) ∣ r + (1 + ε) * s) (h : ¬IsSquare (-(s : ZMod M)))
   /-- `s` even, `r ≡ 3 mod 4` and `r + εs ≢ 1 mod 8`: residues modulo `8`
   (`QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_odd_of_even`,
   `QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_even_of_even`). -/
   | even (hs : s % 2 = 0) (hr : r % 4 = 3) (h : (r + ε * s) % 8 ≠ 1)
   /-- `β_2 = r + εs`, the numerator of `γ_2`, is not a square, and a divisor `M` of it modulo which
-  `s` is a unit and `εs` is not a square
-  (`QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two`). -/
-  | gammaTwo (hw2 : ¬IsSquare (r + ε * s)) (M : ℕ) (hu : IsUnit (s : ZMod M))
-    (hM : (M : ℤ) ∣ r + ε * s) (h : ¬IsSquare ((ε : ZMod M) * s))
+  `εs` is not a square (`QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two`). -/
+  | gammaTwo (hw2 : ¬IsSquare (r + ε * s)) (M : ℕ) (hM : (M : ℤ) ∣ r + ε * s)
+    (h : ¬IsSquare ((ε : ZMod M) * s))
 
 /-- The squarefree-level certificate as the disjunction of its four clauses. -/
 theorem squarefreeCert_iff : SquarefreeCert r s ε ↔
     (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
-      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + (1 + ε) * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
+      (∃ M : ℕ, (M : ℤ) ∣ r + (1 + ε) * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
         (s % 2 = 0 ∧ r % 4 = 3 ∧ (r + ε * s) % 8 ≠ 1) ∨
           (¬IsSquare (r + ε * s) ∧
-            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + ε * s ∧ ¬IsSquare ((ε : ZMod M) * s)) := by
+            ∃ M : ℕ, (M : ℤ) ∣ r + ε * s ∧ ¬IsSquare ((ε : ZMod M) * s)) := by
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · cases h with
     | dvd M hM h => exact .inl ⟨M, hM, h⟩
-    | reflNum M hu hM h => exact .inr (.inl ⟨M, hu, hM, h⟩)
+    | reflNum M hM h => exact .inr (.inl ⟨M, hM, h⟩)
     | even hs hr h => exact .inr (.inr (.inl ⟨hs, hr, h⟩))
-    | gammaTwo hw2 M hu hM h => exact .inr (.inr (.inr ⟨hw2, M, hu, hM, h⟩))
-  · rcases h with ⟨M, hM, h⟩ | ⟨M, hu, hM, h⟩ | ⟨hs, hr, h⟩ | ⟨hw2, M, hu, hM, h⟩
+    | gammaTwo hw2 M hM h => exact .inr (.inr (.inr ⟨hw2, M, hM, h⟩))
+  · rcases h with ⟨M, hM, h⟩ | ⟨M, hM, h⟩ | ⟨hs, hr, h⟩ | ⟨hw2, M, hM, h⟩
     · exact .dvd M hM h
-    · exact .reflNum M hu hM h
+    · exact .reflNum M hM h
     · exact .even hs hr h
-    · exact .gammaTwo hw2 M hu hM h
+    · exact .gammaTwo hw2 M hM h
 
 /-- **Squarefree levels.** Under a certificate `QuadraticIterates.SquarefreeCert r s ε`, `β_n` is
 not a square for every squarefree `n ≥ 2`. -/
@@ -96,18 +94,15 @@ theorem not_isSquare_betaInt_of_squarefree_of_squarefreeCert (hs : s ≠ 0) (hrs
   cases hcert with
   | dvd M hM h =>
     exact not_isSquare_betaInt_of_squarefree_of_dvd_of_not_isSquare hs hrs hε hw hn hsf hM h
-  | reflNum M hu hM h =>
-    obtain ⟨u, hu⟩ := hu.exists_right_inv
-    exact not_isSquare_betaInt_of_squarefree_of_dvd hs hrs hε hw hn hsf hu hM h
+  | reflNum M hM h => exact not_isSquare_betaInt_of_squarefree_of_dvd hs hrs hε hw hn hsf hM h
   | even hs2 hr h8 =>
     rcases Nat.even_or_odd n with hne | hno
-    · exact not_isSquare_betaInt_of_squarefree_of_even_of_even hs2 hs hrs hε hw hn hsf hne h8
+    · exact not_isSquare_betaInt_of_squarefree_of_even_of_even hs2 hs hrs hε hw hsf hne h8
     · exact not_isSquare_betaInt_of_squarefree_of_odd_of_even hs2 hs hrs hε hw hn hsf hno hr
-  | gammaTwo hw2 M hu hM h =>
+  | gammaTwo hw2 M hM h =>
     rcases (show n = 2 ∨ 3 ≤ n by lia) with rfl | hn3
     · rwa [betaInt_two hs hrs hε hw]
-    · obtain ⟨u, hu⟩ := hu.exists_right_inv
-      exact not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two hs hrs hε hw hn3 hsf hu
+    · exact not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two hs hrs hε hw hn3 hsf
         (wSeq_two r s ε ▸ hM) h
 
 /-! ### The uniform theorem and its two sign instances -/
@@ -117,9 +112,10 @@ that is not squarefree: `QuadraticIterates.not_isSquare_betaInt_of_two_le` with
 `k = n / rad n ≥ 2`. -/
 theorem not_isSquare_betaInt_of_twoAdicClass_of_not_squarefree (hs : 0 < s) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) (hc : TwoAdicClass r s ε) {n : ℕ}
-    (hn : 2 ≤ n) (hsf : ¬Squarefree n) : ¬IsSquare (betaInt r s ε n) :=
-  not_isSquare_betaInt_of_two_le hs hrs hε hw hc hn (Nat.div_mul_cancel radical_dvd_self).symm
-    (Nat.two_le_div_radical_of_not_squarefree (by lia) hsf)
+    (hn : 2 ≤ n) (hsf : ¬Squarefree n) : ¬IsSquare (betaInt r s ε n) := by
+  have hk2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
+  exact not_isSquare_betaInt_of_two_le hs.ne' hrs hε (fun n hn ↦ (hw n hn).ne') hc hn
+    (Nat.div_mul_cancel radical_dvd_self).symm hk2 (reflNum_pos hs.le hw (one_le_two.trans hk2)).le
 
 /-- In the 2-adic classes and under a squarefree-level certificate, `β_n` is not a square for any
 `n ≥ 2`. -/

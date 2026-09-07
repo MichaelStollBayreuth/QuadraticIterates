@@ -11,14 +11,15 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.Units
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.Squares
+import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
 /-!
 # The `γ_2` route: `β_n` modulo a divisor of the numerator of `γ_2`
 
 The second mechanism for squarefree levels, the rational form of Lemmas 3.2 and 3.3 of [Li 2020]:
-if a modulus `M` in which `s` is invertible divides `w_2 = r + εs`, the numerator of `γ_2`, then
-`β_n ≡ ε s · (unit)² mod M` for every squarefree `n ≥ 3`
+if a modulus `M` divides `w_2 = r + εs`, the numerator of `γ_2` (so that `M` is coprime to `s`),
+then `β_n ≡ ε s · (unit)² mod M` for every squarefree `n ≥ 3`
 (`QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two`). Modulo `γ_2²` the
 `γ`-sequence is `γ_2` at even and `ε` at odd indices `≥ 3`
 (`QuadraticIterates.gammaSeq_two_sq_dvd_sub_ite_even` over `ℤ[1/s]`), which descends to `ℤ` as
@@ -110,14 +111,14 @@ private lemma intCast_dvd_intCast_ediv_sub_pow [NeZero s] (hrs : IsCoprime r s) 
   linear_combination hv + ((s : Localization.Away s) * s ^ (2 ^ (t - 1) - 2)) * hz +
     gammaSeq (normPolyAway r s ε) ε t * he
 
-/-- Modulo a divisor `M` of `w_2` coprime to `s`, the quotient `w_t / w_2` for even `t` is
-`s^(2^(t-1) - 2)`: in `ℤ[1/s]`, `γ_t ≡ γ_2 mod γ_2²`, so `γ_t / γ_2 ≡ 1 mod M`. -/
+/-- Modulo a divisor `M` of `w_2` (which is coprime to `s`), the quotient `w_t / w_2` for even
+`t` is `s^(2^(t-1) - 2)`: in `ℤ[1/s]`, `γ_t ≡ γ_2 mod γ_2²`, so `γ_t / γ_2 ≡ 1 mod M`. -/
 lemma dvd_wSeq_ediv_wSeq_two_sub_pow_of_even (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw2 : wSeq r s ε 2 ≠ 0) {M : ℕ} (hM : IsCoprime (M : ℤ) s) (hdvd : (M : ℤ) ∣ wSeq r s ε 2)
-    {t : ℕ} (ht : 2 ≤ t) (hte : Even t) :
-    (M : ℤ) ∣ wSeq r s ε t / wSeq r s ε 2 - s ^ (2 ^ (t - 1) - 2) := by
+    (hw2 : wSeq r s ε 2 ≠ 0) {M : ℕ} (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t)
+    (hte : Even t) : (M : ℤ) ∣ wSeq r s ε t / wSeq r s ε 2 - s ^ (2 ^ (t - 1) - 2) := by
   have := NeZero.mk hs
-  refine IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime (S := Localization.Away s) ?_ hM
+  refine IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime (S := Localization.Away s) ?_
+    ((isCoprime_wSeq_right hrs one_le_two).of_isCoprime_of_dvd_left hdvd)
   rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _)]
   simpa using intCast_dvd_intCast_ediv_sub_pow hrs hε hw2 hdvd ht hte
 
@@ -175,10 +176,8 @@ private lemma intCast_wOddPart_zmod (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : 
       (if t % 2 = 0 then u else (ε : ZMod M)) * (s : ZMod M) ^ (2 ^ (t - 1) - 1) := by
   rw [wOddPart]
   split_ifs with he
-  · have hM : IsCoprime (M : ℤ) s :=
-      (ZMod.coe_int_isUnit_iff_isCoprime s M).mp (.of_mul_eq_one _ hu)
-    have h := (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr
-      (dvd_wSeq_ediv_wSeq_two_sub_pow_of_even hs hrs hε hw2 hM hdvd ht (Nat.even_iff.mpr he))
+  · have h := (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr
+      (dvd_wSeq_ediv_wSeq_two_sub_pow_of_even hs hrs hε hw2 hdvd ht (Nat.even_iff.mpr he))
     push_cast at h
     have hf : 2 ^ (t - 1) - 1 = 2 ^ (t - 1) - 2 + 1 := by
       have := Nat.one_lt_two_pow (n := t - 1) (by lia)
@@ -249,17 +248,19 @@ private lemma isSquare_intCast_prod_wOddPart_of_isSquare_betaInt (hs : s ≠ 0)
   rwa [Int.coe_castRingHom, ← Finset.prod_union (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia),
     hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one] at key
 
-/-- **The `γ_2` route.** Let `M` be a modulus in which `s` is invertible (with inverse `u`) and
-which divides `w_2 = r + εs`, the numerator of `γ_2`. Then `β_n ≡ ε s · (unit)² mod M` for every
-squarefree `n ≥ 3`, so `β_n` is not a square when `ε s` is not a square modulo `M`. Modulo
+/-- **The `γ_2` route.** Let `M` divide `w_2 = r + εs`, the numerator of `γ_2` (so that `M` is
+coprime to `s`). Then `β_n ≡ ε s · (unit)² mod M` for every squarefree `n ≥ 3`, so `β_n` is not a
+square when `ε s` is not a square modulo `M`. Modulo
 `γ_2²`, `γ_t ≡ γ_2` for even `t` and `γ_t ≡ ε` for odd `t ≥ 3`; the numerator and the denominator
 of `β_n` contain the same power of `w_2` (the sign partition of the divisors of `n` is balanced
 on the even divisors), and after cancelling it their product is `ε s^F · (unit)²` with the odd
 twist exponent `F = ∑_{t ∣ n} (2^(t-1) - 1)`. Rational form of Lemmas 3.2 and 3.3 of [Li 2020]. -/
 theorem not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two (hs : s ≠ 0) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 3 ≤ n) (hsf : Squarefree n)
-    (hu : (s : ZMod M) * u = 1) (hdvd : (M : ℤ) ∣ wSeq r s ε 2)
-    (hnsq : ¬IsSquare ((ε : ZMod M) * s)) : ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
+    (hdvd : (M : ℤ) ∣ wSeq r s ε 2) (hnsq : ¬IsSquare ((ε : ZMod M) * s)) :
+    ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
+  obtain ⟨u, hu⟩ := (ZMod.isUnit_intCast_of_isCoprime_of_dvd
+    (isCoprime_wSeq_right hrs one_le_two).symm hdvd).exists_right_inv
   obtain ⟨v, hv, h⟩ :=
     exists_isUnit_intCast_prod_wOddPart_zmod_eq hs hrs hε (hw 2 one_le_two) hu hdvd hn hsf
   exact hnsq ((hv.isSquare_mul_sq_iff _).mp

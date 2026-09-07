@@ -218,25 +218,23 @@ def TwoAdicClass (r s ε : ℤ) : Prop :=
 theorem twoAdicClass_iff : TwoAdicClass r s ε ↔
     (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + ε * s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3) := .rfl
 
-/-- In the 2-adic classes, `-1` is not a square modulo `N_k` for every `k ≥ 2`. -/
-theorem not_isSquare_neg_one_zmod_reflNum (hs : 0 < s) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) (hc : TwoAdicClass r s ε) {k : ℕ} (hk : 2 ≤ k) :
+/-- In the 2-adic classes, `-1` is not a square modulo `N_k` for every `k ≥ 2` with `N_k ≥ 0`. -/
+theorem not_isSquare_neg_one_zmod_reflNum (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
+    (hc : TwoAdicClass r s ε) {k : ℕ} (hk : 2 ≤ k) (hN : 0 ≤ reflNum r s ε k) :
     ¬IsSquare (-1 : ZMod (reflNum r s ε k).natAbs) :=
-  Int.not_isSquare_neg_one_zmod_natAbs_of_emod (reflNum_pos hs hw (by lia)).le
+  Int.not_isSquare_neg_one_zmod_natAbs_of_emod hN
     (hc.elim (fun h ↦ reflNum_emod_of_odd h.1 hε h.2 hk)
       fun h ↦ .inr (reflNum_emod_four_of_even h.1 hrs h.2 hk))
 
-/-- **Corollary (non-squarefree levels).** In the 2-adic classes, `β_n` is not a square for every
-`n ≥ 2` with `k = n / rad n ≥ 2`: the reflection lemma with the modulus `N_k` itself. -/
-theorem not_isSquare_betaInt_of_two_le (hs : 0 < s) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) (hc : TwoAdicClass r s ε) {n k : ℕ} (hn : 2 ≤ n)
-    (hk : n = k * radical n) (hk2 : 2 ≤ k) : ¬IsSquare (betaInt r s ε n) := by
-  obtain ⟨u, hu⟩ := ((ZMod.coe_int_isUnit_iff_isCoprime s (reflNum r s ε k).natAbs).mpr
-    (by rw [Int.natAbs_of_nonneg (reflNum_pos hs hw (one_le_two.trans hk2)).le]
-        exact isCoprime_reflNum_right hrs (one_le_two.trans hk2))).exists_right_inv
-  exact not_isSquare_betaInt_of_dvd_add_succ_of_two_le hs.ne' hrs hε (fun n hn ↦ (hw n hn).ne')
-    hn rfl hk hk2 hu (Int.natAbs_dvd.mpr dvd_rfl)
-    (not_isSquare_neg_one_zmod_reflNum hs hrs hε hw hc hk2)
+/-- **Non-squarefree levels.** In the 2-adic classes, `β_n` is not a square for every `n ≥ 2`
+with `k = n / rad n ≥ 2` and `N_k ≥ 0`: `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ`
+with the modulus `N_k` itself. -/
+theorem not_isSquare_betaInt_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
+    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (hc : TwoAdicClass r s ε) {n k : ℕ} (hn : 2 ≤ n)
+    (hk : n = k * radical n) (hk2 : 2 ≤ k) (hN : 0 ≤ reflNum r s ε k) :
+    ¬IsSquare (betaInt r s ε n) :=
+  not_isSquare_betaInt_of_dvd_add_succ_of_two_le hs hrs hε hw hn rfl hk hk2
+    (Int.natAbs_dvd.mpr dvd_rfl) (not_isSquare_neg_one_zmod_reflNum hrs hε hc hk2 hN)
 
 /-! ### The primes of `s` -/
 
@@ -394,9 +392,13 @@ theorem not_isSquare_betaInt_of_squarefree_of_odd_of_even (hs : s % 2 = 0) (hs0 
 square: modulo `8`, `∏_{t ∣ n} w_t = (r + εs) r^(τ(n) - 2)` with `τ(n) - 2` even, and `r + εs` is
 odd and not a square modulo `8`. No condition on `r` modulo `4` is needed here. -/
 theorem not_isSquare_betaInt_of_squarefree_of_even_of_even (hs : s % 2 = 0) (hs0 : s ≠ 0)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n)
+    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ}
     (hsf : Squarefree n) (hne : Even n) (h8 : (r + ε * s) % 8 ≠ 1) :
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
+  have hn : 2 ≤ n := by
+    obtain ⟨m, hm⟩ := hne
+    have := hsf.ne_zero
+    lia
   have key := isSquare_intCast_prod_wSeq_zmod_eight_of_isSquare_betaInt hs0 hrs hε hw hn hsf hsq
   obtain ⟨j, hj⟩ := even_card_filter_divisors_of_even hn hsf hne
   have hr2 : r % 2 = 1 := emod_two_eq_one_of_isCoprime hrs hs

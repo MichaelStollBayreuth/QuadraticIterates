@@ -112,13 +112,14 @@ theorem intCast_wSeq {S : Type*} [CommRing S] {u : S} (hu : (s : S) * u = 1) (h�
         gammaSeq (C ((r : S) * u) * X ^ 2 + C (ε : S)) (ε : S) n ^ 2) * hu
 
 /-- `w_n` is coprime to `r`: `w_{n+1} ≡ ε s^(2^n - 1) mod r`. -/
-lemma isCoprime_wSeq_left (hrs : IsCoprime r s) (hε : IsUnit ε) {n : ℕ} (hn : 1 ≤ n) :
+lemma isCoprime_wSeq_left (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) {n : ℕ} (hn : 1 ≤ n) :
     IsCoprime (wSeq r s ε n) r := by
   rcases hn.eq_or_lt with rfl | hn
   · exact isCoprime_one_left
   · obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
     rw [wSeq_succ r s ε (by lia), add_comm]
-    exact ((isCoprime_mul_unit_left_left hε _ _).mpr hrs.symm.pow_left).add_mul_left_left _
+    exact ((isCoprime_mul_unit_left_left (IsUnit.of_pow_eq_one hε two_ne_zero) _ _).mpr
+      hrs.symm.pow_left).add_mul_left_left _
 
 /-- `w_n` is coprime to `s`: `w_{n+1} ≡ r w_n² mod s`, by induction from `w_1 = 1`. -/
 lemma isCoprime_wSeq_right (hrs : IsCoprime r s) {n : ℕ} (hn : 1 ≤ n) :
@@ -299,7 +300,7 @@ theorem isCoprime_betaInt_right {n : ℕ} (hn : 1 ≤ n) : IsCoprime (betaInt r 
 theorem isCoprime_betaInt_left {n : ℕ} (hn : 1 ≤ n) : IsCoprime (betaInt r s ε n) r :=
   IsCoprime.of_mul_left_left (y := denProd (wSeq r s ε) n)
     (betaInt_mul_denProd hs hrs hε hw hn ▸ IsCoprime.prod_left fun x hx ↦
-      isCoprime_wSeq_left hrs (IsUnit.of_pow_eq_one hε two_ne_zero) (Nat.pos_of_mem_divisors
+      isCoprime_wSeq_left hrs hε (Nat.pos_of_mem_divisors
         (Nat.snd_mem_divisors_of_mem_antidiagonal (Finset.mem_of_mem_filter x hx))))
 
 /-- The integer Möbius factors are pairwise coprime: this holds in `ℤ[1/s]`
@@ -308,7 +309,7 @@ to `s`. -/
 theorem isCoprime_betaInt {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) (hmn : m ≠ n) :
     IsCoprime (betaInt r s ε m) (betaInt r s ε n) := by
   have := NeZero.mk hs
-  refine (IsLocalization.Away.isRelPrime_of_isRelPrime_algebraMap (S := Localization.Away s) hs ?_
+  refine (IsLocalization.Away.isRelPrime_of_isRelPrime_algebraMap (S := Localization.Away s) ?_
     (isCoprime_betaInt_right hs hrs hε hw hm)).isCoprime
   rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _), betaInt_eq_moebiusFactorR,
     betaInt_eq_moebiusFactorR,
@@ -404,10 +405,11 @@ lemma reflNum_one : reflNum r s ε 1 = r + (1 + ε) * s := by
   rw [reflNum, wSeq_succ r s ε le_rfl, wSeq_one]
   ring
 
-lemma reflNum_pos (hs : 0 < s) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {k : ℕ} (hk : 1 ≤ k) :
+lemma reflNum_pos (hs : 0 ≤ s) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {k : ℕ} (hk : 1 ≤ k) :
     0 < reflNum r s ε k := by
   have := hw k hk
   have := hw (k + 1) (by lia)
+  have := pow_nonneg hs (2 ^ (k - 1))
   rw [reflNum]
   positivity
 

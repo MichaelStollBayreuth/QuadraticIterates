@@ -203,9 +203,10 @@ fidelity:
     (2021) is formalized in the stronger form a = -(4k+2)(4k+3), Li's statement being the case
     of even k. The rational-parameter theorems R⁺ and R⁻ (not in the papers) are stated with
     the 2-adic classes as the predicate TwoAdicClass and the squarefree-level clauses as the
-    inductive predicate SquarefreeCert, whose constructors take a general modulus M (s a unit
-    modulo M, the relevant quantity not a square in ZMod M) in place of the odd primes p with
-    Legendre symbol -1 and the modulus 4 of the notes' clauses, which they subsume; Theorem R⁻
+    inductive predicate SquarefreeCert, whose constructors take a general modulus M dividing the
+    respective quantity (hence coprime to s), modulo which the relevant quantity is not a
+    square, in place of the odd primes p with Legendre symbol -1 and the modulus 4 of the
+    notes' clauses, which they subsume; Theorem R⁻
     has the mod-8 clause of Theorem R⁺ as well, which the notes omit. The index-2 statement of the 2020 paper (Ω_n has index 2 in the wreath power when -a - 1 is a
     square) and Lemma 3.5 of the 2021 paper (not needed for its Theorem 3.9) are not
     formalized.

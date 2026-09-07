@@ -344,9 +344,10 @@ and of divisibility, the descent below) are of Mathlib generality.
   \lname{isUnit\_prod\_gammaSeq\_mul}). Multiply by $s^{E(n)}$ (Lemma~\ref{lem:w-gamma-zmod}).
   For $n$ not squarefree $E(n)$ is even, for $n$ squarefree odd.
   \formalnote{\lname{not\_isSquare\_betaInt\_of\_dvd\_add\_succ}: hypotheses $n \ge 2$,
-  $n' = \rad(n)$, $n = k n'$, an element $u$ of $\ZZ/M\ZZ$ with $s u = 1$ (the inverse of the unit
-  $\bar s$, passed as a certificate), $M \mid N_k$ (\lname{reflNum r s ε k}, the numerator
-  $w_k s^{2^{k-1}} + w_{k+1}$, coprime to $s$ and positive when $w$ is), and $-\bar s^{F}$ not a
+  $n' = \rad(n)$, $n = k n'$, $M \mid N_k$ (\lname{reflNum r s ε k}, the numerator
+  $w_k s^{2^{k-1}} + w_{k+1}$, coprime to $s$ and positive when $w$ is; so $\bar s$ is a unit of
+  $\ZZ/M\ZZ$, whose inverse the proof obtains from
+  \lname{ZMod.isUnit\_intCast\_of\_isCoprime\_of\_dvd}), and $-\bar s^{F}$ not a
   square in \lname{ZMod M}, where $F = \sum_{t \mid n'} (2^{kt-1} - 1)$ is the exponent the
   denominators produce ($F \equiv E(n) \bmod 2$); conclusion $\beta_n$ is not a square in $\ZZ$.
   The proof: \lname{intCast\_betaInt\_eq\_div} writes $\beta_n = P/Q$ with $P$, $Q$ the products
@@ -412,7 +413,8 @@ and of divisibility, the descent below) are of Mathlib generality.
   ($-1$ is not a square modulo $N_k$, via \lname{Int.not\_isSquare\_neg\_one\_zmod\_natAbs\_of\_emod})
   and the corollary \lname{not\_isSquare\_betaInt\_of\_two\_le}: in the classes, $\beta_n$ is not
   a square for $n \ge 2$ with $n / \rad(n) \ge 2$, by the reflection lemma with the modulus $N_k$
-  itself (Mathlib's \lname{ZMod.coe\_int\_isUnit\_iff\_isCoprime} supplies the inverse of $\bar s$).}
+  itself; both are stated with the hypothesis $N_k \ge 0$ in place of a sign world, which the
+  theorems supply through \lname{reflNum\_pos}.}
 \end{proof}
 
 \section{Squarefree levels}
@@ -519,8 +521,9 @@ and of divisibility, the descent below) are of Mathlib generality.
   Proposition~\ref{prop:rat-twoadic}, ``$-\varepsilon r s$ is not a square'' and a certificate
   \lname{SquarefreeCert r s ε}, an inductive predicate with one constructor per mechanism of the
   squarefree levels (\lname{dvd}, \lname{reflNum}, \lname{even}, \lname{gammaTwo}); each takes a
-  general modulus $M$ with $s$ a unit modulo $M$ and ``not a square in \lname{ZMod M}'' in place
-  of the odd prime $p$ with Legendre symbol $-1$ and of the modulus $4$, which it subsumes
+  general modulus $M$ dividing the respective quantity (hence coprime to $s$) and ``not a square
+  in \lname{ZMod M}'' in place of the odd prime $p$ with Legendre symbol $-1$ and of the modulus
+  $4$, which it subsumes
   (\lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_squarefreeCert}). Theorem R${}^+$ is the
   instance $\varepsilon = 1$, $-s < r$, with the positivity of $w$ from
   \lname{wSeq\_pos\_of\_pos} ($r > 0$) and \lname{wSeq\_pos\_of\_neg\_lt} ($-s < r < 0$).

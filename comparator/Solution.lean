@@ -53,10 +53,10 @@ theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert 
     (hs : 0 < s) (hrs : IsCoprime r s) (hr : -s < r) (hsq : ¬IsSquare (-(r * s)))
     (hc : (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
-      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + 2 * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
+      (∃ M : ℕ, (M : ℤ) ∣ r + 2 * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
         (s % 2 = 0 ∧ r % 4 = 3 ∧ (r + s) % 8 ≠ 1) ∨
           (¬IsSquare (r + s) ∧
-            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) :
+            ∃ M : ℕ, (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) := fun n _ ↦
   nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert hs hrs hr
     (twoAdicClass_iff.mpr (by simpa using hc)) hsq
@@ -66,10 +66,10 @@ theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squaref
     (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
     (hc : (s % 2 = 1 ∧ (R % 4 = 1 ∨ (R - s) % 4 = 3)) ∨ (s % 2 = 0 ∧ R % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
-      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
+      (∃ M : ℕ, (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
         (s % 2 = 0 ∧ R % 4 = 3 ∧ (R - s) % 8 ≠ 1) ∨
           (¬IsSquare (R - s) ∧
-            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ R - s ∧ ¬IsSquare (-(s : ZMod M)))) :
+            ∃ M : ℕ, (M : ℤ) ∣ R - s ∧ ¬IsSquare (-(s : ZMod M)))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup (-R / s : ℚ) n ≃* WreathPower n) := fun n _ ↦
   (show ((-1 : ℤ) : ℚ) * R / s = (-R / s : ℚ) by simp) ▸
     nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCert hs hRs neg_one_sq

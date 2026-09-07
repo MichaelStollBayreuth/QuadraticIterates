@@ -92,17 +92,17 @@ extension of the Section 3 main result to a rational parameter `a = r/s > -1` (`
 `s` coprime): if `-rs` is not a square, `(r, s)` lies in one of the 2-adic classes (`s` odd with
 `r ≡ 1 mod 4` or `r + s ≡ 3 mod 4`, or `s` even with `r ≡ 3 mod 4`), and one of the four
 squarefree-level certificates holds — a divisor `M` of `s` modulo which `r` is not a square; a
-divisor `M` of `r + 2s` modulo which `s` is a unit and `-s` is not a square; `s` even with
-`r ≡ 3 mod 4` and `r + s ≢ 1 mod 8`; or `r + s` not a square with a divisor `M` of `r + s` modulo
-which `s` is a unit and not a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+divisor `M` of `r + 2s` modulo which `-s` is not a square; `s` even with `r ≡ 3 mod 4` and
+`r + s ≢ 1 mod 8`; or `r + s` not a square with a divisor `M` of `r + s` modulo which `s` is not
+a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
 theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert (r s : ℤ)
     (hs : 0 < s) (hrs : IsCoprime r s) (hr : -s < r) (hsq : ¬IsSquare (-(r * s)))
     (hc : (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
-      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + 2 * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
+      (∃ M : ℕ, (M : ℤ) ∣ r + 2 * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
         (s % 2 = 0 ∧ r % 4 = 3 ∧ (r + s) % 8 ≠ 1) ∨
           (¬IsSquare (r + s) ∧
-            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) :
+            ∃ M : ℕ, (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
   sorry
 
@@ -111,16 +111,16 @@ extension of the Section 3 main result to a rational parameter `a = -R/s ≤ -2`
 coprime): if `Rs` is not a square, `(R, s)` lies in one of the 2-adic classes (`s` odd with
 `R ≡ 1 mod 4` or `R - s ≡ 3 mod 4`, or `s` even with `R ≡ 3 mod 4`), and one of the four
 squarefree-level certificates holds — a divisor `M` of `s` modulo which `R` is not a square; a
-divisor `M` of `R` modulo which `s` is a unit and `-s` is not a square; `s` even with
-`R ≡ 3 mod 4` and `R - s ≢ 1 mod 8`; or `R - s` not a square with a divisor `M` of `R - s` modulo
-which `s` is a unit and `-s` is not a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+divisor `M` of `R` modulo which `-s` is not a square; `s` even with `R ≡ 3 mod 4` and
+`R - s ≢ 1 mod 8`; or `R - s` not a square with a divisor `M` of `R - s` modulo which `-s` is not
+a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
 theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert (R s : ℤ)
     (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
     (hc : (s % 2 = 1 ∧ (R % 4 = 1 ∨ (R - s) % 4 = 3)) ∨ (s % 2 = 0 ∧ R % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
-      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
+      (∃ M : ℕ, (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
         (s % 2 = 0 ∧ R % 4 = 3 ∧ (R - s) % 8 ≠ 1) ∨
           (¬IsSquare (R - s) ∧
-            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ R - s ∧ ¬IsSquare (-(s : ZMod M)))) :
+            ∃ M : ℕ, (M : ℤ) ∣ R - s ∧ ¬IsSquare (-(s : ZMod M)))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup (-R / s : ℚ) n ≃* WreathPower n) :=
   sorry

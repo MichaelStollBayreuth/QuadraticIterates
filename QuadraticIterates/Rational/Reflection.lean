@@ -11,15 +11,16 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.Squares
+import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
 /-!
 # Reflection with the twist: `β_n` modulo `M`
 
 The reflection mechanism of `QuadraticIterates.ArchMath1992.Sequences` for the integer Möbius
-factors `β_n` of the sequence `w` of a rational parameter `a = r/s`: if a modulus `M` in which
-`s` is invertible divides the numerator `N_k = w_k s^(2^(k-1)) + w_{k+1}` of `γ_k + γ_{k+1}`
-(`QuadraticIterates.reflNum`), where `k = n / rad n`, then `γ_{k+1} ≡ -γ_k mod M` and the
+factors `β_n` of the sequence `w` of a rational parameter `a = r/s`: if a modulus `M` divides
+the numerator `N_k = w_k s^(2^(k-1)) + w_{k+1}` of `γ_k + γ_{k+1}` (`QuadraticIterates.reflNum`,
+coprime to `s`), where `k = n / rad n`, then `γ_{k+1} ≡ -γ_k mod M` and the
 constant tail of the `γ`-sequence over `ZMod M` makes `β_n ≡ -s^F · (unit)² mod M`, with the
 twist `s^F`, `F = ∑_{t ∣ rad n} (2^(kt-1) - 1)`, coming from the denominators
 (`QuadraticIterates.intCast_wSeq`). So `β_n` is not a square when `-1` (for `n` not squarefree,
@@ -69,9 +70,6 @@ local notation "γZ" => gammaSeq gZ (ε : ZMod M)
 
 private lemma evenPoly_gZ : EvenPoly gZ := evenPoly_C_mul_X_sq_add_C _ _
 
-private lemma isUnit_intCast_of_mul_eq_one (hu : (s : ZMod M) * u = 1) : IsUnit (s : ZMod M) :=
-  isUnit_iff_exists_inv.mpr ⟨u, hu⟩
-
 private lemma isUnit_eval_zero_gZ (hε : ε ^ 2 = 1) : IsUnit (eval 0 gZ) := by
   have : (ε : ZMod M) ^ 2 = 1 := by rw [← Int.cast_pow, hε, Int.cast_one]
   simpa using IsUnit.of_pow_eq_one this two_ne_zero
@@ -89,8 +87,8 @@ private lemma gammaSeq_zmod_add_succ_eq_zero (hu : (s : ZMod M) * u = 1) (hε : 
     lia
   push_cast at h
   rw [intCast_wSeq hu hε, intCast_wSeq hu hε, Nat.add_sub_cancel, he, pow_add] at h
-  refine (((isUnit_intCast_of_mul_eq_one hu).pow (2 ^ (k - 1) - 1)).mul
-    ((isUnit_intCast_of_mul_eq_one hu).pow (2 ^ (k - 1)))).mul_right_eq_zero.mp ?_
+  refine (((IsUnit.of_mul_eq_one _ hu).pow (2 ^ (k - 1) - 1)).mul
+    ((IsUnit.of_mul_eq_one _ hu).pow (2 ^ (k - 1)))).mul_right_eq_zero.mp ?_
   linear_combination h
 
 private lemma gammaSeq_zmod_add_two_mul_eq_zero (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 = 1)
@@ -125,23 +123,24 @@ private lemma isUnit_intCast_prod_wSeq_zmod (hu : (s : ZMod M) * u = 1) (hε : �
     (hdvd : (M : ℤ) ∣ reflNum r s ε k) (S : Finset ℕ)
     (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit ((∏ t ∈ S, wSeq r s ε (k * t) : ℤ) : ZMod M) := by
   rw [intCast_prod_wSeq_zmod hu hε]
-  exact (IsUnit.prod_iff.mpr fun _ _ ↦ (isUnit_intCast_of_mul_eq_one hu).pow _).mul
+  exact (IsUnit.prod_iff.mpr fun _ _ ↦ (IsUnit.of_mul_eq_one _ hu).pow _).mul
     (isUnit_prod_gammaSeq_mul evenPoly_gZ hk (gammaSeq_zmod_add_two_mul_eq_zero hu hε hk hdvd)
       (isUnit_gammaSeq_zmod_two_mul hu hε hk hdvd) hS)
 
-/-- **Reflection with the twist.** Let `n ≥ 2`, `n' = rad n`, `k = n / n'`, and let `M` be a
-modulus in which `s` is invertible (with inverse `u`) and which divides the numerator `N_k` of
-`γ_k + γ_{k+1}`. Then `β_n ≡ -s^F · (unit)² mod M` with
-`F = ∑_{t ∣ n'} (2^(kt-1) - 1)`, so `β_n` is not a square if `-s^F` is not a square mod `M`. -/
+/-- **Reflection with the twist.** Let `n ≥ 2`, `n' = rad n`, `k = n / n'`, and let `M` divide
+the numerator `N_k` of `γ_k + γ_{k+1}` (so that `M` is coprime to `s`). Then
+`β_n ≡ -s^F · (unit)² mod M` with `F = ∑_{t ∣ n'} (2^(kt-1) - 1)`, so `β_n` is not a square if
+`-s^F` is not a square mod `M`. -/
 theorem not_isSquare_betaInt_of_dvd_add_succ (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
     (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n) (hn' : n' = radical n)
-    (hk : n = k * n') (hu : (s : ZMod M) * u = 1)
-    (hdvd : (M : ℤ) ∣ reflNum r s ε k)
+    (hk : n = k * n') (hdvd : (M : ℤ) ∣ reflNum r s ε k)
     (hnsq : ¬IsSquare (-(s : ZMod M) ^ ∑ t ∈ n'.divisors, (2 ^ (k * t - 1) - 1))) :
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
   have hn'1 : 1 < n' := hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)
   have hkpos : 1 ≤ k := by grind
   have hsf : Squarefree n' := hn' ▸ squarefree_radical
+  obtain ⟨u, hu⟩ := (ZMod.isUnit_intCast_of_isCoprime_of_dvd
+    (isCoprime_reflNum_right hrs hkpos).symm hdvd).exists_right_inv
   have hz := gammaSeq_zmod_add_two_mul_eq_zero hu hε hkpos hdvd
   have hQu := isUnit_intCast_prod_wSeq_zmod hu hε hkpos hdvd
     (n'.divisors.filter fun t ↦ μ (n' / t) = -1) fun t ht ↦
@@ -208,29 +207,30 @@ lemma odd_sum_two_pow_sub_one_of_squarefree {n : ℕ} (hsf : Squarefree n) (hn1 
 square, so it suffices that `-1` is not a square mod `M`. -/
 theorem not_isSquare_betaInt_of_dvd_add_succ_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n)
-    (hn' : n' = radical n) (hk : n = k * n') (hk2 : 2 ≤ k) (hu : (s : ZMod M) * u = 1)
-    (hdvd : (M : ℤ) ∣ reflNum r s ε k)
-    (hnsq : ¬IsSquare (-1 : ZMod M)) : ¬IsSquare (betaInt r s ε n) :=
-  not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn hn' hk hu hdvd fun h ↦ hnsq (by
-    obtain ⟨j, hj⟩ := even_sum_two_pow_mul_sub_one_of_squarefree (hn' ▸ squarefree_radical)
-      (hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)) hk2
-    rwa [hj, show -(s : ZMod M) ^ (j + j) = -1 * ((s : ZMod M) ^ j) ^ 2 by ring,
-      ((isUnit_intCast_of_mul_eq_one hu).pow j).isSquare_mul_sq_iff] at h)
+    (hn' : n' = radical n) (hk : n = k * n') (hk2 : 2 ≤ k) (hdvd : (M : ℤ) ∣ reflNum r s ε k)
+    (hnsq : ¬IsSquare (-1 : ZMod M)) : ¬IsSquare (betaInt r s ε n) := by
+  have hsu : IsUnit (s : ZMod M) := ZMod.isUnit_intCast_of_isCoprime_of_dvd
+    (isCoprime_reflNum_right hrs (one_le_two.trans hk2)).symm hdvd
+  refine not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn hn' hk hdvd fun h ↦ hnsq ?_
+  obtain ⟨j, hj⟩ := even_sum_two_pow_mul_sub_one_of_squarefree (hn' ▸ squarefree_radical)
+    (hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)) hk2
+  rwa [hj, ← two_mul, pow_mul', ← neg_one_mul, (hsu.pow j).isSquare_mul_sq_iff] at h
 
 /-- The reflection lemma for squarefree `n ≥ 2` (`k = 1`): the modulus divides
 `r + (1 + ε) s`, the numerator of `γ_1 + γ_2`, and the twist is `s` times a square, so it suffices
 that `-s` is not a square mod `M`. -/
 theorem not_isSquare_betaInt_of_squarefree_of_dvd (hs : s ≠ 0) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n) (hsf : Squarefree n)
-    (hu : (s : ZMod M) * u = 1) (hdvd : (M : ℤ) ∣ r + (1 + ε) * s)
-    (hnsq : ¬IsSquare (-(s : ZMod M))) : ¬IsSquare (betaInt r s ε n) :=
-  not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn
-    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm hu
-    (reflNum_one ▸ hdvd) fun h ↦ hnsq (by
-      obtain ⟨j, hj⟩ := odd_sum_two_pow_sub_one_of_squarefree hsf (by lia)
-      simp only [one_mul] at h
-      rwa [hj, show -(s : ZMod M) ^ (2 * j + 1) = -(s : ZMod M) * ((s : ZMod M) ^ j) ^ 2 by ring,
-        ((isUnit_intCast_of_mul_eq_one hu).pow j).isSquare_mul_sq_iff] at h)
+    (hdvd : (M : ℤ) ∣ r + (1 + ε) * s) (hnsq : ¬IsSquare (-(s : ZMod M))) :
+    ¬IsSquare (betaInt r s ε n) := by
+  have hd : (M : ℤ) ∣ reflNum r s ε 1 := reflNum_one ▸ hdvd
+  have hsu : IsUnit (s : ZMod M) :=
+    ZMod.isUnit_intCast_of_isCoprime_of_dvd (isCoprime_reflNum_right hrs le_rfl).symm hd
+  refine not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn
+    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm hd fun h ↦ hnsq ?_
+  obtain ⟨j, hj⟩ := odd_sum_two_pow_sub_one_of_squarefree hsf (by lia)
+  simp only [one_mul] at h
+  rwa [hj, pow_succ', pow_mul', ← neg_mul, (hsu.pow j).isSquare_mul_sq_iff] at h
 
 end zmod
 
