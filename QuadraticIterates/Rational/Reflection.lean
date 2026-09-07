@@ -47,7 +47,7 @@ iterated polynomials*, Arch. Math. **59** (1992), 239-244, to rational parameter
 @[expose] public section
 
 open Polynomial ArithmeticFunction UniqueFactorizationMonoid
-open scoped ArithmeticFunction.Moebius
+open scoped ArithmeticFunction.Moebius Finset
 
 namespace QuadraticIterates
 
@@ -112,9 +112,7 @@ private lemma isUnit_gammaSeq_zmod_two_mul (hu : (s : ZMod M) * u = 1) (hε : ε
   have h1 : IsUnit (γZ k) := isCoprime_zero_left.mp
     (gammaSeq_zmod_add_succ_eq_zero hu hε hk hdvd ▸
       isCoprime_gammaSeq_add_succ (ε : ZMod M) hk (isUnit_eval_zero_gZ hε))
-  rw [show γZ (2 * k) = -γZ k by
-    linear_combination gammaSeq_zmod_add_two_mul_eq_zero hu hε hk hdvd]
-  exact h1.neg
+  exact eq_neg_of_add_eq_zero_right (gammaSeq_zmod_add_two_mul_eq_zero hu hε hk hdvd) ▸ h1.neg
 
 /-- A product of `w_{kt}` in `ZMod M` is the corresponding product of `γ_{kt}` times a power
 of `s`. -/
@@ -151,7 +149,7 @@ theorem not_isSquare_betaInt_of_dvd_reflNum (hs : s ≠ 0) (hrs : IsCoprime r s)
     (isCoprime_reflNum_right hrs hkpos).symm hdvd).exists_right_inv
   have hz := gammaSeq_zmod_add_two_mul_eq_zero hu hε hkpos hdvd
   have hQu := isUnit_intCast_prod_wSeq_zmod hu hε hkpos hdvd
-    (n'.divisors.filter fun t ↦ μ (n' / t) = -1) fun t ht ↦
+    {t ∈ n'.divisors | μ (n' / t) = -1} fun t ht ↦
       Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht)
   have key := ZMod.isSquare_mul_of_isSquare_div
     (x := -∏ t ∈ n'.divisors with μ (n' / t) = 1, (s : ZMod M) ^ (2 ^ (k * t - 1) - 1))
@@ -163,8 +161,9 @@ theorem not_isSquare_betaInt_of_dvd_reflNum (hs : s ≠ 0) (hrs : IsCoprime r s)
     Finset.prod_pow_eq_pow_sum] at key
   exact hnsq key
 
-/-- The reflection lemma for `n` not squarefree (`k = n / rad n ≥ 2`): the twist `s^F` is a
-square, so it suffices that `-1` is not a square mod `M`. -/
+/-- `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum` for `n` not squarefree
+(`k = n / rad n ≥ 2`): the twist `s^F` is a square, so it suffices that `-1` is not a square
+mod `M`. -/
 theorem not_isSquare_betaInt_of_dvd_reflNum_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n)
     (hn' : n' = radical n) (hk : n = k * n') (hk2 : 2 ≤ k) (hdvd : (M : ℤ) ∣ reflNum r s ε k)
@@ -175,9 +174,10 @@ theorem not_isSquare_betaInt_of_dvd_reflNum_of_two_le (hs : s ≠ 0) (hrs : IsCo
   rwa [← neg_one_mul, hsu.isSquare_mul_pow_iff_of_even (Squarefree.even_sum_two_pow_mul_sub_one
     (hn' ▸ squarefree_radical) (hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)) hk2)] at h
 
-/-- The reflection lemma for squarefree `n ≥ 2` (`k = 1`): the modulus divides `N_1`, the numerator
-`r + (1 + ε) s` of `γ_1 + γ_2` (`QuadraticIterates.reflNum_one`), and the twist is `s` times a
-square, so it suffices that `-s` is not a square mod `M`. -/
+/-- `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum` for squarefree `n ≥ 2` (`k = 1`): the
+modulus divides `N_1`, the numerator `r + (1 + ε) s` of `γ_1 + γ_2`
+(`QuadraticIterates.reflNum_one`), and the twist is `s` times a square, so it suffices that `-s`
+is not a square mod `M`. -/
 theorem not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one (hs : s ≠ 0) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n) (hsf : Squarefree n)
     (hdvd : (M : ℤ) ∣ reflNum r s ε 1) (hnsq : ¬IsSquare (-(s : ZMod M))) :

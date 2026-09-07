@@ -167,7 +167,6 @@ lemma cSeq_succ_ne_zero_of_irreducible {n : ℕ} (hirr : Irreducible fℚ[a, n +
   exact hirr.not_isRoot_of_natDegree_ne_one (by rw [natDegree_iteratedPoly]; lia)
     (h.resolve_left (neg_ne_zero.mpr one_ne_zero))
 
-/-- When all iterates are irreducible, no `c_n` with `n ≥ 1` vanishes. -/
 lemma cSeq_ne_zero_of_irreducible (hirr : ∀ k, Irreducible fℚ[a, k]) : ∀ n ≥ 1, cSeq a n ≠ 0 :=
   fun n hn ↦ by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)

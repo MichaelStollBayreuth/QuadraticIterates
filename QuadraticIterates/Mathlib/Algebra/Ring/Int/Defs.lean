@@ -18,7 +18,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-/-- The cast of an integer `ε` with `ε² = 1` squares to `1` in every ring. -/
 lemma Int.cast_sq_eq_one_of_sq_eq_one {S : Type*} [Ring S] {ε : ℤ} (hε : ε ^ 2 = 1) :
     (ε : S) ^ 2 = 1 := by
   rw [← Int.cast_pow, hε, Int.cast_one]

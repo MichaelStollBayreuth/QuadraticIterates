@@ -197,7 +197,6 @@ theorem _root_.Squarefree.even_card_filter_divisors_mod_two {n : ℕ} (hsf : Squ
 
 /-! ### The twist exponents -/
 
-/-- The divisors `t` of `n` with `t - 1 ≥ 1` are the divisors other than `1`. -/
 theorem _root_.Nat.divisors_filter_one_le_sub_one (n : ℕ) :
     {t ∈ n.divisors | 1 ≤ t - 1} = n.divisors.erase 1 := by
   rw [← Finset.filter_ne']

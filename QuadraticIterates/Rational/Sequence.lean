@@ -5,14 +5,14 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.EuclideanDomain.Int
-public import Mathlib.GroupTheory.MonoidLocalization.UniqueFactorization
-public import Mathlib.RingTheory.UniqueFactorizationDomain.GCDMonoid
-public import Mathlib.RingTheory.PrincipalIdealDomain
-public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.RingTheory.Localization.Away.Basic
 
+import Mathlib.Algebra.EuclideanDomain.Int
+import Mathlib.GroupTheory.MonoidLocalization.UniqueFactorization
+import Mathlib.RingTheory.PrincipalIdealDomain
+import Mathlib.RingTheory.UniqueFactorizationDomain.GCDMonoid
+import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
 import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
@@ -31,23 +31,30 @@ the integer Möbius factors `β_n = ∏_{d ∣ n} w_d^{μ(n/d)}` (`QuadraticIter
 integers (`QuadraticIterates.intCast_betaInt`), nonzero, pairwise coprime
 (`QuadraticIterates.isCoprime_betaInt`) and coprime to `r` and `s`, with `w_n = ∏_{d ∣ n} β_d`.
 
-## Main definitions and statements
+## Main definitions
 
-* `QuadraticIterates.wSeq`: `w_1 = 1`, `w_{n+1} = r w_n² + ε s^(2^n - 1)`, and
-  `QuadraticIterates.intCast_wSeq`: in any commutative ring in which `s` is invertible,
-  `w_n = s^(2^(n-1) - 1) γ_n`.
+* `QuadraticIterates.wSeq`: `w_1 = 1`, `w_{n+1} = r w_n² + ε s^(2^n - 1)`.
 * `QuadraticIterates.wSeqAway`, `QuadraticIterates.normPolyAway`: `w` and the rescaled
-  polynomial over `ℤ[1/s]`, and `QuadraticIterates.isRelPrime_moebiusFactorR_wSeqAway`.
-* `QuadraticIterates.betaInt` with `QuadraticIterates.betaInt_mul_denProd`,
-  `QuadraticIterates.intCast_betaInt`, `QuadraticIterates.wSeq_eq_prod_betaInt`,
-  `QuadraticIterates.isCoprime_betaInt`, `QuadraticIterates.isCoprime_betaInt_left`,
-  `QuadraticIterates.isCoprime_betaInt_right`.
+  polynomial over `ℤ[1/s]`.
+* `QuadraticIterates.betaInt`: the integer Möbius factors `β_n`.
+* `QuadraticIterates.reflNum`: the numerator `N_k = w_k s^(2^(k-1)) + w_{k+1}` of `γ_k + γ_{k+1}`,
+  whose divisors are the moduli of the reflection lemma.
+
+## Main statements
+
+* `QuadraticIterates.intCast_wSeq`: in any commutative ring in which `s` is invertible,
+  `w_n = s^(2^(n-1) - 1) γ_n`.
+* `QuadraticIterates.isRelPrime_moebiusFactorR_wSeqAway`: over `ℤ[1/s]`, the Möbius factors of
+  `w` are pairwise relatively prime.
+* `QuadraticIterates.betaInt_mul_denProd`, `QuadraticIterates.intCast_betaInt`,
+  `QuadraticIterates.wSeq_eq_prod_betaInt`, `QuadraticIterates.isCoprime_betaInt`,
+  `QuadraticIterates.isCoprime_betaInt_left`, `QuadraticIterates.isCoprime_betaInt_right`: the
+  `β_n` are integers with `w_n = ∏_{d ∣ n} β_d`, pairwise coprime and coprime to `r` and `s`.
 * The sign worlds: `w_n > 0` for `a > 0` (`QuadraticIterates.wSeq_pos_of_pos`), for
   `-1 < a < 0` (`QuadraticIterates.wSeq_pos_of_neg_lt`) and, in Stoll's normalization `ε = -1`
   with `|r|` in place of `r`, for `a ≤ -2` (`QuadraticIterates.wSeq_pos_of_two_mul_le`); then
   `β_n > 0` (`QuadraticIterates.betaInt_pos`).
-* `QuadraticIterates.reflNum`: the numerator `N_k = w_k s^(2^(k-1)) + w_{k+1}` of `γ_k + γ_{k+1}`,
-  coprime to `s`, whose divisors are the moduli of the reflection lemma.
+* `QuadraticIterates.isCoprime_reflNum_right`: `N_k` is coprime to `s`.
 
 Part of the extension of the Section 3 theorem of M. Stoll, *Galois groups over ℚ of some
 iterated polynomials*, Arch. Math. **59** (1992), 239-244, to rational parameters `a`; see
@@ -206,13 +213,12 @@ private lemma wSeqAway_associated_gcd (hε : ε ^ 2 = 1) (m n : ℕ) :
       (Int.cast_sq_eq_one_of_sq_eq_one hε) m n).trans (associated_wSeqAway hε _).symm)
 
 open Classical in
-private lemma factorization_wSeqAway_shape (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) :
-    ∀ p : Localization.Away s, Prime p → normalize p = p → ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1,
-      factorization (wSeqAway r s ε k) p = if m ∣ k then E else 0 :=
-  fun p hp hpn ↦ by
-    obtain ⟨m, hm, E, hE⟩ := factorization_gammaSeq_shape (evenPoly_normPolyAway r s ε)
-      (Int.cast_sq_eq_one_of_sq_eq_one hε) (gammaSeq_normPolyAway_ne_zero hε hw) hp hpn
-    exact ⟨m, hm, E, fun k hk ↦ by rw [(associated_wSeqAway hε k).factorization_eq]; exact hE k hk⟩
+private lemma factorization_wSeqAway_shape (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+    (p : Localization.Away s) (hp : Prime p) (hpn : normalize p = p) :
+    ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (wSeqAway r s ε k) p = if m ∣ k then E else 0 := by
+  obtain ⟨m, hm, E, hE⟩ := factorization_gammaSeq_shape (evenPoly_normPolyAway r s ε)
+    (Int.cast_sq_eq_one_of_sq_eq_one hε) (gammaSeq_normPolyAway_ne_zero hε hw) hp hpn
+  exact ⟨m, hm, E, fun k hk ↦ (associated_wSeqAway hε k).factorization_eq ▸ hE k hk⟩
 
 /-- The Möbius factors of `w` in `ℤ[1/s]` are pairwise relatively prime: `w` is, up to units, the
 `γ`-sequence of the rescaled polynomial, a strong divisibility sequence with the
@@ -375,7 +381,7 @@ def reflNum (r s ε : ℤ) (k : ℕ) : ℤ := wSeq r s ε k * s ^ 2 ^ (k - 1) + 
 lemma reflNum_eq (k : ℕ) :
     reflNum r s ε k = wSeq r s ε k * s ^ 2 ^ (k - 1) + wSeq r s ε (k + 1) := rfl
 
-/-- `N_k ≡ w_{k+1} mod s` is coprime to `s`. -/
+/-- `N_k` is coprime to `s`, since `N_k ≡ w_{k+1} mod s`. -/
 lemma isCoprime_reflNum_right (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
     IsCoprime (reflNum r s ε k) s := by
   rw [reflNum_eq, add_comm, ← mul_pow_sub_one (Nat.two_pow_pos _).ne' s, mul_left_comm]

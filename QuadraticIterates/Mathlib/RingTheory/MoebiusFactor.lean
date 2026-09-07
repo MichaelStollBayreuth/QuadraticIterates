@@ -239,7 +239,7 @@ denominator product divides the numerator product: both images are the solution 
 `β · denProd = numProd`. -/
 theorem map_moebiusFactorR (hφ : ∀ d ≥ 1, φ (c d) ≠ 0) (hdvd : denProd c n ∣ numProd c n) :
     φ (moebiusFactorR c n) = moebiusFactorR (fun d ↦ φ (c d)) n := by
-  have hc (d : ℕ) (hd : 1 ≤ d) : c d ≠ 0 := fun h ↦ hφ d hd (h ▸ map_zero φ)
+  have hc : ∀ d ≥ 1, c d ≠ 0 := fun d hd h ↦ hφ d hd (h ▸ map_zero φ)
   refine mul_right_cancel₀ (denProd_ne_zero hφ n) ?_
   rw [moebiusFactorR_mul_denProd_of_dvd hφ (map_denProd φ c n ▸ map_numProd φ c n ▸ map_dvd φ hdvd),
     ← map_denProd, ← map_mul, moebiusFactorR_mul_denProd_of_dvd hc hdvd, map_numProd]

@@ -18,7 +18,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-/-- `x^(n-1) = x · x^(n-2)` for `n ≥ 2`. -/
 lemma pow_sub_one_eq_mul_pow_sub_two {M : Type*} [Monoid M] (x : M) {n : ℕ} (hn : 2 ≤ n) :
     x ^ (n - 1) = x * x ^ (n - 2) := by
   rw [← mul_pow_sub_one (by lia : n - 1 ≠ 0) x, Nat.sub_sub]

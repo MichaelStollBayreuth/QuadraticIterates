@@ -29,8 +29,9 @@ where the `γ`-sequence of `a X² + ε` is `2`-periodic from index `2` on for ev
 (`QuadraticIterates.reflNum_emod_of_odd`); for even `s`, `w_n ≡ r mod 8` for `n ≥ 3`
 (`QuadraticIterates.intCast_wSeq_zmod_eight_of_even`,
 `QuadraticIterates.reflNum_emod_four_of_even`). Hence `-1` is not a square modulo `N_k`
-(`QuadraticIterates.not_isSquare_neg_one_zmod_reflNum`), and the reflection lemma with the modulus
-`N_k` makes `β_n` a non-square for every `n ≥ 2` with `n / rad n ≥ 2`
+(`QuadraticIterates.not_isSquare_neg_one_zmod_reflNum`), and
+`QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum` with the modulus `N_k` makes `β_n` a
+non-square for every `n ≥ 2` with `n / rad n ≥ 2`
 (`QuadraticIterates.not_isSquare_betaInt_of_twoAdicClass_of_two_le`).
 
 Part of the extension of the Section 3 theorem of M. Stoll, *Galois groups over ℚ of some
@@ -289,7 +290,7 @@ private lemma intCast_prod_wSeq_zmod_eight_of_even (hs : s % 2 = 0) (hrs : IsCop
     intCast_wSeq_zmod_eight_of_even hs hrs t (by have := (Finset.mem_filter.mp ht).2; lia)
 
 private lemma divisors_filter_le_two_of_odd {n : ℕ} (hn : Odd n) :
-    (n.divisors.filter fun t ↦ t ≤ 2) = {1} := by
+    {t ∈ n.divisors | t ≤ 2} = {1} := by
   ext t
   simp only [Finset.mem_filter, Nat.mem_divisors, Finset.mem_singleton]
   refine ⟨fun ⟨⟨ht, hn0⟩, h2⟩ ↦ ?_, fun h ↦ h ▸ ⟨⟨one_dvd n, hn.pos.ne'⟩, one_le_two⟩⟩
@@ -301,7 +302,7 @@ private lemma divisors_filter_le_two_of_odd {n : ℕ} (hn : Odd n) :
     lia
 
 private lemma divisors_filter_le_two_of_even {n : ℕ} (hn0 : n ≠ 0) (hn : Even n) :
-    (n.divisors.filter fun t ↦ t ≤ 2) = {1, 2} := by
+    {t ∈ n.divisors | t ≤ 2} = {1, 2} := by
   ext t
   simp only [Finset.mem_filter, Nat.mem_divisors, Finset.mem_insert, Finset.mem_singleton]
   refine ⟨fun ⟨⟨ht, _⟩, h2⟩ ↦ ?_, fun h ↦ ?_⟩

@@ -33,8 +33,10 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
   \leanok
   Let $a \in \QQ^\times$ and suppose that $f_k$ is irreducible over $\QQ$ for all $k \le n$.
   Then $\Om_n \cong \Ct{n}$ if and only if $c_1, \dots, c_n$ are $2$-independent in
-  $\QQ^\times/(\QQ^\times)^2$. In particular (Lemma~\ref{lem:1.2}), if none of $c_1, \dots, c_n$ is
-  a square, then $\Om_n \cong \Ct{n}$ iff $c_1, \dots, c_n$ are $2$-independent.
+  $\QQ^\times/(\QQ^\times)^2$, if and only if $b_1, \dots, b_n$ are $2$-independent (for the
+  second equivalence only $c_k \ne 0$ for all $k \ge 1$ is needed). In particular
+  (Lemma~\ref{lem:1.2}), if none of $c_1, \dots, c_n$ is a square, then $\Om_n \cong \Ct{n}$ iff
+  $c_1, \dots, c_n$ are $2$-independent.
 \end{theorem}
 \begin{proof}
   \uses{lem:1.4, lem:1.5, lem:1.6, lem:1.2}
@@ -78,7 +80,10 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
   $\gamma_{n+1} = a\gamma_n^2 + \varepsilon$, one has $\gamma_n = w_n / s^{2^{n-1} - 1}$ in every
   commutative ring in which $s$ is invertible. For $\varepsilon = 1$ this is $\gamma_n = f^n(0)/a$
   and $c_n = a \gamma_n = r w_n / s^{2^{n-1}}$ for $n \ge 1$; $\varepsilon = -1$ with $|r|$ in
-  place of $r$ is Stoll's positive normalization for $a \le -2$.
+  place of $r$ is Stoll's positive normalization for $a \le -2$. The sequence $w$ is positive in
+  the three sign worlds: for $r, s > 0$, $\varepsilon = 1$ trivially; for $-s < r < 0$,
+  $\varepsilon = 1$ since $0 < w_n \le s^{2^{n-1}-1}$; for $\varepsilon = -1$ and $2s \le r$ since
+  $w_n \ge s^{2^{n-1}-1}$.
   \formalnote{\lname{wSeq r s ε}, a function of $n$ with values in $\ZZ$, by recursion
   (\lname{wSeq\_succ}); the identity is \lname{intCast\_wSeq}: in a commutative ring $S$ with an
   element $u$, $s u = 1$, the cast of $w_n$ is $s^{2^{n-1}-1}\gamma_n$ for the $\gamma$-sequence of
@@ -198,6 +203,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   \leanok
   For $n \ge 2$, $\beta_n \in \ZZ$, $\gcd(\beta_n, rs) = 1$, $\gcd(\beta_m, \beta_n) = 1$ for
   $m \ne n$, and $v_p(\beta_n) = v_p(w_{d_0(p)})\,[n = d_0(p)]$ for every prime $p \nmid rs$.
+  If all $w_n > 0$, then $\beta_n > 0$.
 \end{lemma}
 \begin{proof}
   \uses{lem:gamma-away, lem:w-coprime}

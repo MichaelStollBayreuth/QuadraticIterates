@@ -28,8 +28,9 @@ integer statements are its corollaries through Corollary 1.3.
   `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are 2-independent
   (`QuadraticIterates.section1_a_iff_b_of_irreducible`, which only needs `f_k` irreducible for
   `k ≤ n`, and `QuadraticIterates.section1_b_iff_c`).
-* `QuadraticIterates.section1_tfae`: the same for an integer `a` with `-a` not a square
-  (`QuadraticIterates.section1_a_iff_b`).
+* `QuadraticIterates.section1_tfae`: for an integer `a` with `-a` not a square (so that all `f_k`
+  are irreducible, Corollary 1.3), `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent iff
+  `b_1, …, b_n` are 2-independent (`QuadraticIterates.section1_a_iff_b`).
 * `QuadraticIterates.section1_of_not_isSquare_abs_bSeq`: if none of `|b_2|, …, |b_n|` is a square,
   then `Ω_n ≅ [C₂]ⁿ`.
 * `QuadraticIterates.section3_main`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and

@@ -5,11 +5,11 @@ Authors: Michael Stoll
 -/
 module
 
-public import QuadraticIterates.Rational.GammaTwo
 public import QuadraticIterates.Rational.Residues
 public import QuadraticIterates.Rational.SquareClasses
 
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
+import QuadraticIterates.Rational.GammaTwo
 
 /-!
 # Theorems R⁺ and R⁻: maximal Galois groups for rational parameters

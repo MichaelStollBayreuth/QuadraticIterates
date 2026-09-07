@@ -31,7 +31,8 @@ ring, the integer sequences of the paper being the case `a ∈ ℤ`; the rescale
 * `splittingField a n`: the splitting field `K_n` of `f_n`, `a ∈ ℚ`, inside `AlgebraicClosure ℚ`.
 * `GaloisGroup a n` and `WreathPower n`: the Galois group `Ω_n` and the wreath power `[C₂]ⁿ`.
 * `cSeq a` and `bSeq a`: the sequences `c_n` and `b_n = ∏_{d ∣ n} c_d^{μ(n/d)}` of a parameter
-  `a` in a commutative ring (resp. a domain); `intCast_cSeq` casts the integer sequence.
+  `a` in a commutative ring (resp. a domain); `QuadraticIterates.intCast_cSeq` casts the integer
+  sequence.
 * `normPoly a`: the rescaling `|a|·X² + sign a` of `X² + a`, `a ∈ ℤ`.
 * `TwoIndependent v`: no nonempty subfamily of `v` has a square product.
 

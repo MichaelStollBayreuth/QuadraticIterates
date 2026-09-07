@@ -24,26 +24,22 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-/-- Multiplying by the square of a unit does not change squareness. -/
 theorem IsUnit.isSquare_mul_sq_iff {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y) (x : α) :
     IsSquare (x * y ^ 2) ↔ IsSquare x :=
   ⟨fun h ↦ by simpa [mul_assoc, ← mul_pow, hy.mul_val_inv] using h.mul (IsSquare.sq ↑hy.unit⁻¹),
     fun h ↦ h.mul (IsSquare.sq y)⟩
 
-/-- Multiplying by an even power of a unit does not change squareness. -/
 theorem IsUnit.isSquare_mul_pow_iff_of_even {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y)
     {n : ℕ} (hn : Even n) (x : α) : IsSquare (x * y ^ n) ↔ IsSquare x := by
   obtain ⟨j, rfl⟩ := hn
   rw [← two_mul, pow_mul', (hy.pow j).isSquare_mul_sq_iff]
 
-/-- Multiplying by an odd power of a unit `y` is, for squareness, multiplying by `y`. -/
 theorem IsUnit.isSquare_mul_pow_iff_of_odd {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y)
     {n : ℕ} (hn : Odd n) (x : α) : IsSquare (x * y ^ n) ↔ IsSquare (x * y) := by
   obtain ⟨j, rfl⟩ := hn
   rw [pow_succ', mul_left_comm, ← mul_assoc, pow_mul', (hy.pow j).isSquare_mul_sq_iff,
     mul_comm y x]
 
-/-- An odd power of a unit is a square iff the unit is. -/
 theorem IsUnit.isSquare_pow_iff_of_odd {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y) {n : ℕ}
     (hn : Odd n) : IsSquare (y ^ n) ↔ IsSquare y := by
   simpa using hy.isSquare_mul_pow_iff_of_odd hn 1
@@ -162,7 +158,6 @@ theorem isSquare_abs_iff {α : Type*} [Ring α] [LinearOrder α] [IsOrderedRing 
     fun h ↦ h.elim (fun h ↦ (congrArg IsSquare (abs_of_nonneg h.nonneg)).mpr h) fun h ↦
       (congrArg IsSquare (abs_of_nonpos (neg_nonneg.mp h.nonneg))).mpr h⟩
 
-/-- If `a b` is a square and `a` is coprime to `b`, then `|a|` is a square. -/
 theorem Int.isSquare_abs_of_isSquare_mul_of_isCoprime {a b : ℤ} (h : IsCoprime a b)
     (hsq : IsSquare (a * b)) : IsSquare |a| := by
   obtain ⟨c, hc⟩ := hsq
@@ -178,7 +173,7 @@ theorem Int.isSquare_abs_of_isSquare_mul_prod_of_pairwise_isCoprime {ι : Type*}
     (hu : ∀ i ∈ S, IsCoprime (f i) u) (hsq : IsSquare (u * ∏ i ∈ S, f i)) {i : ι} (hi : i ∈ S) :
     IsSquare |f i| := by
   classical
-  refine Int.isSquare_abs_of_isSquare_mul_of_isCoprime ((hu i hi).mul_right (IsCoprime.prod_right
+  refine isSquare_abs_of_isSquare_mul_of_isCoprime ((hu i hi).mul_right (IsCoprime.prod_right
     fun j hj ↦ hcop hi (Finset.mem_erase.mp hj).2 (Finset.mem_erase.mp hj).1.symm)) ?_
   rwa [mul_left_comm, Finset.mul_prod_erase S f hi]
 
