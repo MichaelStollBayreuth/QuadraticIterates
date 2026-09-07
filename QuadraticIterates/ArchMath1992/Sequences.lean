@@ -14,6 +14,7 @@ import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.BigOperators
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
+import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
@@ -817,7 +818,8 @@ theorem dvd_two_of_dvd_add_two_of_dvd_succ (hg : EvenPoly g) {ε : ℤ} (h0 : g.
   push_cast [intCast_gammaSeq] at hd hd' ⊢
   set g' := g.map (Int.castRingHom (ZMod d.natAbs))
   have h0' : g'.eval 0 ^ 2 = 1 := by
-    rw [eval_zero_map, eq_intCast, ← Int.cast_pow, h0, Int.cast_one]
+    rw [eval_zero_map, eq_intCast]
+    exact Int.cast_sq_eq_one_of_sq_eq_one h0
   have h1' : gammaSeq g' ε 1 = 1 := by rw [← intCast_gammaSeq, h1, Int.cast_one]
   have hk2 : gammaSeq g' ε (k + 2) = g'.eval 0 := by rw [gammaSeq_succ g' ε (by lia), hd']
   have hk : gammaSeq g' ε k = -g'.eval 0 := by linear_combination hd - hk2
@@ -899,8 +901,8 @@ lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε
   obtain ⟨hsq1, h2x⟩ := hfiber ((g.eval 1 : ℤ) : ZMod 8) (by rwa [map_intCast])
   intro n hn
   push_cast [intCast_gammaSeq]
-  rwa [gammaSeq_add_succ_eq_two_mul_eval_one (hg.map _) (by rw [← Int.cast_pow, hε, Int.cast_one])
-      (by rw [eval_zero_map, eq_intCast, ← Int.cast_pow, h0, Int.cast_one])
+  rwa [gammaSeq_add_succ_eq_two_mul_eval_one (hg.map _) (Int.cast_sq_eq_one_of_sq_eq_one hε)
+      (by rw [eval_zero_map, eq_intCast]; exact Int.cast_sq_eq_one_of_sq_eq_one h0)
       (by rwa [eval_one_map]) n hn, eval_one_map]
 
 lemma gammaSeq_one_eq_one_of_pos {ε : ℤ} (hε : ε ^ 2 = 1) (h0 : g.eval 0 ^ 2 = 1)

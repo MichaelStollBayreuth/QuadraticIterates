@@ -131,13 +131,20 @@ theorem section1_a_iff_b_of_irreducible {n : ℕ} (hirr : ∀ k ≤ n, Irreducib
     · have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr h.of_snoc
       exact ⟨hiso, h16.mpr ((not_isSquare_algebraMap_iff_twoIndependent_snoc hiso h.of_snoc).mpr h)⟩
 
+lemma bSeq_ne_zero_of_forall_cSeq_ne_zero (hc : ∀ k ≥ 1, cSeq a k ≠ 0) (n : ℕ) : bSeq a n ≠ 0 :=
+  bSeq_eq_moebiusFactorK a n ▸ moebiusFactorK_ne_zero hc n
+
+/-- Möbius inversion over `ℚ`: `c_n = ∏_{d ∣ n} b_d` when no `c_k` vanishes. -/
+lemma cSeq_eq_prod_bSeq_of_forall_cSeq_ne_zero (hc : ∀ k ≥ 1, cSeq a k ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
+    cSeq a n = ∏ d ∈ n.divisors, bSeq a d := by
+  simpa [bSeq_eq_moebiusFactorK] using prod_moebiusFactorK (K := ℚ) hc hn
+
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`, when
 no `c_k` vanishes. -/
 lemma sqClass_cSeq_eq_sum_divisors (hc : ∀ k ≥ 1, cSeq a k ≠ 0) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (cSeq a m) = ∑ d ∈ m.divisors, sqClass (bSeq a d) := by
-  rw [show cSeq a m = ∏ d ∈ m.divisors, bSeq a d by
-    simpa [bSeq_eq_moebiusFactorK] using prod_moebiusFactorK (K := ℚ) hc hm]
-  exact sqClass_prod fun d _ ↦ by rw [bSeq_eq_moebiusFactorK]; exact moebiusFactorK_ne_zero hc d
+  rw [cSeq_eq_prod_bSeq_of_forall_cSeq_ne_zero hc hm]
+  exact sqClass_prod fun d _ ↦ bSeq_ne_zero_of_forall_cSeq_ne_zero hc d
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `b_m` is the Möbius-weighted sum of the classes of the `c_d`, when
 no `c_k` vanishes. -/
@@ -281,8 +288,7 @@ theorem abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n
     |bSeq a n| = betaSeq (normPoly a) a.sign n := by
   have ha0 := ne_zero_of_not_isSquare_neg ha
   rw [← Int.cast_inj (α := ℚ), Int.cast_abs, intCast_bSeq_eq_moebiusFactorK ha (by lia),
-    abs_moebiusFactorK,
-    intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
+    abs_moebiusFactorK, intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
       (fun d hd ↦ (gammaSeq_normPoly_pos ha d hd).ne') (by lia),
     ← moebiusFactorK_mul_const γ[a] (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]
   simp only [abs_cSeq_eq_gammaSeq_mul_abs ha]

@@ -228,8 +228,13 @@ them.
     Squarefree.moebius_div_eq_one_or_eq_neg_one,
     Squarefree.filter_moebius_div_eq_one_union_filter_eq_neg_one_of_subset,
     Squarefree.even_card_of_sum_moebius_div_eq_zero,
+    Squarefree.card_eq_two_mul_card_filter_moebius_div_eq_one, Squarefree.card_divisors_eq_two_mul,
+    Squarefree.prod_filter_moebius_div_eq_one_mul_prod_filter_eq_neg_one,
+    Squarefree.sum_filter_moebius_div_eq_one_add_sum_filter_eq_neg_one,
+    Squarefree.even_sum_two_pow_mul_sub_one, Squarefree.odd_sum_two_pow_sub_one,
     ArithmeticFunction.prod_pow_moebius_eq_div, ArithmeticFunction.sum_divisors_moebius_div_eq_zero,
     ArithmeticFunction.sum_divisorsAntidiagonal_moebius_eq_zero,
+    ArithmeticFunction.sum_erase_divisorsAntidiagonal_moebius_eq_neg,
     ArithmeticFunction.prod_pow_moebius_eq_prod_divisors_radical, ArithmeticFunction.sum_divisorsAntidiagonal_filter_dvd_moebius, ArithmeticFunction.sum_mul_moebius_boole_nonneg, ArithmeticFunction.sum_mul_moebius_nonneg,
     ArithmeticFunction.sum_divisors_moebius, moebiusFactorK_mul_const, abs_moebiusFactorK,
     Finset.prod_zpow_eq_zpow_sum₀}
@@ -255,7 +260,8 @@ them.
 \begin{lemma}[Non-squares mod $m$]
   \label{lem:zmodsquare}
   \lean{ZMod.isSquare_neg_one_of_isSquare_div, ZMod.isSquare_mul_of_isSquare_div,
-    Int.isSquare_mul_of_isSquare_div, IsUnit.isSquare_mul_sq_iff, ZMod.not_isSquare_neg_one_of_dvd,
+    Int.isSquare_mul_of_isSquare_div, IsUnit.isSquare_mul_sq_iff, IsUnit.isSquare_mul_pow_iff_of_even,
+    IsUnit.isSquare_mul_pow_iff_of_odd, IsUnit.isSquare_pow_iff_of_odd, ZMod.not_isSquare_neg_one_of_dvd,
     ZMod.not_isSquare_neg_one_of_emod_four_eq_three, ZMod.not_isSquare_neg_one_of_emod_eight_eq_six,
     ZMod.not_isSquare_neg_one_of_four_dvd, ZMod.isUnit_intCast_of_isCoprime_of_dvd_add,
     ZMod.intCast_eq_neg_intCast_of_dvd_add}

@@ -8,9 +8,10 @@ module
 public import QuadraticIterates.ArchMath1992.Main
 public import QuadraticIterates.Rational.Sequence
 
-import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.ArchMath1992.Irreducibility
+import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import QuadraticIterates.Mathlib.Algebra.Squares
+import QuadraticIterates.Mathlib.NumberTheory.Moebius
 
 /-!
 # Square classes for a rational parameter, and the shared-part lemma
@@ -57,9 +58,8 @@ theorem cSeq_div_eq (hs : s ≠ 0) (hε : ε ^ 2 = 1) {n : ℕ} (hn : 2 ≤ n) :
   have hε' : (ε : ℚ) ^ 2 = 1 := mod_cast hε
   have hεa : (ε : ℚ) * (ε * r / s) = r * (s : ℚ)⁻¹ := by
     rw [← mul_div_assoc, ← mul_assoc, ← sq, hε', one_mul, div_eq_mul_inv]
-  have hpow : (s : ℚ) ^ 2 ^ (n - 1) = s * s ^ (2 ^ (n - 1) - 1) := by
-    rw [← pow_succ', Nat.sub_add_cancel Nat.one_le_two_pow]
-  rw [cSeq_eq_mul_gammaSeq _ hε' hn, hεa, intCast_wSeq hu hε n, hpow]
+  rw [cSeq_eq_mul_gammaSeq _ hε' hn, hεa, intCast_wSeq hu hε n,
+    ← mul_pow_sub_one (Nat.two_pow_pos (n - 1)).ne' (s : ℚ)]
   have := pow_ne_zero (2 ^ (n - 1) - 1) hs'
   field
 
@@ -110,9 +110,8 @@ private lemma sum_erase_sqClass_cSeq_div (hs : s ≠ 0) (hε : ε ^ 2 = 1)
     ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), (μ x.1) • sqClass (cSeq (ε * r / s : ℚ) x.2) =
       (∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), μ x.1) • sqClass (r : ℚ) +
         ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), (μ x.1) • sqClass (wSeq r s ε x.2 : ℚ) := by
-  rw [← zmultiplesHom_apply, map_sum, ← Finset.sum_add_distrib]
+  rw [← Finset.sum_zsmul_assoc, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun x hx ↦ ?_
-  rw [zmultiplesHom_apply]
   have hx' := Nat.mem_divisorsAntidiagonal.mp (Finset.mem_of_mem_erase hx)
   have hx2 : 2 ≤ x.2 := by
     rcases (show x.2 = 0 ∨ x.2 = 1 ∨ 2 ≤ x.2 by lia) with h | h | h
@@ -130,15 +129,13 @@ theorem sqClass_bSeq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
       (μ n) • sqClass (-(ε * s) : ℚ) + sqClass (betaInt r s ε n : ℚ) := by
   have hmem : (n, 1) ∈ n.divisorsAntidiagonal :=
     Nat.mem_divisorsAntidiagonal.mpr ⟨mul_one n, by lia⟩
-  have hμ := ArithmeticFunction.sum_divisorsAntidiagonal_moebius_eq_zero hn
-  rw [← Finset.add_sum_erase _ _ hmem] at hμ
   rw [sqClass_bSeq_eq_sum_divisorsAntidiagonal (cSeq_div_ne_zero hs hε hw hr),
     sqClass_betaInt hs hrs hε hw (by lia), ← Finset.add_sum_erase _ _ hmem,
     ← Finset.add_sum_erase _ _ hmem, sum_erase_sqClass_cSeq_div hs hε hw hr, cSeq_one,
     sqClass_neg_div hs, Int.cast_mul,
     sqClass_mul (by simp [hs, (isUnit_intCast_of_sq_eq_one hε).ne_zero]) (mod_cast hr),
     wSeq_one, Int.cast_one, sqClass_one, zsmul_zero, zero_add,
-    show ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), μ x.1 = -μ n by linear_combination hμ,
+    ArithmeticFunction.sum_erase_divisorsAntidiagonal_moebius_eq_neg hn,
     neg_zsmul (sqClass (r : ℚ)) (μ n), zsmul_add]
   push_cast
   abel
@@ -146,9 +143,8 @@ theorem sqClass_bSeq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
 /-! ### The shared-part lemma -/
 
 private lemma bSeq_div_ne_zero (hs : s ≠ 0) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
-    (hr : r ≠ 0) (n : ℕ) : bSeq (ε * r / s : ℚ) n ≠ 0 := by
-  rw [bSeq_eq_moebiusFactorK]
-  exact moebiusFactorK_ne_zero (cSeq_div_ne_zero hs hε hw hr) n
+    (hr : r ≠ 0) (n : ℕ) : bSeq (ε * r / s : ℚ) n ≠ 0 :=
+  bSeq_ne_zero_of_forall_cSeq_ne_zero (cSeq_div_ne_zero hs hε hw hr) n
 
 /-- The class of `b_{i+1}` uniformly in `i`: `μ(i+1) [-εs] + [β_{i+1}]`, plus `[r]` at `i = 0`. -/
 private lemma sqClass_bSeq_div_succ (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
@@ -168,9 +164,9 @@ private lemma sqClass_bSeq_div_succ (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : 
 private lemma isCoprime_betaInt_unit (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
     (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 1 ≤ n) (k c : ℕ) :
     IsCoprime (betaInt r s ε n) ((-(ε * s)) ^ k * r ^ c) :=
-  ((((show IsCoprime (betaInt r s ε n) ε from
-    ⟨0, ε, by rw [zero_mul, zero_add, ← sq, hε]⟩).mul_right
-      (isCoprime_betaInt_right hs hrs hε hw hn)).neg_right).pow_right).mul_right
+  ((((isCoprime_one_right (x := betaInt r s ε n)).of_isCoprime_of_dvd_right
+    (IsUnit.of_pow_eq_one hε two_ne_zero).dvd).mul_right
+      (isCoprime_betaInt_right hs hrs hε hw hn)).neg_right.pow_right).mul_right
     (isCoprime_betaInt_left hs hrs hε hw hn).pow_right
 
 /-- If a subproduct of the `b_{i+1}` is a square, then `(-εs)^k r^c ∏ β_{i+1}` is a square in `ℤ`
@@ -186,15 +182,11 @@ private lemma exists_isSquare_mul_prod_betaInt (hs : s ≠ 0) (hrs : IsCoprime r
     Finset.sum_congr rfl fun (i : Fin m) _ ↦ sqClass_bSeq_div_succ hs hrs hε hw hr i,
     Finset.sum_add_distrib,
     Finset.sum_add_distrib, Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const,
-    ← sqClass_pow, ← sqClass_prod fun i _ ↦ hβ i,
-    show ∑ i ∈ S, μ ((i : ℕ) + 1) • sqClass (-(ε * s) : ℚ) =
-      (∑ i ∈ S, μ ((i : ℕ) + 1)) • sqClass (-(ε * s) : ℚ) from
-        (map_sum (zmultiplesHom (SquareClasses ℚ) (sqClass (-(ε * s) : ℚ))) _ _).symm,
-    zsmul_eq_natAbs_nsmul, ← sqClass_pow, ← sqClass_mul (pow_ne_zero _ hεs)
-      (Finset.prod_ne_zero_iff.mpr fun i _ ↦ hβ i), ← sqClass_mul (mul_ne_zero (pow_ne_zero _ hεs)
-      (Finset.prod_ne_zero_iff.mpr fun i _ ↦ hβ i)) (pow_ne_zero _ (mod_cast hr)),
-    sqClass_eq_zero_iff, mul_right_comm] at hsq
-  exact ⟨_, _, Rat.isSquare_intCast_iff.mp (by push_cast; exact hsq)⟩
+    ← sqClass_pow, ← sqClass_prod fun i _ ↦ hβ i, Finset.sum_zsmul_assoc, zsmul_eq_natAbs_nsmul,
+    ← sqClass_pow, ← sqClass_mul (pow_ne_zero _ hεs) (Finset.prod_ne_zero_iff.mpr fun i _ ↦ hβ i),
+    ← sqClass_mul (mul_ne_zero (pow_ne_zero _ hεs) (Finset.prod_ne_zero_iff.mpr fun i _ ↦ hβ i))
+      (pow_ne_zero _ (mod_cast hr)), sqClass_eq_zero_iff, mul_right_comm] at hsq
+  exact ⟨_, _, Rat.isSquare_intCast_iff.mp (mod_cast hsq)⟩
 
 /-- **The shared part, 2-independence.** For `a = εr/s` with `-εrs` not a square and `|β_n|` not a
 square for every `n ≥ 2`, the `b_1, …, b_m` are 2-independent for every `m`. -/

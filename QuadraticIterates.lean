@@ -14,10 +14,13 @@ public import QuadraticIterates.Mathlib.Algebra.BigOperators
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 public import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
+public import QuadraticIterates.Mathlib.Algebra.Group.Basic
+public import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
 public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
+public import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
 public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Fintype.Basic
 public import QuadraticIterates.Mathlib.Data.Int.Order.Units

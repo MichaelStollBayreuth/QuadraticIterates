@@ -10,8 +10,11 @@ public import QuadraticIterates.Rational.Sequence
 import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
+import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
+import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.NumberTheory.Moebius
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
 /-!
@@ -28,7 +31,8 @@ twist `s^F`, `F = ∑_{t ∣ rad n} (2^(kt-1) - 1)`, coming from the denominator
 
 ## Main statements
 
-* `QuadraticIterates.intCast_betaInt_eq_div`: `β_n` as a quotient of products of the `w_{kt}`.
+* `QuadraticIterates.intCast_betaInt_eq_div`: `β_n` as a quotient of products of the `w_{kt}`,
+  and `QuadraticIterates.intCast_betaInt_eq_div_of_squarefree` for squarefree `n`.
 * `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ`: the reflection lemma with the twist,
   and its two consumed forms `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ_of_two_le`
   (`n` not squarefree, `-1` not a square mod `M`) and
@@ -61,6 +65,15 @@ theorem intCast_betaInt_eq_div (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 
   rw [prod_pow_moebius_eq_div n k n' hn hn' hk (fun d ↦ ((wSeq r s ε d : ℤ) : ℚ)), Int.cast_prod,
     Int.cast_prod]
 
+/-- `β_n` for squarefree `n` as the quotient of the products of `w_t` over the two halves of the
+divisors `t` of `n` by the sign of `μ(n/t)`. -/
+theorem intCast_betaInt_eq_div_of_squarefree (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
+    (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hsf : Squarefree n) : (betaInt r s ε n : ℚ) =
+      ((∏ t ∈ n.divisors with μ (n / t) = 1, wSeq r s ε t : ℤ) : ℚ) /
+        ((∏ t ∈ n.divisors with μ (n / t) = -1, wSeq r s ε t : ℤ) : ℚ) := by
+  simpa using intCast_betaInt_eq_div hs hrs hε hw (Nat.pos_of_ne_zero hsf.ne_zero)
+    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm
+
 section zmod
 
 variable {M : ℕ} {u : ZMod M}
@@ -71,22 +84,17 @@ local notation "γZ" => gammaSeq gZ (ε : ZMod M)
 private lemma evenPoly_gZ : EvenPoly gZ := evenPoly_C_mul_X_sq_add_C _ _
 
 private lemma isUnit_eval_zero_gZ (hε : ε ^ 2 = 1) : IsUnit (eval 0 gZ) := by
-  have : (ε : ZMod M) ^ 2 = 1 := by rw [← Int.cast_pow, hε, Int.cast_one]
-  simpa using IsUnit.of_pow_eq_one this two_ne_zero
+  simpa using IsUnit.of_pow_eq_one (Int.cast_sq_eq_one_of_sq_eq_one (S := ZMod M) hε) two_ne_zero
 
 /-- The certificate `M ∣ N_k` says `γ_k + γ_{k+1} = 0` in `ZMod M`. -/
 private lemma gammaSeq_zmod_add_succ_eq_zero (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 = 1) {k : ℕ}
     (hk : 1 ≤ k) (hdvd : (M : ℤ) ∣ reflNum r s ε k) :
     γZ k + γZ (k + 1) = 0 := by
-  rw [reflNum] at hdvd
+  rw [reflNum_eq] at hdvd
   have h := (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr hdvd
-  have he : 2 ^ k - 1 = 2 ^ (k - 1) - 1 + 2 ^ (k - 1) := by
-    obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
-    have := Nat.one_le_two_pow (n := m)
-    rw [Nat.add_sub_cancel, pow_succ]
-    lia
   push_cast at h
-  rw [intCast_wSeq hu hε, intCast_wSeq hu hε, Nat.add_sub_cancel, he, pow_add] at h
+  rw [intCast_wSeq hu hε, intCast_wSeq hu hε, Nat.add_sub_cancel, Nat.two_pow_sub_one_eq_add hk,
+    pow_add] at h
   refine (((IsUnit.of_mul_eq_one _ hu).pow (2 ^ (k - 1) - 1)).mul
     ((IsUnit.of_mul_eq_one _ hu).pow (2 ^ (k - 1)))).mul_right_eq_zero.mp ?_
   linear_combination h
@@ -151,57 +159,9 @@ theorem not_isSquare_betaInt_of_dvd_add_succ (hs : s ≠ 0) (hrs : IsCoprime r s
     (by rw [intCast_prod_wSeq_zmod hu hε, intCast_prod_wSeq_zmod hu hε,
       prod_gammaSeq_mul_eq_neg_prod evenPoly_gZ hkpos hz hsf hn'1]; ring) hQu
     (intCast_betaInt_eq_div hs hrs hε hw (by lia) hn' hk ▸ Rat.isSquare_intCast_iff.mpr hsq)
-  rw [neg_mul, ← Finset.prod_union (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia),
-    hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one, Finset.prod_pow_eq_pow_sum] at key
+  rw [neg_mul, hsf.prod_filter_moebius_div_eq_one_mul_prod_filter_eq_neg_one,
+    Finset.prod_pow_eq_pow_sum] at key
   exact hnsq key
-
-/-- The parity of `∑_{t ∈ S} (2^(m t) - 1)` is that of the number of `t ∈ S` with `m t ≥ 1`. -/
-private lemma sum_two_pow_sub_one_mod_two (S : Finset ℕ) (m : ℕ → ℕ) :
-    (∑ t ∈ S, (2 ^ m t - 1)) % 2 = (S.filter fun t ↦ 1 ≤ m t).card % 2 := by
-  rw [Finset.sum_nat_mod, Finset.card_eq_sum_ones, Finset.sum_filter]
-  congr 1
-  refine Finset.sum_congr rfl fun t _ ↦ ?_
-  rcases Nat.eq_zero_or_pos (m t) with h | h
-  · simp [h]
-  · rw [ite_eq_left (show 1 ≤ m t from h)]
-    exact Nat.odd_iff.mp
-      (Nat.Even.sub_odd Nat.one_le_two_pow (Nat.even_pow.mpr ⟨even_two, h.ne'⟩) odd_one)
-
-/-- A squarefree `n > 1` has `2 #{t ∣ n : μ(n/t) = 1}` divisors: the two halves of the sign
-partition have the same size. -/
-lemma card_divisors_eq_two_mul_of_squarefree {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n) :
-    n.divisors.card = 2 * (n.divisors.filter fun t ↦ μ (n / t) = 1).card := by
-  have hc := hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one subset_rfl
-    (sum_divisors_moebius_div_eq_zero hn1)
-  nth_rw 1 [← hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one]
-  rw [Finset.card_union_of_disjoint (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia), ← hc,
-    two_mul]
-
-/-- The twist exponent `F = ∑_{t ∣ n} (2^(kt-1) - 1)` is even for `k ≥ 2` (`n` squarefree,
-`n > 1`): all terms are odd and there are evenly many. -/
-lemma even_sum_two_pow_mul_sub_one_of_squarefree {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n)
-    {k : ℕ} (hk : 2 ≤ k) : Even (∑ t ∈ n.divisors, (2 ^ (k * t - 1) - 1)) := by
-  rw [Nat.even_iff, sum_two_pow_sub_one_mod_two, Finset.filter_true_of_mem fun t ht ↦ ?_,
-    card_divisors_eq_two_mul_of_squarefree hsf hn1, Nat.mul_mod_right]
-  have := hk.trans (Nat.le_mul_of_pos_right k (Nat.pos_of_mem_divisors ht))
-  lia
-
-/-- The twist exponent `F = ∑_{t ∣ n} (2^(t-1) - 1)` is odd for squarefree `n > 1`: all terms
-but the one at `t = 1` are odd, and there are evenly many divisors. -/
-lemma odd_sum_two_pow_sub_one_of_squarefree {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n) :
-    Odd (∑ t ∈ n.divisors, (2 ^ (t - 1) - 1)) := by
-  have hf : (n.divisors.filter fun t ↦ 1 ≤ t - 1) = n.divisors.erase 1 := by
-    ext t
-    simp only [Finset.mem_filter, Finset.mem_erase]
-    exact ⟨fun ⟨h1, h2⟩ ↦ ⟨by lia, h1⟩,
-      fun ⟨h1, h2⟩ ↦ ⟨h2, by have := Nat.pos_of_mem_divisors h2; lia⟩⟩
-  have hA : 1 ≤ (n.divisors.filter fun t ↦ μ (n / t) = 1).card :=
-    Finset.card_pos.mpr
-      ⟨n, by simp [Nat.mem_divisors_self n (by lia), Nat.div_self (by lia : 0 < n)]⟩
-  rw [Nat.odd_iff, sum_two_pow_sub_one_mod_two, hf,
-    Finset.card_erase_of_mem (Nat.one_mem_divisors.mpr (by lia)),
-    card_divisors_eq_two_mul_of_squarefree hsf hn1]
-  lia
 
 /-- The reflection lemma for `n` not squarefree (`k = n / rad n ≥ 2`): the twist `s^F` is a
 square, so it suffices that `-1` is not a square mod `M`. -/
@@ -212,9 +172,8 @@ theorem not_isSquare_betaInt_of_dvd_add_succ_of_two_le (hs : s ≠ 0) (hrs : IsC
   have hsu : IsUnit (s : ZMod M) := ZMod.isUnit_intCast_of_isCoprime_of_dvd
     (isCoprime_reflNum_right hrs (one_le_two.trans hk2)).symm hdvd
   refine not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn hn' hk hdvd fun h ↦ hnsq ?_
-  obtain ⟨j, hj⟩ := even_sum_two_pow_mul_sub_one_of_squarefree (hn' ▸ squarefree_radical)
-    (hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)) hk2
-  rwa [hj, ← two_mul, pow_mul', ← neg_one_mul, (hsu.pow j).isSquare_mul_sq_iff] at h
+  rwa [← neg_one_mul, hsu.isSquare_mul_pow_iff_of_even (Squarefree.even_sum_two_pow_mul_sub_one
+    (hn' ▸ squarefree_radical) (hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)) hk2)] at h
 
 /-- The reflection lemma for squarefree `n ≥ 2` (`k = 1`): the modulus divides
 `r + (1 + ε) s`, the numerator of `γ_1 + γ_2`, and the twist is `s` times a square, so it suffices
@@ -228,9 +187,9 @@ theorem not_isSquare_betaInt_of_squarefree_of_dvd (hs : s ≠ 0) (hrs : IsCoprim
     ZMod.isUnit_intCast_of_isCoprime_of_dvd (isCoprime_reflNum_right hrs le_rfl).symm hd
   refine not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn
     (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm hd fun h ↦ hnsq ?_
-  obtain ⟨j, hj⟩ := odd_sum_two_pow_sub_one_of_squarefree hsf (by lia)
   simp only [one_mul] at h
-  rwa [hj, pow_succ', pow_mul', ← neg_mul, (hsu.pow j).isSquare_mul_sq_iff] at h
+  rwa [← neg_one_mul, hsu.isSquare_mul_pow_iff_of_odd (hsf.odd_sum_two_pow_sub_one (by lia)),
+    neg_one_mul] at h
 
 end zmod
 

@@ -14,6 +14,8 @@ public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.RingTheory.Localization.Away.Basic
 
 import Mathlib.Tactic.LinearCombination
+import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
+import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
 import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 
 /-!
@@ -85,14 +87,6 @@ lemma wSeq_succ {n : ℕ} (hn : 1 ≤ n) :
 
 variable {r s ε}
 
-/-- `2^n - 1 = 2 (2^(n-1) - 1) + 1` for `n ≥ 1`: the exponents of `s` in
-`QuadraticIterates.intCast_wSeq` at consecutive indices. -/
-lemma two_pow_sub_one_eq {n : ℕ} (hn : 1 ≤ n) : 2 ^ n - 1 = 2 * (2 ^ (n - 1) - 1) + 1 := by
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
-  have := Nat.one_le_two_pow (n := m)
-  rw [Nat.add_sub_cancel, pow_succ]
-  lia
-
 /-- In a commutative ring `S` in which `s` is invertible, with inverse `u`, the cast of `w_n` is
 `s^(2^(n-1) - 1) γ_n` for the `γ`-sequence of `(r u) X² + ε` with sign `ε`. -/
 theorem intCast_wSeq {S : Type*} [CommRing S] {u : S} (hu : (s : S) * u = 1) (hε : ε ^ 2 = 1)
@@ -102,9 +96,8 @@ theorem intCast_wSeq {S : Type*} [CommRing S] {u : S} (hu : (s : S) * u = 1) (h�
   | zero => simp
   | succ n ih =>
     rcases Nat.eq_zero_or_pos n with rfl | hn
-    · have : (ε : S) ^ 2 = 1 := by rw [← Int.cast_pow, hε, Int.cast_one]
-      simp [← sq, this]
-    · rw [wSeq_succ r s ε hn, gammaSeq_succ _ _ hn, Nat.add_sub_cancel, two_pow_sub_one_eq hn,
+    · simp [← sq, Int.cast_sq_eq_one_of_sq_eq_one (S := S) hε]
+    · rw [wSeq_succ r s ε hn, gammaSeq_succ _ _ hn, Nat.add_sub_cancel, Nat.two_pow_sub_one_eq hn,
         eval_add, eval_mul, eval_C, eval_pow, eval_X, eval_C]
       push_cast
       rw [ih]
@@ -143,12 +136,13 @@ variable (r s ε : ℤ)
 /-- `a = r / s` as an element of `ℤ[1/s]`. -/
 noncomputable def aAway : Localization.Away s := r * IsLocalization.Away.invSelf s
 
-lemma intCast_mul_invSelf : (s : Localization.Away s) * IsLocalization.Away.invSelf s = 1 := by
-  have h := IsLocalization.Away.mul_invSelf (S := Localization.Away s) s
-  rwa [eq_intCast] at h
+lemma aAway_eq : aAway r s = r * IsLocalization.Away.invSelf s := rfl
+
+lemma intCast_mul_invSelf : (s : Localization.Away s) * IsLocalization.Away.invSelf s = 1 :=
+  eq_intCast (algebraMap ℤ (Localization.Away s)) s ▸ IsLocalization.Away.mul_invSelf s
 
 lemma isUnit_intCast_localizationAway : IsUnit (s : Localization.Away s) :=
-  isUnit_iff_exists_inv.mpr ⟨_, intCast_mul_invSelf s⟩
+  eq_intCast (algebraMap ℤ (Localization.Away s)) s ▸ IsLocalization.Away.algebraMap_isUnit s
 
 /-- The rescaled polynomial `a X² + ε` over `ℤ[1/s]`, `a = r / s`. -/
 noncomputable def normPolyAway : (Localization.Away s)[X] :=
@@ -165,15 +159,18 @@ lemma normPolyAway_eq :
 /-- The sequence `w` in `ℤ[1/s]`. -/
 def wSeqAway (n : ℕ) : Localization.Away s := wSeq r s ε n
 
+lemma wSeqAway_eq_intCast (n : ℕ) : wSeqAway r s ε n = (wSeq r s ε n : Localization.Away s) := rfl
+
 variable {r s ε}
 
 lemma wSeqAway_eq_mul_gammaSeq (hε : ε ^ 2 = 1) (n : ℕ) :
     wSeqAway r s ε n =
-      (s : Localization.Away s) ^ (2 ^ (n - 1) - 1) * gammaSeq (normPolyAway r s ε) ε n :=
-  intCast_wSeq (intCast_mul_invSelf s) hε n
+      (s : Localization.Away s) ^ (2 ^ (n - 1) - 1) * gammaSeq (normPolyAway r s ε) ε n := by
+  rw [wSeqAway_eq_intCast, normPolyAway_eq, aAway_eq]
+  exact intCast_wSeq (intCast_mul_invSelf s) hε n
 
 lemma gammaSeq_normPolyAway_one (hε : ε ^ 2 = 1) : gammaSeq (normPolyAway r s ε) ε 1 = 1 := by
-  rw [gammaSeq_one, eval_zero_normPolyAway, ← Int.cast_mul, ← sq, hε, Int.cast_one]
+  rw [gammaSeq_one, eval_zero_normPolyAway, ← sq, Int.cast_sq_eq_one_of_sq_eq_one hε]
 
 lemma wSeqAway_two (hε : ε ^ 2 = 1) :
     wSeqAway r s ε 2 = s * gammaSeq (normPolyAway r s ε) ε 2 := by
@@ -188,7 +185,7 @@ private lemma associated_wSeqAway (hε : ε ^ 2 = 1) (n : ℕ) :
 variable [NeZero s]
 
 private lemma wSeqAway_ne_zero (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) : ∀ n ≥ 1, wSeqAway r s ε n ≠ 0 :=
-  fun n hn h ↦ hw n hn (Int.cast_injective (h.trans (Int.cast_zero).symm))
+  fun n hn ↦ wSeqAway_eq_intCast r s ε n ▸ Int.cast_ne_zero.mpr (hw n hn)
 
 private lemma gammaSeq_normPolyAway_ne_zero (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) :
     ∀ n ≥ 1, gammaSeq (normPolyAway r s ε) ε n ≠ 0 := fun n hn h ↦
@@ -206,7 +203,7 @@ private lemma wSeqAway_associated_gcd (hε : ε ^ 2 = 1) (m n : ℕ) :
     Associated (gcd (wSeqAway r s ε m) (wSeqAway r s ε n)) (wSeqAway r s ε (m.gcd n)) :=
   ((associated_wSeqAway hε m).gcd (associated_wSeqAway hε n)).trans
     ((gammaSeq_associated_gcd (evenPoly_normPolyAway r s ε)
-      (by rw [← Int.cast_pow, hε, Int.cast_one]) m n).trans (associated_wSeqAway hε _).symm)
+      (Int.cast_sq_eq_one_of_sq_eq_one hε) m n).trans (associated_wSeqAway hε _).symm)
 
 open Classical in
 private lemma factorization_wSeqAway_shape (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) :
@@ -214,7 +211,7 @@ private lemma factorization_wSeqAway_shape (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1,
       factorization (wSeqAway r s ε k) p = if m ∣ k then E else 0 :=
   fun p hp hpn ↦ by
     obtain ⟨m, hm, E, hE⟩ := factorization_gammaSeq_shape (evenPoly_normPolyAway r s ε)
-      (by rw [← Int.cast_pow, hε, Int.cast_one]) (gammaSeq_normPolyAway_ne_zero hε hw) hp hpn
+      (Int.cast_sq_eq_one_of_sq_eq_one hε) (gammaSeq_normPolyAway_ne_zero hε hw) hp hpn
     exact ⟨m, hm, E, fun k hk ↦ by rw [(associated_wSeqAway hε k).factorization_eq]; exact hE k hk⟩
 
 /-- The Möbius factors of `w` in `ℤ[1/s]` are pairwise relatively prime: `w` is, up to units, the
@@ -240,11 +237,6 @@ section betaInt
 
 variable {r s ε : ℤ}
 
-private lemma isCoprime_denProd_wSeq (hrs : IsCoprime r s) (n : ℕ) :
-    IsCoprime (denProd (wSeq r s ε) n) s :=
-  IsCoprime.prod_left fun x hx ↦ isCoprime_wSeq_right hrs (Nat.pos_of_mem_divisors
-    (Nat.snd_mem_divisors_of_mem_antidiagonal (Finset.mem_of_mem_filter x hx)))
-
 /-- The denominator product of the Möbius factor of `w` divides the numerator product: in
 `ℤ[1/s]`, where `w` is a strong divisibility sequence up to units, this is `denProd_dvd_numProd`,
 and it descends to `ℤ` because the denominator product is coprime to `s`. -/
@@ -253,7 +245,7 @@ theorem denProd_wSeq_dvd_numProd_wSeq (hs : s ≠ 0) (hrs : IsCoprime r s) (hε 
     denProd (wSeq r s ε) n ∣ numProd (wSeq r s ε) n := by
   have := NeZero.mk hs
   refine IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime (S := Localization.Away s) ?_
-    (isCoprime_denProd_wSeq hrs n)
+    (isCoprime_denProd (fun _ hd ↦ isCoprime_wSeq_right hrs hd) n)
   rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _), map_denProd, map_numProd]
   exact denProd_wSeqAway_dvd_numProd_wSeqAway hε hw hn
 
@@ -292,16 +284,12 @@ theorem betaInt_two : betaInt r s ε 2 = r + ε * s := by
   rwa [Nat.prime_two.divisors, Finset.prod_pair one_lt_two.ne, betaInt_one, one_mul, wSeq_two] at h
 
 theorem isCoprime_betaInt_right {n : ℕ} (hn : 1 ≤ n) : IsCoprime (betaInt r s ε n) s :=
-  IsCoprime.of_mul_left_left (y := denProd (wSeq r s ε) n)
-    (betaInt_mul_denProd hs hrs hε hw hn ▸ IsCoprime.prod_left fun x hx ↦
-      isCoprime_wSeq_right hrs (Nat.pos_of_mem_divisors
-        (Nat.snd_mem_divisors_of_mem_antidiagonal (Finset.mem_of_mem_filter x hx))))
+  IsCoprime.of_mul_left_left (y := denProd (wSeq r s ε) n) (betaInt_mul_denProd hs hrs hε hw hn ▸
+    isCoprime_numProd (fun _ hd ↦ isCoprime_wSeq_right hrs hd) n)
 
 theorem isCoprime_betaInt_left {n : ℕ} (hn : 1 ≤ n) : IsCoprime (betaInt r s ε n) r :=
-  IsCoprime.of_mul_left_left (y := denProd (wSeq r s ε) n)
-    (betaInt_mul_denProd hs hrs hε hw hn ▸ IsCoprime.prod_left fun x hx ↦
-      isCoprime_wSeq_left hrs hε (Nat.pos_of_mem_divisors
-        (Nat.snd_mem_divisors_of_mem_antidiagonal (Finset.mem_of_mem_filter x hx))))
+  IsCoprime.of_mul_left_left (y := denProd (wSeq r s ε) n) (betaInt_mul_denProd hs hrs hε hw hn ▸
+    isCoprime_numProd (fun _ hd ↦ isCoprime_wSeq_left hrs hε hd) n)
 
 /-- The integer Möbius factors are pairwise coprime: this holds in `ℤ[1/s]`
 (`QuadraticIterates.isRelPrime_moebiusFactorR_wSeqAway`) and descends since `β_m` is coprime
@@ -322,11 +310,6 @@ end betaInt
 section sign
 
 variable {r s ε : ℤ}
-
-/-- `s^(2^n - 1) = (s^(2^(n-1) - 1))² · s` for `n ≥ 1`. -/
-private lemma pow_two_pow_sub_one_eq {n : ℕ} (hn : 1 ≤ n) :
-    s ^ (2 ^ n - 1) = (s ^ (2 ^ (n - 1) - 1)) ^ 2 * s := by
-  rw [two_pow_sub_one_eq hn, pow_succ, pow_mul']
 
 /-! ### The sign worlds -/
 
@@ -352,7 +335,7 @@ private lemma wSeq_pos_and_le_of_neg_lt (hr : r < 0) (hrs : -s < r) :
       mul_le_mul_of_nonpos_left (pow_le_pow_left₀ ih.1.le ih.2 2) hr.le
     have h2 : 0 < s ^ (2 ^ (n - 1) - 1) := pow_pos hs _
     have h3 : 0 ≤ wSeq r s 1 n ^ 2 := sq_nonneg _
-    rw [wSeq_succ r s 1 hn, Nat.add_sub_cancel, pow_two_pow_sub_one_eq hn, one_mul]
+    rw [wSeq_succ r s 1 hn, Nat.add_sub_cancel, pow_two_pow_sub_one_eq s hn, one_mul]
     constructor <;> nlinarith
 
 lemma wSeq_pos_of_neg_lt (hr : r < 0) (hrs : -s < r) : ∀ n ≥ 1, 0 < wSeq r s 1 n :=
@@ -370,7 +353,7 @@ lemma pow_le_wSeq_of_two_mul_le (hs : 0 < s) (hr : 2 * s ≤ r) :
     have h1 : 2 * s * (s ^ (2 ^ (n - 1) - 1)) ^ 2 ≤ r * wSeq r s (-1) n ^ 2 :=
       mul_le_mul hr (pow_le_pow_left₀ h2.le ih 2) (by positivity) (by lia)
     have h3 : 0 < s * (s ^ (2 ^ (n - 1) - 1)) ^ 2 := by positivity
-    rw [wSeq_succ r s (-1) hn, Nat.add_sub_cancel, pow_two_pow_sub_one_eq hn]
+    rw [wSeq_succ r s (-1) hn, Nat.add_sub_cancel, pow_two_pow_sub_one_eq s hn]
     nlinarith
 
 lemma wSeq_pos_of_two_mul_le (hs : 0 < s) (hr : 2 * s ≤ r) : ∀ n ≥ 1, 0 < wSeq r s (-1) n :=
@@ -378,14 +361,9 @@ lemma wSeq_pos_of_two_mul_le (hs : 0 < s) (hr : 2 * s ≤ r) : ∀ n ≥ 1, 0 < 
 
 /-- If all `w_n > 0`, then `β_n > 0`: `β_n` is a quotient of products of the `w_d`. -/
 theorem betaInt_pos (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {n : ℕ} (hn : 1 ≤ n) : 0 < betaInt r s ε n := by
-  have hpos (S : Finset (ℕ × ℕ)) (hS : S ⊆ n.divisorsAntidiagonal) : 0 < ∏ x ∈ S, wSeq r s ε x.2 :=
-    Finset.prod_pos fun x hx ↦ hw _ (Nat.pos_of_mem_divisors
-      (Nat.snd_mem_divisors_of_mem_antidiagonal (hS hx)))
-  have hD : 0 < denProd (wSeq r s ε) n := hpos _ (Finset.filter_subset _ _)
-  have hN : 0 < numProd (wSeq r s ε) n := hpos _ (Finset.filter_subset _ _)
-  exact (pos_iff_pos_of_mul_pos
-    (betaInt_mul_denProd hs hrs hε (fun n hn ↦ (hw n hn).ne') hn ▸ hN)).mpr hD
+    (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {n : ℕ} (hn : 1 ≤ n) : 0 < betaInt r s ε n :=
+  (pos_iff_pos_of_mul_pos (betaInt_mul_denProd hs hrs hε (fun n hn ↦ (hw n hn).ne') hn ▸
+    numProd_pos (fun _ hd ↦ hw _ hd) n)).mpr (denProd_pos (fun _ hd ↦ hw _ hd) n)
 
 /-! ### The numerator of `γ_k + γ_{k+1}` -/
 
@@ -394,15 +372,17 @@ theorem betaInt_pos (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
 lemma `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ`. -/
 def reflNum (r s ε : ℤ) (k : ℕ) : ℤ := wSeq r s ε k * s ^ 2 ^ (k - 1) + wSeq r s ε (k + 1)
 
+lemma reflNum_eq (k : ℕ) :
+    reflNum r s ε k = wSeq r s ε k * s ^ 2 ^ (k - 1) + wSeq r s ε (k + 1) := rfl
+
 /-- `N_k ≡ w_{k+1} mod s` is coprime to `s`. -/
 lemma isCoprime_reflNum_right (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
     IsCoprime (reflNum r s ε k) s := by
-  rw [reflNum, add_comm, show s ^ 2 ^ (k - 1) = s * s ^ (2 ^ (k - 1) - 1) by
-    rw [← pow_succ', Nat.sub_add_cancel Nat.one_le_two_pow], mul_left_comm]
+  rw [reflNum_eq, add_comm, ← mul_pow_sub_one (Nat.two_pow_pos _).ne' s, mul_left_comm]
   exact (isCoprime_wSeq_right hrs (Nat.le_succ_of_le hk)).add_mul_left_left _
 
 lemma reflNum_one : reflNum r s ε 1 = r + (1 + ε) * s := by
-  rw [reflNum, wSeq_succ r s ε le_rfl, wSeq_one]
+  rw [reflNum_eq, wSeq_succ r s ε le_rfl, wSeq_one]
   ring
 
 lemma reflNum_pos (hs : 0 ≤ s) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {k : ℕ} (hk : 1 ≤ k) :
@@ -410,7 +390,7 @@ lemma reflNum_pos (hs : 0 ≤ s) (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) {k : ℕ}
   have := hw k hk
   have := hw (k + 1) (by lia)
   have := pow_nonneg hs (2 ^ (k - 1))
-  rw [reflNum]
+  rw [reflNum_eq]
   positivity
 
 end sign

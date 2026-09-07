@@ -178,10 +178,10 @@ and of divisibility, the descent below) are of Mathlib generality.
   into a domain killing no $w_d$, $\varphi(\beta_n)$ is the Möbius factor of $\varphi \circ w$,
   both being the solution of $\beta D = N$. The twist exponent $E(n)$ has no definition of its
   own: the proofs need the parity of the exponents $F = \sum_{t \mid n} (2^{kt-1} - 1)$ of $s$
-  that the denominators produce, \lname{even\_sum\_two\_pow\_mul\_sub\_one\_of\_squarefree}
-  ($k \ge 2$) and \lname{odd\_sum\_two\_pow\_sub\_one\_of\_squarefree} ($k = 1$) in
-  \lname{Reflection.lean}, from the balanced sign partition
-  \lname{card\_divisors\_eq\_two\_mul\_of\_squarefree}.}
+  that the denominators produce, \lname{Squarefree.even\_sum\_two\_pow\_mul\_sub\_one}
+  ($k \ge 2$) and \lname{Squarefree.odd\_sum\_two\_pow\_sub\_one} ($k = 1$) in
+  \lname{Mathlib/NumberTheory/Moebius.lean}, from the balanced sign partition
+  \lname{Squarefree.card\_divisors\_eq\_two\_mul}.}
 \end{definition}
 
 \begin{lemma}[the $\beta_n$ are integers, pairwise coprime, coprime to $rs$]
@@ -379,7 +379,8 @@ and of divisibility, the descent below) are of Mathlib generality.
     QuadraticIterates.intCast_wSeq_zmod_eight_of_even, QuadraticIterates.intCast_sq_zmod_eight_of_odd,
     QuadraticIterates.intCast_pow_zmod_eight_of_even,
     QuadraticIterates.intCast_pow_two_pow_sub_one_zmod_eight_of_odd,
-    Int.not_isSquare_neg_one_zmod_natAbs_of_emod}
+    Int.not_isSquare_neg_one_zmod_natAbs_of_emod_eight_eq_six,
+    Int.not_isSquare_neg_one_zmod_natAbs_of_emod_four_eq_three}
   \leanok
   Let $N_{n_0} = w_{n_0} s^{2^{n_0-1}} + w_{n_0+1}$ (positive world: $a > 0$ or $-1 < a < 0$), resp.\
   $N_{n_0} = w^S_{n_0} s^{2^{n_0-1}} + w^S_{n_0+1}$ ($a \le -2$, $R = |r|$). If $(s \bmod 4, r \bmod 4)
@@ -410,7 +411,9 @@ and of divisibility, the descent below) are of Mathlib generality.
   $(\bar r, \bar s, \bar\varepsilon) \in (\ZZ/8\ZZ)^3$. Even $s$:
   \lname{intCast\_wSeq\_zmod\_eight\_of\_even} ($w_n \equiv r \bmod 8$ for $n \ge 3$) and
   \lname{reflNum\_emod\_four\_of\_even}. Then \lname{not\_isSquare\_neg\_one\_zmod\_reflNum}
-  ($-1$ is not a square modulo $N_k$, via \lname{Int.not\_isSquare\_neg\_one\_zmod\_natAbs\_of\_emod})
+  ($-1$ is not a square modulo $N_k$, via
+  \lname{Int.not\_isSquare\_neg\_one\_zmod\_natAbs\_of\_emod\_eight\_eq\_six} and
+  \lname{\ldots\_of\_emod\_four\_eq\_three})
   and the corollary \lname{not\_isSquare\_betaInt\_of\_two\_le}: in the classes, $\beta_n$ is not
   a square for $n \ge 2$ with $n / \rad(n) \ge 2$, by the reflection lemma with the modulus $N_k$
   itself; both are stated with the hypothesis $N_k \ge 0$ in place of a sign world, which the
@@ -438,7 +441,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   $M \mid s$ with $r$ not a square in \lname{ZMod M} (primality is not needed): $\beta_n = P/Q$
   with $P \equiv r^{F^+}$, $Q \equiv r^{F^-}$, and $F^+ + F^-$ is the odd twist exponent, by
   \lname{ZMod.isSquare\_mul\_of\_isSquare\_div} and
-  \lname{odd\_sum\_two\_pow\_sub\_one\_of\_squarefree}.}
+  \lname{Squarefree.odd\_sum\_two\_pow\_sub\_one}.}
 \end{proof}
 
 \begin{lemma}[reflection at $n_0 = 1$]
@@ -480,7 +483,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   resp.\ $(r + \varepsilon s)\, r^{\tau(n) - 2}$ (even $n$) modulo $8$, with $\tau(n)$ even.
   \formalnote{\lname{intCast\_wSeq\_zmod\_eight\_of\_even}: $w_n \equiv r$ in \lname{ZMod 8} for
   $n \ge 3$ and even $s$; \lname{Int.isSquare\_mul\_of\_isSquare\_div} ($P/Q$ a rational square
-  makes the integer $PQ$ a square) and \lname{card\_divisors\_eq\_two\_mul\_of\_squarefree}; the
+  makes the integer $PQ$ a square) and \lname{Squarefree.card\_divisors\_eq\_two\_mul}; the
   two cases are \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_odd\_of\_even} ($n$ odd,
   $r \equiv 3 \bmod 4$) and \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_even\_of\_even}
   ($n$ even, $r + \varepsilon s \not\equiv 1 \bmod 8$; the condition $r \equiv 3 \bmod 4$ is not

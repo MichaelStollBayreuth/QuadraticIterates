@@ -30,6 +30,24 @@ theorem IsUnit.isSquare_mul_sq_iff {α : Type*} [CommMonoid α] {y : α} (hy : I
   ⟨fun h ↦ by simpa [mul_assoc, ← mul_pow, hy.mul_val_inv] using h.mul (IsSquare.sq ↑hy.unit⁻¹),
     fun h ↦ h.mul (IsSquare.sq y)⟩
 
+/-- Multiplying by an even power of a unit does not change squareness. -/
+theorem IsUnit.isSquare_mul_pow_iff_of_even {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y)
+    {n : ℕ} (hn : Even n) (x : α) : IsSquare (x * y ^ n) ↔ IsSquare x := by
+  obtain ⟨j, rfl⟩ := hn
+  rw [← two_mul, pow_mul', (hy.pow j).isSquare_mul_sq_iff]
+
+/-- Multiplying by an odd power of a unit `y` is, for squareness, multiplying by `y`. -/
+theorem IsUnit.isSquare_mul_pow_iff_of_odd {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y)
+    {n : ℕ} (hn : Odd n) (x : α) : IsSquare (x * y ^ n) ↔ IsSquare (x * y) := by
+  obtain ⟨j, rfl⟩ := hn
+  rw [pow_succ', mul_left_comm, ← mul_assoc, pow_mul', (hy.pow j).isSquare_mul_sq_iff,
+    mul_comm y x]
+
+/-- An odd power of a unit is a square iff the unit is. -/
+theorem IsUnit.isSquare_pow_iff_of_odd {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y) {n : ℕ}
+    (hn : Odd n) : IsSquare (y ^ n) ↔ IsSquare y := by
+  simpa using hy.isSquare_mul_pow_iff_of_odd hn 1
+
 /-- If `P/Q` is a rational square, then the integer `P Q = (P/Q) Q²` is a square. -/
 theorem Int.isSquare_mul_of_isSquare_div {P Q : ℤ} (hsq : IsSquare ((P : ℚ) / Q)) :
     IsSquare (P * Q) := by
@@ -91,16 +109,20 @@ theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
 
-/-- For `N ≥ 0` with `N ≡ 6 mod 8` or `N ≡ 3 mod 4`, `-1` is not a square modulo `N`. -/
-theorem Int.not_isSquare_neg_one_zmod_natAbs_of_emod {N : ℤ} (hN : 0 ≤ N)
-    (h : N % 8 = 6 ∨ N % 4 = 3) : ¬IsSquare (-1 : ZMod N.natAbs) := by
-  rcases h with h | h
-  · refine ZMod.not_isSquare_neg_one_of_emod_eight_eq_six (Nat.cast_injective (R := ℤ) ?_)
-    rw [Int.natCast_mod, Int.natAbs_of_nonneg hN]
-    exact_mod_cast h
-  · refine ZMod.not_isSquare_neg_one_of_emod_four_eq_three (Nat.cast_injective (R := ℤ) ?_)
-    rw [Int.natCast_mod, Int.natAbs_of_nonneg hN]
-    exact_mod_cast h
+/-- The residue of `|N|` modulo `m` is that of `N`, for `N ≥ 0`. -/
+theorem Int.natAbs_mod_eq_of_emod_eq {N : ℤ} (hN : 0 ≤ N) {m k : ℕ} (h : N % m = k) :
+    N.natAbs % m = k :=
+  Nat.cast_injective (R := ℤ) (by rw [Int.natCast_mod, Int.natAbs_of_nonneg hN]; exact_mod_cast h)
+
+/-- For `N ≥ 0` with `N ≡ 6 mod 8`, `-1` is not a square modulo `N`. -/
+theorem Int.not_isSquare_neg_one_zmod_natAbs_of_emod_eight_eq_six {N : ℤ} (hN : 0 ≤ N)
+    (h : N % 8 = 6) : ¬IsSquare (-1 : ZMod N.natAbs) :=
+  ZMod.not_isSquare_neg_one_of_emod_eight_eq_six (Int.natAbs_mod_eq_of_emod_eq hN h)
+
+/-- For `N ≥ 0` with `N ≡ 3 mod 4`, `-1` is not a square modulo `N`. -/
+theorem Int.not_isSquare_neg_one_zmod_natAbs_of_emod_four_eq_three {N : ℤ} (hN : 0 ≤ N)
+    (h : N % 4 = 3) : ¬IsSquare (-1 : ZMod N.natAbs) :=
+  ZMod.not_isSquare_neg_one_of_emod_four_eq_three (Int.natAbs_mod_eq_of_emod_eq hN h)
 
 /-- A square is `0` or `1` modulo `4`. -/
 theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :

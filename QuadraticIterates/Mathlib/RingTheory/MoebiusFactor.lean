@@ -5,6 +5,8 @@ Authors: Michael Stoll
 -/
 module
 
+public import Mathlib.Algebra.Order.Ring.Defs
+public import Mathlib.RingTheory.Coprime.Basic
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Localization.Integer
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
@@ -12,6 +14,7 @@ public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.Field.Power
+import Mathlib.RingTheory.Coprime.Lemmas
 import QuadraticIterates.Mathlib.Algebra.BigOperators
 import QuadraticIterates.Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 
@@ -35,9 +38,13 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 open scoped ArithmeticFunction.Moebius
 open UniqueFactorizationMonoid ArithmeticFunction
 
+theorem Nat.one_le_snd_of_mem_divisorsAntidiagonal {n : ℕ} {x : ℕ × ℕ}
+    (hx : x ∈ n.divisorsAntidiagonal) : 1 ≤ x.2 :=
+  Nat.pos_of_ne_zero (Nat.right_ne_zero_of_mem_divisorsAntidiagonal hx)
+
 theorem ne_zero_of_mem_divisorsAntidiagonal {M : Type*} [Zero M] {c : ℕ → M}
     (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ} {x : ℕ × ℕ} (hx : x ∈ n.divisorsAntidiagonal) : c x.2 ≠ 0 :=
-  hc x.2 (Nat.pos_of_ne_zero (Nat.right_ne_zero_of_mem_divisorsAntidiagonal hx))
+  hc x.2 (Nat.one_le_snd_of_mem_divisorsAntidiagonal hx)
 
 variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 
@@ -93,6 +100,32 @@ lemma map_numProd : φ (numProd c n) = numProd (fun d ↦ φ (c d)) n := map_pro
 lemma map_denProd : φ (denProd c n) = denProd (fun d ↦ φ (c d)) n := map_prod φ _ _
 
 end map
+
+/-- The numerator product of the Möbius factor is coprime to `x` if every `c d`, `d ≥ 1`, is. -/
+theorem isCoprime_numProd {c : ℕ → R} {x : R} (hc : ∀ d ≥ 1, IsCoprime (c d) x) (n : ℕ) :
+    IsCoprime (numProd c n) x :=
+  IsCoprime.prod_left fun y hy ↦
+    hc y.2 (Nat.one_le_snd_of_mem_divisorsAntidiagonal (Finset.mem_of_mem_filter y hy))
+
+/-- The denominator product of the Möbius factor is coprime to `x` if every `c d`, `d ≥ 1`, is. -/
+theorem isCoprime_denProd {c : ℕ → R} {x : R} (hc : ∀ d ≥ 1, IsCoprime (c d) x) (n : ℕ) :
+    IsCoprime (denProd c n) x :=
+  IsCoprime.prod_left fun y hy ↦
+    hc y.2 (Nat.one_le_snd_of_mem_divisorsAntidiagonal (Finset.mem_of_mem_filter y hy))
+
+section pos
+
+variable [LinearOrder R] [IsStrictOrderedRing R]
+
+theorem numProd_pos {c : ℕ → R} (hc : ∀ d ≥ 1, 0 < c d) (n : ℕ) : 0 < numProd c n :=
+  Finset.prod_pos fun y hy ↦
+    hc y.2 (Nat.one_le_snd_of_mem_divisorsAntidiagonal (Finset.mem_of_mem_filter y hy))
+
+theorem denProd_pos {c : ℕ → R} (hc : ∀ d ≥ 1, 0 < c d) (n : ℕ) : 0 < denProd c n :=
+  Finset.prod_pos fun y hy ↦
+    hc y.2 (Nat.one_le_snd_of_mem_divisorsAntidiagonal (Finset.mem_of_mem_filter y hy))
+
+end pos
 
 section IsFractionRing
 

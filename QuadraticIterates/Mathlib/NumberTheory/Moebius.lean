@@ -17,7 +17,9 @@ import QuadraticIterates.Mathlib.Algebra.BigOperators
 Restricted Möbius sums over divisors and divisor antidiagonals; the sign partition of the divisors
 `t` of a squarefree `n'` by `μ (n'/t) = ±1`, which is balanced on every set of divisors with
 vanishing Möbius sum (all divisors, the odd ones, the even ones), and the resulting quotient form
-`ArithmeticFunction.prod_pow_moebius_eq_div` of Möbius products.
+`ArithmeticFunction.prod_pow_moebius_eq_div` of Möbius products; the parity of the twist exponents
+`∑_{t ∣ n} (2^(kt-1) - 1)` of a squarefree `n` (`Squarefree.even_sum_two_pow_mul_sub_one`,
+`Squarefree.odd_sum_two_pow_sub_one`).
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -37,6 +39,14 @@ theorem sum_divisors_moebius (n : ℕ) :
 theorem sum_divisorsAntidiagonal_moebius_eq_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal, μ x.1 = 0 := by
   rw [Nat.sum_divisorsAntidiagonal (fun i _ ↦ μ i), sum_divisors_moebius, ite_eq_right (by lia)]
+
+/-- The Möbius sum over the divisor antidiagonal of `n ≥ 2` without the pair `(n, 1)` is `-μ n`. -/
+theorem sum_erase_divisorsAntidiagonal_moebius_eq_neg {n : ℕ} (hn : 2 ≤ n) :
+    ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), μ x.1 = -μ n :=
+  have hmem : (n, 1) ∈ n.divisorsAntidiagonal :=
+    Nat.mem_divisorsAntidiagonal.mpr ⟨mul_one n, by lia⟩
+  eq_neg_of_add_eq_zero_right
+    ((Finset.add_sum_erase _ _ hmem).trans (sum_divisorsAntidiagonal_moebius_eq_zero hn))
 
 /-- The antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` is a product over the divisors of the
 radical `n' = rad n`, namely `∏_{t ∣ n'} F (k t) ^ μ (n'/t)` with `k = n / n'`, because `μ e = 0`
@@ -92,14 +102,39 @@ theorem _root_.Squarefree.filter_moebius_div_eq_one_union_filter_eq_neg_one {n' 
     {t ∈ n'.divisors | μ (n' / t) = 1} ∪ {t ∈ n'.divisors | μ (n' / t) = -1} = n'.divisors :=
   hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one_of_subset subset_rfl
 
+/-- For squarefree `n'`, a product over the divisors of `n'` is the product over the sign class
+`μ (n'/t) = 1` times the product over the sign class `μ (n'/t) = -1`. -/
+@[to_additive _root_.Squarefree.sum_filter_moebius_div_eq_one_add_sum_filter_eq_neg_one /-- For
+squarefree `n'`, a sum over the divisors of `n'` is the sum over the sign class `μ (n'/t) = 1`
+plus the sum over the sign class `μ (n'/t) = -1`. -/]
+theorem _root_.Squarefree.prod_filter_moebius_div_eq_one_mul_prod_filter_eq_neg_one
+    {M : Type*} [CommMonoid M] {n' : ℕ} (hsf : Squarefree n') (f : ℕ → M) :
+    (∏ t ∈ n'.divisors with μ (n' / t) = 1, f t) * ∏ t ∈ n'.divisors with μ (n' / t) = -1, f t =
+      ∏ t ∈ n'.divisors, f t := by
+  rw [← Finset.prod_union (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia),
+    hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one]
+
+/-- A set `S` of divisors of a squarefree `n'` on which `∑ μ (n'/t)` vanishes has twice as many
+elements as its sign class `μ (n'/t) = 1`. -/
+theorem _root_.Squarefree.card_eq_two_mul_card_filter_moebius_div_eq_one {n' : ℕ}
+    (hsf : Squarefree n') {S : Finset ℕ} (hS : S ⊆ n'.divisors)
+    (hsum : ∑ t ∈ S, μ (n' / t) = 0) : #S = 2 * #{t ∈ S | μ (n' / t) = 1} := by
+  nth_rw 1 [← hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one_of_subset hS]
+  rw [Finset.card_union_of_disjoint (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia),
+    ← hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one hS hsum, two_mul]
+
 /-- A set of divisors of a squarefree `n'` on which `∑ μ (n'/t)` vanishes has evenly many
 elements: its two sign classes have the same size. -/
 theorem _root_.Squarefree.even_card_of_sum_moebius_div_eq_zero {n' : ℕ} (hsf : Squarefree n')
-    {S : Finset ℕ} (hS : S ⊆ n'.divisors) (hsum : ∑ t ∈ S, μ (n' / t) = 0) : Even S.card := by
-  rw [← hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one_of_subset hS,
-    Finset.card_union_of_disjoint (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia),
-    hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one hS hsum]
-  exact ⟨_, rfl⟩
+    {S : Finset ℕ} (hS : S ⊆ n'.divisors) (hsum : ∑ t ∈ S, μ (n' / t) = 0) : Even #S :=
+  ⟨_, (hsf.card_eq_two_mul_card_filter_moebius_div_eq_one hS hsum).trans (two_mul _)⟩
+
+/-- A squarefree `n > 1` has `2 #{t ∣ n : μ(n/t) = 1}` divisors: the two halves of the sign
+partition have the same size. -/
+theorem _root_.Squarefree.card_divisors_eq_two_mul {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n) :
+    #n.divisors = 2 * #{t ∈ n.divisors | μ (n / t) = 1} :=
+  hsf.card_eq_two_mul_card_filter_moebius_div_eq_one subset_rfl
+    (sum_divisors_moebius_div_eq_zero hn1)
 
 /-- The antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` is the quotient of the product of the
 `F (k t)` over the divisors `t` of `n' = rad n` with `μ (n'/t) = 1` by the product over those with
@@ -159,6 +194,46 @@ theorem _root_.Squarefree.even_card_filter_divisors_mod_two {n : ℕ} (hsf : Squ
     (hn : 3 ≤ n) (i : ℕ) : Even #{t ∈ n.divisors | t % 2 = i} :=
   hsf.even_card_of_sum_moebius_div_eq_zero (Finset.filter_subset _ _)
     (sum_divisors_filter_mod_two_moebius_div hn i)
+
+/-! ### The twist exponents -/
+
+/-- The divisors `t` of `n` with `t - 1 ≥ 1` are the divisors other than `1`. -/
+theorem _root_.Nat.divisors_filter_one_le_sub_one (n : ℕ) :
+    {t ∈ n.divisors | 1 ≤ t - 1} = n.divisors.erase 1 := by
+  rw [← Finset.filter_ne']
+  exact Finset.filter_congr fun t ht ↦ by have := Nat.pos_of_mem_divisors ht; lia
+
+/-- The parity of `∑_{t ∈ S} (2^(m t) - 1)` is that of the number of `t ∈ S` with `m t ≥ 1`. -/
+theorem _root_.Finset.sum_two_pow_sub_one_mod_two (S : Finset ℕ) (m : ℕ → ℕ) :
+    (∑ t ∈ S, (2 ^ m t - 1)) % 2 = #{t ∈ S | 1 ≤ m t} % 2 := by
+  rw [Finset.sum_nat_mod, Finset.card_eq_sum_ones, Finset.sum_filter]
+  congr 1
+  refine Finset.sum_congr rfl fun t _ ↦ ?_
+  rcases Nat.eq_zero_or_pos (m t) with h | h
+  · simp [h]
+  · rw [ite_eq_left (show 1 ≤ m t from h)]
+    exact Nat.odd_iff.mp
+      (Nat.Even.sub_odd Nat.one_le_two_pow (Nat.even_pow.mpr ⟨even_two, h.ne'⟩) odd_one)
+
+/-- The twist exponent `F = ∑_{t ∣ n} (2^(kt-1) - 1)` is even for `k ≥ 2` (`n` squarefree,
+`n > 1`): all terms are odd and there are evenly many. -/
+theorem _root_.Squarefree.even_sum_two_pow_mul_sub_one {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n)
+    {k : ℕ} (hk : 2 ≤ k) : Even (∑ t ∈ n.divisors, (2 ^ (k * t - 1) - 1)) := by
+  rw [Nat.even_iff, Finset.sum_two_pow_sub_one_mod_two, Finset.filter_true_of_mem fun t ht ↦ ?_,
+    hsf.card_divisors_eq_two_mul hn1, Nat.mul_mod_right]
+  have := hk.trans (Nat.le_mul_of_pos_right k (Nat.pos_of_mem_divisors ht))
+  lia
+
+/-- The twist exponent `F = ∑_{t ∣ n} (2^(t-1) - 1)` is odd for squarefree `n > 1`: all terms
+but the one at `t = 1` are odd, and there are evenly many divisors. -/
+theorem _root_.Squarefree.odd_sum_two_pow_sub_one {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n) :
+    Odd (∑ t ∈ n.divisors, (2 ^ (t - 1) - 1)) := by
+  have hA : 1 ≤ #{t ∈ n.divisors | μ (n / t) = 1} :=
+    Finset.card_pos.mpr
+      ⟨n, by simp [Nat.mem_divisors_self n (by lia), Nat.div_self (by lia : 0 < n)]⟩
+  rw [Nat.odd_iff, Finset.sum_two_pow_sub_one_mod_two, Nat.divisors_filter_one_le_sub_one,
+    Finset.card_erase_of_mem (Nat.one_mem_divisors.mpr (by lia)), hsf.card_divisors_eq_two_mul hn1]
+  lia
 
 /-- For a `gcd`-`min` function `g` and a least element `m` of the level set `{d ∣ n : k ≤ g d}`,
 that level set consists of the multiples of `m` among the divisors of `n`. -/

@@ -160,14 +160,11 @@ theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreduc
 `f_{n+1}`. -/
 lemma cSeq_succ_ne_zero_of_irreducible {n : ℕ} (hirr : Irreducible fℚ[a, n + 1]) :
     cSeq a (n + 1) ≠ 0 := fun h ↦ by
-  rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, mul_eq_zero,
-    pow_eq_zero_iff (Nat.two_pow_pos n).ne', ← coeff_zero_eq_eval_zero, ← X_dvd_iff] at h
-  rcases hirr.dvd_iff.mp (h.resolve_left (by norm_num)) with hu | hass
-  · exact not_isUnit_X hu
-  · have := natDegree_le_of_dvd hass.dvd X_ne_zero
-    rw [natDegree_iteratedPoly, natDegree_X] at this
-    have := Nat.one_lt_two_pow n.succ_ne_zero
-    lia
+  rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, mul_eq_zero, pow_eq_zero_iff (Nat.two_pow_pos n).ne']
+    at h
+  have := Nat.one_lt_two_pow n.succ_ne_zero
+  exact hirr.not_isRoot_of_natDegree_ne_one (by rw [natDegree_iteratedPoly]; lia)
+    (h.resolve_left (neg_ne_zero.mpr one_ne_zero))
 
 /-- When all iterates are irreducible, no `c_n` with `n ≥ 1` vanishes. -/
 lemma cSeq_ne_zero_of_irreducible (hirr : ∀ k, Irreducible fℚ[a, k]) : ∀ n ≥ 1, cSeq a n ≠ 0 :=

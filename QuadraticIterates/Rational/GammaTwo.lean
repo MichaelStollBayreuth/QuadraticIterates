@@ -10,8 +10,11 @@ public import QuadraticIterates.Rational.Reflection
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.Units
 import Mathlib.Tactic.LinearCombination
+import QuadraticIterates.Mathlib.Algebra.Group.Basic
+import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.NumberTheory.Moebius
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
 /-!
@@ -52,8 +55,8 @@ variable {r s ε : ℤ}
 
 section away
 
-private lemma eval_zero_normPolyAway_sq (hε : ε ^ 2 = 1) : (normPolyAway r s ε).eval 0 ^ 2 = 1 := by
-  rw [eval_zero_normPolyAway, ← Int.cast_pow, hε, Int.cast_one]
+private lemma eval_zero_normPolyAway_sq (hε : ε ^ 2 = 1) : (normPolyAway r s ε).eval 0 ^ 2 = 1 :=
+  eval_zero_normPolyAway r s ε ▸ Int.cast_sq_eq_one_of_sq_eq_one hε
 
 local notation "γA" => gammaSeq (normPolyAway r s ε) ε
 
@@ -67,9 +70,7 @@ private lemma wSeqAway_two_dvd_wSeqAway_of_even (hε : ε ^ 2 = 1) {t : ℕ} (ht
 private lemma intCast_dvd_gammaSeq_normPolyAway_two (hε : ε ^ 2 = 1) {M : ℕ}
     (hdvd : (M : ℤ) ∣ wSeq r s ε 2) : (M : Localization.Away s) ∣ γA 2 := by
   have h : (M : Localization.Away s) ∣ wSeqAway r s ε 2 := by
-    have := _root_.map_dvd (Int.castRingHom (Localization.Away s)) hdvd
-    simp only [eq_intCast, Int.cast_natCast] at this
-    exact this
+    simpa [wSeqAway_eq_intCast] using _root_.map_dvd (Int.castRingHom (Localization.Away s)) hdvd
   rwa [wSeqAway_two hε, (isUnit_intCast_localizationAway s).dvd_mul_left] at h
 
 end away
@@ -83,7 +84,7 @@ lemma wSeq_two_dvd_wSeq_of_even (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^
   refine IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime (S := Localization.Away s) ?_
     (isCoprime_wSeq_right hrs one_le_two)
   rw [RingHom.ext_int (algebraMap ℤ _) (Int.castRingHom _)]
-  exact wSeqAway_two_dvd_wSeqAway_of_even hε (by obtain ⟨k, rfl⟩ := hte; lia) hte
+  exact wSeqAway_two_dvd_wSeqAway_of_even hε (Nat.le_of_dvd ht hte.two_dvd) hte
 
 private lemma intCast_dvd_intCast_ediv_sub_pow [NeZero s] (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
     (hw2 : wSeq r s ε 2 ≠ 0) {M : ℕ} (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t)
@@ -96,20 +97,16 @@ private lemma intCast_dvd_intCast_ediv_sub_pow [NeZero s] (hrs : IsCoprime r s) 
   have hv := congrArg (Int.cast : ℤ → Localization.Away s)
     (Int.mul_ediv_cancel' (wSeq_two_dvd_wSeq_of_even (NeZero.ne s) hrs hε hte))
   push_cast at hv
-  change wSeqAway r s ε 2 * _ = wSeqAway r s ε t at hv
-  rw [wSeqAway_two hε, wSeqAway_eq_mul_gammaSeq hε] at hv
+  rw [← wSeqAway_eq_intCast, ← wSeqAway_eq_intCast, wSeqAway_two hε, wSeqAway_eq_mul_gammaSeq hε]
+    at hv
   have hne : (s : Localization.Away s) * gammaSeq (normPolyAway r s ε) ε 2 ≠ 0 := by
-    rw [← wSeqAway_two hε]
+    rw [← wSeqAway_two hε, wSeqAway_eq_intCast]
     exact Int.cast_ne_zero.mpr hw2
-  have he : (s : Localization.Away s) ^ (2 ^ (t - 1) - 1) = s * s ^ (2 ^ (t - 1) - 2) := by
-    rw [← pow_succ']
-    congr 1
-    have := Nat.one_lt_two_pow (n := t - 1) (by lia)
-    lia
   refine (intCast_dvd_gammaSeq_normPolyAway_two hε hdvd).trans
     ⟨(s : Localization.Away s) ^ (2 ^ (t - 1) - 2) * z, mul_left_cancel₀ hne ?_⟩
   linear_combination hv + ((s : Localization.Away s) * s ^ (2 ^ (t - 1) - 2)) * hz +
-    gammaSeq (normPolyAway r s ε) ε t * he
+    gammaSeq (normPolyAway r s ε) ε t * pow_sub_one_eq_mul_pow_sub_two (s : Localization.Away s)
+      (Nat.one_lt_two_pow (n := t - 1) (by lia))
 
 /-- Modulo a divisor `M` of `w_2` (which is coprime to `s`), the quotient `w_t / w_2` for even
 `t` is `s^(2^(t-1) - 2)`: in `ℤ[1/s]`, `γ_t ≡ γ_2 mod γ_2²`, so `γ_t / γ_2 ≡ 1 mod M`. -/
@@ -143,7 +140,7 @@ private lemma gammaSeq_zmod_two_eq_zero (hu : (s : ZMod M) * u = 1) (hε : ε ^ 
 /-- Modulo `M ∣ w_2`, `γ_t = ε` for odd `t ≥ 3`. -/
 private lemma gammaSeq_zmod_eq_of_odd (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 = 1)
     (hdvd : (M : ℤ) ∣ wSeq r s ε 2) {t : ℕ} (ht : 2 ≤ t) (hto : ¬Even t) : γZ t = ε := by
-  have hε' : (ε : ZMod M) ^ 2 = 1 := by rw [← Int.cast_pow, hε, Int.cast_one]
+  have hε' := Int.cast_sq_eq_one_of_sq_eq_one (S := ZMod M) hε
   have h : γZ 2 ^ 2 ∣ γZ t - if Even t then γZ 2 else eval 0 gZ :=
     gammaSeq_two_sq_dvd_sub_ite_even evenPoly_gZ (by simpa using hε')
       (by simp [gammaSeq_one, ← sq, hε']) t ht
@@ -179,10 +176,8 @@ private lemma intCast_wOddPart_zmod (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : 
   · have h := (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr
       (dvd_wSeq_ediv_wSeq_two_sub_pow_of_even hs hrs hε hw2 hdvd ht (Nat.even_iff.mpr he))
     push_cast at h
-    have hf : 2 ^ (t - 1) - 1 = 2 ^ (t - 1) - 2 + 1 := by
-      have := Nat.one_lt_two_pow (n := t - 1) (by lia)
-      lia
-    rw [sub_eq_zero.mp h, hf, pow_succ]
+    rw [sub_eq_zero.mp h, pow_sub_one_eq_mul_pow_sub_two (s : ZMod M)
+      (Nat.one_lt_two_pow (n := t - 1) (by lia))]
     linear_combination -(s : ZMod M) ^ (2 ^ (t - 1) - 2) * hu
   · rw [intCast_wSeq hu hε, gammaSeq_zmod_eq_of_odd hu hε hdvd ht (Nat.even_iff.not.mpr he),
       mul_comm]
@@ -194,8 +189,7 @@ private lemma intCast_prod_wOddPart_zmod (hs : s ≠ 0) (hrs : IsCoprime r s) (h
       u ^ #{t ∈ n.divisors | t % 2 = 0} * (ε : ZMod M) ^ (#{t ∈ n.divisors | t % 2 = 1} - 1) *
         (s : ZMod M) ^ ∑ t ∈ n.divisors, (2 ^ (t - 1) - 1) := by
   rw [← Finset.mul_prod_erase _ _ (Nat.one_mem_divisors.mpr (by lia)), wOddPart,
-    ite_eq_right (by decide),
-    wSeq_one, one_mul]
+    ite_eq_right (by decide), wSeq_one, one_mul]
   push_cast
   rw [Finset.prod_congr rfl fun t ht ↦ intCast_wOddPart_zmod hs hrs hε hw2 hu hdvd
       (by have := Nat.pos_of_mem_divisors (Finset.mem_of_mem_erase ht)
@@ -217,7 +211,7 @@ private lemma exists_isUnit_intCast_prod_wOddPart_zmod_eq (hs : s ≠ 0) (hrs : 
       ((∏ t ∈ n.divisors, wOddPart r s ε t : ℤ) : ZMod M) = ε * s * v ^ 2 := by
   obtain ⟨N, hN⟩ := hsf.even_card_filter_divisors_mod_two hn 0
   obtain ⟨N', hN'⟩ := hsf.even_card_filter_divisors_mod_two hn 1
-  obtain ⟨j, hj⟩ := odd_sum_two_pow_sub_one_of_squarefree hsf (by lia)
+  obtain ⟨j, hj⟩ := hsf.odd_sum_two_pow_sub_one (by lia)
   have h1 : 1 ≤ #{t ∈ n.divisors | t % 2 = 1} :=
     Finset.card_pos.mpr ⟨1, by simp [Nat.one_mem_divisors.mpr (by lia : n ≠ 0)]⟩
   refine ⟨u ^ N * s ^ j, ((IsUnit.of_mul_eq_one_right _ hu).pow N).mul
@@ -231,22 +225,18 @@ private lemma isSquare_intCast_prod_wOddPart_of_isSquare_betaInt (hs : s ≠ 0)
     (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 3 ≤ n)
     (hsf : Squarefree n) (hsq : IsSquare (betaInt r s ε n)) :
     IsSquare ((∏ t ∈ n.divisors, wOddPart r s ε t : ℤ) : ZMod M) := by
-  have hβ := intCast_betaInt_eq_div hs hrs hε hw (by lia)
-    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm
-  simp only [one_mul] at hβ
+  have hβ := intCast_betaInt_eq_div_of_squarefree hs hrs hε hw hsf
   have hcard : #{t ∈ {t ∈ n.divisors | μ (n / t) = 1} | t % 2 = 0}
       = #{t ∈ {t ∈ n.divisors | μ (n / t) = -1} | t % 2 = 0} := by
     simpa [Finset.filter_filter, and_comm] using
       hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one (Finset.filter_subset _ _)
         (ArithmeticFunction.sum_divisors_filter_mod_two_moebius_div hn 0)
   rw [prod_wSeq_eq_pow_mul_prod_wOddPart hs hrs hε, prod_wSeq_eq_pow_mul_prod_wOddPart hs hrs hε,
-    hcard, Int.cast_mul,
-    Int.cast_mul, Int.cast_pow,
+    hcard, Int.cast_mul, Int.cast_mul, Int.cast_pow,
     mul_div_mul_left _ _ (pow_ne_zero _ (Int.cast_ne_zero.mpr (hw 2 one_le_two)))] at hβ
   have key := (Int.isSquare_mul_of_isSquare_div (hβ ▸ Rat.isSquare_intCast_iff.mpr hsq)).map
     (Int.castRingHom (ZMod M))
-  rwa [Int.coe_castRingHom, ← Finset.prod_union (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia),
-    hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one] at key
+  rwa [Int.coe_castRingHom, hsf.prod_filter_moebius_div_eq_one_mul_prod_filter_eq_neg_one] at key
 
 /-- **The `γ_2` route.** Let `M` divide `w_2 = r + εs`, the numerator of `γ_2` (so that `M` is
 coprime to `s`). Then `β_n ≡ ε s · (unit)² mod M` for every squarefree `n ≥ 3`, so `β_n` is not a
