@@ -53,7 +53,7 @@ status:
     several squarefree-level certificates (a modulus modulo which r, -s or ±s is not a square,
     or a residue condition modulo 8), Ω_n is the full wreath power for all n. Supporting theory (multiquadratic extensions, iterated wreath products, even
     polynomials and their factorizations, Möbius quotients of strong divisibility sequences,
-    valuations in a UFD) is developed in Mathlib generality in 25 files under
+    valuations in a UFD) is developed in Mathlib generality in 30 files under
     QuadraticIterates/Mathlib/ as upstreaming candidates. A LaTeX blueprint with a dependency
     graph and the generated API documentation are published at
     https://michaelstollbayreuth.github.io/QuadraticIterates/ .
@@ -153,7 +153,7 @@ automation:
         and a diff of the pretty-printed types of every declaration in the project against the
         previous round, so that a round changed exactly the intended statements.
       cost:
-        wall_time: "~95 hours in 15 interactive sessions between 2026-07-12 and 2026-09-07"
+        wall_time: "~99 hours in 15 interactive sessions between 2026-07-12 and 2026-09-07"
         spend_usd: "Claude Max 20x subscription"
         hardware: "API-only"
       prompting_notes: >
@@ -177,7 +177,10 @@ automation:
         by the author, then one verified commit per layer on a branch. Two clauses of the
         theorems were found during the formalization, when the mechanisms behind two squarefree-
         level lemmas turned out to be independent of the sign of the parameter; they were checked
-        numerically before being added.
+        numerically before being added. The rational-parameter files were then audited like the
+        paper files: five lenses (hypotheses, general content, placement and naming, proof
+        structure, style and documentation) run by parallel sub-agents, applied in four themed
+        rounds, each verified by the chain and, where a challenge name changed, by the comparator.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
