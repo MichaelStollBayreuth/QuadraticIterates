@@ -323,10 +323,10 @@ theorem gammaSeq_two_sq_dvd_sub_ite_even (hg : EvenPoly g) {ε : R} (h0 : g.eval
   | succ n hn ih =>
     simp only [Nat.even_add_one]
     split_ifs with he
-    · rw [if_pos he] at ih
+    · rw [ite_eq_left he] at ih
       exact (pow_dvd_pow_of_dvd ((dvd_sub_left dvd_rfl).mp ((dvd_pow_self _ two_ne_zero).trans ih))
         2).trans (sq_dvd_gammaSeq_succ_sub hg ε (by lia))
-    · rw [if_neg he] at ih
+    · rw [ite_eq_right he] at ih
       rw [gammaSeq_succ g ε (n := n) (by lia)]
       nth_rw 2 [h2]
       refine hg.dvd_eval_sub ?_
@@ -339,7 +339,7 @@ theorem gammaSeq_two_dvd_of_even (hg : EvenPoly g) {ε : R} (h0 : g.eval 0 ^ 2 =
     (h1 : gammaSeq g ε 1 = 1) {n : ℕ} (hn : 2 ≤ n) (hne : Even n) :
     gammaSeq g ε 2 ∣ gammaSeq g ε n :=
   (dvd_sub_left dvd_rfl).mp ((dvd_pow_self _ two_ne_zero).trans
-    (by simpa [if_pos hne] using gammaSeq_two_sq_dvd_sub_ite_even hg h0 h1 n hn))
+    (by simpa [ite_eq_left hne] using gammaSeq_two_sq_dvd_sub_ite_even hg h0 h1 n hn))
 
 /-- A divisor `q` of `γ_{m+1} - g(0)` is a period divisor of `γ` from index `2` on, i.e.
 `q ∣ γ_{n+m} - γ_n` for all `n ≥ 2` (for even `g` and `ε² = 1`, so that `γ_1² = g(0)²`). -/
@@ -688,13 +688,13 @@ private lemma intCast_oddPart (hg : EvenPoly g) {ε : ℤ} (h0 : g.eval 0 = -1)
   have hd := gammaSeq_two_sq_dvd_sub_ite_even hg (by rw [h0]; ring) h1 t ht
   rw [oddPart]
   split_ifs with he
-  · rw [if_pos (Nat.even_iff.mpr he)] at hd
+  · rw [ite_eq_left (Nat.even_iff.mpr he)] at hd
     obtain ⟨w, hw⟩ := hd
     rw [show gammaSeq g ε t = gammaSeq g ε 2 * (1 + gammaSeq g ε 2 * w) by linear_combination hw,
       Int.mul_ediv_cancel_left _ h2, ← hm]
     push_cast
     simp
-  · rw [if_neg (Nat.even_iff.not.mpr he), h0, sub_neg_eq_add, add_comm] at hd
+  · rw [ite_eq_right (Nat.even_iff.not.mpr he), h0, sub_neg_eq_add, add_comm] at hd
     exact_mod_cast ZMod.intCast_eq_neg_intCast_of_dvd_add
       (hm ▸ (dvd_pow_self _ two_ne_zero).trans hd)
 
@@ -788,7 +788,7 @@ theorem not_isSquare_betaSeq_of_even_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ}
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd] at hdvd ⊢
   push_cast [intCast_gammaSeq] at hdvd ⊢
   rw [gammaSeq_eq_ite_even_of_add_two_eq_zero (hg.map _) hkpos hdvd (2 * k) (by lia),
-    if_pos (by grind)]
+    ite_eq_left (by grind)]
   ring
 
 /-- For odd `k` (`g` even, `ε = ±1`, `g(0)` a unit), a modulus `m` dividing `γ_k + γ_{k+2}` is
@@ -825,7 +825,7 @@ theorem dvd_two_of_dvd_add_two_of_dvd_succ (hg : EvenPoly g) {ε : ℤ} (h0 : g.
     rw [← hd', gammaSeq_succ g' ε hko.pos, hk, (hg.map _).eval_neg]
     exact ((hg.map _).eval_congr (by rw [h0', one_pow])).symm
   have := gammaSeq_eq_ite_even_of_eval_one_eq_zero (hg.map _) h0' h1' hg1 k hk1
-  rw [if_neg (Nat.not_even_iff_odd.mpr hko), hk] at this
+  rw [ite_eq_right (Nat.not_even_iff_odd.mpr hko), hk] at this
   linear_combination (-g'.eval 0) * this - 2 * h0'
 
 /-- If `g` is even with `g(0)² = 1` and `γ_1 = 1`, and `k ≥ 3` is odd, then the odd part `M` of

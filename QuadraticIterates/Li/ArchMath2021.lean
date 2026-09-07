@@ -309,7 +309,7 @@ private lemma isCoprime_gammaSeq_two_of_mul_eq {k₀ : ℕ} (hk₀2 : 2 ≤ k₀
   have ha0 := neg_of_eq_neg_mul_add_one ha
   have hγ2 := gammaSeq_normPoly_two_of_eq_neg_mul_add_one ha
   have hsq := gammaSeq_normPoly_two_sq_dvd_sub_ite_even ha0 hk₀2
-  rw [if_pos hke, hγ2] at hsq
+  rw [ite_eq_left hke, hγ2] at hsq
   rw [hγ2]
   exact isCoprime_of_mul_eq (by linear_combination hm - γ[a] k₀ * ha) hmo
     ((pow_dvd_pow_of_dvd (dvd_mul_right _ _) 2).trans hsq)

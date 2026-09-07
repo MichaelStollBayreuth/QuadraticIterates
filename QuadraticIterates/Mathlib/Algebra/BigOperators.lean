@@ -64,8 +64,8 @@ theorem prod_eq_neg_prod_of_forall_card_filter_eq {R α ι : Type*} [CommMonoid 
         hi (mem_image.mpr ⟨t, ht, h⟩)), pow_zero], ← prod_comp, ← prod_mul_distrib]
     refine prod_congr rfl fun t ht ↦ ?_
     rcases eq_or_ne t a with rfl | h
-    · rw [hxa, if_pos rfl, neg_one_mul]
-    · rw [hx t (hS ht) h, if_neg h, one_mul]
+    · rw [hxa, ite_eq_left rfl, neg_one_mul]
+    · rw [hx t (hS ht) h, ite_eq_right h, one_mul]
   rw [hprod Sp subset_union_left, hprod Sm subset_union_right]
   simp only [hcard]
   rcases mem_union.mp ha with h | h

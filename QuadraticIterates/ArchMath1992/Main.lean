@@ -164,7 +164,7 @@ theorem section1_of_not_isSquare_abs_bSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
   have hzero (i : Fin n) (hi : IsSquare (-bSeq a ((i : ℕ) + 1))) : (i : ℕ) = 0 :=
     Nat.eq_zero_of_not_pos fun hi0 ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inr hi))
-  refine ((section1_tfae ha n).out 2 0).mp ((twoIndependent_intCast_iff _).mpr
+  refine ((section1_tfae ha n).out 3 1).mp ((twoIndependent_intCast_iff _).mpr
     ((twoIndependent_iff_of_pairwise_isCoprime fun i j hij ↦
       isCoprime_bSeq ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)).mpr
         ⟨fun i ↦ ?_, fun i hi j hj ↦ Fin.ext ((hzero i hi).trans (hzero j hj).symm)⟩))

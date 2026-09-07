@@ -171,7 +171,7 @@ theorem factorization_periodic_shape {p : S} (hp : Prime p) (hpn : normalize p =
       have := Nat.le_of_dvd hn h
       obtain rfl : n = m + 1 := by lia
       exact Nat.not_dvd_of_pos_of_lt one_pos hm (Nat.dvd_add_self_left.mp h)
-    rw [if_neg hmn, factorization_eq_zero_iff_not_dvd hp hpn (hne n hn)]
+    rw [ite_eq_right hmn, factorization_eq_zero_iff_not_dvd hp hpn (hne n hn)]
     rcases Nat.lt_or_ge n m with hlt | hge
     · exact hmin n hlt hn
     · exact (show n = m + 1 by lia) ▸ hpm1

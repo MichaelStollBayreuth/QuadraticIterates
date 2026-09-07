@@ -86,7 +86,7 @@ theorem li2020_theorem_3_5 (ha : a < 0) (ha4 : a % 4 = 3) (hsq : ¬IsSquare (-a)
     (∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) := by
   have ha' : ¬IsSquare (-a : ℚ) := mod_cast hsq
   refine ⟨fun h hsq2 ↦ ?_, fun h n _ ↦ section1_of_not_isSquare_abs_bSeq ha' n fun k hk _ ↦ ?_⟩
-  · have hind := ((section1_tfae ha' 2).out 0 2).mp (h 2 one_le_two)
+  · have hind := ((section1_tfae ha' 2).out 1 3).mp (h 2 one_le_two)
     exact hind.not_isSquare 1 (by simpa [bSeq_two ha'] using Rat.isSquare_intCast_iff.mpr hsq2)
   · rcases eq_or_ne k 2 with rfl | hk2
     · have : a ≠ -1 := fun h ↦ hsq ⟨1, by rw [h]; norm_num⟩

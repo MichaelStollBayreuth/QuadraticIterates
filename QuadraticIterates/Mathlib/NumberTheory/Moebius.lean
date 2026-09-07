@@ -36,7 +36,7 @@ theorem sum_divisors_moebius (n : ℕ) :
 
 theorem sum_divisorsAntidiagonal_moebius_eq_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal, μ x.1 = 0 := by
-  rw [Nat.sum_divisorsAntidiagonal (fun i _ ↦ μ i), sum_divisors_moebius, if_neg (by lia)]
+  rw [Nat.sum_divisorsAntidiagonal (fun i _ ↦ μ i), sum_divisors_moebius, ite_eq_right (by lia)]
 
 /-- The antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` is a product over the divisors of the
 radical `n' = rad n`, namely `∏_{t ∣ n'} F (k t) ^ μ (n'/t)` with `k = n / n'`, because `μ e = 0`
@@ -62,7 +62,7 @@ theorem prod_pow_moebius_eq_prod_divisors_radical {G : Type*} [DivisionCommMonoi
 
 theorem sum_divisors_moebius_div_eq_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ t ∈ n.divisors, μ (n / t) = 0 := by
-  rw [Nat.sum_div_divisors, sum_divisors_moebius, if_neg (by lia)]
+  rw [Nat.sum_div_divisors, sum_divisors_moebius, ite_eq_right (by lia)]
 
 /-- For squarefree `n'`, a set `S` of divisors of `n'` on which `∑ μ (n'/t)` vanishes contains
 as many `t` with `μ (n'/t) = 1` as with `μ (n'/t) = -1`. -/
@@ -111,7 +111,7 @@ theorem sum_divisorsAntidiagonal_filter_dvd_moebius {m n : ℕ} (hm : 1 ≤ m) (
     simp [mul_eq_left₀ (show m ≠ 0 by lia)]
   · rw [Finset.filter_eq_empty_iff.mpr fun x hx h ↦ hmn (h.trans
       (Nat.dvd_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx))), Finset.sum_empty,
-      if_neg fun h ↦ hmn (dvd_of_eq h.symm)]
+      ite_eq_right fun h ↦ hmn (dvd_of_eq h.symm)]
 
 /-- The divisor form of `ArithmeticFunction.sum_divisorsAntidiagonal_filter_dvd_moebius`:
 `∑ μ (n/t)` over the divisors `t` of `n` that are multiples of `m` is `1` if `n = m` and `0`

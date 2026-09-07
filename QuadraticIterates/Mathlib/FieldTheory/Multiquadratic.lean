@@ -134,7 +134,7 @@ theorem finrank_adjoin_insert_of_not_isSquare {S : Set E} {w : E} {c : L}
   classical
   rw [finrank_adjoin_insert,
     finrank_adjoin_sqrt_eq (hw.trans (IsScalarTower.algebraMap_apply L (adjoin L S) E c)),
-    if_neg h, mul_comm]
+    ite_eq_right h, mul_comm]
 
 theorem mem_bot_of_add_mul_eq_zero {x : E} {p q : L} (hq : q ≠ 0)
     (h : algebraMap L E p + algebraMap L E q * x = 0) : x ∈ (⊥ : IntermediateField L E) := by
@@ -358,21 +358,21 @@ variable [DecidableEq L]
 noncomputable def sqClass (r : L) : SquareClasses L :=
   if hr : r = 0 then 0 else Additive.ofMul (QuotientGroup.mk (Units.mk0 r hr))
 
-@[simp] theorem sqClass_zero : sqClass (0 : L) = 0 := by rw [sqClass, dif_pos rfl]
+@[simp] theorem sqClass_zero : sqClass (0 : L) = 0 := by rw [sqClass, dite_eq_left rfl]
 
 /-- The square class of `r` vanishes iff `r` is a square in `L` (at `r = 0` both sides hold). -/
 theorem sqClass_eq_zero_iff (r : L) : sqClass r = 0 ↔ IsSquare r := by
   rcases eq_or_ne r 0 with rfl | hr
   · simp
-  rw [sqClass, dif_neg hr, ← ofMul_one, Additive.ofMul.apply_eq_iff_eq, QuotientGroup.eq_one_iff,
-    Units.mem_range_powMonoidHom_two_iff, Units.val_mk0]
+  rw [sqClass, dite_eq_right hr, ← ofMul_one, Additive.ofMul.apply_eq_iff_eq,
+    QuotientGroup.eq_one_iff, Units.mem_range_powMonoidHom_two_iff, Units.val_mk0]
 
 @[simp] theorem sqClass_one : sqClass (1 : L) = 0 := (sqClass_eq_zero_iff 1).mpr IsSquare.one
 
 theorem sqClass_mul {r t : L} (hr : r ≠ 0) (ht : t ≠ 0) :
     sqClass (r * t) = sqClass r + sqClass t := by
-  rw [sqClass, sqClass, sqClass, dif_neg hr, dif_neg ht, dif_neg (mul_ne_zero hr ht),
-    ← ofMul_mul, ← QuotientGroup.mk_mul]
+  rw [sqClass, sqClass, sqClass, dite_eq_right hr, dite_eq_right ht,
+    dite_eq_right (mul_ne_zero hr ht), ← ofMul_mul, ← QuotientGroup.mk_mul]
   congr 2
   ext
   simp
@@ -393,7 +393,7 @@ theorem sqClass_zpow (x : L) (k : ℤ) : sqClass (x ^ k) = k • sqClass x := by
   · rcases eq_or_ne k 0 with rfl | hk
     · simp
     · rw [zero_zpow k hk, sqClass_zero, ← ofMul_one, ← ofMul_zpow, one_zpow]
-  rw [sqClass, sqClass, dif_neg (zpow_ne_zero k hx), dif_neg hx,
+  rw [sqClass, sqClass, dite_eq_right (zpow_ne_zero k hx), dite_eq_right hx,
     show Units.mk0 (x ^ k) (zpow_ne_zero k hx) = (Units.mk0 x hx) ^ k from
       Units.ext (by push_cast; simp),
     QuotientGroup.mk_zpow, ofMul_zpow]
