@@ -352,15 +352,6 @@ instance : Module (ZMod 2) (SquareClasses L) :=
       exact (QuotientGroup.eq_one_iff _).mpr ⟨u, rfl⟩
     simpa [two_nsmul, pow_two] using hsq
 
-/-- In a `ZMod 2`-module an integer scalar acts through its absolute value. -/
-theorem zsmul_eq_natAbs_nsmul {M : Type*} [AddCommGroup M] [Module (ZMod 2) M] (k : ℤ) (v : M) :
-    k • v = k.natAbs • v := by
-  have h2 (w : M) : (2 : ℕ) • w = 0 := by
-    rw [← Nat.cast_smul_eq_nsmul (ZMod 2), ZMod.natCast_self, zero_smul]
-  rcases Int.natAbs_eq k with h | h <;> nth_rw 1 [h]
-  · rw [natCast_zsmul]
-  · rw [neg_zsmul, natCast_zsmul, neg_eq_iff_add_eq_zero, ← two_nsmul, h2]
-
 variable [DecidableEq L]
 
 /-- The class of a nonzero field element in `Lˣ/(Lˣ)²` (junk value `0` at `r = 0`). -/

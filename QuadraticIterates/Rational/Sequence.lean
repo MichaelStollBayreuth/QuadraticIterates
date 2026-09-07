@@ -369,7 +369,7 @@ theorem betaInt_pos (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
 
 /-- `N_k = w_k s^(2^(k-1)) + w_{k+1}`, the numerator of `γ_k + γ_{k+1}`
 (`QuadraticIterates.intCast_wSeq`): its divisors coprime to `s` are the moduli of the reflection
-lemma `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ`. -/
+lemma `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum`. -/
 def reflNum (r s ε : ℤ) (k : ℕ) : ℤ := wSeq r s ε k * s ^ 2 ^ (k - 1) + wSeq r s ε (k + 1)
 
 lemma reflNum_eq (k : ℕ) :

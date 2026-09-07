@@ -33,11 +33,11 @@ twist `s^F`, `F = ∑_{t ∣ rad n} (2^(kt-1) - 1)`, coming from the denominator
 
 * `QuadraticIterates.intCast_betaInt_eq_div`: `β_n` as a quotient of products of the `w_{kt}`,
   and `QuadraticIterates.intCast_betaInt_eq_div_of_squarefree` for squarefree `n`.
-* `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ`: the reflection lemma with the twist,
-  and its two consumed forms `QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ_of_two_le`
+* `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum`: the reflection lemma with the twist,
+  and its two consumed forms `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum_of_two_le`
   (`n` not squarefree, `-1` not a square mod `M`) and
-  `QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd` (`n` squarefree, `M ∣ r + (1+ε)s`,
-  `-s` not a square mod `M`).
+  `QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one` (`n` squarefree,
+  `M ∣ N_1 = r + (1+ε)s`, `-s` not a square mod `M`).
 
 Part of the extension of the Section 3 theorem of M. Stoll, *Galois groups over ℚ of some
 iterated polynomials*, Arch. Math. **59** (1992), 239-244, to rational parameters `a`; see
@@ -139,7 +139,7 @@ private lemma isUnit_intCast_prod_wSeq_zmod (hu : (s : ZMod M) * u = 1) (hε : �
 the numerator `N_k` of `γ_k + γ_{k+1}` (so that `M` is coprime to `s`). Then
 `β_n ≡ -s^F · (unit)² mod M` with `F = ∑_{t ∣ n'} (2^(kt-1) - 1)`, so `β_n` is not a square if
 `-s^F` is not a square mod `M`. -/
-theorem not_isSquare_betaInt_of_dvd_add_succ (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
+theorem not_isSquare_betaInt_of_dvd_reflNum (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
     (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n) (hn' : n' = radical n)
     (hk : n = k * n') (hdvd : (M : ℤ) ∣ reflNum r s ε k)
     (hnsq : ¬IsSquare (-(s : ZMod M) ^ ∑ t ∈ n'.divisors, (2 ^ (k * t - 1) - 1))) :
@@ -165,28 +165,27 @@ theorem not_isSquare_betaInt_of_dvd_add_succ (hs : s ≠ 0) (hrs : IsCoprime r s
 
 /-- The reflection lemma for `n` not squarefree (`k = n / rad n ≥ 2`): the twist `s^F` is a
 square, so it suffices that `-1` is not a square mod `M`. -/
-theorem not_isSquare_betaInt_of_dvd_add_succ_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s)
+theorem not_isSquare_betaInt_of_dvd_reflNum_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n k n' : ℕ} (hn : 2 ≤ n)
     (hn' : n' = radical n) (hk : n = k * n') (hk2 : 2 ≤ k) (hdvd : (M : ℤ) ∣ reflNum r s ε k)
     (hnsq : ¬IsSquare (-1 : ZMod M)) : ¬IsSquare (betaInt r s ε n) := by
   have hsu : IsUnit (s : ZMod M) := ZMod.isUnit_intCast_of_isCoprime_of_dvd
     (isCoprime_reflNum_right hrs (one_le_two.trans hk2)).symm hdvd
-  refine not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn hn' hk hdvd fun h ↦ hnsq ?_
+  refine not_isSquare_betaInt_of_dvd_reflNum hs hrs hε hw hn hn' hk hdvd fun h ↦ hnsq ?_
   rwa [← neg_one_mul, hsu.isSquare_mul_pow_iff_of_even (Squarefree.even_sum_two_pow_mul_sub_one
     (hn' ▸ squarefree_radical) (hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)) hk2)] at h
 
-/-- The reflection lemma for squarefree `n ≥ 2` (`k = 1`): the modulus divides
-`r + (1 + ε) s`, the numerator of `γ_1 + γ_2`, and the twist is `s` times a square, so it suffices
-that `-s` is not a square mod `M`. -/
-theorem not_isSquare_betaInt_of_squarefree_of_dvd (hs : s ≠ 0) (hrs : IsCoprime r s)
+/-- The reflection lemma for squarefree `n ≥ 2` (`k = 1`): the modulus divides `N_1`, the numerator
+`r + (1 + ε) s` of `γ_1 + γ_2` (`QuadraticIterates.reflNum_one`), and the twist is `s` times a
+square, so it suffices that `-s` is not a square mod `M`. -/
+theorem not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one (hs : s ≠ 0) (hrs : IsCoprime r s)
     (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n) (hsf : Squarefree n)
-    (hdvd : (M : ℤ) ∣ r + (1 + ε) * s) (hnsq : ¬IsSquare (-(s : ZMod M))) :
+    (hdvd : (M : ℤ) ∣ reflNum r s ε 1) (hnsq : ¬IsSquare (-(s : ZMod M))) :
     ¬IsSquare (betaInt r s ε n) := by
-  have hd : (M : ℤ) ∣ reflNum r s ε 1 := reflNum_one ▸ hdvd
   have hsu : IsUnit (s : ZMod M) :=
-    ZMod.isUnit_intCast_of_isCoprime_of_dvd (isCoprime_reflNum_right hrs le_rfl).symm hd
-  refine not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn
-    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm hd fun h ↦ hnsq ?_
+    ZMod.isUnit_intCast_of_isCoprime_of_dvd (isCoprime_reflNum_right hrs le_rfl).symm hdvd
+  refine not_isSquare_betaInt_of_dvd_reflNum hs hrs hε hw hn
+    (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm hdvd fun h ↦ hnsq ?_
   simp only [one_mul] at h
   rwa [← neg_one_mul, hsu.isSquare_mul_pow_iff_of_odd (hsf.odd_sum_two_pow_sub_one (by lia)),
     neg_one_mul] at h

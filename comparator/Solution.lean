@@ -10,11 +10,11 @@ Proofs of the challenge statements of `Challenge.lean`, discharged by the librar
 `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`, `QuadraticIterates.li2021_theorem_3_9`
 (`QuadraticIterates.Li.ArchMath2021`), `QuadraticIterates.li2020_theorem_3_5`
 (`QuadraticIterates.Li.ArchMath2020`) and the rational-parameter theorems
-`QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert` and
-`QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCert`
+`QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate` and
+`QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate`
 (`QuadraticIterates.Rational.Main`), whose class and certificate hypotheses are the spelled-out
 disjunctions through `QuadraticIterates.twoAdicClass_iff` and
-`QuadraticIterates.squarefreeCert_iff`. Importing the library brings in the definitions
+`QuadraticIterates.squarefreeCertificate_iff`. Importing the library brings in the definitions
 `iteratedPoly`, `GaloisGroup`, `WreathPower` that the statements refer to; Comparator checks that
 these agree with the copies reproduced in `Challenge.lean`.
 -/
@@ -49,7 +49,7 @@ theorem challenge_li2020_theorem_3_5 (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 3)
     (∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) :=
   li2020_theorem_3_5 ha ha4 hsq
 
-theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert (r s : ℤ)
+theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate (r s : ℤ)
     (hs : 0 < s) (hrs : IsCoprime r s) (hr : -s < r) (hsq : ¬IsSquare (-(r * s)))
     (hc : (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
@@ -58,12 +58,12 @@ theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert 
           (¬IsSquare (r + s) ∧
             ∃ M : ℕ, (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) := fun n _ ↦
-  nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert hs hrs hr
+  nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate hs hrs hr
     (twoAdicClass_iff.mpr (by simpa using hc)) hsq
-    (squarefreeCert_iff.mpr (by simpa using hcert)) n
+    (squarefreeCertificate_iff.mpr (by simpa using hcert)) n
 
-theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert (R s : ℤ)
-    (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
+theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate
+    (R s : ℤ) (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
     (hc : (s % 2 = 1 ∧ (R % 4 = 1 ∨ (R - s) % 4 = 3)) ∨ (s % 2 = 0 ∧ R % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
       (∃ M : ℕ, (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
@@ -72,6 +72,6 @@ theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squaref
             ∃ M : ℕ, (M : ℤ) ∣ R - s ∧ ¬IsSquare (-(s : ZMod M)))) :
     ∀ n ≥ 1, Nonempty (GaloisGroup (-R / s : ℚ) n ≃* WreathPower n) := fun n _ ↦
   (show ((-1 : ℤ) : ℚ) * R / s = (-R / s : ℚ) by simp) ▸
-    nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCert hs hRs neg_one_sq
+    nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate hs hRs neg_one_sq
       (wSeq_pos_of_two_mul_le hs hR) (twoAdicClass_iff.mpr (by simpa [sub_eq_add_neg] using hc))
-      (by simpa using hsq) (squarefreeCert_iff.mpr (by simpa [sub_eq_add_neg] using hcert)) n
+      (by simpa using hsq) (squarefreeCertificate_iff.mpr (by simpa [sub_eq_add_neg] using hcert)) n

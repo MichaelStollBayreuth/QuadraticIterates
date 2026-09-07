@@ -7,8 +7,8 @@
                       "challenge_nonempty_mulEquiv_of_eq_neg_mul",
                       "challenge_li2021_theorem_3_9",
                       "challenge_li2020_theorem_3_5",
-                      "challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert",
-                      "challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert"],
+                      "challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate",
+                      "challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate"],
     "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
     "enable_nanoda": false
 }

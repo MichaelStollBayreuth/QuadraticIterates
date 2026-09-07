@@ -86,8 +86,9 @@ theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSe
 theorem cSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, cSeq a n ≠ 0 := fun _ hn h ↦
   ne_zero_of_not_isSquare_neg ha (by simpa [h] using abs_le_abs_cSeq ha hn)
 
-/-- The rational sequence `c` of an integer parameter does not vanish either. -/
-theorem cSeq_ratCast_ne_zero (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, cSeq (a : ℚ) n ≠ 0 :=
+/-- The sequence `c` of the integer parameter `a` taken in `ℚ` does not vanish either: it is the
+cast of the integer sequence (`QuadraticIterates.intCast_cSeq`). -/
+theorem cSeq_intCast_ne_zero (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, cSeq (a : ℚ) n ≠ 0 :=
   fun n hn ↦ by
   rw [← intCast_cSeq]
   exact Int.cast_ne_zero.mpr (cSeq_ne_zero ha n hn)

@@ -11,6 +11,7 @@ public import QuadraticIterates.Rational.Sequence
 import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import QuadraticIterates.Mathlib.Algebra.Squares
+import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.Moebius
 
 /-!
@@ -182,8 +183,9 @@ private lemma exists_isSquare_mul_prod_betaInt (hs : s ≠ 0) (hrs : IsCoprime r
     Finset.sum_congr rfl fun (i : Fin m) _ ↦ sqClass_bSeq_div_succ hs hrs hε hw hr i,
     Finset.sum_add_distrib,
     Finset.sum_add_distrib, Finset.sum_ite, Finset.sum_const_zero, add_zero, Finset.sum_const,
-    ← sqClass_pow, ← sqClass_prod fun i _ ↦ hβ i, Finset.sum_zsmul_assoc, zsmul_eq_natAbs_nsmul,
-    ← sqClass_pow, ← sqClass_mul (pow_ne_zero _ hεs) (Finset.prod_ne_zero_iff.mpr fun i _ ↦ hβ i),
+    ← sqClass_pow, ← sqClass_prod fun i _ ↦ hβ i, Finset.sum_zsmul_assoc,
+    ZModModule.zsmul_eq_natAbs_nsmul, ← sqClass_pow,
+    ← sqClass_mul (pow_ne_zero _ hεs) (Finset.prod_ne_zero_iff.mpr fun i _ ↦ hβ i),
     ← sqClass_mul (mul_ne_zero (pow_ne_zero _ hεs) (Finset.prod_ne_zero_iff.mpr fun i _ ↦ hβ i))
       (pow_ne_zero _ (mod_cast hr)), sqClass_eq_zero_iff, mul_right_comm] at hsq
   exact ⟨_, _, Rat.isSquare_intCast_iff.mp (mod_cast hsq)⟩

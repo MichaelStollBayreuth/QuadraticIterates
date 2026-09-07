@@ -109,6 +109,13 @@ theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
 
+/-- An odd integer `≢ 1 mod 8` is not a square modulo `8`. -/
+theorem ZMod.not_isSquare_intCast_eight_of_odd_of_emod_ne_one {x : ℤ} (hx : Odd x)
+    (h1 : x % 8 ≠ 1) : ¬IsSquare (x : ZMod 8) := by
+  have hx := Int.odd_iff.mp hx
+  rcases (show x % 8 = 3 % 8 ∨ x % 8 = 5 % 8 ∨ x % 8 = 7 % 8 by lia) with h | h | h <;>
+    rw [(intCast_eq_intCast_iff' x _ 8).mpr h] <;> decide
+
 /-- The residue of `|N|` modulo `m` is that of `N`, for `N ≥ 0`. -/
 theorem Int.natAbs_mod_eq_of_emod_eq {N : ℤ} (hN : 0 ≤ N) {m k : ℕ} (h : N % m = k) :
     N.natAbs % m = k :=

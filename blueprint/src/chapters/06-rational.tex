@@ -321,9 +321,9 @@ and of divisibility, the descent below) are of Mathlib generality.
 \begin{lemma}[reflection with the twist]
   \label{lem:rat-reflection}
   \uses{lem:w-gamma-zmod, def:betaint, lem:betaint}
-  \lean{QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ,
-    QuadraticIterates.not_isSquare_betaInt_of_dvd_add_succ_of_two_le,
-    QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd,
+  \lean{QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum,
+    QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum_of_two_le,
+    QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one,
     QuadraticIterates.intCast_betaInt_eq_div, QuadraticIterates.reflNum,
     QuadraticIterates.isCoprime_reflNum_right, QuadraticIterates.reflNum_pos,
     QuadraticIterates.reflNum_one}
@@ -343,7 +343,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   $\prod_{t \mid \rad n} \gamma_{n_0 t}^{\mu(\rad(n)/t)} = -u^2$ (\lname{prod\_gammaSeq\_mul\_eq\_neg\_prod},
   \lname{isUnit\_prod\_gammaSeq\_mul}). Multiply by $s^{E(n)}$ (Lemma~\ref{lem:w-gamma-zmod}).
   For $n$ not squarefree $E(n)$ is even, for $n$ squarefree odd.
-  \formalnote{\lname{not\_isSquare\_betaInt\_of\_dvd\_add\_succ}: hypotheses $n \ge 2$,
+  \formalnote{\lname{not\_isSquare\_betaInt\_of\_dvd\_reflNum}: hypotheses $n \ge 2$,
   $n' = \rad(n)$, $n = k n'$, $M \mid N_k$ (\lname{reflNum r s ε k}, the numerator
   $w_k s^{2^{k-1}} + w_{k+1}$, coprime to $s$ and positive when $w$ is; so $\bar s$ is a unit of
   $\ZZ/M\ZZ$, whose inverse the proof obtains from
@@ -359,8 +359,8 @@ and of divisibility, the descent below) are of Mathlib generality.
   \lname{isCoprime\_gammaSeq\_add\_succ}); \lname{ZMod.isSquare\_mul\_of\_isSquare\_div} (the
   generalization of \lname{ZMod.isSquare\_neg\_one\_of\_isSquare\_div} to a twist) then makes
   $-\bar s^{F^+ + F^-}$ a square. Coprimality of $M$ with $w_k$ is automatic. The two consumed
-  forms: \lname{not\_isSquare\_betaInt\_of\_dvd\_add\_succ\_of\_two\_le} ($k \ge 2$, $F$ even, so
-  $-1$ not a square suffices) and \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_dvd}
+  forms: \lname{not\_isSquare\_betaInt\_of\_dvd\_reflNum\_of\_two\_le} ($k \ge 2$, $F$ even, so
+  $-1$ not a square suffices) and \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_dvd\_reflNum\_one}
   ($k = 1$, $F$ odd, $M \mid r + (1 + \varepsilon) s$, so $-\bar s$ not a square suffices), by
   \lname{IsUnit.isSquare\_mul\_sq\_iff}. Both sign worlds are the same statements with
   $(r, \varepsilon) = (|r|, -1)$; positivity of $\beta_n$ is not needed for
@@ -375,10 +375,10 @@ and of divisibility, the descent below) are of Mathlib generality.
   \lean{QuadraticIterates.TwoAdicClass, QuadraticIterates.reflNum_emod_of_odd,
     QuadraticIterates.reflNum_emod_four_of_even,
     QuadraticIterates.not_isSquare_neg_one_zmod_reflNum,
-    QuadraticIterates.not_isSquare_betaInt_of_two_le,
-    QuadraticIterates.intCast_wSeq_zmod_eight_of_even, QuadraticIterates.intCast_sq_zmod_eight_of_odd,
-    QuadraticIterates.intCast_pow_zmod_eight_of_even,
-    QuadraticIterates.intCast_pow_two_pow_sub_one_zmod_eight_of_odd,
+    QuadraticIterates.not_isSquare_betaInt_of_twoAdicClass_of_two_le,
+    QuadraticIterates.intCast_wSeq_zmod_eight_of_even, ZMod.intCast_sq_eight_eq_one_of_odd,
+    ZMod.intCast_pow_eight_eq_zero_of_even,
+    ZMod.intCast_pow_two_pow_sub_one_eight_of_odd,
     Int.not_isSquare_neg_one_zmod_natAbs_of_emod_eight_eq_six,
     Int.not_isSquare_neg_one_zmod_natAbs_of_emod_four_eq_three}
   \leanok
@@ -414,7 +414,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   ($-1$ is not a square modulo $N_k$, via
   \lname{Int.not\_isSquare\_neg\_one\_zmod\_natAbs\_of\_emod\_eight\_eq\_six} and
   \lname{\ldots\_of\_emod\_four\_eq\_three})
-  and the corollary \lname{not\_isSquare\_betaInt\_of\_two\_le}: in the classes, $\beta_n$ is not
+  and the corollary \lname{not\_isSquare\_betaInt\_of\_twoAdicClass\_of\_two\_le}: in the classes, $\beta_n$ is not
   a square for $n \ge 2$ with $n / \rad(n) \ge 2$, by the reflection lemma with the modulus $N_k$
   itself; both are stated with the hypothesis $N_k \ge 0$ in place of a sign world, which the
   theorems supply through \lname{reflNum\_pos}.}
@@ -447,7 +447,7 @@ and of divisibility, the descent below) are of Mathlib generality.
 \begin{lemma}[reflection at $n_0 = 1$]
   \label{lem:rat-refl1}
   \uses{lem:rat-reflection}
-  \lean{QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd}
+  \lean{QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_reflNum_one}
   \leanok
   Positive world: $\gamma_1 + \gamma_2$ has numerator $r + 2s$; if an odd prime $p \mid r + 2s$ has
   $\bigl(\tfrac{-s}{p}\bigr) = -1$, or $4 \mid r + 2s$ and $s \equiv 1 \pmod 4$, then $\beta_n$ is
@@ -467,7 +467,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   \uses{def:wseq, def:betaint}
   \lean{QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_odd_of_even,
     QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_even_of_even,
-    QuadraticIterates.not_isSquare_intCast_zmod_eight_of_odd_of_emod_ne_one}
+    ZMod.not_isSquare_intCast_eight_of_odd_of_emod_ne_one}
   \leanok
   Let $s$ be even and $r \equiv 3 \pmod 4$. Then $w_n \equiv r \pmod 8$ for $n \ge 3$, $w_2 = r + s$,
   and for squarefree $n \ge 2$, $\beta_n \equiv r^{\pm 1}$ ($n$ odd) resp.\ $(r+s)^{\pm 1}$ ($n$ even)
@@ -488,7 +488,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   $r \equiv 3 \bmod 4$) and \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_even\_of\_even}
   ($n$ even, $r + \varepsilon s \not\equiv 1 \bmod 8$; the condition $r \equiv 3 \bmod 4$ is not
   needed for even $n$), with
-  \lname{not\_isSquare\_intCast\_zmod\_eight\_of\_odd\_of\_emod\_ne\_one} (an odd integer
+  \lname{ZMod.not\_isSquare\_intCast\_eight\_of\_odd\_of\_emod\_ne\_one} (an odd integer
   $\not\equiv 1 \bmod 8$ is not a square modulo $8$).}
 \end{proof}
 
@@ -497,9 +497,9 @@ and of divisibility, the descent below) are of Mathlib generality.
 \begin{theorem}[Theorem R${}^+$]
   \label{thm:rat-pos}
   \uses{def:galois, def:wreath, def:wseq, prop:rat-twoadic}
-  \lean{QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert,
-    QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCert,
-    QuadraticIterates.SquarefreeCert}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate,
+    QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate,
+    QuadraticIterates.SquarefreeCertificate}
   \leanok
   Let $a = r/s$ with $a > 0$ or $-1 < a < 0$, $-rs$ not a square, $(r, s)$ in a class of
   Proposition~\ref{prop:rat-twoadic} (positive world), and suppose that one of (SQ${}^+$1)
@@ -519,15 +519,15 @@ and of divisibility, the descent below) are of Mathlib generality.
   Lemma~\ref{lem:rat-g2} with $\varepsilon = 1$ ($n \ge 3$; $\beta_2 = w_2 = r + s$ is not a
   square by hypothesis); then Lemma~\ref{lem:rat-shared}.
   \formalnote{The uniform theorem
-  \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_squarefreeCert} takes the sign
+  \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_squarefreeCertificate} takes the sign
   $\varepsilon$, the positivity of $w$, the class \lname{TwoAdicClass r s ε} of
   Proposition~\ref{prop:rat-twoadic}, ``$-\varepsilon r s$ is not a square'' and a certificate
-  \lname{SquarefreeCert r s ε}, an inductive predicate with one constructor per mechanism of the
+  \lname{SquarefreeCertificate r s ε}, an inductive predicate with one constructor per mechanism of the
   squarefree levels (\lname{dvd}, \lname{reflNum}, \lname{even}, \lname{gammaTwo}); each takes a
   general modulus $M$ dividing the respective quantity (hence coprime to $s$) and ``not a square
   in \lname{ZMod M}'' in place of the odd prime $p$ with Legendre symbol $-1$ and of the modulus
   $4$, which it subsumes
-  (\lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_squarefreeCert}). Theorem R${}^+$ is the
+  (\lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_squarefreeCertificate}). Theorem R${}^+$ is the
   instance $\varepsilon = 1$, $-s < r$, with the positivity of $w$ from
   \lname{wSeq\_pos\_of\_pos} ($r > 0$) and \lname{wSeq\_pos\_of\_neg\_lt} ($-s < r < 0$).
   Clause (SQ${}^+$5) was found during the formalization of Lemma~\ref{lem:rat-g2}: its
@@ -537,7 +537,7 @@ and of divisibility, the descent below) are of Mathlib generality.
 \begin{theorem}[Theorem R${}^-$]
   \label{thm:rat-neg}
   \uses{def:galois, def:wreath, def:wseq, prop:rat-twoadic, thm:rat-pos}
-  \lean{QuadraticIterates.nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate}
   \leanok
   Let $a = r/s \le -2$, $R = |r|$, $-rs$ not a square, $(R, s)$ in a class of
   Proposition~\ref{prop:rat-twoadic} ($a \le -2$), and suppose that one of (SQ${}^-$1) some odd
@@ -556,7 +556,7 @@ and of divisibility, the descent below) are of Mathlib generality.
   Lemma~\ref{lem:rat-mod8} in Stoll's world.
   \formalnote{The instance $\varepsilon = -1$ at $(-r, s)$ of the uniform theorem of
   Theorem~\ref{thm:rat-pos}, with $2s \le -r$, the class \lname{TwoAdicClass (-r) s (-1)}, the
-  certificate \lname{SquarefreeCert (-r) s (-1)} and the positivity of $w^S$ from
+  certificate \lname{SquarefreeCertificate (-r) s (-1)} and the positivity of $w^S$ from
   \lname{wSeq\_pos\_of\_two\_mul\_le}; the two worlds share every statement through the general
   \lname{gammaSeq} lemmas over \lname{ZMod M}, specialized only at the end. Clause (SQ${}^-$4) is
   Lemma~\ref{lem:rat-g2} with $\varepsilon = -1$ for $n \ge 3$, and $\beta^S_2 = w^S_2 = |r| - s$
@@ -635,7 +635,7 @@ item.
   comparator challenges, after the author's approval of the change of \lname{GaloisGroup}.
 \item \lname{Rational/SquareClasses.lean}: Lemmas \ref{lem:rat-sqclass}, \ref{lem:rat-shared}
   (with the new integer lemma in \lname{Squares.lean}).
-\item \lname{Rational/Main.lean}: the certificate predicate \lname{SquarefreeCert}, the uniform
-  theorem \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_squarefreeCert}, and Theorems
+\item \lname{Rational/Main.lean}: the certificate predicate \lname{SquarefreeCertificate}, the uniform
+  theorem \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_squarefreeCertificate}, and Theorems
   \ref{thm:rat-pos} and \ref{thm:rat-neg} as its two sign instances.
 \end{enumerate}

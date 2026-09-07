@@ -87,7 +87,7 @@ theorem challenge_li2020_theorem_3_5 (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 3)
     (∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) :=
   sorry
 
-/-- **Theorem R⁺** (`nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert`), the
+/-- **Theorem R⁺** (`nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate`), the
 extension of the Section 3 main result to a rational parameter `a = r/s > -1` (`s > 0`, `r` and
 `s` coprime): if `-rs` is not a square, `(r, s)` lies in one of the 2-adic classes (`s` odd with
 `r ≡ 1 mod 4` or `r + s ≡ 3 mod 4`, or `s` even with `r ≡ 3 mod 4`), and one of the four
@@ -95,7 +95,7 @@ squarefree-level certificates holds — a divisor `M` of `s` modulo which `r` is
 divisor `M` of `r + 2s` modulo which `-s` is not a square; `s` even with `r ≡ 3 mod 4` and
 `r + s ≢ 1 mod 8`; or `r + s` not a square with a divisor `M` of `r + s` modulo which `s` is not
 a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert (r s : ℤ)
+theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate (r s : ℤ)
     (hs : 0 < s) (hrs : IsCoprime r s) (hr : -s < r) (hsq : ¬IsSquare (-(r * s)))
     (hc : (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
@@ -106,7 +106,8 @@ theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert 
     ∀ n ≥ 1, Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
   sorry
 
-/-- **Theorem R⁻** (`nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert`), the
+/-- **Theorem R⁻**
+(`nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate`), the
 extension of the Section 3 main result to a rational parameter `a = -R/s ≤ -2` (`R, s > 0`
 coprime): if `Rs` is not a square, `(R, s)` lies in one of the 2-adic classes (`s` odd with
 `R ≡ 1 mod 4` or `R - s ≡ 3 mod 4`, or `s` even with `R ≡ 3 mod 4`), and one of the four
@@ -114,8 +115,8 @@ squarefree-level certificates holds — a divisor `M` of `s` modulo which `R` is
 divisor `M` of `R` modulo which `-s` is not a square; `s` even with `R ≡ 3 mod 4` and
 `R - s ≢ 1 mod 8`; or `R - s` not a square with a divisor `M` of `R - s` modulo which `-s` is not
 a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert (R s : ℤ)
-    (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
+theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate
+    (R s : ℤ) (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
     (hc : (s % 2 = 1 ∧ (R % 4 = 1 ∨ (R - s) % 4 = 3)) ∨ (s % 2 = 0 ∧ R % 4 = 3))
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
       (∃ M : ℕ, (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
