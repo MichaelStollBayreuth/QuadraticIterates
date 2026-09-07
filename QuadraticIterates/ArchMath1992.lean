@@ -19,20 +19,24 @@ Arch. Math. **59** (1992), 239-244.
 
 For an integer `a` such that `-a` is not a square, let `f_n` be the `n`-th iterate of
 `f = X² + a`, let `K_n` be the splitting field of `f_n` over `ℚ` and `Ω_n` its Galois group,
-which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
+which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`. The Galois side (the
+splitting fields, Lemmas 1.4–1.6 and part 1 of the Section 1 theorem) is formalized for a
+rational parameter `a` whose iterates are irreducible, which is what the extension to rational
+parameters (`QuadraticIterates.Rational`) uses; the integer statements are corollaries via
+Corollary 1.3.
 
 ## Main definitions
 
 * `QuadraticIterates.iteratedPoly`: the iterates `f_n` of `X² + a`, over any commutative semiring.
-* `QuadraticIterates.splittingField`: the splitting field `K_n` of `f_n`, taken inside
+* `QuadraticIterates.splittingField`: the splitting field `K_n` of `f_n`, `a ∈ ℚ`, taken inside
   `AlgebraicClosure ℚ`.
-* `QuadraticIterates.GaloisGroup`: the Galois group `Ω_n = Gal(f_n/ℚ)`.
+* `QuadraticIterates.GaloisGroup`: the Galois group `Ω_n = Gal(f_n/ℚ)`, `a ∈ ℚ`.
 * `QuadraticIterates.WreathPower`: the `n`-fold iterated wreath product `[C₂]ⁿ`.
 * `QuadraticIterates.EvenPoly`: being an even polynomial, i.e. lying in `R[X²]`.
 * `QuadraticIterates.gammaSeq`: the iteration sequence `γ_n` of a polynomial with a sign choice.
 * `QuadraticIterates.betaSeq`: its Möbius factors `β_n = ∏_{d ∣ n} γ_d^{μ(n/d)}`.
 * `QuadraticIterates.cSeq` and `QuadraticIterates.bSeq`: the paper's `c_n` and `b_n`, namely the
-  two above at `g = X² + a`, `ε = -1`.
+  two above at `g = X² + a`, `ε = -1`, for a parameter `a` in any commutative ring (resp. domain).
 * `QuadraticIterates.normPoly`: the rescaling `|a|·X² + sign a` of `X² + a`, whose `γ`-sequence
   is `|c_n| / |a|` and hence positive.
 * `QuadraticIterates.TwoIndependent`: 2-independence of a family, i.e. no nonempty subfamily has
@@ -43,7 +47,8 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 
 * `QuadraticIterates.section1_tfae` (Theorem, part 1): `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are
   2-independent iff `b_1, …, b_n` are 2-independent, where `c_1 = -a`, `c_{n+1} = c_n² + a =
-  f_{n+1}(0)` and `b_n = ∏_{d ∣ n} c_d^{μ(n/d)}`;
+  f_{n+1}(0)` and `b_n = ∏_{d ∣ n} c_d^{μ(n/d)}`; for a rational `a` with irreducible iterates,
+  `QuadraticIterates.section1_tfae_of_irreducible`;
 * `QuadraticIterates.section1_of_not_isSquare_abs_bSeq` (Theorem, part 2): if none of
   `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`;
 * `QuadraticIterates.section3_main` (Section 3): if `a > 0` with `a ≡ 1, 2 mod 4`, or `a < 0`,
@@ -54,8 +59,8 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
   only needs that no `c_k` with `k ≤ n` is a rational square;
 * `QuadraticIterates.nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff
   `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`;
-* `QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6): `[K_{n+1} : K_n] = 2^{2^n}`
-  iff `c_{n+1}` is not a square in `K_n`;
+* `QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6): for irreducible `f_n` with
+  `c_{n+1} ≠ 0`, `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a square in `K_n`;
 * `QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc` (Lemma 1.5): a rational
   is a non-square in `K_n` iff it extends the 2-independent family `c_1, …, c_n`.
 
@@ -66,10 +71,10 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 
 ## Implementation notes
 
-`QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6) is proved from the standing
-assumption that `-a` is not a rational square alone, without the paper's maximality hypothesis
-`[K_n : ℚ] = 2 ^ (2 ^ n - 1)`; for `n ≥ 1` that assumption is equivalent to the irreducibility
-of `f_n`.
+`QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6) is proved for a rational `a`
+from the irreducibility of `f_n` and `c_{n+1} ≠ 0` alone, without the paper's maximality
+hypothesis `[K_n : ℚ] = 2 ^ (2 ^ n - 1)`; for an integer `a` with `-a` not a square both hold
+(Corollary 1.3), and `c_{n+1} ≠ 0` follows from the irreducibility of `f_{n+1}` in general.
 
 All declarations live in the `QuadraticIterates` namespace. The development is split over
 `QuadraticIterates/ArchMath1992/`: `Sequences` (the `γ`- and `β`-sequences over general rings and

@@ -13,17 +13,18 @@ import QuadraticIterates.Mathlib.Algebra.Squares
 /-!
 # Irreducibility of the iterates over `ℚ`
 
-If none of `c_1, …, c_n` is a rational square, then `f_n` is irreducible over `ℚ` (Lemma 1.2,
-`QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`): `f_{n+1} = f_n ∘ (X² + a)` is
-even and, `f_n` being irreducible, has no nontrivial even divisor, so a factorization of it would
-have the shape `g · g(-X) = ± f_{n+1}`
+For a rational parameter `a`, if none of `c_1, …, c_n` is a rational square, then `f_n` is
+irreducible over `ℚ` (Lemma 1.2, `QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`):
+`f_{n+1} = f_n ∘ (X² + a)` is even and, `f_n` being irreducible, has no nontrivial even divisor,
+so a factorization of it would have the shape `g · g(-X) = ± f_{n+1}`
 (`Polynomial.Monic.exists_mul_comp_neg_X_eq_of_not_irreducible`) and exhibit
-`c_{n+1} = ± f_{n+1}(0)` as a square. Since `|c_n| ≥ |a|` places `c_{n+1} = c_n² + a` strictly
-between consecutive squares, no `c_n` is a square when `-a` is not one, and every `f_n` is
-irreducible (Corollary 1.3, `QuadraticIterates.irreducible_iteratedPoly`); conversely,
+`c_{n+1} = ± f_{n+1}(0)` as a square. For an integer `a`, `|c_n| ≥ |a|` places `c_{n+1} = c_n² + a`
+strictly between consecutive squares, so no `c_n` is a square when `-a` is not one, and every
+`f_n` is irreducible (Corollary 1.3, `QuadraticIterates.irreducible_iteratedPoly`); conversely,
 irreducibility of a single `f_n` with `n ≥ 1` already forces `-a` to be a non-square
 (`QuadraticIterates.not_isSquare_neg_of_irreducible`). The consequences for the roots of `f_n`
-needed by the degree criterion (`QuadraticIterates.sub_intCast_ne_zero_of_mem_rootSet`,
+needed by the degree criterion (`QuadraticIterates.cSeq_succ_ne_zero_of_irreducible`,
+`QuadraticIterates.sub_ratCast_ne_zero_of_mem_rootSet`,
 `QuadraticIterates.card_rootSet_iteratedPoly`) close the file.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
@@ -40,7 +41,7 @@ section
 
 variable {a : ℤ}
 
-/-! ### The numbers `c_n`: size, positivity and non-squareness -/
+/-! ### The integers `c_n`: size, positivity and non-squareness -/
 
 /-- If `-a` is not a rational square then `a ≠ 0`, since `-0` is. -/
 lemma ne_zero_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) : a ≠ 0 := fun h ↦ ha (by simp [h])
@@ -85,16 +86,28 @@ theorem cSeq_pos (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) : 0 < cSe
 theorem cSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, cSeq a n ≠ 0 := fun _ hn h ↦
   ne_zero_of_not_isSquare_neg ha (by simpa [h] using abs_le_abs_cSeq ha hn)
 
+/-- The rational sequence `c` of an integer parameter does not vanish either. -/
+theorem cSeq_ratCast_ne_zero (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, cSeq (a : ℚ) n ≠ 0 :=
+  fun n hn ↦ by
+  rw [← intCast_cSeq]
+  exact Int.cast_ne_zero.mpr (cSeq_ne_zero ha n hn)
+
 /-- No `c_n` (`n ≥ 1`) is a rational square: `c_{n+1} = c_n² + a` lies strictly between two
 consecutive squares because `|c_n| ≥ |a|`, and `c_1 = -a` is not a square by assumption. -/
 theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
-    ¬IsSquare (cSeq a n : ℚ) := by
+    ¬IsSquare (cSeq (a : ℚ) n) := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · simpa using ha
-  · rw [Rat.isSquare_intCast_iff, cSeq_succ a hm]
+  · rw [← intCast_cSeq, Rat.isSquare_intCast_iff, cSeq_succ a hm]
     exact not_isSquare_sq_add_of_abs_le_abs (ne_zero_of_not_isSquare_neg ha)
       (ne_neg_one_of_not_isSquare_neg ha) (abs_le_abs_cSeq ha hm)
+
+end
+
+section
+
+variable {a : ℚ}
 
 /-! ### Irreducibility of the iterates -/
 
@@ -103,42 +116,36 @@ theorem not_isSquare_cSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) 
 private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
     (hgdeg : 2 * g.natDegree = fℚ[a, j + 1].natDegree)
     (hgeq : g * g.comp (-X) = C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1]) :
-    IsSquare (cSeq a (j + 1) : ℚ) := by
+    IsSquare (cSeq a (j + 1)) := by
   have hgnd : g.natDegree = 2 ^ j := by grind [natDegree_iteratedPoly]
   have heval := congrArg (eval 0) hgeq
   simp only [eval_mul, eval_C, eval_comp, eval_neg, eval_X, neg_zero] at heval
-  exact ⟨g.eval 0, by rw [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]; exact heval.symm⟩
+  exact ⟨g.eval 0, by rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]; exact heval.symm⟩
 
 /-- Lemma 1.2: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible over `ℚ`.
 By induction: `f_{n+1} = f_n ∘ (X² + a)` is even and, `f_n` being irreducible, has no nontrivial
 even divisor, so if it were reducible, `c_{n+1}` would be a square. -/
 theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ}
-    (h : ∀ k ≥ 1, k ≤ n → ¬IsSquare (cSeq a k : ℚ)) : Irreducible fℚ[a, n] := by
+    (h : ∀ k ≥ 1, k ≤ n → ¬IsSquare (cSeq a k)) : Irreducible fℚ[a, n] := by
   induction n with
   | zero => simpa using irreducible_X (R := ℚ)
   | succ n ih =>
     have hn := h (n + 1) n.succ_pos le_rfl
-    have hF0 : fℚ[a, n].eval (a : ℚ) ≠ 0 := fun h0 ↦ hn (by
-      simp [intCast_cSeq_succ_eq_neg_one_pow_mul_eval_zero, eval_zero_iteratedPoly_succ, h0])
+    have hF0 : fℚ[a, n].eval a ≠ 0 := fun h0 ↦ hn (by
+      simp [cSeq_succ_eq_neg_one_pow_mul_eval_zero, eval_zero_iteratedPoly_succ, h0])
     have hirr := ih fun k hk hkn ↦ h k hk (hkn.trans n.le_succ)
     by_contra hred
     obtain ⟨g, hgdeg, hgeq⟩ :=
-      (monic_iteratedPoly (a : ℚ) (n + 1)).exists_mul_comp_neg_X_eq_of_not_irreducible
-        (iteratedPoly_succ_comp_neg_X (a : ℚ) n) hred fun _ ↦ by
+      (monic_iteratedPoly a (n + 1)).exists_mul_comp_neg_X_eq_of_not_irreducible
+        (iteratedPoly_succ_comp_neg_X a n) hred fun _ ↦ by
           rw [iteratedPoly_succ_comp]
           exact hirr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X hF0
     exact hn (isSquare_cSeq_of_even_factorization hgdeg hgeq)
 
-/-- Corollary 1.3: all `f_n` are irreducible over `ℚ` (including `f_0 = X`). -/
-theorem irreducible_iteratedPoly (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) : Irreducible fℚ[a, n] :=
-  irreducible_iteratedPoly_of_not_isSquare_cSeq fun _ hk _ ↦ not_isSquare_cSeq ha hk
-
 /-- If `-a = r ^ 2` in `ℚ`, then `f_n = f_{n-1} ^ 2 + a = (f_{n-1} - r) * (f_{n-1} + r)` factors
-nontrivially, so irreducibility of any `f_n` with `n ≥ 1` implies that `-a` is not a square.
-This recovers the standing assumption of the paper from the irreducibility hypothesis of
-Lemma 1.6. -/
+nontrivially, so irreducibility of any `f_n` with `n ≥ 1` implies that `-a` is not a square. -/
 theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreducible fℚ[a, n]) :
-    ¬IsSquare (-a : ℚ) := by
+    ¬IsSquare (-a) := by
   intro ⟨r, hr⟩
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   have hfac : fℚ[a, m + 1] = (fℚ[a, m] - C r) * (fℚ[a, m] + C r) := by
@@ -149,14 +156,33 @@ theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreduc
 
 /-! ### Consequences for the roots of `f_n` -/
 
-/-- `a` is not a root of `f_n`, because `f_n(a) = ± c_{n+1} ≠ 0`: the shifted roots `β - a` of
-`f_n`, whose square roots generate `K_{n+1}` over `K_n`, are nonzero. -/
-lemma sub_intCast_ne_zero_of_mem_rootSet (ha : ¬IsSquare (-a : ℚ)) {n : ℕ}
+/-- `c_{n+1} = ± f_{n+1}(0)` is nonzero when `f_{n+1}` is irreducible: otherwise `X` would divide
+`f_{n+1}`. -/
+lemma cSeq_succ_ne_zero_of_irreducible {n : ℕ} (hirr : Irreducible fℚ[a, n + 1]) :
+    cSeq a (n + 1) ≠ 0 := fun h ↦ by
+  rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, mul_eq_zero,
+    pow_eq_zero_iff (Nat.two_pow_pos n).ne', ← coeff_zero_eq_eval_zero, ← X_dvd_iff] at h
+  rcases hirr.dvd_iff.mp (h.resolve_left (by norm_num)) with hu | hass
+  · exact not_isUnit_X hu
+  · have := natDegree_le_of_dvd hass.dvd X_ne_zero
+    rw [natDegree_iteratedPoly, natDegree_X] at this
+    have := Nat.one_lt_two_pow n.succ_ne_zero
+    lia
+
+/-- When all iterates are irreducible, no `c_n` with `n ≥ 1` vanishes. -/
+lemma cSeq_ne_zero_of_irreducible (hirr : ∀ k, Irreducible fℚ[a, k]) : ∀ n ≥ 1, cSeq a n ≠ 0 :=
+  fun n hn ↦ by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
+  exact cSeq_succ_ne_zero_of_irreducible (hirr (m + 1))
+
+/-- `a` is not a root of `f_n` when `c_{n+1} = ± f_n(a) ≠ 0`: the shifted roots `β - a` of `f_n`,
+whose square roots generate `K_{n+1}` over `K_n`, are nonzero. -/
+lemma sub_ratCast_ne_zero_of_mem_rootSet {n : ℕ} (hc : cSeq a (n + 1) ≠ 0)
     {β : AlgebraicClosure ℚ} (hβ : β ∈ fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
     β - (a : AlgebraicClosure ℚ) ≠ 0 := fun hzero ↦ by
   have hroot := aeval_eq_zero_of_mem_rootSet hβ
-  rw [sub_eq_zero.mp hzero, aeval_intCast_iteratedPoly, Int.cast_eq_zero] at hroot
-  exact cSeq_ne_zero ha _ n.succ_pos (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
+  rw [sub_eq_zero.mp hzero, aeval_ratCast_iteratedPoly, Rat.cast_eq_zero] at hroot
+  exact hc (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
 
 /-- An irreducible `f_n` is separable, so it has exactly `2^n = deg f_n` roots in `ℚ̄`. -/
 lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible fℚ[a, n]) :
@@ -166,4 +192,12 @@ lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible fℚ[a, n]) :
 
 end
 
+/-- Corollary 1.3: for an integer `a` with `-a` not a square, all `f_n` are irreducible over `ℚ`
+(including `f_0 = X`). -/
+theorem irreducible_iteratedPoly {a : ℤ} (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
+    Irreducible fℚ[a, n] :=
+  irreducible_iteratedPoly_of_not_isSquare_cSeq fun _ hk _ ↦ not_isSquare_cSeq ha hk
+
 end QuadraticIterates
+
+end

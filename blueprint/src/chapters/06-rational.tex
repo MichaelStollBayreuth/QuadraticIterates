@@ -24,6 +24,9 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 \begin{theorem}[Section 1 for rational $a$]
   \label{thm:rat-section1}
   \uses{def:galois, def:wreath, def:twoindep}
+  \lean{QuadraticIterates.section1_tfae_of_irreducible,
+    QuadraticIterates.section1_a_iff_b_of_irreducible, QuadraticIterates.section1_b_iff_c}
+  \leanok
   Let $a \in \QQ^\times$ and suppose that $f_k$ is irreducible over $\QQ$ for all $k \le n$.
   Then $\Om_n \cong \Ct{n}$ if and only if $c_1, \dots, c_n$ are $2$-independent in
   $\QQ^\times/(\QQ^\times)^2$. In particular (Lemma~\ref{lem:1.2}), if none of $c_1, \dots, c_n$ is
@@ -31,35 +34,30 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 \end{theorem}
 \begin{proof}
   \uses{lem:1.4, lem:1.5, lem:1.6, lem:1.2}
+  \leanok
   The induction of Theorem~\ref{thm:section1}, (a)$\iff$(b), verbatim: Lemma~\ref{lem:1.4}
   reduces level $n+1$ to level $n$ and the degree $[K_{n+1} : K_n] = 2^{2^n}$; Lemma~\ref{lem:1.6}
   turns the degree into ``$c_{n+1}$ is not a square in $K_n$'' (its proof uses only that $f_n$ is
   irreducible, hence separable with $2^n$ roots, and $c_{n+1} = f_n(a) \ne 0$, which follows from
   the irreducibility of $f_{n+1}$: otherwise $X \mid f_{n+1}$); Lemma~\ref{lem:1.5} turns that
   into $2$-independence. If no $c_k$ is a square, all $f_k$ are irreducible by Lemma~\ref{lem:1.2}.
-  \formalnote{The Galois side (\lname{Iterates.lean}, \lname{Irreducibility.lean},
-  \lname{DegreeCriterion.lean}, \lname{Main.lean} up to \lname{section1\_b\_iff\_c}) is to be
-  parametrized by $a \in \QQ$: \lname{splittingField}, \lname{GaloisGroup}, \lname{rootShift}
-  take a rational $a$; \lname{cSeq} and \lname{bSeq} become polymorphic in a commutative
-  (semi)ring, $c$ being the $\gamma$-sequence of $X^2 + a$ with $\varepsilon = -1$ over that ring,
-  with the cast lemma \lname{intCast\_cSeq} (the integer $c_n$ cast to $\QQ$ is the rational
-  $c_n$). The hypothesis \lname{ha} ($-a$ is not a square in $\QQ$) of the seven declarations of
-  \lname{DegreeCriterion.lean} and of \lname{section1\_a\_iff\_b} becomes \lname{hirr} ($f_k$ is
-  irreducible for all $k \le n$, or for all $k$); \lname{cSeq\_ne\_zero} at the level of
-  \lname{rootShift\_ne\_zero} becomes \lname{cSeq\_succ\_ne\_zero\_of\_irreducible}. Use sites
-  fall into three categories: cast plumbing (\lname{Int.cast} $\to$ \lname{algebraMap},
-  \lname{intCast\_mem} $\to$ \lname{algebraMap\_mem}, \lname{map\_intCast} $\to$
-  \lname{AlgEquiv.commutes}; about twelve sites, mechanical), the hypothesis swap (nine
-  declarations), and Möbius inversion in \lname{section1\_b\_iff\_c}, which only needs
-  $c_m = \prod_{d \mid m} b_d$ and $b_m = \prod c_d^{\mu(m/d)}$ in $\QQ$ (\lname{moebiusFactorK}),
-  not integrality. The integer statements \lname{section1\_a\_iff\_b}, \lname{section1\_tfae},
-  \lname{section1\_of\_not\_isSquare\_abs\_bSeq} keep their names and become corollaries via
-  Corollary~\ref{cor:1.3}; the rational versions are \lname{section1\_a\_iff\_b\_of\_irreducible},
-  \lname{section1\_tfae\_of\_irreducible}. The growth argument of \lname{Irreducibility.lean}
-  stays integral. \emph{Comparator:} \lname{Challenge.lean} reproduces \lname{GaloisGroup} with an
-  integer argument; with a rational argument its copy and the challenge statements change by one
-  cast; the statements stay equivalent and become simpler, but this is a change of the challenge
-  file and needs the author's approval.}
+  \formalnote{Done as planned (2026-09-07, with the author's approval of the change of the
+  comparator challenge): \lname{splittingField}, \lname{GaloisGroup}, \lname{rootShift} take a
+  rational $a$; \lname{cSeq} is polymorphic in a commutative ring and \lname{bSeq} in a domain,
+  $c$ being the $\gamma$-sequence of $X^2 + a$ with $\varepsilon = -1$ over that ring, with the
+  cast lemmas \lname{intCast\_cSeq}, \lname{ratCast\_cSeq}, \lname{intCast\_bSeq} and
+  \lname{bSeq\_eq\_moebiusFactorK} (over a field, $b_n$ is the Möbius product itself). Since
+  the expected type propagates through the polymorphic definitions, the integer statements
+  \lname{section1\_a\_iff\_b}, \lname{section1\_tfae},
+  \lname{section1\_of\_not\_isSquare\_abs\_bSeq} keep their text and are the rational
+  statements at $a \in \ZZ \subseteq \QQ$, proved via Corollary~\ref{cor:1.3}; the same holds
+  for the theorems of Chapters~3 and~5 and for the comparator challenges. Lemma~\ref{lem:1.6}
+  is stated with $f_n$ irreducible and $c_{n+1} \ne 0$
+  (\lname{cSeq\_succ\_ne\_zero\_of\_irreducible} from $f_{n+1}$ irreducible);
+  Lemma~\ref{lem:1.5} needs no hypothesis on $a$ at all, because $c_{k+1}$ is a square in
+  $K_n$ for every $a$ (the norm identity with multiplicity). ``b) $\Leftrightarrow$ c)''
+  (\lname{section1\_b\_iff\_c}) needs only that no $c_k$ vanishes. The growth argument of
+  \lname{Irreducibility.lean} stays integral.}
 \end{proof}
 
 \section{The rescaled sequence with denominators}
@@ -561,12 +559,12 @@ its new lemmas are of Mathlib generality.
 \section{Order of work}
 
 \begin{enumerate}
-\item The Galois side for $a \in \QQ$ (Theorem~\ref{thm:rat-section1}): one commit per file in
-  dependency order --- \lname{Iterates.lean} (polymorphic \lname{cSeq}, \lname{bSeq}; rational
+\item The Galois side for $a \in \QQ$ (Theorem~\ref{thm:rat-section1}), done in one commit for
+  the four files \lname{Iterates.lean} (polymorphic \lname{cSeq}, \lname{bSeq}; rational
   \lname{splittingField}, \lname{GaloisGroup}; cast plumbing), \lname{Irreducibility.lean}
   (Lemma~1.2 general, growth integral), \lname{DegreeCriterion.lean} (hypothesis swap),
-  \lname{Main.lean} (Section~1 over $\QQ$, integer corollaries). The comparator challenge follows
-  once the author has approved the change of \lname{GaloisGroup}.
+  \lname{Main.lean} (Section~1 over $\QQ$, integer corollaries), together with the comparator
+  challenge, after the author's approval of the change of \lname{GaloisGroup}.
 \item The supporting lemmas, in the mirror files: the domain instance and the transfer of
   primes and of divisibility for \lname{Localization.Away} (Lemmas \ref{lem:gamma-away},
   \ref{lem:betaint}) in \lname{Mathlib/RingTheory/Localization/Away/Basic.lean}; the

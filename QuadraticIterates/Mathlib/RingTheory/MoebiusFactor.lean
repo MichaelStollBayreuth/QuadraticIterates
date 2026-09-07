@@ -174,6 +174,13 @@ noncomputable def moebiusFactorR (c : ℕ → R) (n : ℕ) : R :=
   rw [moebiusFactorR, moebiusFactorK_one,
     Function.leftInverse_invFun (FaithfulSMul.algebraMap_injective R (FractionRing R))]
 
+/-- Over a field, the `R`-valued Möbius factor is the Möbius product itself. -/
+theorem moebiusFactorR_eq_moebiusFactorK {F : Type*} [Field F] (c : ℕ → F) (n : ℕ) :
+    moebiusFactorR c n = moebiusFactorK (K := F) c n := by
+  rw [moebiusFactorR, moebiusFactorK_eq_div, ← map_div₀, Function.leftInverse_invFun
+    (FaithfulSMul.algebraMap_injective F (FractionRing F))]
+  simp [moebiusFactorK_eq_div]
+
 /-- The defining identity of the `R`-valued factor, `β_n · denProd = numProd`, given that the
 denominator product divides the numerator product. -/
 theorem moebiusFactorR_mul_denProd_of_dvd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ}

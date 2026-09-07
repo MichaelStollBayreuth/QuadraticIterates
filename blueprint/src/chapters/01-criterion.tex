@@ -43,9 +43,11 @@ simple
   \lean{QuadraticIterates.cSeq_pos, QuadraticIterates.abs_le_cSeq,
     QuadraticIterates.abs_le_abs_cSeq,
     QuadraticIterates.cSeq_gcd, QuadraticIterates.cSeq_associated_gcd,
-    QuadraticIterates.intCast_bSeq, QuadraticIterates.cSeq_eq_prod_bSeq,
+    QuadraticIterates.intCast_bSeq_eq_moebiusFactorK, QuadraticIterates.intCast_bSeq,
+    QuadraticIterates.cSeq_eq_prod_bSeq,
     QuadraticIterates.isCoprime_bSeq, QuadraticIterates.bSeq_ne_zero,
-    QuadraticIterates.cSeq_ne_zero, QuadraticIterates.factorization_cSeq_shape}
+    QuadraticIterates.cSeq_ne_zero, QuadraticIterates.cSeq_ratCast_ne_zero,
+    QuadraticIterates.factorization_cSeq_shape}
   \leanok
   \begin{enumerate}
     \item[a)] $\forall n \ge 2 : c_n > 0$.
@@ -94,7 +96,8 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
     Irreducible.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X,
     QuadraticIterates.iteratedPoly_succ_comp_neg_X}
   \leanok
-  If none of $c_1, c_2, \dots, c_n$ is a square in $\QQ$, then $f_n$ is irreducible in $\QQ[X]$.
+  If none of $c_1, c_2, \dots, c_n$ is a square in $\QQ$, then $f_n$ is irreducible in $\QQ[X]$
+  (for any $a \in \QQ$).
 \end{lemma}
 \begin{proof}
   \leanok
@@ -151,10 +154,13 @@ The next lemma gives us a simple irreducibility test for the $f_n$.
   $a < -1$: $(c_n - 1)^2 < c_n^2 + a = c_{n+1} \le c_n^2$, so $c_{n+1}$ is not a square. Since
   $c_1 = -a$ is not a square either, Lemma~\ref{lem:1.2} applies.
   \formalnote{The formal statement covers $n = 0$ as well ($f_0 = X$ is irreducible), as does
-  Lemma~\ref{lem:1.2}. The converse implication is also formalized: irreducibility of a single $f_n$ with $n \ge 1$ forces
-  $-a$ to be a non-square (\lname{not\_isSquare\_neg\_of\_irreducible}), since otherwise
-  $f_n = (f_{n-1} - r)(f_{n-1} + r)$. This is what allows Lemma~\ref{lem:1.6} to be stated with
-  irreducibility as its hypothesis.}
+  Lemma~\ref{lem:1.2}, which is stated for a rational $a$; only this corollary, whose growth
+  argument is integral, needs $a \in \ZZ$. The converse implication is also formalized, for
+  rational $a$: irreducibility of a single $f_n$ with $n \ge 1$ forces $-a$ to be a non-square
+  (\lname{not\_isSquare\_neg\_of\_irreducible}), since otherwise
+  $f_n = (f_{n-1} - r)(f_{n-1} + r)$; and irreducibility of $f_{n+1}$ forces $c_{n+1} \ne 0$,
+  since otherwise $X \dvd f_{n+1}$ (\lname{cSeq\_succ\_ne\_zero\_of\_irreducible}), which is
+  the hypothesis under which Lemma~\ref{lem:1.6} is stated.}
 \end{proof}
 
 The well-known example $a = -2$, where $K_n = \QQ(\zeta_{2^{n+2}}) \cap \mathbb{R}$, shows that
@@ -201,6 +207,7 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   If $\Om_n \cong \Ct{n}$ and $c_1, c_2, \dots, c_n$ are $2$-independent, then for all
   $c \in \QQ^*$:
   \[ c \notin (K_n^*)^2 \iff c_1, c_2, \dots, c_n, c \text{ are $2$-independent.} \]
+  (For any $a \in \QQ$.)
 \end{lemma}
 \begin{proof}
   \leanok
@@ -227,8 +234,10 @@ examples where the other extreme, $\Om_n \cong \Ct{n}$, occurs.
   multiquadratic descent lemma (Lemma~\ref{lem:descent}) turns that into the statement that $c$ times a
   subproduct of the $c_i$ is a square in $\QQ$ --- which is exactly the failure of
   $2$-independence of $c_1, \dots, c_n, c$. The hypothesis $c \ne 0$ is not needed for the formal
-  statement: for $c = 0$ both sides are false. Neither is the standing assumption on $a$: it is
-  recovered from the $2$-independence of $c_1 = -a$ (\lname{TwoIndependent.not\_isSquare}).}
+  statement: for $c = 0$ both sides are false. Neither is any assumption on $a \in \QQ$: that
+  $c_{k+1}$ is a square in $K_n$ for $k < n$ holds because $c_{k+1} = \prod_\beta (\beta - a)$
+  over the roots of $f_k$ \emph{with multiplicity}, a product of squares in $K_{k+1}$
+  (\lname{isSquare\_algebraMap\_cSeq}).}
 \end{proof}
 
 % The paper's remark after Lemma 1.5 is unnumbered, and it stays unnumbered here: a `remark`
@@ -245,10 +254,12 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
     QuadraticIterates.prod_rootSet_sub_eq_cSeq, QuadraticIterates.prod_aroots_sub_eq_cSeq,
     QuadraticIterates.rootRelations_rootShift_eq_bot_iff,
     QuadraticIterates.exists_ringEquiv_rootShift_smul,
-    QuadraticIterates.sub_intCast_ne_zero_of_mem_rootSet,
+    QuadraticIterates.sub_ratCast_ne_zero_of_mem_rootSet,
+    QuadraticIterates.cSeq_succ_ne_zero_of_irreducible,
     QuadraticIterates.card_rootSet_iteratedPoly}
   \leanok
-  For all $n$: $[K_{n+1} : K_n] = 2^{2^n} \iff c_{n+1}$ is not a square in $K_n$.
+  For all $n$: $[K_{n+1} : K_n] = 2^{2^n} \iff c_{n+1}$ is not a square in $K_n$. (For any
+  $a \in \QQ$ such that $f_n$ is irreducible and $c_{n+1} \ne 0$, e.g.\ $f_{n+1}$ irreducible.)
 \end{lemma}
 \begin{proof}
   \leanok
@@ -272,16 +283,16 @@ to have $c_1$ a square in $K_1$ (\lname{cSeq\_one}).
   From the above it is clear that the left hand side is equivalent to
   $(1, \dots, 1) \notin V$, whereas $(1, \dots, 1) \in V$ means that
   $\prod_j (\alpha_j - a) = c_{n+1}$ is a square in $K_n$.
-  \formalnote{The formal statement is proved from the standing assumption on $a$ alone and is
-  uniform in $n$, the degenerate case $n = 0$ included: $K_0 = \QQ$, the only root of $f_0 = X$
-  is $0$, and $K_1 = \QQ(\sqrt{-a})$ has degree $2$ because $-a$ is not a square. For $n \ge 1$
-  the assumption is equivalent to the irreducibility of $f_n$ (Corollary~\ref{cor:1.3} and
-  \lname{not\_isSquare\_neg\_of\_irreducible}), which is what the argument uses; the paper
-  instead argues under the maximality hypothesis $[K_n : \QQ] = 2^{2^n - 1}$, which is strictly
-  stronger. $V$ is \texttt{rootRelations} of the family
-  $\beta \mapsto \beta - a$ of shifted roots (\texttt{rootShift}); that this family consists of
-  nonzero elements is where $c_{n+1} \neq 0$ enters
-  (\lname{sub\_intCast\_ne\_zero\_of\_mem\_rootSet}). The identity
+  \formalnote{The formal statement is for a rational $a$, under exactly what the argument uses:
+  $f_n$ irreducible (so that $f_n$ is separable with $2^n$ roots on which $\Om_n$ acts
+  transitively) and $c_{n+1} \ne 0$ (so that the shifted roots are nonzero,
+  \lname{sub\_ratCast\_ne\_zero\_of\_mem\_rootSet}), which follows from the irreducibility of
+  $f_{n+1}$ (\lname{cSeq\_succ\_ne\_zero\_of\_irreducible}); for an integer $a$ both hold by
+  Corollary~\ref{cor:1.3}. It is uniform in $n$, the degenerate case $n = 0$ included: $K_0 = \QQ$,
+  the only root of $f_0 = X$ is $0$, and $K_1 = \QQ(\sqrt{-a})$ has degree $2$ iff $-a$ is not
+  a square. The paper instead argues under the maximality hypothesis $[K_n : \QQ] = 2^{2^n - 1}$,
+  which is strictly stronger. $V$ is \texttt{rootRelations} of the family
+  $\beta \mapsto \beta - a$ of shifted roots (\texttt{rootShift}). The identity
   $\prod_j (\alpha_j - a) = c_{n+1}$ is proved by evaluating the monic split $f_n$ at $a$
   (\lname{prod\_aroots\_sub\_eq\_cSeq}).}
 \end{proof}
@@ -293,6 +304,9 @@ Summing up, we can now prove the following
   \uses{def:galois, def:wreath, def:twoindep, def:cseq, def:bseq}
   \lean{QuadraticIterates.section1_tfae, QuadraticIterates.section1_a_iff_b,
     QuadraticIterates.section1_b_iff_c, QuadraticIterates.section1_of_not_isSquare_abs_bSeq,
+    QuadraticIterates.section1_tfae_of_irreducible,
+    QuadraticIterates.section1_a_iff_b_of_irreducible,
+    QuadraticIterates.cSeq_ne_zero_of_irreducible,
     QuadraticIterates.sqClass_cSeq_eq_sum_divisors,
     QuadraticIterates.sqClass_bSeq_eq_sum_divisorsAntidiagonal,
     linearIndependent_iff_of_span_range_eq}
@@ -322,7 +336,12 @@ Summing up, we can now prove the following
   2) Since by Lemma~\ref{lem:1.1} $b_1, b_2, \dots, b_n$ are pairwise coprime, 1)~c) is
   equivalent to: none of the $b_m$ is a square, and at most one of the $-b_m$ is a square. Since
   $b_1 = -a$ is not a square, condition 2) implies 1)~c).
-  \formalnote{In 1), ``b) $\Leftrightarrow$ c)'' is run in $\QQ^*/(\QQ^*)^2$: the classes of the
+  \formalnote{Part 1) is proved for a rational $a$ all of whose iterates are irreducible
+  (\lname{section1\_tfae\_of\_irreducible}; ``a) $\Leftrightarrow$ b)'' at level $n$ only needs
+  $f_0, \dots, f_n$ irreducible, \lname{section1\_a\_iff\_b\_of\_irreducible}, and
+  ``b) $\Leftrightarrow$ c)'' only that no $c_k$ vanishes), see Theorem~\ref{thm:rat-section1};
+  the integer statements follow by Corollary~\ref{cor:1.3}.
+  In 1), ``b) $\Leftrightarrow$ c)'' is run in $\QQ^*/(\QQ^*)^2$: the classes of the
   $c_m$ and of the $b_m$ span the same $\FF_2$-subspace (each is a $\ZZ$-combination of the
   others, by Möbius inversion in both directions), and $2$-independence of a family of $n$
   vectors is equivalent to that span having dimension $n$. In 2), the passage from a square
