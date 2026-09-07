@@ -67,41 +67,48 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 \begin{definition}[the $w$-sequence]
   \label{def:wseq}
   \uses{def:cseq}
-  For coprime $r, s \in \ZZ$, $s \ge 1$, let $w_1 = 1$ and $w_{n+1} = r w_n^2 + s^{2^n - 1}$ (junk
-  value $w_0 = 0$). With $\gamma_n = f^n(0)/a$, i.e.\ $\gamma_1 = 1$, $\gamma_{n+1} = a\gamma_n^2 + 1$,
-  one has $\gamma_n = w_n / s^{2^{n-1} - 1}$ and $c_n = a \gamma_n = r w_n / s^{2^{n-1}}$ for
-  $n \ge 1$.
-  \formalnote{\lname{wSeq}, a function of $r$, $s$ and $n$ with values in $\ZZ$, by recursion
-  from $w_0 = 0$, so that $w_{n+1} = r w_n^2 + s^{2^n - 1}$ holds for all $n$
-  (\lname{wSeq\_succ}, by \lname{rfl}); the $\gamma$-sequence is \lname{gammaSeq} of $aX^2 + 1$
-  with $\varepsilon = 1$, and $c_n = a\gamma_n$ for $n \ge 1$ over $\QQ$
-  (\lname{cSeq\_eq\_mul\_gammaSeq}). The identity $w_n = s^{2^{n-1}-1}\gamma_n$ is proved once,
-  for every commutative ring $S$ with a ring homomorphism $\varphi : \ZZ \to S$ and an element
-  $u$ with $\varphi(s)\,u = 1$ (\lname{map\_wSeq\_eq\_mul\_gammaSeq}: $\varphi(w_n) =
-  \varphi(s)^{2^{n-1}-1}\gamma_n$ for the $\gamma$-sequence of $\varphi(r)u\,X^2 + 1$ over $S$,
-  an induction of a dozen lines), and it is used three times: over $\ZZ[1/s]$
-  (Lemma~\ref{lem:gamma-away}), over $\QQ$ (Lemma~\ref{lem:rat-sqclass}) and over $\ZZ/M\ZZ$
-  (Lemma~\ref{lem:w-gamma-zmod}). Because of the varying term $s^{2^n-1}$, $w$ is not itself a
-  $\gamma$-sequence over $\ZZ$; it is one over $\ZZ[1/s]$ up to units, which is how the general
-  theory of Chapter~2 enters.}
+  \lean{QuadraticIterates.wSeq, QuadraticIterates.wSeq_succ, QuadraticIterates.intCast_wSeq}
+  \leanok
+  For coprime $r, s \in \ZZ$, $s \ge 1$, and a sign $\varepsilon = \pm 1$, let $w_1 = 1$ and
+  $w_{n+1} = r w_n^2 + \varepsilon s^{2^n - 1}$ (junk value $w_0 = 0$). For the $\gamma$-sequence
+  of $aX^2 + \varepsilon$ with sign $\varepsilon$, i.e.\ $\gamma_1 = 1$,
+  $\gamma_{n+1} = a\gamma_n^2 + \varepsilon$, one has $\gamma_n = w_n / s^{2^{n-1} - 1}$ in every
+  commutative ring in which $s$ is invertible. For $\varepsilon = 1$ this is $\gamma_n = f^n(0)/a$
+  and $c_n = a \gamma_n = r w_n / s^{2^{n-1}}$ for $n \ge 1$; $\varepsilon = -1$ with $|r|$ in
+  place of $r$ is Stoll's positive normalization for $a \le -2$.
+  \formalnote{\lname{wSeq r s ε}, a function of $n$ with values in $\ZZ$, by recursion
+  (\lname{wSeq\_succ}); the identity is \lname{intCast\_wSeq}: in a commutative ring $S$ with an
+  element $u$, $s u = 1$, the cast of $w_n$ is $s^{2^{n-1}-1}\gamma_n$ for the $\gamma$-sequence of
+  $(r u) X^2 + \varepsilon$ with sign $\varepsilon$, an induction of a dozen lines, used over
+  $\ZZ[1/s]$ (Lemma~\ref{lem:gamma-away}), over $\QQ$ (Lemma~\ref{lem:rat-sqclass}) and over
+  $\ZZ/M\ZZ$ (Lemma~\ref{lem:w-gamma-zmod}). Because of the varying term $s^{2^n-1}$, $w$ is not
+  itself a $\gamma$-sequence over $\ZZ$; it is one over $\ZZ[1/s]$ up to units, which is how the
+  general theory of Chapter~2 enters.}
 \end{definition}
 
 \begin{lemma}[integrality and coprimality]
   \label{lem:w-coprime}
   \uses{def:wseq}
+  \lean{QuadraticIterates.isCoprime_wSeq_left, QuadraticIterates.isCoprime_wSeq_right}
+  \leanok
   $w_n \in \ZZ$ and $\gcd(w_n, rs) = 1$ for all $n \ge 1$.
 \end{lemma}
 \begin{proof}
-  $w_{n+1} \equiv r w_n^2 \pmod s$ and $w_{n+1} \equiv s^{2^n - 1} \pmod r$; induction from
-  $w_1 = 1$ and $\gcd(r, s) = 1$.
-  \formalnote{\lname{isCoprime\_wSeq\_left} ($w_n$ coprime to $r$) and
-  \lname{isCoprime\_wSeq\_right} ($w_n$ coprime to $s$) for $n \ge 1$, by
-  \lname{Nat.le\_induction} and \lname{IsCoprime.mul\_add\_left\_left}-style lemmas.}
+  \leanok
+  $w_{n+1} \equiv r w_n^2 \pmod s$ and $w_{n+1} \equiv \varepsilon s^{2^n - 1} \pmod r$; induction
+  from $w_1 = 1$ and $\gcd(r, s) = 1$.
+  \formalnote{\lname{isCoprime\_wSeq\_left} ($w_n$ coprime to $r$, no induction needed) and
+  \lname{isCoprime\_wSeq\_right} ($w_n$ coprime to $s$, by \lname{Nat.le\_induction}), both from
+  \lname{IsCoprime.add\_mul\_left\_left}.}
 \end{proof}
 
 \begin{lemma}[{$w$ is a $\gamma$-sequence over $\ZZ[1/s]$, up to units}]
   \label{lem:gamma-away}
   \uses{def:wseq, def:gammaseq, lem:2.1, thm:valshape, lem:moebiusfactor}
+  \lean{QuadraticIterates.aAway, QuadraticIterates.normPolyAway, QuadraticIterates.wSeqAway,
+    QuadraticIterates.wSeqAway_eq_mul_gammaSeq,
+    QuadraticIterates.isRelPrime_moebiusFactorR_wSeqAway}
+  \leanok
   Let $R = \ZZ[1/s]$, a unique factorization domain whose primes are the primes $p \nmid s$, and
   let $a = r/s \in R$. The $\gamma$-sequence of $aX^2 + 1$ over $R$ satisfies
   $w_n = s^{2^{n-1}-1}\gamma_n$ in $R$, with $s$ a unit of $R$. Hence $(w_n)$, viewed in $R$, is
@@ -113,6 +120,7 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
 \end{lemma}
 \begin{proof}
   \uses{lem:2.1, thm:valshape, lem:moebiusfactor}
+  \leanok
   The identity is the case $S = R$ of the identity in Definition~\ref{def:wseq}. Multiplying a
   sequence termwise by units changes neither $\gcd$'s up to association nor valuations, so
   Lemma~\ref{lem:2.1} and Theorem~\ref{thm:valshape} for the $\gamma$-sequence transfer to
@@ -131,13 +139,11 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
   arbitrary normalization, visible in no exported statement, since relative primality and
   divisibility do not mention it), and \lname{classical} inside the proofs. The inverse of $s$ is
   \lname{IsLocalization.Away.invSelf}. Declarations: \lname{aAway} ($a = r/s$ in $R$),
-  \lname{wSeqAway} (the sequence $n \mapsto \varphi(w_n)$ in $R$),
-  \lname{wSeqAway\_associated\_gcd}, \lname{factorization\_wSeqAway\_shape},
+  \lname{normPolyAway} ($aX^2 + \varepsilon$ over $R$), \lname{wSeqAway} (the sequence
+  $n \mapsto w_n$ in $R$), \lname{wSeqAway\_eq\_mul\_gammaSeq}, the private
+  \lname{wSeqAway\_associated\_gcd} and \lname{factorization\_wSeqAway\_shape}, and
   \lname{isRelPrime\_moebiusFactorR\_wSeqAway}, each a few lines, exactly as
-  \lname{factorization\_cSeq\_shape} and \lname{isCoprime\_bSeq} in Chapter~1. A prototype of
-  this route --- the instances, the identity for $w$ over $R$, the API applications and the
-  descent of Lemma~\ref{lem:betaint} --- compiles against the repository (240 lines, 2.5 s;
-  \lname{explore/stoll-extensions-2026-09-07/UfdAway.lean} outside the repository).}
+  \lname{factorization\_cSeq\_shape} and \lname{isCoprime\_bSeq} in Chapter~1.}
 \end{proof}
 
 \paragraph{The alternative not taken.}
@@ -155,30 +161,42 @@ its new lemmas are of Mathlib generality.
 \begin{definition}[the integer Möbius factors]
   \label{def:betaint}
   \uses{def:wseq}
+  \lean{QuadraticIterates.betaInt, QuadraticIterates.betaInt_eq_moebiusFactorR}
+  \leanok
   $\beta_n := \prod_{d \mid n} w_d^{\mu(n/d)}$ and $E(n) := \sum_{d \mid n} (2^{d-1} - 1)\mu(n/d)$,
   so that $\beta_n = s^{E(n)} \prod_{d \mid n} \gamma_d^{\mu(n/d)}$ and $E(n) \equiv \mu(n) \pmod 2$
   for $n \ge 2$.
-  \formalnote{\lname{betaInt r s n := moebiusFactorR (wSeq r s) n}, the same device as
+  \formalnote{\lname{betaInt r s ε n := moebiusFactorR (wSeq r s ε) n}, the same device as
   \lname{bSeq}: \lname{moebiusFactorR} is defined for any sequence in a domain, and its API
   (\lname{moebiusFactorR\_mul\_denProd}, \lname{algebraMap\_moebiusFactorR},
   \lname{prod\_moebiusFactorR}, \lname{moebiusFactorR\_ne\_zero}) uses strong divisibility only
-  through $D \mid N$ (Lemma~\ref{lem:moebiusfactor}); these four lemmas get primary forms
-  \lname{\_of\_dvd} with the hypothesis $D \mid N$, of which the present forms become corollaries,
-  and a lemma \lname{map\_moebiusFactorR}: for $D \mid N$ and a ring homomorphism $\varphi$
-  into a domain with $\varphi(D) \ne 0$, $\varphi(\beta_n)$ is the Möbius factor of
-  $\varphi \circ w$, both being the solution of $\beta D = N$. Then \lname{twistExp}, the integer
-  $E(n)$ as a sum over \lname{n.divisorsAntidiagonal}, with \lname{twistExp\_emod\_two}
+  through $D \mid N$ (Lemma~\ref{lem:moebiusfactor}); these four lemmas have primary forms
+  \lname{\_of\_dvd} with the hypothesis $D \mid N$, of which the strong-divisibility forms are
+  corollaries, and \lname{map\_moebiusFactorR}: for $D \mid N$ and a ring homomorphism $\varphi$
+  into a domain killing no $w_d$, $\varphi(\beta_n)$ is the Möbius factor of $\varphi \circ w$,
+  both being the solution of $\beta D = N$. Still to come: \lname{twistExp}, the integer $E(n)$
+  as a sum over \lname{n.divisorsAntidiagonal}, with \lname{twistExp\_emod\_two}
   ($E(n) \equiv \mu(n) \bmod 2$ for $n \ge 2$).}
 \end{definition}
 
 \begin{lemma}[the $\beta_n$ are integers, pairwise coprime, coprime to $rs$]
   \label{lem:betaint}
   \uses{def:betaint, lem:gamma-away, lem:w-coprime}
+  \lean{QuadraticIterates.denProd_wSeq_dvd_numProd_wSeq, QuadraticIterates.betaInt_mul_denProd,
+    QuadraticIterates.intCast_betaInt, QuadraticIterates.betaInt_ne_zero,
+    QuadraticIterates.wSeq_eq_prod_betaInt, QuadraticIterates.isCoprime_betaInt,
+    QuadraticIterates.isCoprime_betaInt_left, QuadraticIterates.isCoprime_betaInt_right,
+    IsLocalization.Away.isRelPrime_of_isRelPrime_algebraMap,
+    IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime,
+    IsLocalization.Away.prime_algebraMap_of_not_dvd, IsLocalization.prime_algebraMap_of_prime,
+    IsLocalization.dvd_of_algebraMap_dvd}
+  \leanok
   For $n \ge 2$, $\beta_n \in \ZZ$, $\gcd(\beta_n, rs) = 1$, $\gcd(\beta_m, \beta_n) = 1$ for
   $m \ne n$, and $v_p(\beta_n) = v_p(w_{d_0(p)})\,[n = d_0(p)]$ for every prime $p \nmid rs$.
 \end{lemma}
 \begin{proof}
   \uses{lem:gamma-away, lem:w-coprime}
+  \leanok
   Everything holds in $R = \ZZ[1/s]$ by Lemma~\ref{lem:gamma-away} and descends to $\ZZ$: with
   $N = \prod_{\mu(n/d) = 1} w_d$ and $D = \prod_{\mu(n/d) = -1} w_d$, both coprime to $rs$
   (Lemma~\ref{lem:w-coprime}), $D \mid N$ in $R$ means $Dm = Ns^k$ in $\ZZ$ for some $m$, $k$,
@@ -201,14 +219,16 @@ its new lemmas are of Mathlib generality.
   \lname{IsLocalization.Away.prime\_algebraMap\_of\_not\_dvd} (a prime $p \nmid x$ stays prime,
   via \lname{IsLocalization.Away.algebraMap\_isUnit\_iff}). No PR adds the domain instance for
   \lname{Localization.Away x} or a normalization on localizations. Finally
-  \lname{isCoprime\_of\_isRelPrime\_localizationAway} (integers prime to $x$ whose images are
-  relatively prime are coprime, by \lname{Nat.coprime\_of\_dvd}). Then
-  \lname{denProd\_wSeq\_dvd\_numProd\_wSeq}, and the API of \lname{betaInt}
-  (\lname{intCast\_betaInt}, \lname{betaInt\_ne\_zero}, \lname{wSeq\_eq\_prod\_betaInt}) from the
-  \lname{\_of\_dvd} forms; \lname{algebraMap\_betaInt} from \lname{map\_moebiusFactorR};
-  \lname{isCoprime\_betaInt} from the transfer lemma and
-  \lname{isRelPrime\_moebiusFactorR\_wSeqAway}; \lname{isCoprime\_betaInt\_mul :
-  IsCoprime (betaInt r s n) (r * s)} from $\beta_n D = N$.}
+  \lname{IsLocalization.Away.isRelPrime\_of\_isRelPrime\_algebraMap}: in a UFD, elements the
+  first of which is coprime to $x$ and whose images are relatively prime are relatively prime,
+  since a common prime factor would stay prime. Then \lname{denProd\_wSeq\_dvd\_numProd\_wSeq},
+  and the API of \lname{betaInt} (\lname{betaInt\_mul\_denProd}, \lname{intCast\_betaInt},
+  \lname{betaInt\_ne\_zero}, \lname{wSeq\_eq\_prod\_betaInt}) from the \lname{\_of\_dvd} forms;
+  \lname{isCoprime\_betaInt} from the transfer lemma, \lname{map\_moebiusFactorR} and
+  \lname{isRelPrime\_moebiusFactorR\_wSeqAway}; \lname{isCoprime\_betaInt\_left} and
+  \lname{isCoprime\_betaInt\_right} ($\beta_n$ coprime to $r$ and to $s$) from $\beta_n D = N$. The
+  hypotheses throughout are $s \ne 0$, $\gcd(r, s) = 1$, $\varepsilon^2 = 1$ and $w_n \ne 0$ for
+  $n \ge 1$, the last one supplied later by positivity.}
 \end{proof}
 
 \begin{lemma}[square classes]
@@ -261,7 +281,7 @@ its new lemmas are of Mathlib generality.
 \end{lemma}
 \begin{proof}
   Induction on $n$ from the recursions.
-  \formalnote{The instance of \lname{map\_wSeq\_eq\_mul\_gammaSeq} (Definition~\ref{def:wseq})
+  \formalnote{The instance of \lname{intCast\_wSeq} (Definition~\ref{def:wseq})
   at $S = \ZZ/M\ZZ$, $\varphi$ the cast and $u$ the inverse of the unit $\bar s$; the
   $\gamma$-sequence over \lname{ZMod M} is \lname{gammaSeq} of $\bar a X^2 + 1$ with
   $\bar a = \bar r \bar s^{-1}$.}

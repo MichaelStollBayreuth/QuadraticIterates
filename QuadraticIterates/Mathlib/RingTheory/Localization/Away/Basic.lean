@@ -6,16 +6,21 @@ Authors: Michael Stoll
 module
 
 public import Mathlib.RingTheory.Localization.Away.Basic
+public import Mathlib.RingTheory.UniqueFactorizationDomain.Defs
 
+import Mathlib.Algebra.CharP.Algebra
+import Mathlib.RingTheory.UniqueFactorizationDomain.Basic
 import QuadraticIterates.Mathlib.RingTheory.Localization.Basic
 
 /-!
 # Localization away from an element: domains, primes, divisibility
 
-The localization of a domain away from a nonzero element is a domain, as an instance for
-`[NeZero x]`; a prime not dividing `x` stays prime in it
-(`IsLocalization.Away.prime_algebraMap_of_not_dvd`); and divisibility by an element coprime
-to `x` descends from it (`IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime`).
+The localization of a domain away from a nonzero element is a domain, of characteristic zero if
+the domain is, as instances for `[NeZero x]`; a prime not dividing `x` stays prime in it
+(`IsLocalization.Away.prime_algebraMap_of_not_dvd`); divisibility by an element coprime to `x`
+descends from it (`IsLocalization.Away.dvd_of_algebraMap_dvd_of_isCoprime`), and so does
+relative primality when one of the elements is coprime to `x`
+(`IsLocalization.Away.isRelPrime_of_isRelPrime_algebraMap`).
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -27,6 +32,13 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 instance Localization.Away.instIsDomain {R : Type*} [CommRing R] [IsDomain R] (x : R)
     [NeZero x] : IsDomain (Localization.Away x) :=
   Localization.Away.isDomain (NeZero.ne x)
+
+/-- The localization of a domain of characteristic zero away from a nonzero element has
+characteristic zero. -/
+instance Localization.Away.instCharZero {R : Type*} [CommRing R] [IsDomain R] [CharZero R] (x : R)
+    [NeZero x] : CharZero (Localization.Away x) :=
+  charZero_of_injective_algebraMap
+    (IsLocalization.injective _ (powers_le_nonZeroDivisors_of_noZeroDivisors (NeZero.ne x)))
 
 namespace IsLocalization.Away
 
@@ -48,6 +60,21 @@ theorem prime_algebraMap_of_not_dvd (hx : x ≠ 0) {p : R} (hp : Prime p) (hpx :
       (powers_le_nonZeroDivisors_of_noZeroDivisors hx) (h.trans (map_zero _).symm)))
     fun h ↦ hpx (((IsLocalization.Away.algebraMap_isUnit_iff x).mp h).elim
       fun _ hn ↦ hp.dvd_of_dvd_pow hn)
+
+variable [UniqueFactorizationMonoid R]
+
+/-- Relative primality descends from a localization away from `x` to elements the first of which
+is coprime to `x`: a common prime factor would stay prime in the localization. -/
+theorem isRelPrime_of_isRelPrime_algebraMap (hx : x ≠ 0) {a b : R}
+    (h : IsRelPrime (algebraMap R S a) (algebraMap R S b)) (hax : IsCoprime a x) :
+    IsRelPrime a b := by
+  rcases eq_or_ne a 0 with rfl | ha
+  · obtain ⟨n, hn⟩ := (IsLocalization.Away.algebraMap_isUnit_iff x).mp
+      (isRelPrime_zero_left.mp (by simpa using h))
+    exact isRelPrime_zero_left.mpr (isUnit_of_dvd_unit hn ((isCoprime_zero_left.mp hax).pow n))
+  refine (UniqueFactorizationMonoid.isRelPrime_iff_no_prime_factors ha).mpr fun p hpa hpb hp ↦ ?_
+  have hpx : ¬p ∣ x := fun hpx ↦ hp.not_isUnit (hax.isUnit_of_dvd' hpa hpx)
+  exact (prime_algebraMap_of_not_dvd hx hp hpx).not_isUnit (h (map_dvd _ hpa) (map_dvd _ hpb))
 
 end IsLocalization.Away
 
