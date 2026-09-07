@@ -7,7 +7,7 @@ public import QuadraticIterates
 
 Proofs of the challenge statements of `Challenge.lean`, discharged by the library theorems
 `QuadraticIterates.section3_main` (`QuadraticIterates.ArchMath1992.Main`),
-`QuadraticIterates.li2021_theorem_3_3`, `QuadraticIterates.li2021_theorem_3_9`
+`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`, `QuadraticIterates.li2021_theorem_3_9`
 (`QuadraticIterates.Li.ArchMath2021`) and `QuadraticIterates.li2020_theorem_3_5`
 (`QuadraticIterates.Li.ArchMath2020`). Importing the library brings in the definitions
 `iteratedPoly`, `GaloisGroup`, `WreathPower` that the statements refer to; Comparator checks that
@@ -30,9 +30,9 @@ theorem challenge_section3_main_neg_emod_four_eq_zero (a : ℤ) (ha : a < 0) (ha
     (hsq : ¬IsSquare (-a)) : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
   section3_main (.inr (.inr ⟨ha, ha4, hsq⟩))
 
-theorem challenge_li2021_theorem_3_3 (k : ℕ) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (-((8 * k + 2) * (8 * k + 3))) n ≃* WreathPower n) :=
-  li2021_theorem_3_3 rfl
+theorem challenge_nonempty_mulEquiv_of_eq_neg_mul (k : ℕ) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup (-((4 * k + 2) * (4 * k + 3))) n ≃* WreathPower n) :=
+  nonempty_mulEquiv_of_eq_neg_mul rfl
 
 theorem challenge_li2021_theorem_3_9 (k : ℕ) :
     ∀ n ≥ 1, Nonempty (GaloisGroup (-((4 * k + 1) * (4 * k + 2) + 1)) n ≃* WreathPower n) :=

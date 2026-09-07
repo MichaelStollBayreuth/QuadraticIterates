@@ -551,10 +551,10 @@
         <div class="cell">
           <span class="cell-label">a &lt; 0, a ≡ 2 (mod 4)</span>
           <span class="chip partial">One family</span>
-          <p class="src">Li 2021, Thm 3.3</p>
-          <p>Only <code>a = −(8k+2)(8k+3)</code>.</p>
+          <p class="src">Li 2021, Thm 3.3 · extended here</p>
+          <p>Only <code>a = −(4k+2)(4k+3)</code>. Li proved the even-<var>k</var> half, <code>a = −(8k+2)(8k+3)</code>; the odd half is new, by his argument with the residue of the rescaled sequence read modulo 8 instead of modulo 4.</p>
           <p class="lapse-note">Contains a failure family: <code>a = −(m²+1)</code> with <var>m</var> odd loses maximality already at level 2.</p>
-          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_3">li2021_theorem_3_3</a></p>
+          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul">nonempty_mulEquiv_of_eq_neg_mul</a></p>
         </div>
 
         <div class="cell">
@@ -575,7 +575,7 @@
       <div class="eyebrow">The library</div>
       <h2>What is formalized, and where</h2>
     </div>
-    <p class="col">Six named results carry the mathematics; the criterion below them is stated once, in the generality the papers use, and shared.</p>
+    <p class="col">Seven named results carry the mathematics, one of them not from the papers; the criterion below them is stated once, in the generality the papers use, and shared.</p>
 
     <div class="table-wrap">
       <table>
@@ -616,6 +616,11 @@
             <td class="what">Maximality for <var>a</var> = −(8<var>k</var>+2)(8<var>k</var>+3)</td>
             <td class="who">Li 2021, Thm 3.3</td>
             <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_3">li2021_theorem_3_3</a></td>
+          </tr>
+          <tr>
+            <td class="what">Maximality for <var>a</var> = −(4<var>k</var>+2)(4<var>k</var>+3), all <var>k</var></td>
+            <td class="who">this formalization, by Li's method</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul">nonempty_mulEquiv_of_eq_neg_mul</a></td>
           </tr>
           <tr>
             <td class="what">Maximality for <var>a</var> = −((4<var>k</var>+1)(4<var>k</var>+2)+1)</td>
@@ -686,6 +691,8 @@
       </div>
 
       <p>Li reached the same verdict from the other side in 2021: <em>"there seems to be no method other than Stoll's criterion which can show the non-squareness of |b<sub>n</sub>| for infinitely many n."</em> Five years on, that is still true.</p>
+
+      <p>One small exception has since appeared, and it comes out of the formalization itself: Li's family <code>a = −(8k+2)(8k+3)</code> is the even-<var>k</var> half of <code>a = −(4k+2)(4k+3)</code>, and the odd half goes through by his own argument once the residue of the rescaled sequence is read modulo 8 rather than modulo 4 — the <var>a</var> ≡ 2 (mod 4) box above. It is a half-family, not a new class: the verdicts of Jones and Li stand.</p>
     </div>
   </section>
 

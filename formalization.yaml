@@ -41,8 +41,9 @@ status:
     parts, including all supporting lemmas 1.0-1.6, 2.1, 2.2 and Odoni's embedding theorem),
     and the main result of Section 3. Also formalized are the results of H.-C. Li (Arch. Math.
     2020 and 2021) extending the Section 3 result: Ω_n is the full wreath power for all n when
-    a = -(8k+2)(8k+3) or a = -((4k+1)(4k+2)+1), and, for a < 0 with a ≡ 3 mod 4 and -a not a
-    square, if and only if -a - 1 is not a square (QuadraticIterates/Li/); the index-2
+    a = -(4k+2)(4k+3) (Li's Theorem 3.3 is the case of even k, a = -(8k+2)(8k+3); the odd case
+    is proved here by his method) or a = -((4k+1)(4k+2)+1), and, for a < 0 with a ≡ 3 mod 4
+    and -a not a square, if and only if -a - 1 is not a square (QuadraticIterates/Li/); the index-2
     statement of the 2020 paper in the exceptional case and Lemma 3.5 of the 2021 paper are not
     formalized. Supporting theory (multiquadratic extensions, iterated wreath products, even
     polynomials and their factorizations, Möbius quotients of strong divisibility sequences,
@@ -72,11 +73,17 @@ status:
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
-  - declaration: "QuadraticIterates.li2021_theorem_3_3"
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul"
     file: "QuadraticIterates/Li/ArchMath2021.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2021_theorem_3_3"
+    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
     literature_dependencies: []
   - declaration: "QuadraticIterates.li2021_theorem_3_9"
     file: "QuadraticIterates/Li/ArchMath2021.lean"
@@ -128,7 +135,7 @@ automation:
         and a diff of the pretty-printed types of every declaration in the project against the
         previous round, so that a round changed exactly the intended statements.
       cost:
-        wall_time: "~78 hours in 13 interactive sessions between 2026-07-12 and 2026-09-06"
+        wall_time: "~86 hours in 14 interactive sessions between 2026-07-12 and 2026-09-07"
         spend_usd: "Claude Max 20x subscription"
         hardware: "API-only"
       prompting_notes: >
@@ -142,7 +149,11 @@ automation:
         whose proposals had to compile before being applied. The extensions of Li were first
         planned in a blueprint chapter (statements, proofs reduced to the existing
         infrastructure, order of work), reviewed by the author, and then formalized in seven
-        verified commits, one per layer or theorem.
+        verified commits, one per layer or theorem. A subsequent exploration session (open-ended
+        brainstorming on pushing Stoll's method to further parameters, with numerical
+        experiments in Python/PARI and candidate statements checked in Lean before anything was
+        integrated) produced the strengthening of Li's Theorem 3.3 to a = -(4k+2)(4k+3), which
+        replaced the original formalization of that theorem.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
@@ -162,8 +173,9 @@ fidelity:
     For the results of Li: the criteria of his Section 2 (2021) are stated for a modulus m with
     -1 not a square mod m (the paper uses primes p ≡ 3 mod 4), his Lemmas 3.2 and 3.3 (2020)
     are one statement proved modulo γ_2, and Lemma 2.2 (2021) is stated with the case
-    a ≡ 1 mod 4 (the printed "3 mod 4" is a misprint; a = -5 is a counterexample). The
-    index-2 statement of the 2020 paper (Ω_n has index 2 in the wreath power when -a - 1 is a
+    a ≡ 1 mod 4 (the printed "3 mod 4" is a misprint; a = -5 is a counterexample). Theorem 3.3
+    (2021) is formalized in the stronger form a = -(4k+2)(4k+3), Li's statement being the case
+    of even k. The index-2 statement of the 2020 paper (Ω_n has index 2 in the wreath power when -a - 1 is a
     square) and Lemma 3.5 of the 2021 paper (not needed for its Theorem 3.9) are not
     formalized.
 
@@ -259,10 +271,16 @@ alignment:
       lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul"
       module: "QuadraticIterates.Li.ArchMath2021"
       status: "proved"
+      note: "stated for a = -(4k+2)(4k+3); Li's lemma is the case of even k"
     - source: "Li 2021, Theorem 3.3"
       lean: "li2021_theorem_3_3"
       module: "QuadraticIterates.Li.ArchMath2021"
       status: "proved"
+    - source: "Li 2021, Theorem 3.3 for a = -(4k+2)(4k+3), all k (not in the paper)"
+      lean: "nonempty_mulEquiv_of_eq_neg_mul, not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+      note: "Li's argument with the residue of γ_k₀ modulo 8 in place of the one modulo 4"
     - source: "Li 2021, Lemma 3.4"
       lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one"
       module: "QuadraticIterates.Li.ArchMath2021"

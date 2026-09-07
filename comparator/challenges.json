@@ -4,7 +4,7 @@
     "theorem_names": ["challenge_section3_main_pos_emod_four_eq_one",
                       "challenge_section3_main_pos_emod_four_eq_two",
                       "challenge_section3_main_neg_emod_four_eq_zero",
-                      "challenge_li2021_theorem_3_3",
+                      "challenge_nonempty_mulEquiv_of_eq_neg_mul",
                       "challenge_li2021_theorem_3_9",
                       "challenge_li2020_theorem_3_5"],
     "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],

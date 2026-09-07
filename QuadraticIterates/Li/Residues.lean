@@ -171,12 +171,6 @@ theorem gammaSeq_normPoly_emod_four_eq_two_of_even (ha : a < 0) (ha4 : a % 4 = 1
   have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp h
   lia
 
-theorem gammaSeq_normPoly_emod_four_eq_one_of_emod_eight_eq_two (ha : a < 0) (ha8 : a % 8 = 2)
-    {n : ℕ} (hn : 2 ≤ n) : γ[a] n % 4 = 1 := by
-  have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp
-    (gammaSeq_normPoly_zmod_eight_of_even ha (Int.even_iff.mpr (by lia)) n hn)
-  lia
-
 theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 = 3) {k : ℕ}
     (hk : 2 ≤ k) :
     (γ[a] k + γ[a] (k + 1)) % 4 = 3 := by

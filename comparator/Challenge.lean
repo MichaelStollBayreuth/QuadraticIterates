@@ -8,8 +8,9 @@ public import Mathlib
 Self-contained restatements, with `sorry` proofs, of the main results for verification with
 [leanprover/comparator](https://github.com/leanprover/comparator): the three cases of the paper's
 Section 3 main result (`section3_main` in `QuadraticIterates/ArchMath1992/`), one challenge per
-case, and the theorems of Li extending it (`li2021_theorem_3_3`, `li2021_theorem_3_9`,
-`li2020_theorem_3_5` in `QuadraticIterates/Li/`).
+case, and the theorems of Li extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its
+strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in
+`QuadraticIterates/Li/`).
 
 This file imports **only Mathlib**: the three non-Mathlib definitions the statement refers to
 (`QuadraticIterates.iteratedPoly`, `.GaloisGroup`, `.WreathPower`) are reproduced here from the
@@ -61,10 +62,10 @@ theorem challenge_section3_main_neg_emod_four_eq_zero (a : ℤ) (ha : a < 0) (ha
     (hsq : ¬IsSquare (-a)) : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
   sorry
 
-/-- Theorem 3.3 of H.-C. Li, Arch. Math. 117 (2021) (`li2021_theorem_3_3`): for
-`a = -(8k+2)(8k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_li2021_theorem_3_3 (k : ℕ) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (-((8 * k + 2) * (8 * k + 3))) n ≃* WreathPower n) :=
+/-- For `a = -(4k+2)(4k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` (`nonempty_mulEquiv_of_eq_neg_mul`);
+Theorem 3.3 of H.-C. Li, Arch. Math. 117 (2021), is the case of even `k`, `a = -(8k+2)(8k+3)`. -/
+theorem challenge_nonempty_mulEquiv_of_eq_neg_mul (k : ℕ) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup (-((4 * k + 2) * (4 * k + 3))) n ≃* WreathPower n) :=
   sorry
 
 /-- Theorem 3.9 of H.-C. Li, Arch. Math. 117 (2021) (`li2021_theorem_3_9`): for

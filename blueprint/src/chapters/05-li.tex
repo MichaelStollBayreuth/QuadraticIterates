@@ -9,27 +9,35 @@ $g = |a| X^2 + \sgn(a)$, $\gamma_1 = 1$, $\gamma_{n+1} = g(\gamma_n)$, so that
 $\gamma_n = |c_n|/|a|$ and $\beta_n = |b_n|$ for $n \ge 2$. (In \cite{li2020} the polynomial is
 written $x^2 - a$ with $a > 0$; below, $a$ always denotes the coefficient of $f = X^2 + a$, so the
 case of \cite{li2020} is $a < 0$, $a \equiv 3 \bmod 4$.) The Lean sources are in
-\texttt{QuadraticIterates/Li/}.
+\texttt{QuadraticIterates/Li/}. Theorem~\ref{thm:li-A} is stated for the family
+$a = -(4k+2)(4k+3)$, of which Li's Theorem~3.3 is the even-$k$ half; the odd half is proved by
+the same argument (see Lemma~\ref{lem:li-A-nonsqfree}).
 
 \section{The results}
 
-\begin{theorem}[\cite{li2021}, Theorem 3.3]
+\begin{theorem}[\cite{li2021}, Theorem 3.3, extended]
   \label{thm:li-A}
-  \lean{QuadraticIterates.li2021_theorem_3_3, QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul, QuadraticIterates.li2021_theorem_3_3, QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq}
   \leanok
   \uses{def:galois, def:wreath}
-  Let $a = -(8k+2)(8k+3)$ with $k \ge 0$. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
+  Let $a = -(4k+2)(4k+3)$ with $k \ge 0$. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
+  Theorem~3.3 of \cite{li2021} is the case of even $k$, $a = -(8k+2)(8k+3)$.
 \end{theorem}
 \begin{proof}
   \leanok
-  \uses{lem:li-sqfree, lem:li-A-nonsqfree, thm:section1, def:normpoly}
-  $-a = (8k+2)(8k+3) \equiv 6 \bmod 8$ is not a square. For $n \ge 2$, $|b_n| = \beta_n$ is not a
-  square: by Lemma~\ref{lem:li-sqfree}~(2) if $n$ is squarefree, by
+  \uses{lem:li-A-sqfree, lem:li-A-nonsqfree, thm:section1, def:normpoly}
+  $-a = (4k+2)(4k+3) \equiv 2 \bmod 4$ is not a square. For $n \ge 2$, $|b_n| = \beta_n$ is not a
+  square: by Lemma~\ref{lem:li-A-sqfree} if $n$ is squarefree, by
   Lemma~\ref{lem:li-A-nonsqfree} otherwise. Part~2) of Theorem~\ref{thm:section1}.
   \formalnote{The case split on \texttt{Squarefree n} in front of
   \lname{section1\_of\_not\_isSquare\_abs\_bSeq} is
   \lname{nonempty\_mulEquiv\_of\_forall\_not\_isSquare\_abs\_bSeq}, shared with
-  Theorem~\ref{thm:li-B}.}
+  Theorem~\ref{thm:li-B}. Li's proof for even $k$ uses, for $n$ not squarefree, the residue
+  $\gamma_{k_0} \equiv 1 \bmod 4$, which needs $a \equiv 2 \bmod 8$; for odd $k$,
+  $a \equiv 6 \bmod 8$. The proof formalized here is Li's with the residue of $\gamma_{k_0}$
+  modulo $8$ (Lemma~\ref{lem:li-mod8-2}, valid for all even $a$) and the other linear factor of
+  $|a| y^2 + y - 1$, and covers both parities at once; \lname{li2021\_theorem\_3\_3} is the case
+  $k \mapsto 2k$ of \lname{nonempty\_mulEquiv\_of\_eq\_neg\_mul}.}
 \end{proof}
 
 \begin{theorem}[\cite{li2021}, Theorem 3.9]
@@ -424,24 +432,45 @@ of Lemma~\ref{lem:li-period}.
 
 \subsection*{Theorem A}
 
-\begin{lemma}[\cite{li2021}, Lemma 3.1]
+\begin{lemma}[\cite{li2021}, Lemma 2.2 for $a = -(4k+2)(4k+3)$]
+  \label{lem:li-A-sqfree}
+  \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul}
+  \leanok
+  \uses{def:normpoly}
+  Let $a = -(4k+2)(4k+3)$ and let $n > 1$ be squarefree. Then $|b_n|$ is not a square.
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{lem:li-sqfree}
+  $-1$ is not a square modulo $\gamma_1 + \gamma_2 = -a = (4k+3)(4k+2)$, since
+  $4k+3 \equiv 3 \bmod 4$ divides it (\lname{ZMod.not\_isSquare\_neg\_one\_of\_dvd}).
+  Lemma~\ref{lem:li-sqfree}.
+  \formalnote{For even $k$ this is case (2) of Lemma~\ref{lem:li-sqfree}, $-a \equiv 6 \bmod 8$;
+  for odd $k$, $-a \equiv 2 \bmod 8$, and the divisor $4k+3$ is what remains.}
+\end{proof}
+
+\begin{lemma}[\cite{li2021}, Lemma 3.1 for $a = -(4k+2)(4k+3)$]
   \label{lem:li-A-nonsqfree}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul}
   \leanok
   \uses{def:normpoly}
-  Let $a = -(8k+2)(8k+3)$ and let $n \ge 1$ be not squarefree. Then $|b_n|$ is not a square.
+  Let $a = -(4k+2)(4k+3)$ and let $n \ge 1$ be not squarefree. Then $|b_n|$ is not a square.
 \end{lemma}
 \begin{proof}
   \leanok
   \uses{lem:li-succ, lem:li-mod8-2}
-  Let $k_0 := n/\rad(n) \ge 2$. Since $|a|\,y^2 + y - 1 = \bigl((8k+3)y - 1\bigr)\bigl((8k+2)y +
-  1\bigr)$, the number $m := (8k+2)\gamma_{k_0} + 1$ divides
-  $\gamma_{k_0} + \gamma_{k_0+1} = |a|\gamma_{k_0}^2 + \gamma_{k_0} - 1$, and
-  $m \equiv 2 \cdot 5 + 1 \equiv 3 \bmod 4$ by Lemma~\ref{lem:li-mod8-2}. Lemma~\ref{lem:li-succ}.
-  \formalnote{Here $a \equiv 2 \bmod 8$ because $(8k+2)(8k+3) \equiv 6 \bmod 8$. The
-  discriminant $1 - 4a = (16k+5)^2$ is what makes the quadratic in $y$ split; \cite{li2021},
-  Remark~3.2, notes that the complementary family $-(8k+5)(8k+6)$ is out of reach of this
-  method ($a = -30$: no prime $\equiv 3 \bmod 4$ divides $\gamma_2 + \gamma_3$).}
+  Let $k_0 := n/\rad(n) \ge 2$. Since $|a|\,y^2 + y - 1 = \bigl((4k+3)y - 1\bigr)\bigl((4k+2)y +
+  1\bigr)$, the number $m := (4k+3)\gamma_{k_0} - 1$ divides
+  $\gamma_{k_0} + \gamma_{k_0+1} = |a|\gamma_{k_0}^2 + \gamma_{k_0} - 1$. By
+  Lemma~\ref{lem:li-mod8-2}, $\gamma_{k_0} \equiv -a - 1 = (4k+2)(4k+3) - 1 \bmod 8$, so
+  $m \equiv (4k+3)\bigl((4k+2)(4k+3) - 1\bigr) - 1 \equiv 6 \bmod 8$ for every $k$ (a check of
+  the eight residues of $k$), and $-1$ is not a square modulo $m$. Lemma~\ref{lem:li-succ}.
+  \formalnote{Li takes the other factor, $m' := (4k+2)\gamma_{k_0} + 1$ (with $4k+2 = 8k'+2$ in
+  his notation), which is $\equiv 3 \bmod 4$ because $\gamma_{k_0} \equiv 1 \bmod 4$; that residue
+  holds only for $a \equiv 2 \bmod 8$, that is, for even $k$ in the present family, whereas $m$
+  works for all $k$. The discriminant $1 - 4a = (8k+5)^2$ is what makes the quadratic in $y$
+  split; \cite{li2021}, Remark~3.2, notes that the complementary family $-(8k+5)(8k+6)$ is out of
+  reach of this method ($a = -30$: no prime $\equiv 3 \bmod 4$ divides $\gamma_2 + \gamma_3$).}
 \end{proof}
 
 \subsection*{Theorem B}

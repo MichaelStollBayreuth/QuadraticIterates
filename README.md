@@ -25,12 +25,14 @@ with no `sorry` and no axioms beyond the three of Mathlib.
 Also formalized are the extensions of the last result by H.-C. Li
 (Arch. Math. **114** (2020), 265–269, [DOI: 10.1007/s00013-019-01390-x](https://doi.org/10.1007/s00013-019-01390-x);
 Arch. Math. **117** (2021), 133–140, [DOI: 10.1007/s00013-021-01609-w](https://doi.org/10.1007/s00013-021-01609-w)):
-the embedding is an isomorphism for every `n` when `a = -(8k+2)(8k+3)` or
+the embedding is an isomorphism for every `n` when `a = -(4k+2)(4k+3)` or
 `a = -((4k+1)(4k+2)+1)`, and, for `a < 0` with `a ≡ 3 mod 4` and `-a` not a square, exactly when
-`-a - 1` is not a square.
+`-a - 1` is not a square. Li's first family is `a = -(8k+2)(8k+3)`, the case of even `k`; the odd
+case is proved here by his argument, with a residue of the rescaled sequence modulo 8 in place of
+one modulo 4.
 
-These three papers are everything that is unconditionally known: no further value of `a` has been
-settled since 2021.
+These three papers are everything that is unconditionally known: apart from that half-family, no
+further value of `a` has been settled since 2021.
 [Maximality for `x² + a`](https://michaelstollbayreuth.github.io/QuadraticIterates/literature.html)
 (source: [`website/literature.html`](website/literature.html)) surveys the literature — it maps
 the eight sign-and-residue classes of `a` against what is proved in each, links every box to the
@@ -57,7 +59,8 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml) format; it
 includes a table aligning each result of the paper with the declaration that formalizes it.
 [`comparator/`](comparator) holds a [comparator](https://github.com/leanprover/comparator)
-harness for the main result of Section 3 and for the theorems of Li, one challenge per case.
+harness for the main result of Section 3 and for the theorems of Li (the first one in its
+strengthened form), one challenge per case.
 
 ## Blueprint
 

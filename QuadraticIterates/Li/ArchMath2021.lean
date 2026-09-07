@@ -19,18 +19,24 @@ The results of H.-C. Li, Arch. Math. **117** (2021), 133-140: `Ω_n ≅ [C₂]�
 `a = -(8k+2)(8k+3)` (Theorem 3.3) or `a = -((4k+1)(4k+2)+1)` (Theorem 3.9), `k ≥ 0`. Both follow
 the pattern of the Section 3 theorem of the paper: no `|b_n|` with `n ≥ 2` is a square, by the
 single-index criteria of `QuadraticIterates.ArchMath1992.Sequences` with suitable moduli.
+Theorem 3.3 is proved in the stronger form `a = -(4k+2)(4k+3)`, Li's family being the case of even
+`k`: his argument goes through for odd `k` with the residue of `γ_{k₀}` modulo `8` in place of the
+one modulo `4`.
 
 ## Main statements
 
-* `QuadraticIterates.li2021_theorem_3_3`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when `a = -(8k+2)(8k+3)`.
+* `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when
+  `a = -(4k+2)(4k+3)`; `QuadraticIterates.li2021_theorem_3_3` (Theorem 3.3) is the case of even
+  `k`, `a = -(8k+2)(8k+3)`.
 * `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree` (Lemma 2.2): for squarefree `n > 1`,
   `|b_n|` is not a square once `-1` is not a square modulo `γ_1 + γ_2`; its three cases
   `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_pos_of_emod_eight_eq_four`,
   `…_of_neg_of_emod_eight_eq_two` and `…_of_neg_of_emod_four_eq_one`.
 * `QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq`: the common shape of both
   theorems, a case split on `Squarefree n` in front of part 2 of the Section 1 theorem.
-* `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul` (Lemma 3.1): for
-  `a = -(8k+2)(8k+3)` and `n` not squarefree, `|b_n|` is not a square.
+* `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul` (Lemma 3.1, for
+  all `k`): for `a = -(4k+2)(4k+3)` and `n` not squarefree, `|b_n|` is not a square; for
+  squarefree `n`, `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul`.
 * `QuadraticIterates.li2021_theorem_3_9`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when
   `a = -((4k+1)(4k+2)+1)`.
 * `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one`
@@ -97,57 +103,82 @@ theorem not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_one (ha : a <
     (by rw [Int.toNat_of_nonneg (by lia), abs_of_neg ha, Int.sign_eq_neg_one_of_neg ha]; ring)
     (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by lia)) hsf hn
 
-private lemma mul_add_one_emod_four_eq_three {k : ℕ} {γ : ℤ} (hγ : γ % 4 = 1) :
-    ((8 * k + 2) * γ + 1) % 4 = 3 := by
-  rw [Int.add_emod, Int.mul_emod, hγ, show (8 * (k : ℤ) + 2) % 4 = 2 by lia]
-  decide
-
 section
 
-variable {k : ℕ} (ha : a = -((8 * k + 2) * (8 * k + 3)))
+variable {k : ℕ} (ha : a = -((4 * k + 2) * (4 * k + 3)))
 include ha
 
 private lemma neg_of_eq_neg_mul : a < 0 := ha ▸ neg_lt_zero.mpr (by positivity)
 
-private lemma emod_eight_eq_two_of_eq_neg_mul : a % 8 = 2 := by
-  rw [ha, show -((8 * (k : ℤ) + 2) * (8 * k + 3)) = 2 + 8 * (-(8 * k ^ 2 + 5 * k + 1)) by ring,
+private lemma even_of_eq_neg_mul : Even a := ⟨-((2 * k + 1) * (4 * k + 3)), by rw [ha]; ring⟩
+
+private lemma neg_emod_four_eq_two_of_eq_neg_mul : -a % 4 = 2 := by
+  rw [ha, neg_neg, show (4 * (k : ℤ) + 2) * (4 * k + 3) = 2 + 4 * (4 * k ^ 2 + 5 * k + 1) by ring,
     Int.add_mul_emod_self_left]
   decide
 
-/-- Lemma 3.1 of [Li 2021]: for `a = -(8k+2)(8k+3)` and `n ≥ 1` not squarefree, `|b_n|` is not a
-square. With `k₀ = n / rad n ≥ 2`, the modulus `m = (8k+2) γ_{k₀} + 1` divides
-`γ_{k₀} + γ_{k₀+1} = -a γ_{k₀}² + γ_{k₀} - 1 = ((8k+3) γ_{k₀} - 1) m`, and `m ≡ 3 mod 4` because
-`γ_{k₀} ≡ 1 mod 4`. -/
+private lemma not_isSquare_neg_of_eq_neg_mul : ¬IsSquare (-a : ℚ) :=
+  mod_cast Int.not_isSquare_of_emod_four_eq_two (neg_emod_four_eq_two_of_eq_neg_mul ha)
+
+-- For `k₀ ≥ 2`, the modulus `(4k+3) γ_{k₀} - 1` is `≡ 6 mod 8`, since `γ_{k₀} ≡ -a - 1 mod 8`.
+private lemma mul_gammaSeq_sub_one_emod_eight_eq_six {k₀ : ℕ} (hk₀ : 2 ≤ k₀) :
+    ((4 * k + 3) * γ[a] k₀ - 1) % 8 = 6 := by
+  have hγ := gammaSeq_normPoly_zmod_eight_of_even (neg_of_eq_neg_mul ha) (even_of_eq_neg_mul ha)
+    k₀ hk₀
+  have key : (((4 * k + 3) * γ[a] k₀ - 1 : ℤ) : ZMod 8) = ((6 : ℤ) : ZMod 8) := by
+    push_cast at hγ ⊢
+    rw [hγ, ha]
+    push_cast
+    generalize (k : ZMod 8) = x
+    decide +revert
+  simpa using (ZMod.intCast_eq_intCast_iff' _ _ 8).mp key
+
+/-- Lemma 3.1 of [Li 2021], for `a = -(4k+2)(4k+3)` (Li's lemma is the case of even `k`): for
+`n ≥ 1` not squarefree, `|b_n|` is not a square. With `k₀ = n / rad n ≥ 2`, the modulus
+`m = (4k+3) γ_{k₀} - 1` divides `γ_{k₀} + γ_{k₀+1} = -a γ_{k₀}² + γ_{k₀} - 1`, the quotient being
+`(4k+2) γ_{k₀} + 1`, and `m ≡ 6 mod 8`, because `γ_{k₀} ≡ -a - 1 mod 8`. -/
 theorem not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul {n : ℕ} (hn : 1 ≤ n)
     (hsf : ¬Squarefree n) : ¬IsSquare |bSeq a n| := by
-  have ha0 := neg_of_eq_neg_mul ha
-  have ha8 := emod_eight_eq_two_of_eq_neg_mul ha
-  have ha' : ¬IsSquare (-a : ℚ) := mod_cast Int.not_isSquare_of_emod_four_eq_two (by lia)
+  have ha' := not_isSquare_neg_of_eq_neg_mul ha
   have hk₀2 := Nat.two_le_div_radical_of_not_squarefree (by lia) hsf
   have hpos := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
-  obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := (8 * k + 2) * γ[a] (n / radical n) + 1)
-    (add_nonneg (mul_nonneg (by positivity) hpos.le) zero_le_one)
-  have hm4 : m % 4 = 3 := by
-    have := mul_add_one_emod_four_eq_three (k := k)
-      (gammaSeq_normPoly_emod_four_eq_one_of_emod_eight_eq_two ha0 ha8 hk₀2)
-    lia
+  obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := (4 * k + 3) * γ[a] (n / radical n) - 1)
+    (Int.le_sub_one_of_lt (mul_pos (by positivity) hpos))
   refine not_isSquare_abs_bSeq_of_dvd_add_succ ha' (hk₀2.trans (Nat.div_le_self n _))
     (Nat.div_mul_cancel radical_dvd_self).symm (m := m) ?_
-    (ZMod.not_isSquare_neg_one_of_emod_four_eq_three hm4)
-  rw [← hm, gammaSeq_succ _ _ (by lia), eval_normPoly_of_neg ha0]
-  exact ⟨(8 * k + 3) * γ[a] (n / radical n) - 1, by
+    (ZMod.not_isSquare_neg_one_of_emod_eight_eq_six
+      (by have := mul_gammaSeq_sub_one_emod_eight_eq_six ha hk₀2; lia))
+  rw [← hm, gammaSeq_succ _ _ (by lia), eval_normPoly_of_neg (neg_of_eq_neg_mul ha)]
+  exact ⟨(4 * k + 2) * γ[a] (n / radical n) + 1, by
     linear_combination (-(γ[a] (n / radical n)) ^ 2) * ha⟩
 
-/-- Theorem 3.3 of [Li 2021]: for `a = -(8k+2)(8k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem li2021_theorem_3_3 : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
-  have ha8 := emod_eight_eq_two_of_eq_neg_mul ha
-  nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq
-    (mod_cast Int.not_isSquare_of_emod_four_eq_two (by lia))
-    (fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_eight_eq_two
-      (neg_of_eq_neg_mul ha) ha8 hsf hn)
+/-- Lemma 2.2 of [Li 2021] for `a = -(4k+2)(4k+3)` (its case (2) is the case of even `k`): for
+squarefree `n > 1`, `|b_n|` is not a square, since `-1` is not a square modulo
+`γ_1 + γ_2 = -a = (4k+3)(4k+2)`, a multiple of `4k+3 ≡ 3 mod 4`. -/
+theorem not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul {n : ℕ} (hsf : Squarefree n)
+    (hn : 1 < n) : ¬IsSquare |bSeq a n| :=
+  have ha0 := neg_of_eq_neg_mul ha
+  not_isSquare_abs_bSeq_of_squarefree (not_isSquare_neg_of_eq_neg_mul ha)
+    (m := (4 * k + 3) * (4 * k + 2))
+    (by rw [abs_of_neg ha0, Int.sign_eq_neg_one_of_neg ha0, ha]; push_cast; ring)
+    (ZMod.not_isSquare_neg_one_of_dvd (dvd_mul_right _ _) (by lia)) hsf hn
+
+/-- For `a = -(4k+2)(4k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. Theorem 3.3 of [Li 2021]
+(`QuadraticIterates.li2021_theorem_3_3`) is the case of even `k`; the proof is Li's, with the
+residue `γ_{k₀} ≡ -a - 1 mod 8` of `QuadraticIterates.gammaSeq_normPoly_zmod_eight_of_even`, valid
+for all even `a`, in place of `γ_{k₀} ≡ 1 mod 4`, which needs `a ≡ 2 mod 8`. -/
+theorem nonempty_mulEquiv_of_eq_neg_mul : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
+  nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq (not_isSquare_neg_of_eq_neg_mul ha)
+    (fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul ha hsf hn)
     fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul ha hn hsf
 
 end
+
+/-- Theorem 3.3 of [Li 2021]: for `a = -(8k+2)(8k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`; the case of
+even `k` of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`. -/
+theorem li2021_theorem_3_3 {k : ℕ} (ha : a = -((8 * k + 2) * (8 * k + 3))) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
+  nonempty_mulEquiv_of_eq_neg_mul (k := 2 * k) (by rw [ha]; push_cast; ring)
 
 /-- Lemma 3.4 of [Li 2021]: for `a < 0` with `a ≡ 1 mod 4` and `n ≥ 1` not squarefree with
 `4 ∤ n`, `|b_n|` is not a square: `k = n / rad n ≥ 3` is odd, `γ_k + γ_{k+2} ≡ 6 mod 8`, and the
