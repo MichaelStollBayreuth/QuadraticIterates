@@ -31,6 +31,8 @@ public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
+public import QuadraticIterates.Mathlib.RingTheory.Localization.Away.Basic
+public import QuadraticIterates.Mathlib.RingTheory.Localization.Basic
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 public import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 public import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
