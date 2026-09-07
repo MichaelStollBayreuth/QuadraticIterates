@@ -24,6 +24,10 @@ lemma ZMod.intCast_eq_neg_intCast_of_dvd_add {a b : ℤ} {m : ℕ} (h : (m : ℤ
   rw [← Int.cast_neg, intCast_eq_intCast_iff_dvd_sub, ← neg_add']
   exact h.neg_right
 
+lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd {a b : ℤ} {m : ℕ} (h : IsCoprime a b)
+    (hm : (m : ℤ) ∣ b) : IsUnit (a : ZMod m) :=
+  (coe_int_isUnit_iff_isCoprime a m).mpr (h.of_isCoprime_of_dvd_right hm).symm
+
 lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd_add {a b : ℤ} {m : ℕ}
     (hcop : IsCoprime (m : ℤ) a) (h : (m : ℤ) ∣ a + b) : IsUnit ((b : ZMod m)) := by
   have hu := (coe_int_isUnit_iff_isCoprime a m).mpr hcop

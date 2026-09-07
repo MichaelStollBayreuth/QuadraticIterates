@@ -81,6 +81,8 @@ lemma wSeq_succ {n : ℕ} (hn : 1 ≤ n) :
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
   rfl
 
+@[simp] lemma wSeq_two : wSeq r s ε 2 = r + ε * s := (wSeq_succ r s ε le_rfl).trans (by simp)
+
 variable {r s ε}
 
 /-- `2^n - 1 = 2 (2^(n-1) - 1) + 1` for `n ≥ 1`: the exponents of `s` in

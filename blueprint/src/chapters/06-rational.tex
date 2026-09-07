@@ -393,20 +393,30 @@ its new lemmas are of Mathlib generality.
 \begin{lemma}[primes of $s$]
   \label{lem:rat-ps}
   \uses{def:wseq, def:betaint}
+  \lean{QuadraticIterates.intCast_wSeq_zmod_of_dvd,
+    QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_of_not_isSquare}
+  \leanok
   For an odd prime $p \mid s$: $w_n \equiv r^{2^{n-1}-1} \pmod p$ and $\beta_n \equiv r^{E(n)}
   \pmod p$. If $\bigl(\tfrac{r}{p}\bigr) = -1$, then $\beta_n$ is a non-square modulo $p$ for every
   squarefree $n \ge 2$ (with $|r|$ in place of $r$ and $w^S$ in place of $w$ when $a \le -2$).
 \end{lemma}
 \begin{proof}
+  \uses{lem:betaint, lem:moebiussign, lem:zmodsquare}
+  \leanok
   $w_{n+1} \equiv r w_n^2 \pmod p$; $E(n)$ is odd for squarefree $n \ge 2$.
-  \formalnote{\lname{intCast\_wSeq\_zmod\_of\_dvd}: $w_n \equiv r^{2^{n-1}-1}$ in \lname{ZMod p}
-  for $p \mid s$, then \lname{not\_isSquare\_betaInt\_of\_dvd\_of\_not\_isSquare}; the Legendre
-  condition is ``$r$ is not a square in \lname{ZMod p}''.}
+  \formalnote{\lname{intCast\_wSeq\_zmod\_of\_dvd}: $w_n \equiv r^{2^{n-1}-1}$ modulo any $M \mid s$,
+  then \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_dvd\_of\_not\_isSquare}, for any modulus
+  $M \mid s$ with $r$ not a square in \lname{ZMod M} (primality is not needed): $\beta_n = P/Q$
+  with $P \equiv r^{F^+}$, $Q \equiv r^{F^-}$, and $F^+ + F^-$ is the odd twist exponent, by
+  \lname{ZMod.isSquare\_mul\_of\_isSquare\_div} and
+  \lname{odd\_sum\_two\_pow\_sub\_one\_of\_squarefree}.}
 \end{proof}
 
 \begin{lemma}[reflection at $n_0 = 1$]
   \label{lem:rat-refl1}
   \uses{lem:rat-reflection}
+  \lean{QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd}
+  \leanok
   Positive world: $\gamma_1 + \gamma_2$ has numerator $r + 2s$; if an odd prime $p \mid r + 2s$ has
   $\bigl(\tfrac{-s}{p}\bigr) = -1$, or $4 \mid r + 2s$ and $s \equiv 1 \pmod 4$, then $\beta_n$ is
   not a square for every squarefree $n \ge 2$. For $a \le -2$ the numerator is $R$, with the same
@@ -415,6 +425,7 @@ its new lemmas are of Mathlib generality.
 \end{lemma}
 \begin{proof}
   \uses{lem:rat-reflection}
+  \leanok
   Lemma~\ref{lem:rat-reflection} with $n_0 = 1$: $\beta_n \equiv -s u^2$, and $-s$ is a non-square
   modulo $p$ iff $\bigl(\tfrac{-s}{p}\bigr) = -1$, modulo $4$ iff $s \equiv 1 \pmod 4$.
 \end{proof}
@@ -422,19 +433,33 @@ its new lemmas are of Mathlib generality.
 \begin{lemma}[the modulus $8$ for even $s$]
   \label{lem:rat-mod8}
   \uses{def:wseq, def:betaint}
+  \lean{QuadraticIterates.intCast_wSeq_zmod_eight_of_even,
+    QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_odd_of_even,
+    QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_even_of_even,
+    QuadraticIterates.not_isSquare_intCast_zmod_eight_of_odd_of_emod_ne_one,
+    Int.isSquare_mul_of_isSquare_div}
+  \leanok
   Let $s$ be even and $r \equiv 3 \pmod 4$. Then $w_n \equiv r \pmod 8$ for $n \ge 3$, $w_2 = r + s$,
   and for squarefree $n \ge 2$, $\beta_n \equiv r^{\pm 1}$ ($n$ odd) resp.\ $(r+s)^{\pm 1}$ ($n$ even)
   modulo $8$. So $\beta_n$ is a non-square for odd $n \ge 3$, and for even $n$ if $r + s \not\equiv
   1 \pmod 8$ (with $|r|$, $|r| - s$ when $a \le -2$).
 \end{lemma}
 \begin{proof}
-  $s^{2^n-1} \equiv 0 \pmod 8$ for $n \ge 2$ and $w_n$ is odd. The exponent of $r$ in $\beta_n$ is
-  $\sum_{d \mid n, d \ge 3} \mu(n/d) = -\mu(n) - \mu(n/2)[2 \mid n]$.
+  \uses{lem:betaint, lem:moebiussign}
+  \leanok
+  $s^{2^n-1} \equiv 0 \pmod 8$ for $n \ge 2$ and $w_n$ is odd. Instead of the exponent of $r$ in
+  $\beta_n$ one can look at the product $PQ$ of the numerator and the denominator of $\beta_n$,
+  which is a square if $\beta_n$ is, and is $\prod_{d \mid n} w_d \equiv r^{\tau(n) - 1}$ (odd $n$)
+  resp.\ $(r + \varepsilon s)\, r^{\tau(n) - 2}$ (even $n$) modulo $8$, with $\tau(n)$ even.
   \formalnote{\lname{intCast\_wSeq\_zmod\_eight\_of\_even}: $w_n \equiv r$ in \lname{ZMod 8} for
-  $n \ge 3$ and even $s$; the Möbius exponent computation is
-  \lname{ArithmeticFunction.sum\_divisors\_filter\_dvd\_moebius\_div} of Chapter~4 in the form
-  ``sum over $d \ge 3$''. An odd integer $\not\equiv 1 \pmod 8$ is not a square:
-  \lname{Int.not\_isSquare\_of\_emod\_eight\_ne\_one}, for \lname{Squares.lean}.}
+  $n \ge 3$ and even $s$; \lname{Int.isSquare\_mul\_of\_isSquare\_div} ($P/Q$ a rational square
+  makes the integer $PQ$ a square) and \lname{card\_divisors\_eq\_two\_mul\_of\_squarefree}; the
+  two cases are \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_odd\_of\_even} ($n$ odd,
+  $r \equiv 3 \bmod 4$) and \lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_even\_of\_even}
+  ($n$ even, $r + \varepsilon s \not\equiv 1 \bmod 8$; the condition $r \equiv 3 \bmod 4$ is not
+  needed for even $n$), with
+  \lname{not\_isSquare\_intCast\_zmod\_eight\_of\_odd\_of\_emod\_ne\_one} (an odd integer
+  $\not\equiv 1 \bmod 8$ is not a square modulo $8$).}
 \end{proof}
 
 \section{The theorems}

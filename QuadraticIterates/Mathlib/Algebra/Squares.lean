@@ -30,6 +30,15 @@ theorem IsUnit.isSquare_mul_sq_iff {α : Type*} [CommMonoid α] {y : α} (hy : I
   ⟨fun h ↦ by simpa [mul_assoc, ← mul_pow, hy.mul_val_inv] using h.mul (IsSquare.sq ↑hy.unit⁻¹),
     fun h ↦ h.mul (IsSquare.sq y)⟩
 
+/-- If `P/Q` is a rational square, then the integer `P Q = (P/Q) Q²` is a square. -/
+theorem Int.isSquare_mul_of_isSquare_div {P Q : ℤ} (hsq : IsSquare ((P : ℚ) / Q)) :
+    IsSquare (P * Q) := by
+  rcases eq_or_ne Q 0 with rfl | hQ
+  · simp
+  · rw [← Rat.isSquare_intCast_iff, show ((P * Q : ℤ) : ℚ) = (P : ℚ) / Q * Q ^ 2 by
+      push_cast; rw [sq, ← mul_assoc, div_mul_cancel₀ _ (Int.cast_ne_zero.mpr hQ)]]
+    exact hsq.mul (IsSquare.sq _)
+
 /-- If `P y ≡ x Q mod m` with `Q` a unit mod `m` and `P/Q` a rational square, then `x y` is a
 square mod `m`: `x y = P Q (y / Q)²`. -/
 theorem ZMod.isSquare_mul_of_isSquare_div {P Q : ℤ} {m : ℕ} {x y : ZMod m}
@@ -39,12 +48,8 @@ theorem ZMod.isSquare_mul_of_isSquare_div {P Q : ℤ} {m : ℕ} {x y : ZMod m}
   · rw [Int.cast_zero, isUnit_zero_iff] at hQunit
     have := subsingleton_of_zero_eq_one hQunit
     exact ⟨0, Subsingleton.elim _ _⟩
-  have hPQsq : IsSquare ((P * Q : ℤ) : ZMod m) := by
-    have hQ : (Q : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hQ0
-    refine (Rat.isSquare_intCast_iff.mp ?_).map (Int.castRingHom (ZMod m))
-    rw [show ((P * Q : ℤ) : ℚ) = (P : ℚ) / Q * Q ^ 2 by
-      push_cast; rw [sq, ← mul_assoc, div_mul_cancel₀ _ hQ]]
-    exact hsq.mul (IsSquare.sq _)
+  have hPQsq : IsSquare ((P * Q : ℤ) : ZMod m) :=
+    (Int.isSquare_mul_of_isSquare_div hsq).map (Int.castRingHom (ZMod m))
   obtain ⟨v, hv⟩ := hQunit
   have key : x * y = ((P * Q : ℤ) : ZMod m) * ((y * ↑v⁻¹) * (y * ↑v⁻¹)) := by
     push_cast

@@ -168,34 +168,40 @@ private lemma sum_two_pow_sub_one_mod_two (S : Finset ℕ) (m : ℕ → ℕ) :
     exact Nat.odd_iff.mp
       (Nat.Even.sub_odd Nat.one_le_two_pow (Nat.even_pow.mpr ⟨even_two, h.ne'⟩) odd_one)
 
-/-- A squarefree `n' > 1` has `2 #{t ∣ n' : μ(n'/t) = 1}` divisors. -/
-private lemma card_divisors_eq_two_mul {n' : ℕ} (hsf : Squarefree n') (hn'1 : 1 < n') :
-    n'.divisors.card = 2 * (n'.divisors.filter fun t ↦ μ (n' / t) = 1).card := by
+/-- A squarefree `n > 1` has `2 #{t ∣ n : μ(n/t) = 1}` divisors: the two halves of the sign
+partition have the same size. -/
+lemma card_divisors_eq_two_mul_of_squarefree {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n) :
+    n.divisors.card = 2 * (n.divisors.filter fun t ↦ μ (n / t) = 1).card := by
   have hc := hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one subset_rfl
-    (sum_divisors_moebius_div_eq_zero hn'1)
+    (sum_divisors_moebius_div_eq_zero hn1)
   nth_rw 1 [← hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one]
   rw [Finset.card_union_of_disjoint (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia), ← hc,
     two_mul]
 
-private lemma even_sum_twist {n' : ℕ} (hsf : Squarefree n') (hn'1 : 1 < n') {k : ℕ}
-    (hk : 2 ≤ k) : Even (∑ t ∈ n'.divisors, (2 ^ (k * t - 1) - 1)) := by
+/-- The twist exponent `F = ∑_{t ∣ n} (2^(kt-1) - 1)` is even for `k ≥ 2` (`n` squarefree,
+`n > 1`): all terms are odd and there are evenly many. -/
+lemma even_sum_two_pow_mul_sub_one_of_squarefree {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n)
+    {k : ℕ} (hk : 2 ≤ k) : Even (∑ t ∈ n.divisors, (2 ^ (k * t - 1) - 1)) := by
   rw [Nat.even_iff, sum_two_pow_sub_one_mod_two, Finset.filter_true_of_mem fun t ht ↦ ?_,
-    card_divisors_eq_two_mul hsf hn'1, Nat.mul_mod_right]
+    card_divisors_eq_two_mul_of_squarefree hsf hn1, Nat.mul_mod_right]
   have := hk.trans (Nat.le_mul_of_pos_right k (Nat.pos_of_mem_divisors ht))
   lia
 
-private lemma odd_sum_twist {n' : ℕ} (hsf : Squarefree n') (hn'1 : 1 < n') :
-    Odd (∑ t ∈ n'.divisors, (2 ^ (1 * t - 1) - 1)) := by
-  have hf : (n'.divisors.filter fun t ↦ 1 ≤ 1 * t - 1) = n'.divisors.erase 1 := by
+/-- The twist exponent `F = ∑_{t ∣ n} (2^(t-1) - 1)` is odd for squarefree `n > 1`: all terms
+but the one at `t = 1` are odd, and there are evenly many divisors. -/
+lemma odd_sum_two_pow_sub_one_of_squarefree {n : ℕ} (hsf : Squarefree n) (hn1 : 1 < n) :
+    Odd (∑ t ∈ n.divisors, (2 ^ (t - 1) - 1)) := by
+  have hf : (n.divisors.filter fun t ↦ 1 ≤ t - 1) = n.divisors.erase 1 := by
     ext t
-    simp only [Finset.mem_filter, Finset.mem_erase, one_mul]
+    simp only [Finset.mem_filter, Finset.mem_erase]
     exact ⟨fun ⟨h1, h2⟩ ↦ ⟨by lia, h1⟩,
       fun ⟨h1, h2⟩ ↦ ⟨h2, by have := Nat.pos_of_mem_divisors h2; lia⟩⟩
-  have hA : 1 ≤ (n'.divisors.filter fun t ↦ μ (n' / t) = 1).card :=
+  have hA : 1 ≤ (n.divisors.filter fun t ↦ μ (n / t) = 1).card :=
     Finset.card_pos.mpr
-      ⟨n', by simp [Nat.mem_divisors_self n' (by lia), Nat.div_self (by lia : 0 < n')]⟩
+      ⟨n, by simp [Nat.mem_divisors_self n (by lia), Nat.div_self (by lia : 0 < n)]⟩
   rw [Nat.odd_iff, sum_two_pow_sub_one_mod_two, hf,
-    Finset.card_erase_of_mem (Nat.one_mem_divisors.mpr (by lia)), card_divisors_eq_two_mul hsf hn'1]
+    Finset.card_erase_of_mem (Nat.one_mem_divisors.mpr (by lia)),
+    card_divisors_eq_two_mul_of_squarefree hsf hn1]
   lia
 
 /-- The reflection lemma for `n` not squarefree (`k = n / rad n ≥ 2`): the twist `s^F` is a
@@ -206,7 +212,7 @@ theorem not_isSquare_betaInt_of_dvd_add_succ_of_two_le (hs : s ≠ 0) (hrs : IsC
     (hdvd : (M : ℤ) ∣ reflNum r s ε k)
     (hnsq : ¬IsSquare (-1 : ZMod M)) : ¬IsSquare (betaInt r s ε n) :=
   not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn hn' hk hu hdvd fun h ↦ hnsq (by
-    obtain ⟨j, hj⟩ := even_sum_twist (hn' ▸ squarefree_radical)
+    obtain ⟨j, hj⟩ := even_sum_two_pow_mul_sub_one_of_squarefree (hn' ▸ squarefree_radical)
       (hn' ▸ Nat.one_lt_radical_iff.mpr (by lia)) hk2
     rwa [hj, show -(s : ZMod M) ^ (j + j) = -1 * ((s : ZMod M) ^ j) ^ 2 by ring,
       ((isUnit_intCast_of_mul_eq_one hu).pow j).isSquare_mul_sq_iff] at h)
@@ -221,7 +227,8 @@ theorem not_isSquare_betaInt_of_squarefree_of_dvd (hs : s ≠ 0) (hrs : IsCoprim
   not_isSquare_betaInt_of_dvd_add_succ hs hrs hε hw hn
     (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm hu
     (reflNum_one ▸ hdvd) fun h ↦ hnsq (by
-      obtain ⟨j, hj⟩ := odd_sum_twist hsf (by lia)
+      obtain ⟨j, hj⟩ := odd_sum_two_pow_sub_one_of_squarefree hsf (by lia)
+      simp only [one_mul] at h
       rwa [hj, show -(s : ZMod M) ^ (2 * j + 1) = -(s : ZMod M) * ((s : ZMod M) ^ j) ^ 2 by ring,
         ((isUnit_intCast_of_mul_eq_one hu).pow j).isSquare_mul_sq_iff] at h)
 
