@@ -15,7 +15,8 @@ import Mathlib.RingTheory.Int.Basic
 /-!
 # Lemmas about squares
 
-Criteria for (non-)squareness in `ℚ`, `ℤ` and `ZMod m`.
+Criteria for (non-)squareness in `ℚ`, `ℤ` and `ZMod m`; a rational square `P/Q` with `P y ≡ x Q`
+modulo `m` makes `x y` a square modulo `m` (`ZMod.isSquare_mul_of_isSquare_div`).
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -23,26 +24,41 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-/-- If `P ≡ -Q mod m` with `Q` a unit mod `m` and `P/Q` a rational square, then `-1` is a
-square mod `m`. -/
-theorem ZMod.isSquare_neg_one_of_isSquare_div {P Q : ℤ} {m : ℕ}
-    (hPnegQ : (P : ZMod m) = -(Q : ZMod m)) (hQunit : IsUnit (Q : ZMod m))
-    (hsq : IsSquare ((P : ℚ) / (Q : ℚ))) : IsSquare (-1 : ZMod m) := by
+/-- Multiplying by the square of a unit does not change squareness. -/
+theorem IsUnit.isSquare_mul_sq_iff {α : Type*} [CommMonoid α] {y : α} (hy : IsUnit y) (x : α) :
+    IsSquare (x * y ^ 2) ↔ IsSquare x :=
+  ⟨fun h ↦ by simpa [mul_assoc, ← mul_pow, hy.mul_val_inv] using h.mul (IsSquare.sq ↑hy.unit⁻¹),
+    fun h ↦ h.mul (IsSquare.sq y)⟩
+
+/-- If `P y ≡ x Q mod m` with `Q` a unit mod `m` and `P/Q` a rational square, then `x y` is a
+square mod `m`: `x y = P Q (y / Q)²`. -/
+theorem ZMod.isSquare_mul_of_isSquare_div {P Q : ℤ} {m : ℕ} {x y : ZMod m}
+    (hPQ : (P : ZMod m) * y = x * Q) (hQunit : IsUnit (Q : ZMod m))
+    (hsq : IsSquare ((P : ℚ) / (Q : ℚ))) : IsSquare (x * y) := by
   rcases eq_or_ne Q 0 with rfl | hQ0
   · rw [Int.cast_zero, isUnit_zero_iff] at hQunit
-    exact ⟨0, by rw [← hQunit]; ring⟩
-  have hPQ : IsSquare ((P * Q : ℤ) : ZMod m) := by
+    have := subsingleton_of_zero_eq_one hQunit
+    exact ⟨0, Subsingleton.elim _ _⟩
+  have hPQsq : IsSquare ((P * Q : ℤ) : ZMod m) := by
     have hQ : (Q : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hQ0
     refine (Rat.isSquare_intCast_iff.mp ?_).map (Int.castRingHom (ZMod m))
     rw [show ((P * Q : ℤ) : ℚ) = (P : ℚ) / Q * Q ^ 2 by
       push_cast; rw [sq, ← mul_assoc, div_mul_cancel₀ _ hQ]]
     exact hsq.mul (IsSquare.sq _)
-  obtain ⟨u, hu⟩ := hQunit
-  have key : (-1 : ZMod m) = ((P * Q : ℤ) : ZMod m) * ((u⁻¹ : (ZMod m)ˣ) * (u⁻¹ : (ZMod m)ˣ)) := by
+  obtain ⟨v, hv⟩ := hQunit
+  have key : x * y = ((P * Q : ℤ) : ZMod m) * ((y * ↑v⁻¹) * (y * ↑v⁻¹)) := by
     push_cast
-    rw [hPnegQ, ← hu, mul_mul_mul_comm, neg_mul, Units.mul_inv, mul_one]
-  rw [key]
-  exact hPQ.mul (IsSquare.mul_self _)
+    rw [← hv, ← Units.mul_inv_cancel_right x v, hv, ← hPQ, ← hv]
+    linear_combination (-(P : ZMod m) * y * y * ↑v⁻¹) * Units.mul_inv v
+  exact key ▸ hPQsq.mul (IsSquare.mul_self _)
+
+/-- If `P ≡ -Q mod m` with `Q` a unit mod `m` and `P/Q` a rational square, then `-1` is a
+square mod `m`. -/
+theorem ZMod.isSquare_neg_one_of_isSquare_div {P Q : ℤ} {m : ℕ}
+    (hPnegQ : (P : ZMod m) = -(Q : ZMod m)) (hQunit : IsUnit (Q : ZMod m))
+    (hsq : IsSquare ((P : ℚ) / (Q : ℚ))) : IsSquare (-1 : ZMod m) := by
+  simpa using isSquare_mul_of_isSquare_div (y := 1) (by rw [mul_one, hPnegQ, neg_one_mul])
+    hQunit hsq
 
 /-- A sum of two squares is never congruent to `3` modulo `4`, a square being `0` or `1`. -/
 theorem Nat.not_sq_add_sq_modEq_three (x y : ℕ) : ¬x ^ 2 + y ^ 2 ≡ 3 [MOD 4] := by
