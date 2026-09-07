@@ -1,0 +1,464 @@
+\chapter{\texorpdfstring{Rational parameters $a = r/s$}{Rational parameters a = r/s}}
+\label{chap:rational}
+
+\emph{This chapter is a plan, not a record.} Nothing in it is formalized yet. It states the
+rational version of the Section~3 theorem obtained in the working notes
+(\texttt{tex/stoll-method-extensions.tex}: Theorems R${}^+$ and R${}^-$ there), reduces it to
+the material of Chapters~1--5 plus the new lemmas listed here, and fixes the order of work.
+Every node below is uncoloured; the arrows into it are the point. Proposed declaration names
+are given in \lname{typewriter}; they follow the naming grammar of the project.
+
+Throughout, $a = r/s \in \QQ$ with $r, s \in \ZZ$ coprime, $s \ge 1$, $r \ne 0$, and $-rs$ not a
+square (else $f = X^2 + a$ is reducible). The iterates $f_n$, the fields $K_n$ and the groups
+$\Om_n$ are defined as in Chapter~0 with $a \in \QQ$.
+
+\section{The Galois side for a rational parameter}
+
+The formalized Section~1 (Chapter~1) is parametrized by an integer $a$ and uses the standing
+hypothesis ``$-a$ is not a square'' in exactly three ways: to know that every $f_n$ is
+irreducible (Corollary~\ref{cor:1.3}, a size argument that is false for rational $a$: for
+$a = 1/3$, $c_2 = 4/9$ is a square while $f_2$ is irreducible), to know $c_{n+1} \ne 0$, and
+through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two matter for Lemmas
+\ref{lem:1.4}--\ref{lem:1.6} and the equivalence (a)$\iff$(b) of Theorem~\ref{thm:section1}.
+
+\begin{theorem}[Section 1 for rational $a$]
+  \label{thm:rat-section1}
+  \uses{def:galois, def:wreath, def:twoindep}
+  Let $a \in \QQ^\times$ and suppose that $f_k$ is irreducible over $\QQ$ for all $k \le n$.
+  Then $\Om_n \cong \Ct{n}$ if and only if $c_1, \dots, c_n$ are $2$-independent in
+  $\QQ^\times/(\QQ^\times)^2$. In particular (Lemma~\ref{lem:1.2}), if none of $c_1, \dots, c_n$ is
+  a square, then $\Om_n \cong \Ct{n}$ iff $c_1, \dots, c_n$ are $2$-independent.
+\end{theorem}
+\begin{proof}
+  \uses{lem:1.4, lem:1.5, lem:1.6, lem:1.2}
+  The induction of Theorem~\ref{thm:section1}, (a)$\iff$(b), verbatim: Lemma~\ref{lem:1.4}
+  reduces level $n+1$ to level $n$ and the degree $[K_{n+1} : K_n] = 2^{2^n}$; Lemma~\ref{lem:1.6}
+  turns the degree into ``$c_{n+1}$ is not a square in $K_n$'' (its proof uses only that $f_n$ is
+  irreducible, hence separable with $2^n$ roots, and $c_{n+1} = f_n(a) \ne 0$, which follows from
+  the irreducibility of $f_{n+1}$: otherwise $X \mid f_{n+1}$); Lemma~\ref{lem:1.5} turns that
+  into $2$-independence. If no $c_k$ is a square, all $f_k$ are irreducible by Lemma~\ref{lem:1.2}.
+  \formalnote{The Galois side (\lname{Iterates.lean}, \lname{Irreducibility.lean},
+  \lname{DegreeCriterion.lean}, \lname{Main.lean} up to \lname{section1\_b\_iff\_c}) is to be
+  parametrized by $a \in \QQ$: \lname{splittingField}, \lname{GaloisGroup}, \lname{rootShift}
+  take a rational $a$; \lname{cSeq} and \lname{bSeq} become polymorphic in a commutative
+  (semi)ring, $c$ being the $\gamma$-sequence of $X^2 + a$ with $\varepsilon = -1$ over that ring,
+  with the cast lemma \lname{intCast\_cSeq} (the integer $c_n$ cast to $\QQ$ is the rational
+  $c_n$). The hypothesis \lname{ha} ($-a$ is not a square in $\QQ$) of the seven declarations of
+  \lname{DegreeCriterion.lean} and of \lname{section1\_a\_iff\_b} becomes \lname{hirr} ($f_k$ is
+  irreducible for all $k \le n$, or for all $k$); \lname{cSeq\_ne\_zero} at the level of
+  \lname{rootShift\_ne\_zero} becomes \lname{cSeq\_succ\_ne\_zero\_of\_irreducible}. Use sites
+  fall into three categories: cast plumbing (\lname{Int.cast} $\to$ \lname{algebraMap},
+  \lname{intCast\_mem} $\to$ \lname{algebraMap\_mem}, \lname{map\_intCast} $\to$
+  \lname{AlgEquiv.commutes}; about twelve sites, mechanical), the hypothesis swap (nine
+  declarations), and Möbius inversion in \lname{section1\_b\_iff\_c}, which only needs
+  $c_m = \prod_{d \mid m} b_d$ and $b_m = \prod c_d^{\mu(m/d)}$ in $\QQ$ (\lname{moebiusFactorK}),
+  not integrality. The integer statements \lname{section1\_a\_iff\_b}, \lname{section1\_tfae},
+  \lname{section1\_of\_not\_isSquare\_abs\_bSeq} keep their names and become corollaries via
+  Corollary~\ref{cor:1.3}; the rational versions are \lname{section1\_a\_iff\_b\_of\_irreducible},
+  \lname{section1\_tfae\_of\_irreducible}. The growth argument of \lname{Irreducibility.lean}
+  stays integral. \emph{Comparator:} \lname{Challenge.lean} reproduces \lname{GaloisGroup} with an
+  integer argument; with a rational argument its copy and the challenge statements change by one
+  cast; the statements stay equivalent and become simpler, but this is a change of the challenge
+  file and needs the author's approval.}
+\end{proof}
+
+\section{The rescaled sequence with denominators}
+
+\begin{definition}[the $w$-sequence]
+  \label{def:wseq}
+  \uses{def:cseq}
+  For coprime $r, s \in \ZZ$, $s \ge 1$, let $w_1 = 1$ and $w_{n+1} = r w_n^2 + s^{2^n - 1}$ (junk
+  value $w_0 = 0$). With $\gamma_n = f^n(0)/a$, i.e.\ $\gamma_1 = 1$, $\gamma_{n+1} = a\gamma_n^2 + 1$,
+  one has $\gamma_n = w_n / s^{2^{n-1} - 1}$ and $c_n = a \gamma_n = r w_n / s^{2^{n-1}}$ for
+  $n \ge 1$.
+  \formalnote{\lname{wSeq}, a function of $r$, $s$ and $n$ with values in $\ZZ$, by recursion
+  from $w_0 = 0$, so that $w_{n+1} = r w_n^2 + s^{2^n - 1}$ holds for all $n$
+  (\lname{wSeq\_succ}, by \lname{rfl}); the $\gamma$-sequence is \lname{gammaSeq} of $aX^2 + 1$
+  with $\varepsilon = 1$, and $c_n = a\gamma_n$ for $n \ge 1$ over $\QQ$
+  (\lname{cSeq\_eq\_mul\_gammaSeq}). The identity $w_n = s^{2^{n-1}-1}\gamma_n$ is proved once,
+  for every commutative ring $S$ with a ring homomorphism $\varphi : \ZZ \to S$ and an element
+  $u$ with $\varphi(s)\,u = 1$ (\lname{map\_wSeq\_eq\_mul\_gammaSeq}: $\varphi(w_n) =
+  \varphi(s)^{2^{n-1}-1}\gamma_n$ for the $\gamma$-sequence of $\varphi(r)u\,X^2 + 1$ over $S$,
+  an induction of a dozen lines), and it is used three times: over $\ZZ[1/s]$
+  (Lemma~\ref{lem:gamma-away}), over $\QQ$ (Lemma~\ref{lem:rat-sqclass}) and over $\ZZ/M\ZZ$
+  (Lemma~\ref{lem:w-gamma-zmod}). Because of the varying term $s^{2^n-1}$, $w$ is not itself a
+  $\gamma$-sequence over $\ZZ$; it is one over $\ZZ[1/s]$ up to units, which is how the general
+  theory of Chapter~2 enters.}
+\end{definition}
+
+\begin{lemma}[integrality and coprimality]
+  \label{lem:w-coprime}
+  \uses{def:wseq}
+  $w_n \in \ZZ$ and $\gcd(w_n, rs) = 1$ for all $n \ge 1$.
+\end{lemma}
+\begin{proof}
+  $w_{n+1} \equiv r w_n^2 \pmod s$ and $w_{n+1} \equiv s^{2^n - 1} \pmod r$; induction from
+  $w_1 = 1$ and $\gcd(r, s) = 1$.
+  \formalnote{\lname{isCoprime\_wSeq\_left} ($w_n$ coprime to $r$) and
+  \lname{isCoprime\_wSeq\_right} ($w_n$ coprime to $s$) for $n \ge 1$, by
+  \lname{Nat.le\_induction} and \lname{IsCoprime.mul\_add\_left\_left}-style lemmas.}
+\end{proof}
+
+\begin{lemma}[{$w$ is a $\gamma$-sequence over $\ZZ[1/s]$, up to units}]
+  \label{lem:gamma-away}
+  \uses{def:wseq, def:gammaseq, lem:2.1, thm:valshape, lem:moebiusfactor}
+  Let $R = \ZZ[1/s]$, a unique factorization domain whose primes are the primes $p \nmid s$, and
+  let $a = r/s \in R$. The $\gamma$-sequence of $aX^2 + 1$ over $R$ satisfies
+  $w_n = s^{2^{n-1}-1}\gamma_n$ in $R$, with $s$ a unit of $R$. Hence $(w_n)$, viewed in $R$, is
+  a strong divisibility sequence (Lemma~\ref{lem:2.1}) with the constant-valuation shape
+  (Theorem~\ref{thm:valshape}) at every prime $p \nmid s$: $p \mid w_n$ iff $d_0(p) \mid n$, where
+  $d_0(p)$ is the least index with $p \mid w_{d_0}$, and $v_p(w_{kd_0}) = v_p(w_{d_0})$ for all
+  $k \ge 1$. Consequently the Möbius factors $\prod_{d \mid n} w_d^{\mu(n/d)}$ lie in $R$ and are
+  pairwise relatively prime in $R$ (Lemma~\ref{lem:moebiusfactor}, Theorem~\ref{thm:valshape}).
+\end{lemma}
+\begin{proof}
+  \uses{lem:2.1, thm:valshape, lem:moebiusfactor}
+  The identity is the case $S = R$ of the identity in Definition~\ref{def:wseq}. Multiplying a
+  sequence termwise by units changes neither $\gcd$'s up to association nor valuations, so
+  Lemma~\ref{lem:2.1} and Theorem~\ref{thm:valshape} for the $\gamma$-sequence transfer to
+  $(w_n)$, and Lemma~\ref{lem:moebiusfactor} and Theorem~\ref{thm:valshape} give the Möbius
+  factors.
+  \formalnote{Since Mathlib v4.34.0-rc2 a localization of a unique factorization monoid is one
+  (\lname{UniqueFactorizationMonoid (Localization S)}); \lname{Localization.Away s} is a domain
+  since $s \ne 0$ (\lname{Localization.Away.isDomain}, to be registered as an instance for
+  \lname{[NeZero s]}). The API of Chapter~2 (\lname{gammaSeq\_associated\_gcd},
+  \lname{factorization\_gammaSeq\_shape}) and \lname{moebiusFactorR\_isRelPrime} need a
+  \lname{NormalizedGCDMonoid} instance, a \lname{DecidableEq} instance and normalized primes;
+  Mathlib has neither instance for the localization (its \lname{DecidableEq} instance needs
+  cancellation on the base monoid, which fails for the ring $\ZZ$). Both are supplied
+  \emph{locally}: \lname{UniqueFactorizationMonoid.strongNormalizationMonoid} and
+  \lname{toNormalizedGCDMonoid} as local instances of the one file that applies the API (an
+  arbitrary normalization, visible in no exported statement, since relative primality and
+  divisibility do not mention it), and \lname{classical} inside the proofs. The inverse of $s$ is
+  \lname{IsLocalization.Away.invSelf}. Declarations: \lname{aAway} ($a = r/s$ in $R$),
+  \lname{wSeqAway} (the sequence $n \mapsto \varphi(w_n)$ in $R$),
+  \lname{wSeqAway\_associated\_gcd}, \lname{factorization\_wSeqAway\_shape},
+  \lname{isRelPrime\_moebiusFactorR\_wSeqAway}, each a few lines, exactly as
+  \lname{factorization\_cSeq\_shape} and \lname{isCoprime\_bSeq} in Chapter~1. A prototype of
+  this route --- the instances, the identity for $w$ over $R$, the API applications and the
+  descent of Lemma~\ref{lem:betaint} --- compiles against the repository (240 lines, 2.5 s;
+  \lname{explore/stoll-extensions-2026-09-07/UfdAway.lean} outside the repository).}
+\end{proof}
+
+\paragraph{The alternative not taken.}
+One can avoid $\ZZ[1/s]$ and prove the shape of $w$ over $\ZZ$ directly: the twisted rigidity
+$w_d^2 \mid w_{d+j} - s^{2^{j-1}(2^d-1)} w_j$ (an induction like that of Lemma~\ref{lem:2.1}),
+then the Euclidean and periodic-shape arguments of Chapter~4 with the twist $s^{(\cdot)}$, a
+unit modulo any $p \nmid s$; this needs twisted generalizations of the two supporting lemmas
+(\lname{gcd\_eq\_normalize\_of\_dvd\_sub}, \lname{factorization\_periodic\_shape}) with a unit
+factor in the congruence, about a hundred lines against about a hundred and fifty for the
+localization route, whose surplus consists of general lemmas on localizations (a domain instance,
+the transfer of primes and of divisibility) and of the descent below. The localization route is
+chosen because it reuses Chapter~2 verbatim instead of re-deriving it with a twist, and because
+its new lemmas are of Mathlib generality.
+
+\begin{definition}[the integer Möbius factors]
+  \label{def:betaint}
+  \uses{def:wseq}
+  $\beta_n := \prod_{d \mid n} w_d^{\mu(n/d)}$ and $E(n) := \sum_{d \mid n} (2^{d-1} - 1)\mu(n/d)$,
+  so that $\beta_n = s^{E(n)} \prod_{d \mid n} \gamma_d^{\mu(n/d)}$ and $E(n) \equiv \mu(n) \pmod 2$
+  for $n \ge 2$.
+  \formalnote{\lname{betaInt r s n := moebiusFactorR (wSeq r s) n}, the same device as
+  \lname{bSeq}: \lname{moebiusFactorR} is defined for any sequence in a domain, and its API
+  (\lname{moebiusFactorR\_mul\_denProd}, \lname{algebraMap\_moebiusFactorR},
+  \lname{prod\_moebiusFactorR}, \lname{moebiusFactorR\_ne\_zero}) uses strong divisibility only
+  through $D \mid N$ (Lemma~\ref{lem:moebiusfactor}); these four lemmas get primary forms
+  \lname{\_of\_dvd} with the hypothesis $D \mid N$, of which the present forms become corollaries,
+  and a lemma \lname{map\_moebiusFactorR}: for $D \mid N$ and a ring homomorphism $\varphi$
+  into a domain with $\varphi(D) \ne 0$, $\varphi(\beta_n)$ is the Möbius factor of
+  $\varphi \circ w$, both being the solution of $\beta D = N$. Then \lname{twistExp}, the integer
+  $E(n)$ as a sum over \lname{n.divisorsAntidiagonal}, with \lname{twistExp\_emod\_two}
+  ($E(n) \equiv \mu(n) \bmod 2$ for $n \ge 2$).}
+\end{definition}
+
+\begin{lemma}[the $\beta_n$ are integers, pairwise coprime, coprime to $rs$]
+  \label{lem:betaint}
+  \uses{def:betaint, lem:gamma-away, lem:w-coprime}
+  For $n \ge 2$, $\beta_n \in \ZZ$, $\gcd(\beta_n, rs) = 1$, $\gcd(\beta_m, \beta_n) = 1$ for
+  $m \ne n$, and $v_p(\beta_n) = v_p(w_{d_0(p)})\,[n = d_0(p)]$ for every prime $p \nmid rs$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:gamma-away, lem:w-coprime}
+  Everything holds in $R = \ZZ[1/s]$ by Lemma~\ref{lem:gamma-away} and descends to $\ZZ$: with
+  $N = \prod_{\mu(n/d) = 1} w_d$ and $D = \prod_{\mu(n/d) = -1} w_d$, both coprime to $rs$
+  (Lemma~\ref{lem:w-coprime}), $D \mid N$ in $R$ means $Dm = Ns^k$ in $\ZZ$ for some $m$, $k$,
+  so $D \mid N$ in $\ZZ$ and $\beta_n = N/D \in \ZZ$ is coprime to $rs$. A prime $p$ dividing
+  $\beta_m$ and $\beta_n$ is prime to $s$, hence a prime of $R$ dividing both Möbius factors
+  there, which are relatively prime. The valuation formula is that of Lemma~\ref{lem:gamma-away}.
+  \formalnote{The descent rests on Mathlib's transport lemmas for localization maps
+  (\lname{Mathlib/GroupTheory/MonoidLocalization/Divisibility.lean} and
+  \lname{UniqueFactorization.lean}, from the same PR \#33832 as the instance):
+  \lname{Submonoid.LocalizationMap.map\_dvd\_map} ($\varphi(a) \mid \varphi(b)$ iff $a \mid mb$ for
+  some $m$ in the submonoid), \lname{map\_isUnit\_iff} and \lname{map\_prime}. Three lemmas of
+  Mathlib generality are added on top of them, in the mirror file of
+  \lname{Mathlib/RingTheory/Localization/Away/Basic.lean}: \lname{IsLocalization.Away.dvd\_of\_algebraMap\_dvd\_of\_isCoprime}
+  ($\varphi(D) \mid \varphi(N)$ and $D$ coprime to $x$ give $D \mid N$, three lines from
+  \lname{map\_dvd\_map}), \lname{IsLocalization.prime\_algebraMap\_of\_prime} --- stated
+  \emph{exactly} as in the open Mathlib PR \#37247 (Yuma Mizuno, approved in April 2026,
+  awaiting a rebase since July), which adds this ring-level wrapper of \lname{map\_prime} together
+  with the prime-divisibility transport \lname{algebraMap\_dvd\_algebraMap\_iff\_of\_prime}; the
+  local copy is deleted when that PR lands --- and its consequence
+  \lname{IsLocalization.Away.prime\_algebraMap\_of\_not\_dvd} (a prime $p \nmid x$ stays prime,
+  via \lname{IsLocalization.Away.algebraMap\_isUnit\_iff}). No PR adds the domain instance for
+  \lname{Localization.Away x} or a normalization on localizations. Finally
+  \lname{isCoprime\_of\_isRelPrime\_localizationAway} (integers prime to $x$ whose images are
+  relatively prime are coprime, by \lname{Nat.coprime\_of\_dvd}). Then
+  \lname{denProd\_wSeq\_dvd\_numProd\_wSeq}, and the API of \lname{betaInt}
+  (\lname{intCast\_betaInt}, \lname{betaInt\_ne\_zero}, \lname{wSeq\_eq\_prod\_betaInt}) from the
+  \lname{\_of\_dvd} forms; \lname{algebraMap\_betaInt} from \lname{map\_moebiusFactorR};
+  \lname{isCoprime\_betaInt} from the transfer lemma and
+  \lname{isRelPrime\_moebiusFactorR\_wSeqAway}; \lname{isCoprime\_betaInt\_mul :
+  IsCoprime (betaInt r s n) (r * s)} from $\beta_n D = N$.}
+\end{proof}
+
+\begin{lemma}[square classes]
+  \label{lem:rat-sqclass}
+  \uses{def:betaint, def:bseq}
+  In $\QQ^\times/(\QQ^\times)^2$: $c_1 = b_1 \sim -rs$ and $b_n \sim (-s)^{\mu(n)} \beta_n$ for
+  $n \ge 2$.
+\end{lemma}
+\begin{proof}
+  $c_d = r w_d / s^{2^{d-1}} \sim r w_d$ for $d \ge 2$ (even exponent), so
+  $b_n \sim (-rs)^{\mu(n)} \prod_{d \mid n, d \ge 2} (r w_d)^{\mu(n/d)} = (-s)^{\mu(n)} r^{\sum_{d \mid n}
+  \mu(n/d)} \beta_n$ with $w_1 = 1$ and $\sum_{d \mid n} \mu(n/d) = 0$.
+  \formalnote{Stated with \lname{sqClass} (\lname{QuadraticIterates.Mathlib.FieldTheory.Multiquadratic}),
+  additively: \lname{sqClass\_bSeq\_eq}, $[b_n] = \mu(n)\,[-s] + [\beta_n]$; the proof is
+  \lname{sqClass\_bSeq\_eq\_sum\_divisorsAntidiagonal} plus \lname{sqClass\_cSeq\_eq},
+  $[c_d] = [r w_d]$ for $d \ge 2$.}
+\end{proof}
+
+\begin{lemma}[shared-part lemma]
+  \label{lem:rat-shared}
+  \uses{lem:rat-sqclass, lem:betaint, thm:rat-section1}
+  If $-rs$ is not a square and $|\beta_n|$ is not a square for every $n \ge 2$, then
+  $c_1, \dots, c_n$ are $2$-independent for every $n$, hence $\Om_n \cong \Ct{n}$ for all $n$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:betaint, lem:rat-sqclass}
+  A nonempty $S$ with $\prod_{n \in S} b_n$ a square has, by pairwise coprimality and coprimality to
+  $rs$, $|\beta_n|$ a square for each $n \in S$, $n \ge 2$; so $S = \{1\}$, but $b_1 \sim -rs$ is not
+  a square. The $b$'s are $2$-independent, hence the $c$'s (Möbius inversion in $\QQ^\times$), and
+  no $c_k$ is a square, so Theorem~\ref{thm:rat-section1} applies.
+  \formalnote{\lname{nonempty\_mulEquiv\_of\_forall\_not\_isSquare\_abs\_betaInt}, the rational
+  analogue of \lname{section1\_of\_not\_isSquare\_abs\_bSeq}. The integer argument uses
+  \lname{twoIndependent\_iff\_of\_pairwise\_isCoprime}; here the family
+  $i \mapsto (-s)^{\mu(i+1)} \beta_{i+1}$ is not pairwise coprime, so the lemma to prove is: for
+  pairwise coprime $\beta_i$ coprime to $u$, if $u^e \prod_{i \in S} \beta_i$ is a square then each
+  $|\beta_i|$, $i \in S$, is a square
+  (\lname{Int.isSquare\_abs\_of\_isSquare\_mul\_prod\_of\_pairwise\_isCoprime}, for
+  \lname{QuadraticIterates/Mathlib/Algebra/Squares.lean}).}
+\end{proof}
+
+\section{Reflection with the twist}
+\label{sec:rat-reflection}
+
+\begin{lemma}[$w$ and $\gamma$ modulo $M$]
+  \label{lem:w-gamma-zmod}
+  \uses{def:wseq, def:gammaseq}
+  Let $M \ge 1$ be coprime to $s$, and let $\bar a = \bar r \bar s^{-1} \in \ZZ/M\ZZ$. Then
+  $\bar w_n = \bar s^{\,2^{n-1} - 1} \gamma_n(\bar a)$ in $\ZZ/M\ZZ$, where $\gamma(\bar a)$ is the
+  $\gamma$-sequence of $\bar a X^2 + 1$ (with $\varepsilon = 1$) over $\ZZ/M\ZZ$.
+\end{lemma}
+\begin{proof}
+  Induction on $n$ from the recursions.
+  \formalnote{The instance of \lname{map\_wSeq\_eq\_mul\_gammaSeq} (Definition~\ref{def:wseq})
+  at $S = \ZZ/M\ZZ$, $\varphi$ the cast and $u$ the inverse of the unit $\bar s$; the
+  $\gamma$-sequence over \lname{ZMod M} is \lname{gammaSeq} of $\bar a X^2 + 1$ with
+  $\bar a = \bar r \bar s^{-1}$.}
+\end{proof}
+
+\begin{lemma}[reflection with the twist]
+  \label{lem:rat-reflection}
+  \uses{lem:w-gamma-zmod, def:betaint, lem:li-crit}
+  Let $n \ge 2$, $n_0 = n/\rad(n)$, and $M$ coprime to $s$ and to $w_{n_0}$. If $M$ divides the
+  numerator $w_{n_0} s^{2^{n_0-1}} + w_{n_0+1}$ of $\gamma_{n_0} + \gamma_{n_0+1}$, then
+  $\beta_n \equiv -s^{E(n)} u^2 \pmod M$ for a unit $u$. Hence $|\beta_n|$ is not a square if
+  $\beta_n > 0$ and $-1$ (for $n$ not squarefree) resp.\ $-s$ (for $n$ squarefree) is a non-square
+  modulo $M$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-succ, lem:w-gamma-zmod}
+  In $\ZZ/M\ZZ$, $\gamma_{n_0+1} = -\gamma_{n_0}$, so $\gamma_{n_0 t} = -\gamma_{n_0}$ for all
+  $t \ge 2$ (Lemma~\ref{lem:li-succ}: \lname{gammaSeq\_mul\_eq\_two\_mul} and evenness), and
+  $\prod_{t \mid \rad n} \gamma_{n_0 t}^{\mu(\rad(n)/t)} = -u^2$ (\lname{prod\_gammaSeq\_mul\_eq\_neg\_prod},
+  \lname{isUnit\_prod\_gammaSeq\_mul}). Multiply by $s^{E(n)}$ (Lemma~\ref{lem:w-gamma-zmod}).
+  For $n$ not squarefree $E(n)$ is even, for $n$ squarefree odd.
+  \formalnote{\lname{not\_isSquare\_betaInt\_of\_dvd\_add\_succ}: hypotheses $n = k \cdot \rad(n)$,
+  $M \mid w_k s^{2^{k-1}} + w_{k+1}$, $M$ coprime to $s$, $\beta_n > 0$, and $(-s)^{E(n)}$ not a
+  square in \lname{ZMod M}; the two consumed forms have $-1$ not a square with $n$ not squarefree,
+  and $-s$ not a square with $n$ squarefree. Coprimality of $M$ with $w_{n_0}$ is automatic for
+  this modulus (\lname{isCoprime\_gammaSeq\_add\_succ}). The positive-world version takes $w$,
+  the $a \le -2$ version the sequence $w^S$ with $w^S_n = -w_n$ ($n \ge 2$), i.e.\ $\gamma^S$ of
+  $|a| X^2 - 1$; both are instances of the same general lemma with $g = \pm\bar a X^2 \pm 1$.}
+\end{proof}
+
+\section{The residue classes}
+
+\begin{proposition}[the classes (C${}^\pm$)]
+  \label{prop:rat-twoadic}
+  \uses{def:wseq, lem:li-mod8-2}
+  Let $N_{n_0} = w_{n_0} s^{2^{n_0-1}} + w_{n_0+1}$ (positive world: $a > 0$ or $-1 < a < 0$), resp.\
+  $N_{n_0} = w^S_{n_0} s^{2^{n_0-1}} + w^S_{n_0+1}$ ($a \le -2$, $R = |r|$). If $(s \bmod 4, r \bmod 4)
+  \in \{(1,1), (1,2), (3,0), (3,1)\}$ or $s$ is even and $r \equiv 3 \pmod 4$ (resp.\
+  $(s, R) \bmod 4 \in \{(1,0), (1,1), (3,1), (3,2)\}$ or $s$ even and $R \equiv 3 \pmod 4$), then for
+  every $n_0 \ge 2$ the integer $N_{n_0} > 0$ is divisible by $4$ or has an odd part
+  $\equiv 3 \pmod 4$.
+\end{proposition}
+\begin{proof}
+  \uses{lem:li-period, lem:w-gamma-zmod}
+  Everything is decided modulo $8$. For odd $s$, $s^{2^{n_0}-1} \equiv s \pmod 8$, so $N \equiv
+  s(\gamma_{n_0} + \gamma_{n_0+1})$ with $\gamma$ computed in $\ZZ/8\ZZ$ from $\bar a = r s^{-1}$:
+  for even $\bar a$ the sequence is constant $\bar a + 1$ from $n = 2$ on
+  (\lname{gammaSeq\_eq\_eval\_one}) and $N \equiv 2(r+s)$; for odd $\bar a$ it has period $2$ from
+  $n = 2$ on with $\gamma_3 \in \{5, 1\}$ (\lname{gammaSeq\_eq\_ite\_even\_of\_add\_two\_eq}) and
+  $N \equiv r + 2 \pmod 4$. For even $s$, $w_n \equiv r \pmod 8$ for $n \ge 3$ and $N \equiv r
+  \pmod 4$. The listed classes are exactly those where the residue is as claimed (working notes,
+  Proposition~5.1).
+  \formalnote{Four lemmas in a new \lname{Rational/Residues.lean}, in the style of
+  \lname{Li/Residues.lean}: the $\gamma$-sequence of $\bar a X^2 + 1$ over \lname{ZMod 8} with
+  $\bar a$ even, resp.\ odd, and the $w$-recursion modulo $8$ for even $s$; conclusions of the
+  form $N \equiv 6 \bmod 8$ or $N \equiv 3 \bmod 4$, consumed by
+  \lname{ZMod.not\_isSquare\_neg\_one\_of\_emod\_eight\_eq\_six} and
+  \lname{ZMod.not\_isSquare\_neg\_one\_of\_emod\_four\_eq\_three}. The class conditions are best
+  bundled as a \lname{Prop}-structure \lname{RatClass} in $r$ and $s$ with the disjunction as
+  its single field, so that no signature grows.}
+\end{proof}
+
+\section{Squarefree levels}
+
+\begin{lemma}[primes of $s$]
+  \label{lem:rat-ps}
+  \uses{def:wseq, def:betaint}
+  For an odd prime $p \mid s$: $w_n \equiv r^{2^{n-1}-1} \pmod p$ and $\beta_n \equiv r^{E(n)}
+  \pmod p$. If $\bigl(\tfrac{r}{p}\bigr) = -1$, then $\beta_n$ is a non-square modulo $p$ for every
+  squarefree $n \ge 2$ (with $|r|$ in place of $r$ and $w^S$ in place of $w$ when $a \le -2$).
+\end{lemma}
+\begin{proof}
+  $w_{n+1} \equiv r w_n^2 \pmod p$; $E(n)$ is odd for squarefree $n \ge 2$.
+  \formalnote{\lname{intCast\_wSeq\_zmod\_of\_dvd}: $w_n \equiv r^{2^{n-1}-1}$ in \lname{ZMod p}
+  for $p \mid s$, then \lname{not\_isSquare\_betaInt\_of\_dvd\_of\_not\_isSquare}; the Legendre
+  condition is ``$r$ is not a square in \lname{ZMod p}''.}
+\end{proof}
+
+\begin{lemma}[reflection at $n_0 = 1$]
+  \label{lem:rat-refl1}
+  \uses{lem:rat-reflection}
+  Positive world: $\gamma_1 + \gamma_2$ has numerator $r + 2s$; if an odd prime $p \mid r + 2s$ has
+  $\bigl(\tfrac{-s}{p}\bigr) = -1$, or $4 \mid r + 2s$ and $s \equiv 1 \pmod 4$, then $\beta_n$ is
+  not a square for every squarefree $n \ge 2$. For $a \le -2$ the numerator is $R$, with the same
+  conclusion under $\bigl(\tfrac{-s}{p}\bigr) = -1$ for an odd $p \mid R$, or $4 \mid R$ and
+  $s \equiv 1 \pmod 4$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:rat-reflection}
+  Lemma~\ref{lem:rat-reflection} with $n_0 = 1$: $\beta_n \equiv -s u^2$, and $-s$ is a non-square
+  modulo $p$ iff $\bigl(\tfrac{-s}{p}\bigr) = -1$, modulo $4$ iff $s \equiv 1 \pmod 4$.
+\end{proof}
+
+\begin{lemma}[the modulus $8$ for even $s$]
+  \label{lem:rat-mod8}
+  \uses{def:wseq, def:betaint}
+  Let $s$ be even and $r \equiv 3 \pmod 4$. Then $w_n \equiv r \pmod 8$ for $n \ge 3$, $w_2 = r + s$,
+  and for squarefree $n \ge 2$, $\beta_n \equiv r^{\pm 1}$ ($n$ odd) resp.\ $(r+s)^{\pm 1}$ ($n$ even)
+  modulo $8$. So $\beta_n$ is a non-square for odd $n \ge 3$, and for even $n$ if $r + s \not\equiv
+  1 \pmod 8$ (with $|r|$, $|r| - s$ when $a \le -2$).
+\end{lemma}
+\begin{proof}
+  $s^{2^n-1} \equiv 0 \pmod 8$ for $n \ge 2$ and $w_n$ is odd. The exponent of $r$ in $\beta_n$ is
+  $\sum_{d \mid n, d \ge 3} \mu(n/d) = -\mu(n) - \mu(n/2)[2 \mid n]$.
+  \formalnote{\lname{intCast\_wSeq\_zmod\_eight\_of\_even}: $w_n \equiv r$ in \lname{ZMod 8} for
+  $n \ge 3$ and even $s$; the Möbius exponent computation is
+  \lname{ArithmeticFunction.sum\_divisors\_filter\_dvd\_moebius\_div} of Chapter~4 in the form
+  ``sum over $d \ge 3$''. An odd integer $\not\equiv 1 \pmod 8$ is not a square:
+  \lname{Int.not\_isSquare\_of\_emod\_eight\_ne\_one}, for \lname{Squares.lean}.}
+\end{proof}
+
+\section{The theorems}
+
+\begin{theorem}[Theorem R${}^+$]
+  \label{thm:rat-pos}
+  \uses{def:galois, def:wreath, def:wseq}
+  Let $a = r/s$ with $a > 0$ or $-1 < a < 0$, $-rs$ not a square, $(r, s)$ in a class of
+  Proposition~\ref{prop:rat-twoadic} (positive world), and suppose that one of (SQ${}^+$1)
+  some odd $p \mid s$ has $\bigl(\tfrac{r}{p}\bigr) = -1$; (SQ${}^+$2) some odd $p \mid r + 2s$
+  has $\bigl(\tfrac{-s}{p}\bigr) = -1$; (SQ${}^+$3) $4 \mid r + 2s$ and $s \equiv 1 \pmod 4$;
+  (SQ${}^+$4) $s$ even and $r + s \not\equiv 1 \pmod 8$ holds. Then $\Om_n \cong \Ct{n}$ for all
+  $n \ge 1$.
+\end{theorem}
+\begin{proof}
+  \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-mod8}
+  All $w_n > 0$ in the positive world, so $\beta_n > 0$. For $n$ not squarefree,
+  Proposition~\ref{prop:rat-twoadic} and Lemma~\ref{lem:rat-reflection}; for squarefree $n$,
+  Lemmas \ref{lem:rat-ps}, \ref{lem:rat-refl1}, \ref{lem:rat-mod8}; then Lemma~\ref{lem:rat-shared}.
+  \formalnote{\lname{nonempty\_mulEquiv\_of\_ratClass\_of\_squarefreeCert} with the two
+  \lname{Prop}-structures \lname{RatClass} and \lname{SquarefreeCert} in $r$ and $s$ (the four
+  clauses as a disjunction); the sign condition $0 < r$ or $-s < r$, and $-rs$ not a square.
+  Positivity of $w$: \lname{wSeq\_pos} for $r > 0$, and for $-s < r < 0$ the bound
+  $0 < w_n \le s^{2^{n-1}-1}$.}
+\end{proof}
+
+\begin{theorem}[Theorem R${}^-$]
+  \label{thm:rat-neg}
+  \uses{def:galois, def:wreath, def:wseq}
+  Let $a = r/s \le -2$, $R = |r|$, $-rs$ not a square, $(R, s)$ in a class of
+  Proposition~\ref{prop:rat-twoadic} ($a \le -2$), and suppose that one of (SQ${}^-$1) some odd
+  $p \mid s$ has $\bigl(\tfrac{R}{p}\bigr) = -1$; (SQ${}^-$2) some odd $p \mid R$ has
+  $\bigl(\tfrac{-s}{p}\bigr) = -1$; (SQ${}^-$3) $4 \mid R$ and $s \equiv 1 \pmod 4$; (SQ${}^-$4)
+  $R - s$ is not a square, and some odd $p \mid R - s$ has $\bigl(\tfrac{-s}{p}\bigr) = -1$ or
+  $4 \mid R - s$ and $s \equiv 1 \pmod 4$ holds. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
+\end{theorem}
+\begin{proof}
+  \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-g2}
+  As for Theorem~\ref{thm:rat-pos} in Stoll's world ($w^S$ positive from $n = 2$ on, $\beta^S_n =
+  |\beta_n|$), clause (SQ${}^-$4) by Lemma~\ref{lem:rat-g2}.
+  \formalnote{Second instance of the same lemmas with $w^S$; the two worlds should share every
+  statement through the general \lname{gammaSeq} lemmas over \lname{ZMod M}, specialized only at
+  the end. Clause (SQ${}^-$4) is the last item of the order of work, since its lemma is the only one
+  whose proof is not yet written out in the notes.}
+\end{proof}
+
+\begin{lemma}[the $\gamma_2$ route, rational form of {\cite[Lemmas 3.2, 3.3]{li2020}}]
+  \label{lem:rat-g2}
+  \uses{lem:li-C-sqfree, lem:w-gamma-zmod}
+  Let $a \le -2$ and let $M$ be coprime to $s$ and divide $R - s$, the numerator of $\gamma^S_2 =
+  |a| - 1$. If $-s$ is a non-square modulo $M$, then $\beta^S_n$ is a non-square modulo $M$ for
+  every squarefree $n \ge 3$.
+\end{lemma}
+\begin{proof}
+  \uses{lem:li-C-sqfree}
+  Modulo $M$ the sequence $\gamma^S$ is $1, 0, -1, 0, -1, \dots$, and modulo $M^2$ it is
+  $\gamma^S_2$ at even and $-1$ at odd indices $\ge 3$ (Lemma~\ref{lem:li-modsq} over
+  $\ZZ/M^2\ZZ$). For odd $n$ this is a constant tail and Lemma~\ref{lem:rat-reflection} applies;
+  for even $n = 2m$, $m > 1$, the argument of Lemma~\ref{lem:li-C-sqfree} modulo $\gamma_2$ gives
+  $\beta^S_n \equiv -s^{E(n)} u^2$ after cancelling the (trivial) power of $\gamma^S_2$.
+  \formalnote{To be worked out in detail before formalization: the integral version is
+  \lname{not\_isSquare\_betaSeq\_of\_squarefree\_of\_not\_isSquare\_neg\_one} (Chapter~5), whose
+  proof modulo $\gamma_2$ should generalize to a ring where $s$ is a unit, with the twist
+  $s^{E(n)}$ inserted exactly as in Lemma~\ref{lem:rat-reflection}.}
+\end{proof}
+
+\section{Order of work}
+
+\begin{enumerate}
+\item The Galois side for $a \in \QQ$ (Theorem~\ref{thm:rat-section1}): one commit per file in
+  dependency order --- \lname{Iterates.lean} (polymorphic \lname{cSeq}, \lname{bSeq}; rational
+  \lname{splittingField}, \lname{GaloisGroup}; cast plumbing), \lname{Irreducibility.lean}
+  (Lemma~1.2 general, growth integral), \lname{DegreeCriterion.lean} (hypothesis swap),
+  \lname{Main.lean} (Section~1 over $\QQ$, integer corollaries). The comparator challenge follows
+  once the author has approved the change of \lname{GaloisGroup}.
+\item The supporting lemmas, in the mirror files: the domain instance and the transfer of
+  primes and of divisibility for \lname{Localization.Away} (Lemmas \ref{lem:gamma-away},
+  \ref{lem:betaint}) in \lname{Mathlib/RingTheory/Localization/Away/Basic.lean}; the
+  \lname{\_of\_dvd} primary forms and \lname{map\_moebiusFactorR} in
+  \lname{Mathlib/RingTheory/MoebiusFactor.lean} (Definition~\ref{def:betaint}).
+\item \lname{Rational/Sequence.lean}: Definition~\ref{def:wseq} with the identity over a general
+  ring, Lemma~\ref{lem:w-coprime}, Lemma~\ref{lem:gamma-away} (with the local instances),
+  Definition~\ref{def:betaint}, Lemma~\ref{lem:betaint}.
+\item \lname{Rational/SquareClasses.lean}: Lemmas \ref{lem:rat-sqclass}, \ref{lem:rat-shared}
+  (with the new integer lemma in \lname{Squares.lean}).
+\item \lname{Rational/Reflection.lean}: Lemmas \ref{lem:w-gamma-zmod}, \ref{lem:rat-reflection}.
+\item \lname{Rational/Residues.lean}: Proposition~\ref{prop:rat-twoadic}, Lemmas \ref{lem:rat-ps},
+  \ref{lem:rat-refl1}, \ref{lem:rat-mod8}.
+\item \lname{Rational/Main.lean}: Theorem~\ref{thm:rat-pos}, then Theorem~\ref{thm:rat-neg} with
+  clauses 1--3, then Lemma~\ref{lem:rat-g2} and clause 4.
+\end{enumerate}
