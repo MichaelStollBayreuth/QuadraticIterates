@@ -1,12 +1,12 @@
 \chapter{\texorpdfstring{Rational parameters $a = r/s$}{Rational parameters a = r/s}}
 \label{chap:rational}
 
-\emph{This chapter is a plan, not a record.} Nothing in it is formalized yet. It states the
-rational version of the Section~3 theorem obtained in the working notes
-(\texttt{tex/stoll-method-extensions.tex}: Theorems R${}^+$ and R${}^-$ there), reduces it to
-the material of Chapters~1--5 plus the new lemmas listed here, and fixes the order of work.
-Every node below is uncoloured; the arrows into it are the point. Proposed declaration names
-are given in \lname{typewriter}; they follow the naming grammar of the project.
+This chapter records the rational version of the Section~3 theorem obtained in the working
+notes (\texttt{tex/stoll-method-extensions.tex}: Theorems R${}^+$ and R${}^-$ there) and reduces
+it to the material of Chapters~1--5 plus the new lemmas stated here. It was written as a plan
+before any Lean, and every node is now formalized (\lname{QuadraticIterates/Rational/}, with the
+Galois side of Chapter~1 parametrized by $a \in \QQ$); the formalization remarks name the
+declarations.
 
 Throughout, $a = r/s \in \QQ$ with $r, s \in \ZZ$ coprime, $s \ge 1$, $r \ne 0$, and $-rs$ not a
 square (else $f = X^2 + a$ is reducible). The iterates $f_n$, the fields $K_n$ and the groups
@@ -488,6 +488,10 @@ its new lemmas are of Mathlib generality.
 \begin{theorem}[Theorem R${}^+$]
   \label{thm:rat-pos}
   \uses{def:galois, def:wreath, def:wseq}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert,
+    QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCert,
+    QuadraticIterates.SquarefreeCert}
+  \leanok
   Let $a = r/s$ with $a > 0$ or $-1 < a < 0$, $-rs$ not a square, $(r, s)$ in a class of
   Proposition~\ref{prop:rat-twoadic} (positive world), and suppose that one of (SQ${}^+$1)
   some odd $p \mid s$ has $\bigl(\tfrac{r}{p}\bigr) = -1$; (SQ${}^+$2) some odd $p \mid r + 2s$
@@ -499,38 +503,56 @@ its new lemmas are of Mathlib generality.
 \begin{proof}
   \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-mod8,
     lem:rat-g2}
+  \leanok
   All $w_n > 0$ in the positive world, so $\beta_n > 0$. For $n$ not squarefree,
   Proposition~\ref{prop:rat-twoadic} and Lemma~\ref{lem:rat-reflection}; for squarefree $n$,
   Lemmas \ref{lem:rat-ps}, \ref{lem:rat-refl1}, \ref{lem:rat-mod8}, and for (SQ${}^+$5)
   Lemma~\ref{lem:rat-g2} with $\varepsilon = 1$ ($n \ge 3$; $\beta_2 = w_2 = r + s$ is not a
   square by hypothesis); then Lemma~\ref{lem:rat-shared}.
-  \formalnote{\lname{nonempty\_mulEquiv\_of\_ratClass\_of\_squarefreeCert} with the two
-  \lname{Prop}-structures \lname{RatClass} and \lname{SquarefreeCert} in $r$ and $s$ (the five
-  clauses as a disjunction); the sign condition $0 < r$ or $-s < r$, and $-rs$ not a square.
+  \formalnote{The uniform theorem
+  \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_squarefreeCert} takes the sign
+  $\varepsilon$, the positivity of $w$, the class \lname{TwoAdicClass r s ε} of
+  Proposition~\ref{prop:rat-twoadic}, ``$-\varepsilon r s$ is not a square'' and a certificate
+  \lname{SquarefreeCert r s ε}, an inductive predicate with one constructor per mechanism of the
+  squarefree levels (\lname{dvd}, \lname{reflNum}, \lname{even}, \lname{gammaTwo}); each takes a
+  general modulus $M$ with $s$ a unit modulo $M$ and ``not a square in \lname{ZMod M}'' in place
+  of the odd prime $p$ with Legendre symbol $-1$ and of the modulus $4$, which it subsumes
+  (\lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_squarefreeCert}). Theorem R${}^+$ is the
+  instance $\varepsilon = 1$, $-s < r$, with the positivity of $w$ from
+  \lname{wSeq\_pos\_of\_pos} ($r > 0$) and \lname{wSeq\_pos\_of\_neg\_lt} ($-s < r < 0$).
   Clause (SQ${}^+$5) was found during the formalization of Lemma~\ref{lem:rat-g2}: its
-  mechanism works for both signs, and for $\varepsilon = 1$ it is void only for $s = 1$.
-  Positivity of $w$: \lname{wSeq\_pos} for $r > 0$, and for $-s < r < 0$ the bound
-  $0 < w_n \le s^{2^{n-1}-1}$.}
+  mechanism works for both signs, and for $\varepsilon = 1$ it is void only for $s = 1$.}
 \end{proof}
 
 \begin{theorem}[Theorem R${}^-$]
   \label{thm:rat-neg}
   \uses{def:galois, def:wreath, def:wseq}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert}
+  \leanok
   Let $a = r/s \le -2$, $R = |r|$, $-rs$ not a square, $(R, s)$ in a class of
   Proposition~\ref{prop:rat-twoadic} ($a \le -2$), and suppose that one of (SQ${}^-$1) some odd
   $p \mid s$ has $\bigl(\tfrac{R}{p}\bigr) = -1$; (SQ${}^-$2) some odd $p \mid R$ has
   $\bigl(\tfrac{-s}{p}\bigr) = -1$; (SQ${}^-$3) $4 \mid R$ and $s \equiv 1 \pmod 4$; (SQ${}^-$4)
   $R - s$ is not a square, and some odd $p \mid R - s$ has $\bigl(\tfrac{-s}{p}\bigr) = -1$ or
-  $4 \mid R - s$ and $s \equiv 1 \pmod 4$ holds. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
+  $4 \mid R - s$ and $s \equiv 1 \pmod 4$; (SQ${}^-$5) $s$ is even and
+  $R - s \not\equiv 1 \pmod 8$ holds. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
 \end{theorem}
 \begin{proof}
-  \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-g2}
+  \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-mod8,
+    lem:rat-g2}
+  \leanok
   As for Theorem~\ref{thm:rat-pos} in Stoll's world ($w^S$ positive from $n = 2$ on, $\beta^S_n =
-  |\beta_n|$), clause (SQ${}^-$4) by Lemma~\ref{lem:rat-g2}.
-  \formalnote{Second instance of the same lemmas with $w^S$; the two worlds share every statement
-  through the general \lname{gammaSeq} lemmas over \lname{ZMod M}, specialized only at the end.
-  Clause (SQ${}^-$4) is Lemma~\ref{lem:rat-g2} with $\varepsilon = -1$ for $n \ge 3$, and
-  $\beta^S_2 = w^S_2 = |r| - s$ is not a square by hypothesis.}
+  |\beta_n|$), clause (SQ${}^-$4) by Lemma~\ref{lem:rat-g2} and clause (SQ${}^-$5) by
+  Lemma~\ref{lem:rat-mod8} in Stoll's world.
+  \formalnote{The instance $\varepsilon = -1$ at $(-r, s)$ of the uniform theorem of
+  Theorem~\ref{thm:rat-pos}, with $2s \le -r$, the class \lname{TwoAdicClass (-r) s (-1)}, the
+  certificate \lname{SquarefreeCert (-r) s (-1)} and the positivity of $w^S$ from
+  \lname{wSeq\_pos\_of\_two\_mul\_le}; the two worlds share every statement through the general
+  \lname{gammaSeq} lemmas over \lname{ZMod M}, specialized only at the end. Clause (SQ${}^-$4) is
+  Lemma~\ref{lem:rat-g2} with $\varepsilon = -1$ for $n \ge 3$, and $\beta^S_2 = w^S_2 = |r| - s$
+  is not a square by hypothesis. Clause (SQ${}^-$5) is the constructor \lname{even} of the
+  certificate, Lemma~\ref{lem:rat-mod8} in Stoll's world; the working notes state the lemma for
+  both worlds but list the clause only in Theorem R${}^+$.}
 \end{proof}
 
 \begin{lemma}[the $\gamma_2$ route, rational form of {\cite[Lemmas 3.2, 3.3]{li2020}}]
@@ -577,15 +599,11 @@ its new lemmas are of Mathlib generality.
   \lname{Squarefree.even\_card\_filter\_divisors\_mod\_two}.}
 \end{proof}
 
-\section{Order of work}
+\section{The files}
 
+The order below is the order in which the material was formalized, one verified commit per
+item.
 \begin{enumerate}
-\item The Galois side for $a \in \QQ$ (Theorem~\ref{thm:rat-section1}), done in one commit for
-  the four files \lname{Iterates.lean} (polymorphic \lname{cSeq}, \lname{bSeq}; rational
-  \lname{splittingField}, \lname{GaloisGroup}; cast plumbing), \lname{Irreducibility.lean}
-  (Lemma~1.2 general, growth integral), \lname{DegreeCriterion.lean} (hypothesis swap),
-  \lname{Main.lean} (Section~1 over $\QQ$, integer corollaries), together with the comparator
-  challenge, after the author's approval of the change of \lname{GaloisGroup}.
 \item The supporting lemmas, in the mirror files: the domain instance and the transfer of
   primes and of divisibility for \lname{Localization.Away} (Lemmas \ref{lem:gamma-away},
   \ref{lem:betaint}) in \lname{Mathlib/RingTheory/Localization/Away/Basic.lean}; the
@@ -593,13 +611,20 @@ its new lemmas are of Mathlib generality.
   \lname{Mathlib/RingTheory/MoebiusFactor.lean} (Definition~\ref{def:betaint}).
 \item \lname{Rational/Sequence.lean}: Definition~\ref{def:wseq} with the identity over a general
   ring, Lemma~\ref{lem:w-coprime}, Lemma~\ref{lem:gamma-away} (with the local instances),
-  Definition~\ref{def:betaint}, Lemma~\ref{lem:betaint}.
-\item \lname{Rational/SquareClasses.lean}: Lemmas \ref{lem:rat-sqclass}, \ref{lem:rat-shared}
-  (with the new integer lemma in \lname{Squares.lean}); done after the Galois side.
+  Definition~\ref{def:betaint}, Lemma~\ref{lem:betaint}, the sign worlds.
 \item \lname{Rational/Reflection.lean}: Lemmas \ref{lem:w-gamma-zmod}, \ref{lem:rat-reflection}.
 \item \lname{Rational/Residues.lean}: Proposition~\ref{prop:rat-twoadic}, Lemmas \ref{lem:rat-ps},
   \ref{lem:rat-refl1}, \ref{lem:rat-mod8}.
-\item \lname{Rational/GammaTwo.lean}: Lemma~\ref{lem:rat-g2} (done before the Galois side, as it
-  is independent of it).
-\item \lname{Rational/Main.lean}: Theorem~\ref{thm:rat-pos}, then Theorem~\ref{thm:rat-neg}.
+\item \lname{Rational/GammaTwo.lean}: Lemma~\ref{lem:rat-g2}, independent of the Galois side.
+\item The Galois side for $a \in \QQ$ (Theorem~\ref{thm:rat-section1}), in the four files
+  \lname{Iterates.lean} (polymorphic \lname{cSeq}, \lname{bSeq}; rational
+  \lname{splittingField}, \lname{GaloisGroup}; cast lemmas), \lname{Irreducibility.lean}
+  (Lemma~1.2 general, growth integral), \lname{DegreeCriterion.lean} (hypothesis swap) and
+  \lname{Main.lean} (Section~1 over $\QQ$, integer corollaries) of Chapter~1, together with the
+  comparator challenges, after the author's approval of the change of \lname{GaloisGroup}.
+\item \lname{Rational/SquareClasses.lean}: Lemmas \ref{lem:rat-sqclass}, \ref{lem:rat-shared}
+  (with the new integer lemma in \lname{Squares.lean}).
+\item \lname{Rational/Main.lean}: the certificate predicate \lname{SquarefreeCert}, the uniform
+  theorem \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_squarefreeCert}, and Theorems
+  \ref{thm:rat-pos} and \ref{thm:rat-neg} as its two sign instances.
 \end{enumerate}

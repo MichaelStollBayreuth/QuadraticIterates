@@ -6,6 +6,7 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.Rational.GammaTwo
+public import QuadraticIterates.Rational.Main
 public import QuadraticIterates.Rational.Reflection
 public import QuadraticIterates.Rational.Residues
 public import QuadraticIterates.Rational.Sequence
@@ -25,5 +26,6 @@ squarefree levels (`QuadraticIterates.Rational.Residues`); a second mechanism fo
 levels works modulo divisors of the numerator of `γ_2` (`QuadraticIterates.Rational.GammaTwo`).
 The shared-part lemma (`QuadraticIterates.Rational.SquareClasses`) turns the non-squareness of
 all `|β_n|`, `n ≥ 2`, into `Ω_n ≅ [C₂]ⁿ` for all `n`, through the Section 1 theorem for a rational
-parameter. Work in progress; the plan is Chapter 6 of the blueprint.
+parameter; Theorems R⁺ and R⁻ (`QuadraticIterates.Rational.Main`) assemble these for the positive
+world `a > -1` and for Stoll's world `a ≤ -2`. Chapter 6 of the blueprint.
 -/

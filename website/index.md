@@ -19,7 +19,8 @@ For an integer `a` such that `-a` is not a square, the paper determines when the
 over ℚ of the `n`-th iterate of `X² + a` is the full iterated wreath power `[C₂]ⁿ`. The
 extensions of its last result by H.-C. Li (Arch. Math. 2020 and 2021) to further values of `a`
 are formalized as well, one of them in a stronger form (`a = −(4k+2)(4k+3)` for all `k`, where Li
-has even `k`).
+has even `k`), and so is an extension of the last result to rational parameters `a = r/s` in
+explicit residue classes (Chapter 6 of the blueprint).
 
 - [Blueprint]({{ site.baseurl }}/blueprint/) — the paper, with each definition and statement
   linked to the declaration that formalizes it

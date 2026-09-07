@@ -9,12 +9,14 @@ the definitions from the introduction, and Chapter~4 the general-purpose theory 
 formalization develops on the side, in Mathlib generality, under
 \texttt{QuadraticIterates/Mathlib/}.
 
-All statements of Chapters~0--5 are formalized and proved: there is no \texttt{sorry} anywhere,
+All statements of Chapters~0--6 are formalized and proved: there is no \texttt{sorry} anywhere,
 so every node of the dependency graph is green. Chapter~5 formalizes the results of Li
 \cite{li2020, li2021} that extend the last theorem of the paper to further values of $a$; it
 records the mathematics in the notation of Chapter~2 and how the proofs reduce to the material
-of Chapters~2--4. Chapter~6 is a plan for a rational version of the Section~3 theorem; its
-nodes are not formalized.
+of Chapters~2--4. Chapter~6 extends the Section~3 theorem to rational parameters $a = r/s$
+(Theorems R${}^+$ and R${}^-$, new results), with the Galois side of Chapter~1 parametrized by
+$a \in \QQ$; it was written as a plan before the formalization and reduces the proofs to the
+material of Chapters~1--5 plus new lemmas.
 
 \emph{Standing hypotheses.} Throughout, $a$ is an integer such that $-a$ is not a square in
 $\QQ$, $f := X^2 + a \in \ZZ[X]$, and $f_0 := X$, $f_{n+1} := f(f_n) = f_n^2 + a$ are its

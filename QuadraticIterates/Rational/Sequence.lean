@@ -285,6 +285,11 @@ theorem wSeq_eq_prod_betaInt {n : ℕ} (hn : 1 ≤ n) :
   prod_moebiusFactorR_of_dvd hw hn fun _ hd ↦
     denProd_wSeq_dvd_numProd_wSeq hs hrs hε hw (Nat.pos_of_mem_divisors hd)
 
+/-- `β_2 = w_2 = r + εs`: `w_2 = β_1 β_2` with `β_1 = 1`. -/
+theorem betaInt_two : betaInt r s ε 2 = r + ε * s := by
+  have h := (wSeq_eq_prod_betaInt hs hrs hε hw one_le_two).symm
+  rwa [Nat.prime_two.divisors, Finset.prod_pair one_lt_two.ne, betaInt_one, one_mul, wSeq_two] at h
+
 theorem isCoprime_betaInt_right {n : ℕ} (hn : 1 ≤ n) : IsCoprime (betaInt r s ε n) s :=
   IsCoprime.of_mul_left_left (y := denProd (wSeq r s ε) n)
     (betaInt_mul_denProd hs hrs hε hw hn ▸ IsCoprime.prod_left fun x hx ↦

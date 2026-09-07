@@ -31,8 +31,17 @@ the embedding is an isomorphism for every `n` when `a = -(4k+2)(4k+3)` or
 case is proved here by his argument, with a residue of the rescaled sequence modulo 8 in place of
 one modulo 4.
 
-These three papers are everything that is unconditionally known: apart from that half-family, no
-further value of `a` has been settled since 2021.
+Beyond the papers, the last result is extended to rational parameters `a = r/s`
+([`QuadraticIterates/Rational`](QuadraticIterates/Rational)): for `a > −1` and for `a ≤ −2`, when
+`(r, s)` lies in one of a few explicit residue classes modulo 8 and a *squarefree-level
+certificate* holds (a modulus modulo which `r`, `−s` or `±s` is not a square, or a residue
+condition modulo 8), the embedding is an isomorphism for every `n`. The rescaled iteration
+sequence of `a` has integer numerators whose Möbius factors take the place of the `b_n`, and the
+reflection mechanism of the paper works for them with a twist by a power of `s`; Chapter 6 of the
+blueprint records the statements and the proofs.
+
+For integer `a`, these three papers are everything that is unconditionally known: apart from that
+half-family, no further value of `a` has been settled since 2021.
 [Maximality for `x² + a`](https://michaelstollbayreuth.github.io/QuadraticIterates/literature.html)
 (source: [`website/literature.html`](website/literature.html)) surveys the literature — it maps
 the eight sign-and-residue classes of `a` against what is proved in each, links every box to the

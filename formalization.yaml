@@ -47,7 +47,11 @@ status:
     is proved here by his method) or a = -((4k+1)(4k+2)+1), and, for a < 0 with a ≡ 3 mod 4
     and -a not a square, if and only if -a - 1 is not a square (QuadraticIterates/Li/); the index-2
     statement of the 2020 paper in the exceptional case and Lemma 3.5 of the 2021 paper are not
-    formalized. Supporting theory (multiquadratic extensions, iterated wreath products, even
+    formalized. Beyond the papers, the Section 3 result is extended to rational parameters
+    a = r/s (QuadraticIterates/Rational/, Theorems R⁺ for a > -1 and R⁻ for a ≤ -2 of the
+    author's working notes): in explicit residue classes of (r, s) modulo 8 and under one of
+    several squarefree-level certificates (a modulus modulo which r, -s or ±s is not a square,
+    or a residue condition modulo 8), Ω_n is the full wreath power for all n. Supporting theory (multiquadratic extensions, iterated wreath products, even
     polynomials and their factorizations, Möbius quotients of strong divisibility sequences,
     valuations in a UFD) is developed in Mathlib generality in 25 files under
     QuadraticIterates/Mathlib/ as upstreaming candidates. A LaTeX blueprint with a dependency
@@ -105,6 +109,18 @@ status:
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert"
+    file: "QuadraticIterates/Rational/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert"
+    file: "QuadraticIterates/Rational/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
 
 # how it was produced.
 automation:
@@ -137,7 +153,7 @@ automation:
         and a diff of the pretty-printed types of every declaration in the project against the
         previous round, so that a round changed exactly the intended statements.
       cost:
-        wall_time: "~86 hours in 14 interactive sessions between 2026-07-12 and 2026-09-07"
+        wall_time: "~95 hours in 15 interactive sessions between 2026-07-12 and 2026-09-07"
         spend_usd: "Claude Max 20x subscription"
         hardware: "API-only"
       prompting_notes: >
@@ -155,7 +171,13 @@ automation:
         brainstorming on pushing Stoll's method to further parameters, with numerical
         experiments in Python/PARI and candidate statements checked in Lean before anything was
         integrated) produced the strengthening of Li's Theorem 3.3 to a = -(4k+2)(4k+3), which
-        replaced the original formalization of that theorem.
+        replaced the original formalization of that theorem, and the rational-parameter
+        theorems R⁺ and R⁻, proved on paper in the author's notes and then formalized the same
+        way: a blueprint chapter reducing them to the existing material plus new lemmas, reviewed
+        by the author, then one verified commit per layer on a branch. Two clauses of the
+        theorems were found during the formalization, when the mechanisms behind two squarefree-
+        level lemmas turned out to be independent of the sign of the parameter; they were checked
+        numerically before being added.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
@@ -179,7 +201,12 @@ fidelity:
     are one statement proved modulo γ_2, and Lemma 2.2 (2021) is stated with the case
     a ≡ 1 mod 4 (the printed "3 mod 4" is a misprint; a = -5 is a counterexample). Theorem 3.3
     (2021) is formalized in the stronger form a = -(4k+2)(4k+3), Li's statement being the case
-    of even k. The index-2 statement of the 2020 paper (Ω_n has index 2 in the wreath power when -a - 1 is a
+    of even k. The rational-parameter theorems R⁺ and R⁻ (not in the papers) are stated with
+    the 2-adic classes as the predicate TwoAdicClass and the squarefree-level clauses as the
+    inductive predicate SquarefreeCert, whose constructors take a general modulus M (s a unit
+    modulo M, the relevant quantity not a square in ZMod M) in place of the odd primes p with
+    Legendre symbol -1 and the modulus 4 of the notes' clauses, which they subsume; Theorem R⁻
+    has the mod-8 clause of Theorem R⁺ as well, which the notes omit. The index-2 statement of the 2020 paper (Ω_n has index 2 in the wreath power when -a - 1 is a
     square) and Lemma 3.5 of the 2021 paper (not needed for its Theorem 3.9) are not
     formalized.
 
@@ -323,6 +350,44 @@ alignment:
       module: "QuadraticIterates.Li.ArchMath2020"
       status: "proved"
       note: "the index-2 statement in the exceptional case is not formalized"
+    - source: "Theorem R⁺ (rational a = r/s > -1; author's working notes, not in the papers)"
+      lean: "nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert"
+      module: "QuadraticIterates.Rational.Main"
+      status: "proved"
+      note: >
+        the squarefree-level clauses are the constructors of SquarefreeCert, each with a general
+        modulus M in place of an odd prime p or the modulus 4
+    - source: "Theorem R⁻ (rational a = r/s ≤ -2; author's working notes, not in the papers)"
+      lean: "nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert"
+      module: "QuadraticIterates.Rational.Main"
+      status: "proved"
+      note: "with the mod-8 clause (SquarefreeCert.even) of Theorem R⁺, which the notes omit"
+    - source: "Theorems R⁺ and R⁻, uniform form (sign ε, positive sequence w)"
+      lean: "nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCert, not_isSquare_betaInt_of_squarefree_of_squarefreeCert"
+      module: "QuadraticIterates.Rational.Main"
+      status: "proved"
+    - source: "Rational program: the shared-part lemma (2-independence from the Möbius factors)"
+      lean: "nonempty_mulEquiv_of_forall_not_isSquare_abs_betaInt, twoIndependent_bSeq_div, sqClass_bSeq_div"
+      module: "QuadraticIterates.Rational.SquareClasses"
+      status: "proved"
+    - source: "Rational program: the reflection lemma with the twist s^E(n)"
+      lean: "not_isSquare_betaInt_of_dvd_add_succ"
+      module: "QuadraticIterates.Rational.Reflection"
+      status: "proved"
+    - source: "Rational program: the 2-adic classes (non-squarefree levels)"
+      lean: "reflNum_emod_of_odd, reflNum_emod_four_of_even, not_isSquare_betaInt_of_two_le"
+      module: "QuadraticIterates.Rational.Residues"
+      status: "proved"
+    - source: "Rational program: the squarefree levels (primes of s, first reflection, modulus 8)"
+      lean: "not_isSquare_betaInt_of_squarefree_of_dvd_of_not_isSquare, not_isSquare_betaInt_of_squarefree_of_dvd, not_isSquare_betaInt_of_squarefree_of_odd_of_even, not_isSquare_betaInt_of_squarefree_of_even_of_even"
+      module: "QuadraticIterates.Rational.Residues"
+      status: "proved"
+      note: "the first reflection lemma is in QuadraticIterates.Rational.Reflection"
+    - source: "Rational program: the γ_2 route (Li 2020, Lemmas 3.2 and 3.3, rational form)"
+      lean: "not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two"
+      module: "QuadraticIterates.Rational.GammaTwo"
+      status: "proved"
+      note: "for both signs; gives clause (SQ⁺5) of Theorem R⁺ and clause (SQ⁻4) of Theorem R⁻"
 
 # acknowledgements
 acknowledgements: ""
