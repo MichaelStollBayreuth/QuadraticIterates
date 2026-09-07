@@ -155,6 +155,12 @@ noncomputable def normPolyAway : (Localization.Away s)[X] :=
 
 lemma evenPoly_normPolyAway : EvenPoly (normPolyAway r s ε) := evenPoly_C_mul_X_sq_add_C _ _
 
+lemma normPolyAway_eq :
+    normPolyAway r s ε = C (aAway r s) * X ^ 2 + C (ε : Localization.Away s) := rfl
+
+@[simp] lemma eval_zero_normPolyAway : (normPolyAway r s ε).eval 0 = ε := by
+  simp [normPolyAway_eq]
+
 /-- The sequence `w` in `ℤ[1/s]`. -/
 def wSeqAway (n : ℕ) : Localization.Away s := wSeq r s ε n
 
@@ -164,6 +170,14 @@ lemma wSeqAway_eq_mul_gammaSeq (hε : ε ^ 2 = 1) (n : ℕ) :
     wSeqAway r s ε n =
       (s : Localization.Away s) ^ (2 ^ (n - 1) - 1) * gammaSeq (normPolyAway r s ε) ε n :=
   intCast_wSeq (intCast_mul_invSelf s) hε n
+
+lemma gammaSeq_normPolyAway_one (hε : ε ^ 2 = 1) : gammaSeq (normPolyAway r s ε) ε 1 = 1 := by
+  rw [gammaSeq_one, eval_zero_normPolyAway, ← Int.cast_mul, ← sq, hε, Int.cast_one]
+
+lemma wSeqAway_two (hε : ε ^ 2 = 1) :
+    wSeqAway r s ε 2 = s * gammaSeq (normPolyAway r s ε) ε 2 := by
+  rw [wSeqAway_eq_mul_gammaSeq hε]
+  norm_num
 
 private lemma associated_wSeqAway (hε : ε ^ 2 = 1) (n : ℕ) :
     Associated (wSeqAway r s ε n) (gammaSeq (normPolyAway r s ε) ε n) :=

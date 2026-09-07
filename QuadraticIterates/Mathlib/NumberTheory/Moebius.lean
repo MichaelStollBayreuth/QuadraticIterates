@@ -64,25 +64,42 @@ theorem sum_divisors_moebius_div_eq_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ t ∈ n.divisors, μ (n / t) = 0 := by
   rw [Nat.sum_div_divisors, sum_divisors_moebius, ite_eq_right (by lia)]
 
+/-- For squarefree `n'`, every divisor `t` of `n'` has `μ (n'/t) = 1` or `μ (n'/t) = -1`. -/
+theorem _root_.Squarefree.moebius_div_eq_one_or_eq_neg_one {n' t : ℕ} (hsf : Squarefree n')
+    (ht : t ∈ n'.divisors) : μ (n' / t) = 1 ∨ μ (n' / t) = -1 :=
+  moebius_ne_zero_iff_eq_or.mp (moebius_ne_zero_iff_squarefree.mpr
+    (hsf.squarefree_of_dvd (Nat.div_dvd_of_dvd (Nat.dvd_of_mem_divisors ht))))
+
 /-- For squarefree `n'`, a set `S` of divisors of `n'` on which `∑ μ (n'/t)` vanishes contains
 as many `t` with `μ (n'/t) = 1` as with `μ (n'/t) = -1`. -/
 theorem _root_.Squarefree.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one {n' : ℕ}
     (hsf : Squarefree n') {S : Finset ℕ} (hS : S ⊆ n'.divisors)
     (hsum : ∑ t ∈ S, μ (n' / t) = 0) :
     #{t ∈ S | μ (n' / t) = 1} = #{t ∈ S | μ (n' / t) = -1} :=
-  Finset.card_filter_eq_one_eq_card_filter_eq_neg_one_of_sum_eq_zero (fun _ ht ↦
-    moebius_ne_zero_iff_eq_or.mp (moebius_ne_zero_iff_squarefree.mpr (hsf.squarefree_of_dvd
-      (Nat.div_dvd_of_dvd (Nat.dvd_of_mem_divisors (hS ht)))))) hsum
+  Finset.card_filter_eq_one_eq_card_filter_eq_neg_one_of_sum_eq_zero
+    (fun _ ht ↦ hsf.moebius_div_eq_one_or_eq_neg_one (hS ht)) hsum
 
-/-- For squarefree `n'`, every divisor `t` of `n'` has `μ (n'/t) = 1` or `μ (n'/t) = -1`. -/
+/-- For squarefree `n'`, a set `S` of divisors of `n'` is the union of its two sign classes
+`μ (n'/t) = 1` and `μ (n'/t) = -1`. -/
+theorem _root_.Squarefree.filter_moebius_div_eq_one_union_filter_eq_neg_one_of_subset {n' : ℕ}
+    (hsf : Squarefree n') {S : Finset ℕ} (hS : S ⊆ n'.divisors) :
+    {t ∈ S | μ (n' / t) = 1} ∪ {t ∈ S | μ (n' / t) = -1} = S := by
+  rw [← Finset.filter_or]
+  exact Finset.filter_true_of_mem fun t ht ↦ hsf.moebius_div_eq_one_or_eq_neg_one (hS ht)
+
 theorem _root_.Squarefree.filter_moebius_div_eq_one_union_filter_eq_neg_one {n' : ℕ}
     (hsf : Squarefree n') :
-    {t ∈ n'.divisors | μ (n' / t) = 1} ∪ {t ∈ n'.divisors | μ (n' / t) = -1} = n'.divisors := by
-  rw [Finset.filter_congr (p := fun t ↦ μ (n' / t) = -1) (q := fun t ↦ ¬μ (n' / t) = 1) fun t ht ↦
-    by rcases moebius_ne_zero_iff_eq_or.mp (moebius_ne_zero_iff_squarefree.mpr
-      (hsf.squarefree_of_dvd (Nat.div_dvd_of_dvd (Nat.dvd_of_mem_divisors ht)))) with h | h <;>
-        simp [h]]
-  exact Finset.filter_union_filter_not_eq _ _
+    {t ∈ n'.divisors | μ (n' / t) = 1} ∪ {t ∈ n'.divisors | μ (n' / t) = -1} = n'.divisors :=
+  hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one_of_subset subset_rfl
+
+/-- A set of divisors of a squarefree `n'` on which `∑ μ (n'/t)` vanishes has evenly many
+elements: its two sign classes have the same size. -/
+theorem _root_.Squarefree.even_card_of_sum_moebius_div_eq_zero {n' : ℕ} (hsf : Squarefree n')
+    {S : Finset ℕ} (hS : S ⊆ n'.divisors) (hsum : ∑ t ∈ S, μ (n' / t) = 0) : Even S.card := by
+  rw [← hsf.filter_moebius_div_eq_one_union_filter_eq_neg_one_of_subset hS,
+    Finset.card_union_of_disjoint (Finset.disjoint_filter.mpr fun _ _ h1 h2 ↦ by lia),
+    hsf.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one hS hsum]
+  exact ⟨_, rfl⟩
 
 /-- The antidiagonal Möbius product `∏_{ed = n} F d ^ μ e` is the quotient of the product of the
 `F (k t)` over the divisors `t` of `n' = rad n` with `μ (n'/t) = 1` by the product over those with
@@ -136,6 +153,12 @@ theorem sum_divisors_filter_mod_two_moebius_div {n : ℕ} (hn : 3 ≤ n) (i : �
       Finset.filter_congr (q := (· % 2 = 1)) fun t _ ↦ by lia] at h
     exact h
   · rw [Finset.filter_false_of_mem fun _ _ h ↦ by lia, Finset.sum_empty]
+
+/-- For squarefree `n ≥ 3`, `n` has evenly many even and evenly many odd divisors. -/
+theorem _root_.Squarefree.even_card_filter_divisors_mod_two {n : ℕ} (hsf : Squarefree n)
+    (hn : 3 ≤ n) (i : ℕ) : Even #{t ∈ n.divisors | t % 2 = i} :=
+  hsf.even_card_of_sum_moebius_div_eq_zero (Finset.filter_subset _ _)
+    (sum_divisors_filter_mod_two_moebius_div hn i)
 
 /-- For a `gcd`-`min` function `g` and a least element `m` of the level set `{d ∣ n : k ≤ g d}`,
 that level set consists of the multiples of `m` among the divisors of `n`. -/

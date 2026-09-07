@@ -38,6 +38,7 @@ public import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 public import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 public import QuadraticIterates.Rational
+public import QuadraticIterates.Rational.GammaTwo
 public import QuadraticIterates.Rational.Reflection
 public import QuadraticIterates.Rational.Residues
 public import QuadraticIterates.Rational.Sequence

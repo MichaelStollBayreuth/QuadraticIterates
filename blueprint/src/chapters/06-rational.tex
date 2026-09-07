@@ -108,8 +108,9 @@ through the integer factors $b_n$ of Lemma~\ref{lem:1.1}. Only the first two mat
   \label{lem:gamma-away}
   \uses{def:wseq, def:gammaseq, lem:2.1, thm:valshape, lem:moebiusfactor}
   \lean{QuadraticIterates.aAway, QuadraticIterates.normPolyAway, QuadraticIterates.wSeqAway,
-    QuadraticIterates.wSeqAway_eq_mul_gammaSeq,
-    QuadraticIterates.isRelPrime_moebiusFactorR_wSeqAway}
+    QuadraticIterates.normPolyAway_eq, QuadraticIterates.eval_zero_normPolyAway,
+    QuadraticIterates.gammaSeq_normPolyAway_one, QuadraticIterates.wSeqAway_eq_mul_gammaSeq,
+    QuadraticIterates.wSeqAway_two, QuadraticIterates.isRelPrime_moebiusFactorR_wSeqAway}
   \leanok
   Let $R = \ZZ[1/s]$, a unique factorization domain whose primes are the primes $p \nmid s$, and
   let $a = r/s \in R$. The $\gamma$-sequence of $aX^2 + 1$ over $R$ satisfies
@@ -472,17 +473,23 @@ its new lemmas are of Mathlib generality.
   Proposition~\ref{prop:rat-twoadic} (positive world), and suppose that one of (SQ${}^+$1)
   some odd $p \mid s$ has $\bigl(\tfrac{r}{p}\bigr) = -1$; (SQ${}^+$2) some odd $p \mid r + 2s$
   has $\bigl(\tfrac{-s}{p}\bigr) = -1$; (SQ${}^+$3) $4 \mid r + 2s$ and $s \equiv 1 \pmod 4$;
-  (SQ${}^+$4) $s$ even and $r + s \not\equiv 1 \pmod 8$ holds. Then $\Om_n \cong \Ct{n}$ for all
-  $n \ge 1$.
+  (SQ${}^+$4) $s$ even and $r + s \not\equiv 1 \pmod 8$; (SQ${}^+$5) $r + s$ is not a square,
+  and some odd $p \mid r + s$ has $\bigl(\tfrac{s}{p}\bigr) = -1$, or $4 \mid r + s$ and
+  $s \equiv 3 \pmod 4$ holds. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
 \end{theorem}
 \begin{proof}
-  \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-mod8}
+  \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-mod8,
+    lem:rat-g2}
   All $w_n > 0$ in the positive world, so $\beta_n > 0$. For $n$ not squarefree,
   Proposition~\ref{prop:rat-twoadic} and Lemma~\ref{lem:rat-reflection}; for squarefree $n$,
-  Lemmas \ref{lem:rat-ps}, \ref{lem:rat-refl1}, \ref{lem:rat-mod8}; then Lemma~\ref{lem:rat-shared}.
+  Lemmas \ref{lem:rat-ps}, \ref{lem:rat-refl1}, \ref{lem:rat-mod8}, and for (SQ${}^+$5)
+  Lemma~\ref{lem:rat-g2} with $\varepsilon = 1$ ($n \ge 3$; $\beta_2 = w_2 = r + s$ is not a
+  square by hypothesis); then Lemma~\ref{lem:rat-shared}.
   \formalnote{\lname{nonempty\_mulEquiv\_of\_ratClass\_of\_squarefreeCert} with the two
-  \lname{Prop}-structures \lname{RatClass} and \lname{SquarefreeCert} in $r$ and $s$ (the four
+  \lname{Prop}-structures \lname{RatClass} and \lname{SquarefreeCert} in $r$ and $s$ (the five
   clauses as a disjunction); the sign condition $0 < r$ or $-s < r$, and $-rs$ not a square.
+  Clause (SQ${}^+$5) was found during the formalization of Lemma~\ref{lem:rat-g2}: its
+  mechanism works for both signs, and for $\varepsilon = 1$ it is void only for $s = 1$.
   Positivity of $w$: \lname{wSeq\_pos} for $r > 0$, and for $-s < r < 0$ the bound
   $0 < w_n \le s^{2^{n-1}-1}$.}
 \end{proof}
@@ -501,30 +508,54 @@ its new lemmas are of Mathlib generality.
   \uses{lem:rat-shared, lem:rat-reflection, prop:rat-twoadic, lem:rat-ps, lem:rat-refl1, lem:rat-g2}
   As for Theorem~\ref{thm:rat-pos} in Stoll's world ($w^S$ positive from $n = 2$ on, $\beta^S_n =
   |\beta_n|$), clause (SQ${}^-$4) by Lemma~\ref{lem:rat-g2}.
-  \formalnote{Second instance of the same lemmas with $w^S$; the two worlds should share every
-  statement through the general \lname{gammaSeq} lemmas over \lname{ZMod M}, specialized only at
-  the end. Clause (SQ${}^-$4) is the last item of the order of work, since its lemma is the only one
-  whose proof is not yet written out in the notes.}
+  \formalnote{Second instance of the same lemmas with $w^S$; the two worlds share every statement
+  through the general \lname{gammaSeq} lemmas over \lname{ZMod M}, specialized only at the end.
+  Clause (SQ${}^-$4) is Lemma~\ref{lem:rat-g2} with $\varepsilon = -1$ for $n \ge 3$, and
+  $\beta^S_2 = w^S_2 = |r| - s$ is not a square by hypothesis.}
 \end{proof}
 
 \begin{lemma}[the $\gamma_2$ route, rational form of {\cite[Lemmas 3.2, 3.3]{li2020}}]
   \label{lem:rat-g2}
-  \uses{lem:li-C-sqfree, lem:w-gamma-zmod}
-  Let $a \le -2$ and let $M$ be coprime to $s$ and divide $R - s$, the numerator of $\gamma^S_2 =
-  |a| - 1$. If $-s$ is a non-square modulo $M$, then $\beta^S_n$ is a non-square modulo $M$ for
-  every squarefree $n \ge 3$.
+  \uses{def:wseq, def:betaint, lem:betaint, lem:gamma-away, lem:w-gamma-zmod, lem:li-modsq,
+    lem:moebiussign}
+  \lean{QuadraticIterates.not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two,
+    QuadraticIterates.wSeq_two_dvd_wSeq_of_even,
+    QuadraticIterates.dvd_wSeq_ediv_wSeq_two_sub_pow_of_even}
+  \leanok
+  In either world, let $M$ be coprime to $s$ and divide $w_2 = r + \varepsilon s$, the numerator
+  of $\gamma_2$. Then $\beta_n \equiv \varepsilon s \cdot u^2 \pmod M$ with a unit $u$, for
+  every squarefree $n \ge 3$; so if $\varepsilon s$ is a non-square modulo $M$, then $\beta_n$ is
+  a non-square modulo $M$ for every squarefree $n \ge 3$. For $a \le -2$ ($\varepsilon = -1$,
+  $M \mid |r| - s$, $-s$ a non-square) this is clause (SQ${}^-$4); in the positive world
+  ($\varepsilon = 1$, $M \mid r + s$, $s$ a non-square) it is the new clause (SQ${}^+$5), void
+  for $s = 1$.
 \end{lemma}
 \begin{proof}
-  \uses{lem:li-C-sqfree}
-  Modulo $M$ the sequence $\gamma^S$ is $1, 0, -1, 0, -1, \dots$, and modulo $M^2$ it is
-  $\gamma^S_2$ at even and $-1$ at odd indices $\ge 3$ (Lemma~\ref{lem:li-modsq} over
-  $\ZZ/M^2\ZZ$). For odd $n$ this is a constant tail and Lemma~\ref{lem:rat-reflection} applies;
-  for even $n = 2m$, $m > 1$, the argument of Lemma~\ref{lem:li-C-sqfree} modulo $\gamma_2$ gives
-  $\beta^S_n \equiv -s^{E(n)} u^2$ after cancelling the (trivial) power of $\gamma^S_2$.
-  \formalnote{To be worked out in detail before formalization: the integral version is
-  \lname{not\_isSquare\_betaSeq\_of\_squarefree\_of\_not\_isSquare\_neg\_one} (Chapter~5), whose
-  proof modulo $\gamma_2$ should generalize to a ring where $s$ is a unit, with the twist
-  $s^{E(n)}$ inserted exactly as in Lemma~\ref{lem:rat-reflection}.}
+  \uses{lem:li-modsq, lem:betaint, lem:gamma-away, lem:moebiussign}
+  \leanok
+  Over $\ZZ[1/s]$, where $M \mid \gamma_2$, Lemma~\ref{lem:li-modsq} gives $\gamma_t \equiv
+  \gamma_2 \pmod{\gamma_2^2}$ for even $t$ and $\gamma_t \equiv g(0) = \varepsilon$ for odd
+  $t \ge 3$. So for even $t$, $\gamma_t = \gamma_2 u_t$ with $u_t \equiv 1 \pmod M$, which in
+  terms of $w$ says $w_2 \mid w_t$ in $\ZZ$ and $w_t / w_2 \equiv s^{2^{t-1} - 2} \pmod M$;
+  for odd $t \ge 3$, $w_t \equiv \varepsilon s^{2^{t-1}-1}$. Write $\beta_n = P/Q$ with $P$,
+  $Q$ the products of the $w_t$ over the two sign classes of the divisors $t$ of $n$. Both classes
+  contain the same number $N$ of even divisors (Lemma~\ref{lem:moebiussign} on the even
+  divisors), so $P = w_2^N P'$ and $Q = w_2^N Q'$ with $P'$, $Q'$ the products of the $w_2$-free
+  parts, and $\beta_n = P'/Q'$. If $\beta_n$ is a square, so is the integer $P'Q'$, the product
+  of the $w_2$-free parts over all divisors, which modulo $M$ is $u^{\#\{t \text{ even}\}}
+  \varepsilon^{\#\{t \text{ odd}\} - 1} s^{E(n)}$ with $u = s^{-1}$; $n$ has evenly many even
+  and evenly many odd divisors, and $E(n)$ is odd, so this is $\varepsilon s \cdot
+  (\text{unit})^2$.
+  \formalnote{\lname{not\_isSquare\_betaInt\_of\_squarefree\_of\_dvd\_wSeq\_two}, for a general
+  sign $\varepsilon$, with the modulus a divisor of \lname{wSeq r s ε 2} and the hypothesis
+  ``$\varepsilon s$ is not a square in \lname{ZMod M}''. The descent from $\ZZ[1/s]$
+  (\lname{wSeq\_two\_dvd\_wSeq\_of\_even},
+  \lname{dvd\_wSeq\_ediv\_wSeq\_two\_sub\_pow\_of\_even}) applies
+  \lname{gammaSeq\_two\_sq\_dvd\_sub\_ite\_even} over \lname{Localization.Away s} and the
+  descent lemma of Lemma~\ref{lem:betaint}; the $w_2$-free part is a private device as in the
+  integer proof (\lname{not\_isSquare\_betaSeq\_of\_squarefree\_of\_not\_isSquare\_neg\_one}
+  of Chapter~5), and the parities of the numbers of even and of odd divisors are
+  \lname{Squarefree.even\_card\_filter\_divisors\_mod\_two}.}
 \end{proof}
 
 \section{Order of work}
@@ -549,6 +580,7 @@ its new lemmas are of Mathlib generality.
 \item \lname{Rational/Reflection.lean}: Lemmas \ref{lem:w-gamma-zmod}, \ref{lem:rat-reflection}.
 \item \lname{Rational/Residues.lean}: Proposition~\ref{prop:rat-twoadic}, Lemmas \ref{lem:rat-ps},
   \ref{lem:rat-refl1}, \ref{lem:rat-mod8}.
-\item \lname{Rational/Main.lean}: Theorem~\ref{thm:rat-pos}, then Theorem~\ref{thm:rat-neg} with
-  clauses 1--3, then Lemma~\ref{lem:rat-g2} and clause 4.
+\item \lname{Rational/GammaTwo.lean}: Lemma~\ref{lem:rat-g2} (done before the Galois side, as it
+  is independent of it).
+\item \lname{Rational/Main.lean}: Theorem~\ref{thm:rat-pos}, then Theorem~\ref{thm:rat-neg}.
 \end{enumerate}
