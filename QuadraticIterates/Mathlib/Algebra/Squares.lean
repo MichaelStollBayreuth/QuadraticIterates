@@ -86,6 +86,17 @@ theorem ZMod.not_isSquare_neg_one_of_emod_eight_eq_six {m : ℕ} (hm : m % 8 = 6
 theorem ZMod.not_isSquare_neg_one_of_four_dvd {m : ℕ} (hm : 4 ∣ m) : ¬IsSquare (-1 : ZMod m) :=
   fun hsq ↦ absurd (ZMod.isSquare_neg_one_of_dvd hm hsq) (by decide)
 
+/-- For `N ≥ 0` with `N ≡ 6 mod 8` or `N ≡ 3 mod 4`, `-1` is not a square modulo `N`. -/
+theorem Int.not_isSquare_neg_one_zmod_natAbs_of_emod {N : ℤ} (hN : 0 ≤ N)
+    (h : N % 8 = 6 ∨ N % 4 = 3) : ¬IsSquare (-1 : ZMod N.natAbs) := by
+  rcases h with h | h
+  · refine ZMod.not_isSquare_neg_one_of_emod_eight_eq_six (Nat.cast_injective (R := ℤ) ?_)
+    rw [Int.natCast_mod, Int.natAbs_of_nonneg hN]
+    exact_mod_cast h
+  · refine ZMod.not_isSquare_neg_one_of_emod_four_eq_three (Nat.cast_injective (R := ℤ) ?_)
+    rw [Int.natCast_mod, Int.natAbs_of_nonneg hN]
+    exact_mod_cast h
+
 /-- A square is `0` or `1` modulo `4`. -/
 theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :
     m % 4 = 0 ∨ m % 4 = 1 := by

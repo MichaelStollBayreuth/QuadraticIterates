@@ -344,6 +344,15 @@ its new lemmas are of Mathlib generality.
 \begin{proposition}[the classes (C${}^\pm$)]
   \label{prop:rat-twoadic}
   \uses{def:wseq, lem:li-mod8-2}
+  \lean{QuadraticIterates.TwoAdicClass, QuadraticIterates.reflNum_emod_of_odd,
+    QuadraticIterates.reflNum_emod_four_of_even,
+    QuadraticIterates.not_isSquare_neg_one_zmod_reflNum,
+    QuadraticIterates.not_isSquare_betaInt_of_two_le,
+    QuadraticIterates.intCast_wSeq_zmod_eight_of_even, QuadraticIterates.intCast_sq_zmod_eight_of_odd,
+    QuadraticIterates.intCast_pow_zmod_eight_of_even,
+    QuadraticIterates.intCast_pow_two_pow_sub_one_zmod_eight_of_odd,
+    Int.not_isSquare_neg_one_zmod_natAbs_of_emod}
+  \leanok
   Let $N_{n_0} = w_{n_0} s^{2^{n_0-1}} + w_{n_0+1}$ (positive world: $a > 0$ or $-1 < a < 0$), resp.\
   $N_{n_0} = w^S_{n_0} s^{2^{n_0-1}} + w^S_{n_0+1}$ ($a \le -2$, $R = |r|$). If $(s \bmod 4, r \bmod 4)
   \in \{(1,1), (1,2), (3,0), (3,1)\}$ or $s$ is even and $r \equiv 3 \pmod 4$ (resp.\
@@ -352,7 +361,8 @@ its new lemmas are of Mathlib generality.
   $\equiv 3 \pmod 4$.
 \end{proposition}
 \begin{proof}
-  \uses{lem:li-period, lem:w-gamma-zmod}
+  \uses{lem:w-gamma-zmod, lem:li-period, def:betaint, lem:rat-reflection}
+  \leanok
   Everything is decided modulo $8$. For odd $s$, $s^{2^{n_0}-1} \equiv s \pmod 8$, so $N \equiv
   s(\gamma_{n_0} + \gamma_{n_0+1})$ with $\gamma$ computed in $\ZZ/8\ZZ$ from $\bar a = r s^{-1}$:
   for even $\bar a$ the sequence is constant $\bar a + 1$ from $n = 2$ on
@@ -361,14 +371,21 @@ its new lemmas are of Mathlib generality.
   $N \equiv r + 2 \pmod 4$. For even $s$, $w_n \equiv r \pmod 8$ for $n \ge 3$ and $N \equiv r
   \pmod 4$. The listed classes are exactly those where the residue is as claimed (working notes,
   Proposition~5.1).
-  \formalnote{Four lemmas in a new \lname{Rational/Residues.lean}, in the style of
-  \lname{Li/Residues.lean}: the $\gamma$-sequence of $\bar a X^2 + 1$ over \lname{ZMod 8} with
-  $\bar a$ even, resp.\ odd, and the $w$-recursion modulo $8$ for even $s$; conclusions of the
-  form $N \equiv 6 \bmod 8$ or $N \equiv 3 \bmod 4$, consumed by
-  \lname{ZMod.not\_isSquare\_neg\_one\_of\_emod\_eight\_eq\_six} and
-  \lname{ZMod.not\_isSquare\_neg\_one\_of\_emod\_four\_eq\_three}. The class conditions are best
-  bundled as a \lname{Prop}-structure \lname{RatClass} in $r$ and $s$ with the disjunction as
-  its single field, so that no signature grows.}
+  \formalnote{In terms of $(r, s, \varepsilon)$, both worlds at once: $s$ odd with
+  $r \equiv 1$ or $r + \varepsilon s \equiv 3 \pmod 4$, or $s$ even with $r \equiv 3 \pmod 4$
+  (\lname{TwoAdicClass r s ε}, a \lname{Prop}, so that no signature grows). Odd $s$:
+  \lname{reflNum\_emod\_of\_odd} ($N_k \equiv 6 \bmod 8$ or $N_k \equiv 3 \bmod 4$ for $k \ge 2$)
+  --- in \lname{ZMod 8}, $\gamma_4 = \gamma_2$ for every $\bar a$ (a \lname{decide}), so
+  \lname{gammaSeq\_eq\_ite\_even\_of\_add\_two\_eq} gives $\gamma_k + \gamma_{k+1} = \gamma_2 +
+  \gamma_3$, and $N_k \equiv s(\gamma_2 + \gamma_3)$ by \lname{intCast\_wSeq} with $s^{2^k - 1} = s$;
+  the inverse of $\bar s$ is $\bar s$ itself, and the residue claim is a \lname{decide} over
+  $(\bar r, \bar s, \bar\varepsilon) \in (\ZZ/8\ZZ)^3$. Even $s$:
+  \lname{intCast\_wSeq\_zmod\_eight\_of\_even} ($w_n \equiv r \bmod 8$ for $n \ge 3$) and
+  \lname{reflNum\_emod\_four\_of\_even}. Then \lname{not\_isSquare\_neg\_one\_zmod\_reflNum}
+  ($-1$ is not a square modulo $N_k$, via \lname{Int.not\_isSquare\_neg\_one\_zmod\_natAbs\_of\_emod})
+  and the corollary \lname{not\_isSquare\_betaInt\_of\_two\_le}: in the classes, $\beta_n$ is not
+  a square for $n \ge 2$ with $n / \rad(n) \ge 2$, by the reflection lemma with the modulus $N_k$
+  itself (Mathlib's \lname{ZMod.coe\_int\_isUnit\_iff\_isCoprime} supplies the inverse of $\bar s$).}
 \end{proof}
 
 \section{Squarefree levels}

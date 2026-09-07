@@ -83,7 +83,9 @@ lemma wSeq_succ {n : ℕ} (hn : 1 ≤ n) :
 
 variable {r s ε}
 
-private lemma two_pow_sub_one_eq {n : ℕ} (hn : 1 ≤ n) : 2 ^ n - 1 = 2 * (2 ^ (n - 1) - 1) + 1 := by
+/-- `2^n - 1 = 2 (2^(n-1) - 1) + 1` for `n ≥ 1`: the exponents of `s` in
+`QuadraticIterates.intCast_wSeq` at consecutive indices. -/
+lemma two_pow_sub_one_eq {n : ℕ} (hn : 1 ≤ n) : 2 ^ n - 1 = 2 * (2 ^ (n - 1) - 1) + 1 := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
   have := Nat.one_le_two_pow (n := m)
   rw [Nat.add_sub_cancel, pow_succ]
