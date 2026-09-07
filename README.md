@@ -68,8 +68,8 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml) format; it
 includes a table aligning each result of the paper with the declaration that formalizes it.
 [`comparator/`](comparator) holds a [comparator](https://github.com/leanprover/comparator)
-harness for the main result of Section 3 and for the theorems of Li (the first one in its
-strengthened form), one challenge per case.
+harness for the main result of Section 3, for the theorems of Li (the first one in its
+strengthened form) and for the two rational-parameter theorems, one challenge per case.
 
 ## Blueprint
 

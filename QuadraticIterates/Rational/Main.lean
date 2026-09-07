@@ -69,6 +69,25 @@ inductive SquarefreeCert (r s ε : ℤ) : Prop
   | gammaTwo (hw2 : ¬IsSquare (r + ε * s)) (M : ℕ) (hu : IsUnit (s : ZMod M))
     (hM : (M : ℤ) ∣ r + ε * s) (h : ¬IsSquare ((ε : ZMod M) * s))
 
+/-- The squarefree-level certificate as the disjunction of its four clauses. -/
+theorem squarefreeCert_iff : SquarefreeCert r s ε ↔
+    (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
+      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + (1 + ε) * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
+        (s % 2 = 0 ∧ r % 4 = 3 ∧ (r + ε * s) % 8 ≠ 1) ∨
+          (¬IsSquare (r + ε * s) ∧
+            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + ε * s ∧ ¬IsSquare ((ε : ZMod M) * s)) := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · cases h with
+    | dvd M hM h => exact .inl ⟨M, hM, h⟩
+    | reflNum M hu hM h => exact .inr (.inl ⟨M, hu, hM, h⟩)
+    | even hs hr h => exact .inr (.inr (.inl ⟨hs, hr, h⟩))
+    | gammaTwo hw2 M hu hM h => exact .inr (.inr (.inr ⟨hw2, M, hu, hM, h⟩))
+  · rcases h with ⟨M, hM, h⟩ | ⟨M, hu, hM, h⟩ | ⟨hs, hr, h⟩ | ⟨hw2, M, hu, hM, h⟩
+    · exact .dvd M hM h
+    · exact .reflNum M hu hM h
+    · exact .even hs hr h
+    · exact .gammaTwo hw2 M hu hM h
+
 /-- **Squarefree levels.** Under a certificate `QuadraticIterates.SquarefreeCert r s ε`, `β_n` is
 not a square for every squarefree `n ≥ 2`. -/
 theorem not_isSquare_betaInt_of_squarefree_of_squarefreeCert (hs : s ≠ 0) (hrs : IsCoprime r s)

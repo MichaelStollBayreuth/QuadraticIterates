@@ -2,9 +2,11 @@
 
 This directory lets [Comparator](https://github.com/leanprover/comparator) — "a trustworthy judge
 for Lean proofs" — certify that this repository proves the paper's **Section 3 main result** (`section3_main`, one
-challenge per case) and the **theorems of Li** extending it (`li2021_theorem_3_9`,
+challenge per case), the **theorems of Li** extending it (`li2021_theorem_3_9`,
 `li2020_theorem_3_5`, and Theorem 3.3 of 2021 in its strengthened form
-`nonempty_mulEquiv_of_eq_neg_mul`, for `a = -(4k+2)(4k+3)` rather than Li's `a = -(8k+2)(8k+3)`),
+`nonempty_mulEquiv_of_eq_neg_mul`, for `a = -(4k+2)(4k+3)` rather than Li's `a = -(8k+2)(8k+3)`)
+and the **rational-parameter theorems R⁺ and R⁻** (`QuadraticIterates/Rational/Main.lean`, with
+the 2-adic classes and the squarefree-level certificates spelled out as disjunctions),
 independently of the repository's own build and using only the permitted axioms.
 
 ## What is checked
@@ -31,10 +33,11 @@ Mathlib's `Polynomial.Gal`, so reproducing the three definitions pulls in only M
 
 ## Config
 
-[`challenges.json`](challenges.json) — the six challenge theorems: the three cases of the Section 3
-main result (`a > 0`, `a ≡ 1 mod 4`; `a > 0`, `a ≡ 2 mod 4`; `a < 0`, `a ≡ 0 mod 4`, `-a` not a
-square), Li's Theorems 3.9 (2021) and 3.5 (2020), and Theorem 3.3 (2021) strengthened to
-`a = -(4k+2)(4k+3)`.
+[`challenges.json`](challenges.json) — the eight challenge theorems: the three cases of the
+Section 3 main result (`a > 0`, `a ≡ 1 mod 4`; `a > 0`, `a ≡ 2 mod 4`; `a < 0`, `a ≡ 0 mod 4`,
+`-a` not a square), Li's Theorems 3.9 (2021) and 3.5 (2020), Theorem 3.3 (2021) strengthened to
+`a = -(4k+2)(4k+3)`, and Theorems R⁺ (`a = r/s > -1`) and R⁻ (`a = -R/s ≤ -2`) for rational
+parameters.
 
 ## Running
 

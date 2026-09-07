@@ -8,9 +8,11 @@ public import Mathlib
 Self-contained restatements, with `sorry` proofs, of the main results for verification with
 [leanprover/comparator](https://github.com/leanprover/comparator): the three cases of the paper's
 Section 3 main result (`section3_main` in `QuadraticIterates/ArchMath1992/`), one challenge per
-case, and the theorems of Li extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its
+case, the theorems of Li extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its
 strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in
-`QuadraticIterates/Li/`).
+`QuadraticIterates/Li/`), and the two theorems extending it to rational parameters `a = r/s`
+(Theorems R⁺ and R⁻ of `QuadraticIterates/Rational/Main.lean`, with the 2-adic classes and the
+squarefree-level certificates spelled out).
 
 This file imports **only Mathlib**: the three non-Mathlib definitions the statement refers to
 (`QuadraticIterates.iteratedPoly`, `.GaloisGroup`, `.WreathPower`) are reproduced here from the
@@ -83,4 +85,42 @@ a square. -/
 theorem challenge_li2020_theorem_3_5 (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 3)
     (hsq : ¬IsSquare (-a)) :
     (∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) :=
+  sorry
+
+/-- **Theorem R⁺** (`nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert`), the
+extension of the Section 3 main result to a rational parameter `a = r/s > -1` (`s > 0`, `r` and
+`s` coprime): if `-rs` is not a square, `(r, s)` lies in one of the 2-adic classes (`s` odd with
+`r ≡ 1 mod 4` or `r + s ≡ 3 mod 4`, or `s` even with `r ≡ 3 mod 4`), and one of the four
+squarefree-level certificates holds — a divisor `M` of `s` modulo which `r` is not a square; a
+divisor `M` of `r + 2s` modulo which `s` is a unit and `-s` is not a square; `s` even with
+`r ≡ 3 mod 4` and `r + s ≢ 1 mod 8`; or `r + s` not a square with a divisor `M` of `r + s` modulo
+which `s` is a unit and not a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCert (r s : ℤ)
+    (hs : 0 < s) (hrs : IsCoprime r s) (hr : -s < r) (hsq : ¬IsSquare (-(r * s)))
+    (hc : (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3))
+    (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
+      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + 2 * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
+        (s % 2 = 0 ∧ r % 4 = 3 ∧ (r + s) % 8 ≠ 1) ∨
+          (¬IsSquare (r + s) ∧
+            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
+  sorry
+
+/-- **Theorem R⁻** (`nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert`), the
+extension of the Section 3 main result to a rational parameter `a = -R/s ≤ -2` (`R, s > 0`
+coprime): if `Rs` is not a square, `(R, s)` lies in one of the 2-adic classes (`s` odd with
+`R ≡ 1 mod 4` or `R - s ≡ 3 mod 4`, or `s` even with `R ≡ 3 mod 4`), and one of the four
+squarefree-level certificates holds — a divisor `M` of `s` modulo which `R` is not a square; a
+divisor `M` of `R` modulo which `s` is a unit and `-s` is not a square; `s` even with
+`R ≡ 3 mod 4` and `R - s ≢ 1 mod 8`; or `R - s` not a square with a divisor `M` of `R - s` modulo
+which `s` is a unit and `-s` is not a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
+theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCert (R s : ℤ)
+    (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
+    (hc : (s % 2 = 1 ∧ (R % 4 = 1 ∨ (R - s) % 4 = 3)) ∨ (s % 2 = 0 ∧ R % 4 = 3))
+    (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
+      (∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
+        (s % 2 = 0 ∧ R % 4 = 3 ∧ (R - s) % 8 ≠ 1) ∨
+          (¬IsSquare (R - s) ∧
+            ∃ M : ℕ, IsUnit (s : ZMod M) ∧ (M : ℤ) ∣ R - s ∧ ¬IsSquare (-(s : ZMod M)))) :
+    ∀ n ≥ 1, Nonempty (GaloisGroup (-R / s : ℚ) n ≃* WreathPower n) :=
   sorry

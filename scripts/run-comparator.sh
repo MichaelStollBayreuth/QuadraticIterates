@@ -3,7 +3,7 @@
 # Run the leanprover/comparator check for this project locally.
 #
 # Certifies that the repository proves the challenge statements in the given config
-# (default: all six challenge theorems). See comparator/README.md for what is checked.
+# (default: all eight challenge theorems). See comparator/README.md for what is checked.
 #
 # Requires three binaries; override any location via the environment:
 #   COMPARATOR_BIN         the `comparator` binary (built from leanprover/comparator)

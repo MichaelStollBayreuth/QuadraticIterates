@@ -215,6 +215,9 @@ condition on `r`, `s`, `ε`: `s` odd with `r ≡ 1 mod 4` or `r + εs ≡ 3 mod 
 def TwoAdicClass (r s ε : ℤ) : Prop :=
   (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + ε * s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3)
 
+theorem twoAdicClass_iff : TwoAdicClass r s ε ↔
+    (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + ε * s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3) := .rfl
+
 /-- In the 2-adic classes, `-1` is not a square modulo `N_k` for every `k ≥ 2`. -/
 theorem not_isSquare_neg_one_zmod_reflNum (hs : 0 < s) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
     (hw : ∀ n ≥ 1, 0 < wSeq r s ε n) (hc : TwoAdicClass r s ε) {k : ℕ} (hk : 2 ≤ k) :
