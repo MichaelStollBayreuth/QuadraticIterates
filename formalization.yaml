@@ -108,7 +108,7 @@ status:
 automation:
   methods:
     - method: "autonomous"
-      models: []               # TODO: system/models used for the original AI-generated version
+      models: ["[Logos Model]"]
       framework: "Logos Research (https://www.logosresearch.ai/)"
       tool_setup: ""
       cost:
