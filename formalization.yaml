@@ -126,7 +126,7 @@ status:
 automation:
   methods:
     - method: "autonomous"
-      models: ["[Logos Model]"]
+      models: ["Logos Model"]
       framework: "Logos Research (https://www.logosresearch.ai/)"
       tool_setup: ""
       cost:
