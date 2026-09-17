@@ -45,9 +45,8 @@ lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd_add {a b : ℤ} {m : ℕ}
 
 /-- The square of an odd integer is `1` in `ZMod 8`. -/
 lemma ZMod.intCast_sq_eight_eq_one_of_odd {x : ℤ} (hx : Odd x) : (x : ZMod 8) ^ 2 = 1 := by
-  have hx := Int.odd_iff.mp hx
-  rcases (show x % 8 = 1 % 8 ∨ x % 8 = 3 % 8 ∨ x % 8 = 5 % 8 ∨ x % 8 = 7 % 8 by lia)
-    with h | h | h | h <;> rw [(intCast_eq_intCast_iff' x _ 8).mpr h] <;> decide
+  rw [← Int.cast_pow, ← Int.cast_one, intCast_eq_intCast_iff_dvd_sub]
+  exact_mod_cast dvd_sub_comm.mp (Int.eight_dvd_sq_sub_one_of_odd hx)
 
 lemma ZMod.isUnit_intCast_eight_of_odd {x : ℤ} (hx : Odd x) : IsUnit (x : ZMod 8) :=
   .of_mul_eq_one _ (sq (x : ZMod 8) ▸ intCast_sq_eight_eq_one_of_odd hx)
