@@ -131,9 +131,8 @@ theorem Int.not_isSquare_neg_one_zmod_natAbs_of_emod_four_eq_three {N : ℤ} (hN
 theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :
     m % 4 = 0 ∨ m % 4 = 1 := by
   obtain ⟨r, rfl⟩ := h
-  rw [Int.mul_emod]
-  rcases (show r % 4 = 0 ∨ r % 4 = 1 ∨ r % 4 = 2 ∨ r % 4 = 3 by lia) with h | h | h | h <;>
-    rw [h] <;> decide
+  rw [← sq, Int.sq_emod_four]
+  exact Int.emod_two_eq_zero_or_one r
 
 /-- The `IsSquare` form of Mathlib's `Int.sq_ne_two_mod_four`. -/
 theorem Int.not_isSquare_of_emod_four_eq_two {m : ℤ} (h : m % 4 = 2) : ¬IsSquare m :=
