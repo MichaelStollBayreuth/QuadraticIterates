@@ -20,6 +20,7 @@ public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
+public import QuadraticIterates.Mathlib.Algebra.QuadraticDiscriminant
 public import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
 public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Fintype.Basic

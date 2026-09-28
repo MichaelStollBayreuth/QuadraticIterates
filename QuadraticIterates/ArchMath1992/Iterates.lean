@@ -10,6 +10,7 @@ public import Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 
+import QuadraticIterates.Mathlib.Algebra.QuadraticDiscriminant
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Fintype.Basic
 import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
@@ -51,6 +52,9 @@ ring, the integer sequences of the paper being the case `a ∈ ℤ`; the rescale
 * `QuadraticIterates.twoIndependent_iff_of_pairwise_isCoprime`: a pairwise coprime family of
   integers is 2-independent iff none of its members is a square and at most one of their negatives
   is.
+* `QuadraticIterates.cSeq_add_cSeq_succ_neg`: in an ordered ring, for `α < a < 0` with `α` the
+  real root of `x³ + 2x² + 2x + 2`, the sums `c_n + c_{n+1}` of successive iterates are negative
+  (`QuadraticIterates.cSeq_le_sq_add`: for `-2 ≤ a ≤ 0` the sequence is bounded by `c_2 = a² + a`).
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -292,6 +296,72 @@ noncomputable def normPoly (a : ℤ) : ℤ[X] := C |a| * X ^ 2 + C a.sign
   simp [normPoly]
 
 lemma evenPoly_normPoly (a : ℤ) : EvenPoly (normPoly a) := evenPoly_C_mul_X_sq_add_C |a| a.sign
+
+/-! ### The iterates of a parameter in `[-2, 0]` of an ordered ring -/
+
+section
+
+variable {R : Type*} [CommRing R] [LinearOrder R] [IsStrictOrderedRing R] (a : R)
+
+theorem le_cSeq {n : ℕ} (hn : 2 ≤ n) : a ≤ cSeq a n := by
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by lia⟩
+  rw [cSeq_succ a (by lia)]
+  exact le_add_of_nonneg_left (sq_nonneg _)
+
+/-- For `-2 ≤ a ≤ 0` the second iterate `c_2 = a² + a` bounds the sequence from above: the
+interval `[a, a² + a]`, contained in `[a, -a]`, is mapped into itself by `x ↦ x² + a`. -/
+theorem cSeq_le_sq_add (h₂ : -2 ≤ a) (h₀ : a ≤ 0) {n : ℕ} (hn : 2 ≤ n) :
+    cSeq a n ≤ a ^ 2 + a := by
+  induction n, hn using Nat.le_induction with
+  | base => exact (cSeq_two a).le
+  | succ k hk ih =>
+    have hle : a ^ 2 + a ≤ -a := by
+      linear_combination mul_nonpos_of_nonpos_of_nonneg h₀ (by linarith : 0 ≤ a + 2)
+    rw [cSeq_succ a (by lia), ← neg_sq a]
+    exact add_le_add (sq_le_sq' (by linarith [le_cSeq a hk]) (ih.trans hle)) le_rfl
+
+-- the real root of `x³ + 2x² + 2x + 2` is larger than `-2`
+private lemma neg_two_lt_of_pos (h : 0 < a ^ 3 + 2 * a ^ 2 + 2 * a + 2) : -2 < a := by
+  by_contra! h'
+  have h1 := mul_nonpos_of_nonneg_of_nonpos (sq_nonneg a) (by linarith : a + 2 ≤ 0)
+  linarith [(by linear_combination h1 + 2 * h' : a ^ 3 + 2 * a ^ 2 + 2 * a + 2 ≤ -2)]
+
+/-- The first iterate `a = -c_1` and the second, `c_2 = a² + a`, have negative sum for
+`-2 < a < 0`. -/
+theorem add_cSeq_two_neg (h₂ : -2 < a) (ha : a < 0) : a + cSeq a 2 < 0 := by
+  rw [cSeq_two]
+  linear_combination mul_neg_of_neg_of_pos ha (by linarith : 0 < a + 2)
+
+/-- **Sums of successive iterates are negative** for `α < a < 0`, where `α ≈ -1.5437` is the real
+root of `x³ + 2x² + 2x + 2`: `c_n + c_{n+1} < 0` for all `n ≥ 2` (the first pair is
+`QuadraticIterates.add_cSeq_two_neg`). The hypothesis `0 < a³ + 2a² + 2a + 2` says `α < a`, the
+cubic being increasing; `QuadraticIterates.cSeq_add_cSeq_succ_neg_of_lt` has the root in the
+statement. Proof: `c_n + c_{n+1} = q(c_n)` for `q(x) = x² + x + a`, `c_n` lies in `[a, a² + a]`,
+and the convex `q` is negative at both endpoints, `q(a) = a (a + 2)` and
+`q(a² + a) = a (a³ + 2a² + 2a + 2)`. -/
+theorem cSeq_add_cSeq_succ_neg (ha : a < 0) (hα : 0 < a ^ 3 + 2 * a ^ 2 + 2 * a + 2) {n : ℕ}
+    (hn : 2 ≤ n) : cSeq a n + cSeq a (n + 1) < 0 := by
+  have h₂ := neg_two_lt_of_pos a hα
+  have hl : 1 * (a * a) + 1 * a + a < 0 := by
+    linear_combination mul_neg_of_neg_of_pos ha (by linarith : 0 < a + 2)
+  have hu : 1 * ((a ^ 2 + a) * (a ^ 2 + a)) + 1 * (a ^ 2 + a) + a < 0 := by
+    linear_combination mul_neg_of_neg_of_pos ha hα
+  have := (quadratic_le_max_of_nonneg_of_mem_Icc zero_le_one 1 a
+    ⟨le_cSeq a hn, cSeq_le_sq_add a h₂.le ha.le hn⟩).trans_lt (max_lt hl hu)
+  rw [cSeq_succ a (by lia)]
+  linear_combination this
+
+/-- `QuadraticIterates.cSeq_add_cSeq_succ_neg` with the root in the statement: for a root `α` of
+`x³ + 2x² + 2x + 2` (over `ℝ`, its only real root, `α ≈ -1.5437`) and `α < a < 0`, the sums
+`c_n + c_{n+1}`, `n ≥ 2`, are negative. -/
+theorem cSeq_add_cSeq_succ_neg_of_lt {α : R} (hα : α ^ 3 + 2 * α ^ 2 + 2 * α + 2 = 0) (h : α < a)
+    (ha : a < 0) {n : ℕ} (hn : 2 ≤ n) : cSeq a n + cSeq a (n + 1) < 0 := by
+  refine cSeq_add_cSeq_succ_neg a ha ?_ hn
+  have hpos : 0 < a ^ 2 + a * α + α ^ 2 + 2 * a + 2 * α + 2 := by
+    nlinarith [sq_nonneg (2 * a + α + 2), sq_nonneg (3 * α + 2)]
+  linear_combination mul_pos (sub_pos.2 h) hpos - hα
+
+end
 
 /-! ### 2-independence -/
 
