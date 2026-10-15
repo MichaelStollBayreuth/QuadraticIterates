@@ -6,16 +6,18 @@
 \begin{lemma}[Signs; draft Lemma~2.5]
   \label{lem:signs}
   \uses{def:cseq}
+  \lean{QuadraticIterates.cSeq_pos_of_pos, QuadraticIterates.cSeq_neg_of_neg_one_lt,
+    QuadraticIterates.neg_le_cSeq_of_le_neg_two}
+  \leanok
   \begin{enumerate}
     \item If $a > 0$, then $c_1 < 0$ and $c_n > 0$ for $n \ge 2$.
     \item If $-1 < a < 0$, then $c_1 > 0$ and $c_n < 0$ for $n \ge 2$.
     \item If $a \le -2$, then $c_n \ge -a > 0$ for $n \ge 1$.
   \end{enumerate}
-  \formalnote{In a linearly ordered commutative ring. Proposed: \lname{cSeq\_pos\_of\_pos},
-  \lname{cSeq\_neg\_of\_neg\_one\_lt}, \lname{neg\_le\_cSeq\_of\_le\_neg\_two}; (2) follows from
-  the existing \lname{le\_cSeq} and \lname{cSeq\_le\_sq\_add}.}
+  \formalnote{In a linearly ordered commutative ring; (2) follows from \lname{cSeq\_le\_sq\_add}.}
 \end{lemma}
 \begin{proof}
+  \leanok
   (1) $c_{n+1} = c_n^2 + a > 0$. (2) For $-2 \le a \le 0$ the interval $[a, a^2 + a]$ is mapped
   into itself by $f$, and $c_2 = a^2 + a$; here $a^2 + a < 0$. (3) If $c_n \ge -a$, then
   $c_{n+1} \ge a^2 + a \ge -a$ since $a(a + 2) \ge 0$.
@@ -24,15 +26,18 @@
 \begin{lemma}[A sign window below $-1$]
   \label{lem:window}
   \uses{def:cseq}
+  \lean{QuadraticIterates.cSeq_mem_Icc_of_even, QuadraticIterates.cSeq_mem_Icc_of_odd,
+    QuadraticIterates.cSeq_three_lt_neg_one}
+  \leanok
   Let $a < -1$ with $c_3 < 0 < c_4$ (equivalently $a_* < a < -1$, where
   $a_* \approx -1.3107026$ is the largest root of $c_4 = ((a^2+a)^2+a)^2+a$ below $-1$). Then
   for all $k \ge 1$: $0 < c_4 \le c_{2k} \le c_2$ and $a \le c_{2k+1} \le c_3 < -1$. So
   $\sgn(c_\bullet) = ({+}{+}{-}{+}{-}{+}\cdots)$.
-  \formalnote{Proposed: \lname{cSeq\_mem\_Icc\_of\_even} and \lname{cSeq\_mem\_Icc\_of\_odd}, with
-  the hypotheses \lname{a < -1}, \lname{cSeq a 3 < 0}, \lname{0 < cSeq a 4}; no root $a_*$
-  appears in the formal statements.}
+  \formalnote{With the hypotheses \lname{a < -1}, \lname{cSeq a 3 < 0}, \lname{0 < cSeq a 4};
+  no root $a_*$ appears in the formal statements.}
 \end{lemma}
 \begin{proof}
+  \leanok
   $c_4 = c_3^2 + a > 0$ gives $c_3^2 > -a > 1$, so $c_3 < -1$; and $c_2 = a(a+1) > 0$. On
   $B_1 = [a, c_3] \subset (-\infty, 0)$ the map $f$ is decreasing, so $f(B_1) = [c_4, c_2]$, using
   $f(a) = c_2$; on $B_2 = [c_4, c_2] \subset (0, \infty)$ it is increasing, so

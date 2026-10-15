@@ -80,5 +80,5 @@ All declarations live in the `QuadraticIterates` namespace. The Galois side (the
 1.4–1.6) is in `QuadraticIterates/Galois/`, even polynomials and the `γ`-sequence in
 `QuadraticIterates.EvenPoly`; the rest is split over `QuadraticIterates/ArchMath1992/`: `Sequences`
 (the `β`-sequences over general rings and over `ℤ`), `Iterates` (the sequence `b`, strong
-divisibility, parameters in `[-2, 0]`), `Irreducibility` (integer parameters) and `Main`.
+divisibility), `Irreducibility` (integer parameters) and `Main`.
 -/
