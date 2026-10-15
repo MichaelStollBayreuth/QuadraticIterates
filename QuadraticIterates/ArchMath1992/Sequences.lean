@@ -378,7 +378,7 @@ theorem isUnit_prod_gammaSeq_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 �
   rcases eq_or_ne t 1 with rfl | h1
   · rw [mul_one, show gammaSeq g ε k = -gammaSeq g ε (2 * k) by linear_combination hzero]
     exact hu.neg
-  · rw [mul_comm, gammaSeq_mul_eq_two_mul hg hk hzero t (by have := hS t ht; lia)]
+  · rw [mul_comm, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia [hS t ht])]
     exact hu
 
 /-- If `γ_k + γ_{2k} = 0`, then the products of the `γ_{kt}` over the two halves of the sign
@@ -467,7 +467,7 @@ theorem isUnit_prod_gammaSeq_mul_of_odd (hg : EvenPoly g) {ε : R} {k : ℕ} (hk
   refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
   rcases eq_or_ne t 1 with rfl | h1
   · rwa [mul_one]
-  · rw [gammaSeq_mul_eq_ite_even_of_odd hg hko hzero (by have := hS t ht; lia)]
+  · rw [gammaSeq_mul_eq_ite_even_of_odd hg hko hzero (by lia [hS t ht])]
     split_ifs
     exacts [hu1, hu.neg]
 
@@ -739,7 +739,7 @@ theorem not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one (hg : EvenPol
       (w := fun i ↦ if i = 0 then 1 else -1) (Finset.disjoint_filter.mpr fun _ _ _ _ ↦ by lia)
       (by rw [hunion]; exact Nat.one_mem_divisors.mpr (by lia)) (by simp [oddPart, h1])
       (fun t ht h1t ↦ intCast_oddPart hg h0 h1 h2 hm
-        (by have := Nat.pos_of_mem_divisors (hunion ▸ ht); lia)) hcard
+        (by lia [Nat.pos_of_mem_divisors (hunion ▸ ht)])) hcard
   · exact IsUnit.prod_iff.mpr fun t ht ↦ isUnit_intCast_oddPart hg h0 h1 h2 hm
       (Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht))
 
@@ -849,8 +849,7 @@ private lemma three_le_radical_of_odd_dvd {k n : ℕ} (hn : n ≠ 0) (hk : k ∣
     (hk1 : 1 < k) : 3 ≤ radical n := by
   by_contra! h
   have h2 : radical n = 2 := by
-    have := Nat.one_lt_radical_iff.mpr (hk1.trans_le (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hk))
-    lia
+    lia [Nat.one_lt_radical_iff.mpr (hk1.trans_le (Nat.le_of_dvd (Nat.pos_of_ne_zero hn) hk))]
   obtain ⟨p, hp, hpk⟩ := Nat.exists_prime_and_dvd (show k ≠ 1 by lia)
   have hpn : p ∈ n.primeFactors := Nat.mem_primeFactors.mpr ⟨hp, hpk.trans hk, hn⟩
   rw [← Nat.primeFactors_radical, h2, Nat.prime_two.primeFactors, Finset.mem_singleton] at hpn
@@ -908,8 +907,7 @@ lemma gammaSeq_add_succ_zmod_eight_eq_six (hg : EvenPoly g) {ε : ℤ} (hε : ε
 lemma gammaSeq_one_eq_one_of_pos {ε : ℤ} (hε : ε ^ 2 = 1) (h0 : g.eval 0 ^ 2 = 1)
     (hpos : 0 < gammaSeq g ε 1) : gammaSeq g ε 1 = 1 := by
   rw [gammaSeq_one] at hpos ⊢
-  have := sq_eq_one_iff.mp (show (ε * g.eval 0) ^ 2 = 1 by rw [mul_pow, hε, h0, one_mul])
-  lia
+  lia [sq_eq_one_iff.mp (show (ε * g.eval 0) ^ 2 = 1 by rw [mul_pow, hε, h0, one_mul])]
 
 /-- The reduction of Lemma 2.2 to Lemma 2.1: for positive `γ` and a unit `g(0)`, the positive
 integer `γ_n + γ_{n+1}` divides `γ_n + γ_{2n}` and is prime to `γ_n`, so `β_n` is not a square in
@@ -939,10 +937,7 @@ theorem not_isSquare_betaSeq_of_pos_of_eval_one_emod_four_eq_two (hg : EvenPoly 
     fun n hn ↦ ZMod.not_isSquare_neg_one_of_emod_four_eq_three ?_
   have hsum := gammaSeq_add_succ_zmod_four_eq_three hg h0
     ((ZMod.intCast_eq_intCast_iff' (g.eval 1) 2 4).mpr (by lia)) n hn
-  have := (ZMod.intCast_eq_intCast_iff' _ 3 4).mp (mod_cast hsum)
-  have := hpos n hn
-  have := hpos (n + 1) (by lia)
-  lia
+  lia [(ZMod.intCast_eq_intCast_iff' _ 3 4).mp (mod_cast hsum), hpos n hn, hpos (n + 1) (by lia)]
 
 /-- Lemma 2.2 b): if all `γ_n > 0`, `g(0) = ±1` and `g(1) ≡ 3 mod 4`, then `β_n` is not a square
 in `ℚ` for `n ≥ 2`, since `4 ∣ γ_1 + γ_2` and `γ_n + γ_{n+1} ≡ 6 mod 8` for all `n ≥ 2`. -/

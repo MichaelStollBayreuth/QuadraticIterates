@@ -330,8 +330,7 @@ theorem mem_adjoin_of_sq_eq_algebraMap_of_card_le [IsGalois L E] [FiniteDimensio
     hy.elim (fun h ↦ ⟨c, h ▸ hw⟩) (hS y)
   rw [finrank_adjoin_insert_of_not_isSquare hw
     (not_isSquare_algebraMap_of_sqrt_notMem hw hwS)] at h
-  have := Module.finrank_pos (R := L) (M := adjoin L S)
-  lia
+  lia [Module.finrank_pos (R := L) (M := adjoin L S)]
 
 end IntermediateField
 

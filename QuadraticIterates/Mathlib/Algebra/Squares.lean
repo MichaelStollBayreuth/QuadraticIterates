@@ -136,19 +136,17 @@ theorem Int.emod_four_eq_zero_or_one_of_isSquare {m : ℤ} (h : IsSquare m) :
 
 /-- The `IsSquare` form of Mathlib's `Int.sq_ne_two_mod_four`. -/
 theorem Int.not_isSquare_of_emod_four_eq_two {m : ℤ} (h : m % 4 = 2) : ¬IsSquare m :=
-  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; lia
+  fun hs ↦ by lia [emod_four_eq_zero_or_one_of_isSquare hs]
 
 theorem Int.not_isSquare_of_emod_four_eq_three {m : ℤ} (h : m % 4 = 3) : ¬IsSquare m :=
-  fun hs ↦ by have := emod_four_eq_zero_or_one_of_isSquare hs; lia
+  fun hs ↦ by lia [emod_four_eq_zero_or_one_of_isSquare hs]
 
 theorem Int.not_isSquare_of_sq_lt_of_lt_sq (e : ℤ) {m : ℤ} (h1 : e ^ 2 < m)
     (h2 : m < (e + 1) ^ 2) :
     ¬IsSquare m := by
   rintro ⟨r, rfl⟩
   rw [← sq] at h1 h2
-  have h1' := sq_lt_sq.mp h1
-  have h2' := (sq_lt_sq.mp h2).trans_le (by simpa using abs_add_le e 1)
-  lia
+  lia [sq_lt_sq.mp h1, (sq_lt_sq.mp h2).trans_le (by simpa using abs_add_le e 1)]
 
 theorem isSquare_abs_iff {α : Type*} [Ring α] [LinearOrder α] [IsOrderedRing α] {x : α} :
     IsSquare |x| ↔ IsSquare x ∨ IsSquare (-x) :=
