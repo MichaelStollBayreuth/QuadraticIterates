@@ -127,7 +127,7 @@ lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m :
 private lemma mem_range_of_dvd {α : Type*} (F : ℕ → α) {n : ℕ} {i : Fin n} {d : ℕ}
     (hd : d ∣ (i : ℕ) + 1) : F d ∈ Set.range fun j : Fin n ↦ F ((j : ℕ) + 1) :=
   have h1 := Nat.pos_of_dvd_of_pos hd i.1.succ_pos
-  ⟨⟨d - 1, by have := Nat.le_of_dvd i.1.succ_pos hd; lia⟩, by simp [Nat.sub_add_cancel h1]⟩
+  ⟨⟨d - 1, by lia [Nat.le_of_dvd i.1.succ_pos hd]⟩, by simp [Nat.sub_add_cancel h1]⟩
 
 /-- Section 1, `(b) ↔ (c)`: `c_1, …, c_n` are 2-independent iff `b_1, …, b_n` are 2-independent,
 since their classes in `ℚˣ/(ℚˣ)²` span the same `𝔽₂`-subspace (Möbius inversion in both

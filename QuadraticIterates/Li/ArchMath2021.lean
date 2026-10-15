@@ -147,7 +147,7 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul {n : ℕ} (hn : 1 
   refine not_isSquare_abs_bSeq_of_dvd_add_succ ha' (hk₀2.trans (Nat.div_le_self n _))
     (Nat.div_mul_cancel radical_dvd_self).symm (m := m) ?_
     (ZMod.not_isSquare_neg_one_of_emod_eight_eq_six
-      (by have := mul_gammaSeq_sub_one_emod_eight_eq_six ha hk₀2; lia))
+      (by lia [mul_gammaSeq_sub_one_emod_eight_eq_six ha hk₀2]))
   rw [← hm, gammaSeq_succ _ _ (by lia), eval_normPoly_of_neg (neg_of_eq_neg_mul ha)]
   exact ⟨(4 * k + 2) * γ[a] (n / radical n) + 1, by
     linear_combination (-(γ[a] (n / radical n)) ^ 2) * ha⟩

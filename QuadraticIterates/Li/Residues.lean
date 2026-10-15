@@ -160,16 +160,13 @@ theorem gammaSeq_normPoly_add_two_emod_eight_eq_six (ha : a < 0) (ha4 : a % 4 = 
   have hk2 := h (k + 2) (by lia)
   rw [ite_eq_right (Nat.not_even_iff_odd.mpr hko)] at hk1
   rw [ite_eq_right (Nat.not_even_iff_odd.mpr (by grind))] at hk2
-  have := (ZMod.intCast_eq_intCast_iff' _ 3 8).mp hk1
-  have := (ZMod.intCast_eq_intCast_iff' _ 3 8).mp hk2
-  lia
+  lia [(ZMod.intCast_eq_intCast_iff' _ 3 8).mp hk1, (ZMod.intCast_eq_intCast_iff' _ 3 8).mp hk2]
 
 theorem gammaSeq_normPoly_emod_four_eq_two_of_even (ha : a < 0) (ha4 : a % 4 = 1) {k : ℕ}
     (hke : Even k) (hk : 2 ≤ k) : γ[a] k % 4 = 2 := by
   have h := gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one ha ha4 k hk
   rw [ite_eq_left hke] at h
-  have := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp h
-  lia
+  lia [(ZMod.intCast_eq_intCast_iff' _ _ 8).mp h]
 
 theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 = 3) {k : ℕ}
     (hk : 2 ≤ k) :
@@ -179,12 +176,8 @@ theorem gammaSeq_normPoly_add_succ_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 
   have hk2 := h (k + 1) (by lia)
   simp only [Nat.even_add_one] at hk2
   split_ifs at hk1 hk2 with he
-  · have := (ZMod.intCast_eq_intCast_iff' _ 0 4).mp hk1
-    have := (ZMod.intCast_eq_intCast_iff' _ 3 4).mp hk2
-    lia
-  · have := (ZMod.intCast_eq_intCast_iff' _ 3 4).mp hk1
-    have := (ZMod.intCast_eq_intCast_iff' _ 0 4).mp hk2
-    lia
+  · lia [(ZMod.intCast_eq_intCast_iff' _ 0 4).mp hk1, (ZMod.intCast_eq_intCast_iff' _ 3 4).mp hk2]
+  · lia [(ZMod.intCast_eq_intCast_iff' _ 3 4).mp hk1, (ZMod.intCast_eq_intCast_iff' _ 0 4).mp hk2]
 
 /-! ### The single-index criteria for `|b_n|` -/
 

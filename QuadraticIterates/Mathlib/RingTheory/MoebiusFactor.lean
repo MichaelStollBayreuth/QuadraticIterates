@@ -176,10 +176,8 @@ theorem denProd_dvd_numProd {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0)
     Multiset.le_iff_count]
   intro p
   rw [← factorization_eq_count, ← factorization_eq_count]
-  have hge := sum_mul_moebius_nonneg (fun d ↦ factorization (c d) p)
-    (factorization_apply_gcd_eq_min hc hsd p) hn
-  have heq := factorization_numProd_sub_denProd hc n p
-  lia
+  lia [sum_mul_moebius_nonneg (fun d ↦ factorization (c d) p)
+    (factorization_apply_gcd_eq_min hc hsd p) hn, factorization_numProd_sub_denProd hc n p]
 
 /-- **Integrality.** For a nowhere-zero strong divisibility sequence `c` in a UFD `R`, the
 fraction-field Möbius factor `moebiusFactorK c n` lies in the image of `R`. -/
@@ -237,8 +235,7 @@ theorem factorization_moebiusFactorR {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 
       = factorization (numProd c n) p := by
     rw [← Finsupp.add_apply, ← factorization_mul (moebiusFactorR_ne_zero hc hsd hn)
       (denProd_ne_zero hc n), moebiusFactorR_mul_denProd hc hsd hn]
-  have := factorization_numProd_sub_denProd hc n p
-  lia
+  lia [factorization_numProd_sub_denProd hc n p]
 
 /-- If `v_p ∘ c` has the constant-valuation shape (value `E` exactly on the multiples of `m`),
 then `v_p(β_n)` is supported at the single index `n = m`. -/

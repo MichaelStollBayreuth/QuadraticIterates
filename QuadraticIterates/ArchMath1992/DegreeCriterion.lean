@@ -160,9 +160,8 @@ theorem relfinrank_succ_eq_two_pow_iff (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   classical
   rw [← rootRelations_rootShift_eq_bot_iff ha n, ← Submodule.finrank_eq_zero,
     relfinrank_succ_eq_pow ha n, Nat.pow_right_inj one_lt_two]
-  have := (finrank_rootRelations_le (rootShift a n)).trans_eq
-    (card_rootSet_iteratedPoly (irreducible_iteratedPoly ha n))
-  lia
+  lia [(finrank_rootRelations_le (rootShift a n)).trans_eq
+    (card_rootSet_iteratedPoly (irreducible_iteratedPoly ha n))]
 
 /-! ### Lemma 1.5: the Kummer extension criterion -/
 
