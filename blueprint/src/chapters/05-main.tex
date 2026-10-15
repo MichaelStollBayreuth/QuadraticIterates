@@ -13,6 +13,14 @@ are. Each of the following conditions provides one of them.
 \begin{proposition}[Criteria for $\phi_0$]
   \label{prop:Z}
   \uses{lem:pat-r, lem:pat-r2s, lem:pat-r2s2}
+  \lean{QuadraticIterates.NegAllCriterion,
+    QuadraticIterates.hasCharPattern_neg_one_of_negAllCriterion,
+    QuadraticIterates.hasCharPattern_neg_one_of_not_isSquare,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_add_two_mul,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_sq_add_sq,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_left,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_left_two}
+  \leanok
   $a$ has $\phi_0$ if one of the following holds.
   \begin{enumerate}
     \item[(Z1)] $r \ne \pm\sq$.
@@ -21,10 +29,12 @@ are. Each of the following conditions provides one of them.
     \item[(Z4)] A prime $p \equiv 1 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = -1$; or $8 \mid r$
           and $r_2 s \equiv \pm 3 \pmod 8$.
   \end{enumerate}
-  \formalnote{Proposed: an inductive proposition \lname{NegAllCriterion r s} with one
-  constructor per item, and \lname{hasCharPattern\_neg\_one\_of\_negAllCriterion}.}
+  \formalnote{An inductive proposition \lname{NegAllCriterion r s} with one constructor per item
+  (two for (Z4)), stated with Mathlib's notions only: Legendre symbols as \lname{jacobiSym} and
+  $p$-parts as $r = p^k m$ with $p \nmid m$.}
 \end{proposition}
 \begin{proof}
+  \leanok
   (Z1) Some prime has $v_p(r)$ odd; $\val_p$ (Lemma~\ref{lem:pat-r}(1)). (Z2) $\chi_p$
   (Lemma~\ref{lem:pat-r2s}). (Z3) $\chi_p$ (Lemma~\ref{lem:pat-r2s2}). (Z4) $\chi_p$
   (Lemma~\ref{lem:pat-r}(2), $\Leg{-1}{p} = 1$), resp.\ $\chi_8$ (Lemma~\ref{lem:pat-r}(4)).
@@ -33,6 +43,16 @@ are. Each of the following conditions provides one of them.
 \begin{proposition}[Criteria for $\phi_1$]
   \label{prop:O}
   \uses{lem:pat-sign, lem:pat-dyadic, lem:pat-s, lem:pat-r}
+  \lean{QuadraticIterates.NegFirstCriterion,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_negFirstCriterion,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_of_odd,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_two,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_four,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_eight,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_left,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_left_four}
+  \leanok
   $a$ has $\phi_1$ if one of the following holds.
   \begin{enumerate}
     \item[(O1)] $a > 0$.
@@ -44,10 +64,11 @@ are. Each of the following conditions provides one of them.
           and $r_2 s \equiv 1 \pmod 4$.
   \end{enumerate}
   In particular, $a$ has $\phi_1$ if $s$ is not a square (O3 or O4).
-  \formalnote{Proposed: \lname{NegFirstCriterion r s} and
-  \lname{hasCharPattern\_mulSingle\_one\_of\_negFirstCriterion}.}
+  \formalnote{\lname{NegFirstCriterion r s}. In (O4), $\chi_4$ works whenever $4 \mid s$ and
+  $r s_2 \equiv 1 \pmod 4$, and $\chi_8$ whenever $8 \mid s$ and $r s_2 \equiv \pm 3 \pmod 8$.}
 \end{proposition}
 \begin{proof}
+  \leanok
   \uses{lem:sqclass}
   (O1) the sign (Lemma~\ref{lem:pat-sign}). (O2) Lemma~\ref{lem:pat-dyadic}. (O3) $\val_p$ or
   $\chi_p$ (Lemma~\ref{lem:pat-s}(1)). (O4) By Lemma~\ref{lem:pat-s}(2) the characters at $2$
@@ -63,6 +84,19 @@ are. Each of the following conditions provides one of them.
 \begin{proposition}[Criteria for $\tau$]
   \label{prop:T}
   \uses{lem:pat-sign, lem:pat-r, lem:pat-rs}
+  \lean{QuadraticIterates.NegTailCriterion,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_negTailCriterion,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_neg_lt,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_left,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_left_four,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add_of_valChar,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add_prime,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add_four,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_not_isSquare_add,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_window,
+    QuadraticIterates.mul_wSeq_three, QuadraticIterates.mul_wSeq_four}
+  \leanok
   $a$ has $\tau$ if one of the following holds.
   \begin{enumerate}
     \item[(T1)] $-1 < a < 0$.
@@ -73,10 +107,11 @@ are. Each of the following conditions provides one of them.
           divisible by $4$ or by a prime $p \equiv 3 \pmod 4$.
     \item[(T4)] $a < -1$, $c_3 < 0 < c_4$ (i.e.\ $a_* < a < -1$), and $r + s \ne \pm\sq$.
   \end{enumerate}
-  \formalnote{Proposed: \lname{NegTailCriterion r s} and
-  \lname{hasCharPattern\_neg\_mulSingle\_one\_of\_negTailCriterion}.}
+  \formalnote{\lname{NegTailCriterion r s}; in (T4) the window $c_3 < 0 < c_4$ is stated as
+  $r w_3 < 0 < r w_4$, with $r w_3 = (r^2 + rs)^2 + rs^3$ and $r w_4 = (r w_3)^2 + rs^7$.}
 \end{proposition}
 \begin{proof}
+  \leanok
   \uses{lem:pat-rs}
   (T1) the sign (Lemma~\ref{lem:pat-sign}). (T2) $\chi_p$ resp.\ $\chi_4$
   (Lemma~\ref{lem:pat-r}(2), (3)). (T3) Lemma~\ref{lem:pat-rs}: $\chi$ itself when $y = -1$,
@@ -106,14 +141,14 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
 
 \begin{lemma}[Prime divisors in residue classes]
   \label{lem:prime3}
+  \lean{Nat.exists_prime_dvd_of_mod_four_eq_three, Nat.exists_prime_dvd_of_mod_eight_eq_six,
+    Nat.exists_prime_dvd_of_mod_eight_eq_three_or_five}
+  \leanok
   Let $m > 0$. If $m \equiv 3 \pmod 4$ or $m \equiv 6 \pmod 8$, then a prime $p \equiv 3 \pmod 4$
   divides $m$. If $m \equiv \pm 3 \pmod 8$, then a prime $p \equiv \pm 3 \pmod 8$ divides $m$.
-  \formalnote{Proposed: \lname{Nat.exists\_prime\_dvd\_of\_mod\_four\_eq\_three},
-  \lname{Nat.exists\_prime\_dvd\_of\_mod\_eight\_eq\_six},
-  \lname{Nat.exists\_prime\_dvd\_of\_mod\_eight\_eq\_three\_or\_five}; the existing
-  \lname{ZMod.not\_isSquare\_neg\_one\_of\_emod\_four\_eq\_three} is a related fact.}
 \end{lemma}
 \begin{proof}
+  \leanok
   The residues $\{1\}$ modulo $4$ and $\{\pm 1\}$ modulo $8$ are closed under multiplication, so
   a product of primes in them stays in them; for $m \equiv 6 \pmod 8$ apply the first statement to
   $m/2$.

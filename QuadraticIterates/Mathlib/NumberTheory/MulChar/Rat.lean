@@ -137,6 +137,11 @@ lemma valChar_neg_one : valChar p (-1) = 1 := by
   exact_mod_cast valChar_intCast_of_not_dvd (p := p) (m := -1) (by
     simpa using (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit ∘ isUnit_of_dvd_one)
 
+lemma valChar_intCast_pow_mul (k : ℕ) {m : ℤ} (hm : ¬(p : ℤ) ∣ m) :
+    valChar p (((p : ℤ) ^ k * m : ℤ) : ℚ) = (-1) ^ k := by
+  rw [Int.cast_mul, map_mul, Int.cast_pow, Int.cast_natCast, map_pow, valChar_natCast_self,
+    valChar_intCast_of_not_dvd hm, mul_one]
+
 end valChar
 
 /-! ### Characters of the prime-to-`p` part -/
@@ -197,6 +202,11 @@ lemma unitPartChar_neg_one {N k : ℕ} (hN : N = p ^ k) (ψ : MulChar (ZMod N) �
     unitPartChar p ψ (-1) = ψ (-1) := by
   exact_mod_cast unitPartChar_intCast (ψ := ψ) hN (m := -1) (by
     simpa using (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit ∘ isUnit_of_dvd_one)
+
+lemma unitPartChar_intCast_pow_mul {N j : ℕ} (hN : N = p ^ j) (ψ : MulChar (ZMod N) ℤ) (k : ℕ)
+    {m : ℤ} (hm : ¬(p : ℤ) ∣ m) : unitPartChar p ψ (((p : ℤ) ^ k * m : ℤ) : ℚ) = ψ m := by
+  rw [Int.cast_mul, map_mul, Int.cast_pow, Int.cast_natCast, map_pow, unitPartChar_natCast_self hN,
+    unitPartChar_intCast hN hm, one_pow, one_mul]
 
 end unitPartChar
 

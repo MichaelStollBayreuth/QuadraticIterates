@@ -146,6 +146,14 @@ theorem cSeq_sq_sub_cSeq_add_eq_zero_of_uSeq (hσ : (s : S) * σ = 1) {n : ℕ} 
 
 end Reduction
 
+lemma mul_wSeq_three : r * wSeq r s 3 = (r ^ 2 + r * s) ^ 2 + r * s ^ 3 := by
+  rw [wSeq_succ r s (by norm_num), wSeq_two]
+  ring
+
+lemma mul_wSeq_four : r * wSeq r s 4 = ((r ^ 2 + r * s) ^ 2 + r * s ^ 3) ^ 2 + r * s ^ 7 := by
+  rw [wSeq_succ r s (by norm_num), ← mul_wSeq_three]
+  ring
+
 /-! ### Coprimality and residues -/
 
 section Coprime
