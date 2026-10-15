@@ -11,6 +11,7 @@ public import Mathlib.FieldTheory.Relrank
 public import Mathlib.LinearAlgebra.Pi
 
 import Mathlib.Data.FunLike.Fintype
+import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import QuadraticIterates.Mathlib.Algebra.BigOperators
 import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
@@ -440,7 +441,7 @@ variable {L : Type*} [Field L] [DecidableEq L] {ι : Type*}
 relation submodule of the family `r|_s` (see `mem_multiquadraticRelations`). -/
 noncomputable def multiquadraticRelations (s : Finset ι) (r : ι → L) :
     Submodule (ZMod 2) (ι → ZMod 2) :=
-  Submodule.map (Function.ExtendByZero.linearMap (ZMod 2) (Subtype.val : ↥s → ι))
+  Submodule.map (Function.ExtendByZero.linearMap (ZMod 2) (ZMod 2) (Subtype.val : ↥s → ι))
     (rootRelations fun i : ↥s ↦ r i.1)
 
 theorem mem_multiquadraticRelations {s : Finset ι} {r : ι → L} (hr : ∀ i ∈ s, r i ≠ 0)
@@ -449,7 +450,7 @@ theorem mem_multiquadraticRelations {s : Finset ι} {r : ι → L} (hr : ∀ i �
       ↔ (∀ i ∉ s, ε i = 0) ∧ IsSquare (∏ i ∈ s with ε i = 1, r i) := by
   have hrne (i : ↥s) : r i.1 ≠ 0 := hr i.1 i.2
   have hoff (v : ↥s → ZMod 2) {i : ι} (hi : i ∉ s) :
-      Function.ExtendByZero.linearMap (ZMod 2) (Subtype.val : ↥s → ι) v i = 0 := by
+      Function.ExtendByZero.linearMap (ZMod 2) (ZMod 2) (Subtype.val : ↥s → ι) v i = 0 := by
     have hnot : ¬∃ a : ↥s, (a : ι) = i := fun ⟨y, hyi⟩ ↦ hi (hyi ▸ y.2)
     simp [Function.extend_apply' _ _ _ hnot]
   refine ⟨fun h ↦ ?_, fun ⟨hsupp, hsq⟩ ↦ ⟨fun i : ↥s ↦ ε i.1, ?_, ?_⟩⟩
@@ -484,7 +485,7 @@ theorem finrank_multiquadraticRelations (s : Finset ι) (r : ι → L) :
     Module.finrank (ZMod 2) (multiquadraticRelations s r)
       = Module.finrank (ZMod 2) (rootRelations fun i : ↥s ↦ r i.1) :=
   (Submodule.equivMapOfInjective _
-    (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _).symm.finrank_eq
+    (Function.ExtendByZero.linearMap_injective _ _ Subtype.val_injective) _).symm.finrank_eq
 
 theorem finrank_multiquadraticRelations_le (s : Finset ι) (r : ι → L) :
     Module.finrank (ZMod 2) (multiquadraticRelations s r) ≤ s.card := by
@@ -493,7 +494,7 @@ theorem finrank_multiquadraticRelations_le (s : Finset ι) (r : ι → L) :
 
 instance (s : Finset ι) (r : ι → L) : Module.Finite (ZMod 2) (multiquadraticRelations s r) :=
   Module.Finite.equiv (Submodule.equivMapOfInjective _
-    (Function.ExtendByZero.linearMap_injective _ Subtype.val_injective) _)
+    (Function.ExtendByZero.linearMap_injective _ _ Subtype.val_injective) _)
 
 theorem multiquadraticRelations_univ [Fintype ι] {r : ι → L} (hr : ∀ i, r i ≠ 0) :
     multiquadraticRelations Finset.univ r = rootRelations r := by

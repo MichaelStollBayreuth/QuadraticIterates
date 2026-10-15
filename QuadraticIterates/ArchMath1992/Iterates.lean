@@ -395,7 +395,7 @@ theorem splittingField_succ_eq_sup_adjoin (n : ℕ) (g : AlgebraicClosure ℚ �
     (sup_le (splittingField_le_succ a n) (IntermediateField.adjoin_le_iff.mpr ?_))
   · have hgmem : g (β ^ 2 + a) ∈ splittingField a n ⊔
         IntermediateField.adjoin ℚ (g '' (fℚ[a, n].rootSet (AlgebraicClosure ℚ))) :=
-      SetLike.le_def.mp le_sup_right (IntermediateField.subset_adjoin ℚ _
+      IsConcreteLE.le_iff.mp le_sup_right (IntermediateField.subset_adjoin ℚ _
         ⟨_, (mem_rootSet_iteratedPoly_succ a n β).mp hβ, rfl⟩)
     rcases sq_eq_sq_iff_eq_or_eq_neg.mp (show β ^ 2 = g (β ^ 2 + a) ^ 2 by
       rw [hg, add_sub_cancel_right]) with h | h
