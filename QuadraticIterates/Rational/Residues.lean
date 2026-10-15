@@ -8,6 +8,7 @@ module
 public import QuadraticIterates.Rational.Reflection
 
 import Mathlib.Data.Fintype.Parity
+import Mathlib.Data.Nat.Prime.Int
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.Units
 import Mathlib.Tactic.LinearCombination

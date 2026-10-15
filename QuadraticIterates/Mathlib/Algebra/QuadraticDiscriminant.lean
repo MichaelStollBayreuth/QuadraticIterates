@@ -6,6 +6,9 @@ Authors: Michael Stoll
 module
 
 public import Mathlib.Algebra.QuadraticDiscriminant
+public import Mathlib.Order.Interval.Set.Defs
+
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # A quadratic on an interval

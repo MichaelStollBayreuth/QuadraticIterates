@@ -1,48 +1,31 @@
 #!/usr/bin/env bash
 
-# Run the leanprover/comparator check for this project locally.
+# Run the comparator check for this project locally, with Lake's built-in `lake comparator`
+# (Lean v4.35.0 and later). It certifies that the repository proves the challenge statement(s) of
+# the config (default: all challenge theorems); see comparator/README.md for what is checked.
 #
-# Certifies that the repository proves the challenge statements in the given config
-# (default: all eight challenge theorems). See comparator/README.md for what is checked.
+# Usage: scripts/run-comparator.sh [CONFIG] [OPTIONS]
+#   CONFIG   the challenge description (default: comparator/challenges.json)
+#   OPTIONS  passed on to `lake comparator`, e.g. `--paranoid` to run all external checkers
+#            bundled with Lean besides its own kernel
 #
-# Requires three binaries; override any location via the environment:
-#   COMPARATOR_BIN         the `comparator` binary (built from leanprover/comparator)
-#   COMPARATOR_LEAN4EXPORT `lean4export`, built at THIS project's Lean version (tag v4.xx.0)
-#   COMPARATOR_LANDRUN     `landrun`, built from its `main` branch
-# NB: rebuild lean4export whenever the project's Lean version changes (see ~/lean4/UPDATE.md).
+# Requires bubblewrap (`bwrap`) with unprivileged user namespaces; `lake comparator` builds and
+# exports both modules inside its sandbox and never loads the project's `.olean`s itself.
 
 set -euo pipefail
-
-COMPARATOR_BIN="${COMPARATOR_BIN:-$HOME/lean4/comparator/.lake/build/bin/comparator}"
-# Default lean4export: prefer a build matching this project's toolchain (a worktree named
-# ~/lean4/lean4export-<version>, e.g. lean4export-v4.34.0), else the floating checkout.
-TOOLCHAIN_VERSION="$(sed 's/^leanprover\/lean4://' "$(dirname "$0")/../lean-toolchain" 2>/dev/null || true)"
-if [ -z "${COMPARATOR_LEAN4EXPORT:-}" ] \
-    && [ -x "$HOME/lean4/lean4export-$TOOLCHAIN_VERSION/.lake/build/bin/lean4export" ]; then
-  COMPARATOR_LEAN4EXPORT="$HOME/lean4/lean4export-$TOOLCHAIN_VERSION/.lake/build/bin/lean4export"
-fi
-: "${COMPARATOR_LEAN4EXPORT:=$HOME/lean4/lean4export/.lake/build/bin/lean4export}"
-: "${COMPARATOR_LANDRUN:=$HOME/go/bin/landrun}"
-export COMPARATOR_LEAN4EXPORT COMPARATOR_LANDRUN
-export PATH="$(dirname "$COMPARATOR_LANDRUN"):$PATH"
-
-# Config file to check (default: all challenge theorems).
-CONFIG="${1:-comparator/challenges.json}"
 
 # Move to the repository root (this script lives in scripts/).
 cd "$(dirname "$0")/.."
 
-# Fail early with a helpful message if a binary is missing.
-for bin in "$COMPARATOR_BIN" "$COMPARATOR_LEAN4EXPORT" "$COMPARATOR_LANDRUN"; do
-  if [ ! -x "$bin" ]; then
-    echo "ERROR: comparator binary not found or not executable: $bin" >&2
-    echo "See comparator/README.md for how to build/install it; override via env vars." >&2
-    exit 1
-  fi
-done
+CONFIG="comparator/challenges.json"
+if [ $# -gt 0 ] && [ "${1#-}" = "$1" ]; then
+  CONFIG="$1"
+  shift
+fi
 
-# Ensure the library oleans are current so the sandboxed Solution build reuses them.
+# Bring the library oleans up to date first: the sandbox cannot write to the project directory,
+# and with a current build the sandboxed Solution build only replays it.
 lake build QuadraticIterates
 
-# Run the check (exit 0 and "Your solution is okay!" = certified).
-exec lake env "$COMPARATOR_BIN" "$CONFIG"
+# Exit 0 and "Your solution is okay!" = certified; exit 1 = rejected; exit 2 = could not start.
+exec lake comparator --config "$CONFIG" "$@"
