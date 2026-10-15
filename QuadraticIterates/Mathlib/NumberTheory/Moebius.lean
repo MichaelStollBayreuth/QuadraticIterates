@@ -200,7 +200,7 @@ theorem _root_.Squarefree.even_card_filter_divisors_mod_two {n : ℕ} (hsf : Squ
 theorem _root_.Nat.divisors_filter_one_le_sub_one (n : ℕ) :
     {t ∈ n.divisors | 1 ≤ t - 1} = n.divisors.erase 1 := by
   rw [← Finset.filter_ne']
-  exact Finset.filter_congr fun t ht ↦ by have := Nat.pos_of_mem_divisors ht; lia
+  exact Finset.filter_congr fun t ht ↦ by lia [Nat.pos_of_mem_divisors ht]
 
 /-- The parity of `∑_{t ∈ S} (2^(m t) - 1)` is that of the number of `t ∈ S` with `m t ≥ 1`. -/
 theorem _root_.Finset.sum_two_pow_sub_one_mod_two (S : Finset ℕ) (m : ℕ → ℕ) :
@@ -220,8 +220,7 @@ theorem _root_.Squarefree.even_sum_two_pow_mul_sub_one {n : ℕ} (hsf : Squarefr
     {k : ℕ} (hk : 2 ≤ k) : Even (∑ t ∈ n.divisors, (2 ^ (k * t - 1) - 1)) := by
   rw [Nat.even_iff, Finset.sum_two_pow_sub_one_mod_two, Finset.filter_true_of_mem fun t ht ↦ ?_,
     hsf.card_divisors_eq_two_mul hn1, Nat.mul_mod_right]
-  have := hk.trans (Nat.le_mul_of_pos_right k (Nat.pos_of_mem_divisors ht))
-  lia
+  lia [hk.trans (Nat.le_mul_of_pos_right k (Nat.pos_of_mem_divisors ht))]
 
 /-- The twist exponent `F = ∑_{t ∣ n} (2^(t-1) - 1)` is odd for squarefree `n > 1`: all terms
 but the one at `t = 1` are odd, and there are evenly many divisors. -/

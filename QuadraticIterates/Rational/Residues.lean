@@ -159,9 +159,7 @@ private lemma intCast_wSeq_sq_zmod_eight_of_even {n : ℕ} (hn : 1 ≤ n) :
 `w_n² ≡ 1`, and `8 ∣ s^(2^n - 1)` for `n ≥ 2`. -/
 theorem intCast_wSeq_zmod_eight_of_even : ∀ n ≥ 3, (wSeq r s ε n : ZMod 8) = r := fun n hn ↦ by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
-  have h3 : 3 ≤ 2 ^ m - 1 := by
-    have := Nat.pow_le_pow_right two_pos (by lia : 2 ≤ m)
-    lia
+  have h3 : 3 ≤ 2 ^ m - 1 := by lia [Nat.pow_le_pow_right two_pos (by lia : 2 ≤ m)]
   rw [wSeq_succ r s ε (by lia)]
   push_cast
   rw [intCast_wSeq_sq_zmod_eight_of_even hs hrs (by lia),
@@ -299,7 +297,7 @@ private lemma intCast_prod_wSeq_zmod_eight_of_even (hs : s % 2 = 0) (hrs : IsCop
   rw [← Finset.prod_filter_mul_prod_filter_not n.divisors (· ≤ 2), ← Finset.prod_const]
   congr 1
   exact Finset.prod_congr rfl fun t ht ↦
-    intCast_wSeq_zmod_eight_of_even hs hrs t (by have := (Finset.mem_filter.mp ht).2; lia)
+    intCast_wSeq_zmod_eight_of_even hs hrs t (by lia [(Finset.mem_filter.mp ht).2])
 
 private lemma divisors_filter_le_two_of_odd {n : ℕ} (hn : Odd n) :
     {t ∈ n.divisors | t ≤ 2} = {1} := by
@@ -309,9 +307,7 @@ private lemma divisors_filter_le_two_of_odd {n : ℕ} (hn : Odd n) :
   rcases (show t = 0 ∨ t = 1 ∨ t = 2 by lia) with rfl | rfl | rfl
   · exact absurd (zero_dvd_iff.mp ht) hn0
   · rfl
-  · have := Nat.mod_eq_zero_of_dvd ht
-    have := Nat.odd_iff.mp hn
-    lia
+  · lia [Nat.odd_iff.mp hn]
 
 private lemma divisors_filter_le_two_of_even {n : ℕ} (hn0 : n ≠ 0) (hn : Even n) :
     {t ∈ n.divisors | t ≤ 2} = {1, 2} := by
@@ -371,8 +367,7 @@ theorem not_isSquare_betaInt_of_squarefree_of_even_of_even (hs : s % 2 = 0) (hs0
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
   have hn : 2 ≤ n := by
     obtain ⟨m, hm⟩ := hne
-    have := hsf.ne_zero
-    lia
+    lia [hsf.ne_zero]
   have key := isSquare_intCast_prod_wSeq_zmod_eight_of_isSquare_betaInt hs0 hrs hε hw hsf hsq
   have hs' : Even s := Int.even_iff.mpr hs
   have hr2 : Odd r := odd_of_isCoprime_of_even hrs hs'
