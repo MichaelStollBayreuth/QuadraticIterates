@@ -5,7 +5,6 @@ Authors: Michael Stoll
 -/
 module
 
-public import QuadraticIterates.ArchMath1992.DegreeCriterion
 public import QuadraticIterates.ArchMath1992.Irreducibility
 public import QuadraticIterates.ArchMath1992.Iterates
 public import QuadraticIterates.ArchMath1992.Main
@@ -76,8 +75,10 @@ from the irreducibility of `f_n` and `c_{n+1} ≠ 0` alone, without the paper's 
 hypothesis `[K_n : ℚ] = 2 ^ (2 ^ n - 1)`; for an integer `a` with `-a` not a square both hold
 (Corollary 1.3), and `c_{n+1} ≠ 0` follows from the irreducibility of `f_{n+1}` in general.
 
-All declarations live in the `QuadraticIterates` namespace. The development is split over
-`QuadraticIterates/ArchMath1992/`: `Sequences` (the `γ`- and `β`-sequences over general rings and
-over `ℤ`), `Iterates` (the polynomials `f_n`, the fields `K_n`, the groups `Ω_n`, the sequences
-`c` and `b`), `Irreducibility`, `DegreeCriterion` and `Main`.
+All declarations live in the `QuadraticIterates` namespace. The Galois side (the polynomials
+`f_n`, the fields `K_n`, the groups `Ω_n`, the sequence `c`, 2-independence, Lemmas 1.2 and
+1.4–1.6) is in `QuadraticIterates/Galois/`, even polynomials and the `γ`-sequence in
+`QuadraticIterates.EvenPoly`; the rest is split over `QuadraticIterates/ArchMath1992/`: `Sequences`
+(the `β`-sequences over general rings and over `ℤ`), `Iterates` (the sequence `b`, strong
+divisibility, parameters in `[-2, 0]`), `Irreducibility` (integer parameters) and `Main`.
 -/

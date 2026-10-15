@@ -6,26 +6,20 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.Galois.Irreducibility
 
 import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
 
 /-!
-# Irreducibility of the iterates over `ℚ`
+# Irreducibility of the iterates for an integer parameter
 
-For a rational parameter `a`, if none of `c_1, …, c_n` is a rational square, then `f_n` is
-irreducible over `ℚ` (Lemma 1.2, `QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`):
-`f_{n+1} = f_n ∘ (X² + a)` is even and, `f_n` being irreducible, has no nontrivial even divisor,
-so a factorization of it would have the shape `g · g(-X) = ± f_{n+1}`
-(`Polynomial.Monic.exists_mul_comp_neg_X_eq_of_not_irreducible`) and exhibit
-`c_{n+1} = ± f_{n+1}(0)` as a square. For an integer `a`, `|c_n| ≥ |a|` places `c_{n+1} = c_n² + a`
-strictly between consecutive squares, so no `c_n` is a square when `-a` is not one, and every
-`f_n` is irreducible (Corollary 1.3, `QuadraticIterates.irreducible_iteratedPoly`); conversely,
-irreducibility of a single `f_n` with `n ≥ 1` already forces `-a` to be a non-square
-(`QuadraticIterates.not_isSquare_neg_of_irreducible`). The consequences for the roots of `f_n`
-needed by the degree criterion (`QuadraticIterates.cSeq_succ_ne_zero_of_irreducible`,
-`QuadraticIterates.sub_ratCast_ne_zero_of_mem_rootSet`,
-`QuadraticIterates.card_rootSet_iteratedPoly`) close the file.
+For an integer `a`, `|c_n| ≥ |a|` places `c_{n+1} = c_n² + a` strictly between consecutive
+squares, so no `c_n` is a square when `-a` is not one, and every `f_n` is irreducible over `ℚ`
+(Corollary 1.3, `QuadraticIterates.irreducible_iteratedPoly`, from Lemma 1.2,
+`QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`); conversely, irreducibility of a
+single `f_n` with `n ≥ 1` already forces `-a` to be a non-square
+(`QuadraticIterates.not_isSquare_neg_of_irreducible`, for a rational `a`).
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -110,39 +104,6 @@ section
 
 variable {a : ℚ}
 
-/-! ### Irreducibility of the iterates -/
-
-/-- If `f_{j+1}` factors over `ℚ` as `g * g(-X) = C ((-1)^{deg g}) * f_{j+1}` with
-`deg f_{j+1} = 2 · deg g`, then evaluation at `0` exhibits `c_{j+1}` as a square in `ℚ`. -/
-private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
-    (hgdeg : 2 * g.natDegree = fℚ[a, j + 1].natDegree)
-    (hgeq : g * g.comp (-X) = C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1]) :
-    IsSquare (cSeq a (j + 1)) := by
-  have hgnd : g.natDegree = 2 ^ j := by grind [natDegree_iteratedPoly]
-  have heval := congrArg (eval 0) hgeq
-  simp only [eval_mul, eval_C, eval_comp, eval_neg, eval_X, neg_zero] at heval
-  exact ⟨g.eval 0, by rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]; exact heval.symm⟩
-
-/-- Lemma 1.2: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible over `ℚ`.
-By induction: `f_{n+1} = f_n ∘ (X² + a)` is even and, `f_n` being irreducible, has no nontrivial
-even divisor, so if it were reducible, `c_{n+1}` would be a square. -/
-theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ}
-    (h : ∀ k ≥ 1, k ≤ n → ¬IsSquare (cSeq a k)) : Irreducible fℚ[a, n] := by
-  induction n with
-  | zero => simpa using irreducible_X (R := ℚ)
-  | succ n ih =>
-    have hn := h (n + 1) n.succ_pos le_rfl
-    have hF0 : fℚ[a, n].eval a ≠ 0 := fun h0 ↦ hn (by
-      simp [cSeq_succ_eq_neg_one_pow_mul_eval_zero, eval_zero_iteratedPoly_succ, h0])
-    have hirr := ih fun k hk hkn ↦ h k hk (hkn.trans n.le_succ)
-    by_contra hred
-    obtain ⟨g, hgdeg, hgeq⟩ :=
-      (monic_iteratedPoly a (n + 1)).exists_mul_comp_neg_X_eq_of_not_irreducible
-        (iteratedPoly_succ_comp_neg_X a n) hred fun _ ↦ by
-          rw [iteratedPoly_succ_comp]
-          exact hirr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X hF0
-    exact hn (isSquare_cSeq_of_even_factorization hgdeg hgeq)
-
 /-- If `-a = r ^ 2` in `ℚ`, then `f_n = f_{n-1} ^ 2 + a = (f_{n-1} - r) * (f_{n-1} + r)` factors
 nontrivially, so irreducibility of any `f_n` with `n ≥ 1` implies that `-a` is not a square. -/
 theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreducible fℚ[a, n]) :
@@ -155,38 +116,10 @@ theorem not_isSquare_neg_of_irreducible {n : ℕ} (hn : 1 ≤ n) (hirr : Irreduc
   refine (hirr.isUnit_or_isUnit hfac).elim ?_ ?_ <;>
     exact not_isUnit_of_natDegree_pos _ (by simp [natDegree_iteratedPoly])
 
-/-! ### Consequences for the roots of `f_n` -/
-
-/-- `c_{n+1} = ± f_{n+1}(0)` is nonzero when `f_{n+1}` is irreducible: otherwise `X` would divide
-`f_{n+1}`. -/
-lemma cSeq_succ_ne_zero_of_irreducible {n : ℕ} (hirr : Irreducible fℚ[a, n + 1]) :
-    cSeq a (n + 1) ≠ 0 := fun h ↦ by
-  rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, mul_eq_zero, pow_eq_zero_iff (Nat.two_pow_pos n).ne']
-    at h
-  have := Nat.one_lt_two_pow n.succ_ne_zero
-  exact hirr.not_isRoot_of_natDegree_ne_one (by rw [natDegree_iteratedPoly]; lia)
-    (h.resolve_left (neg_ne_zero.mpr one_ne_zero))
-
 lemma cSeq_ne_zero_of_irreducible (hirr : ∀ k, Irreducible fℚ[a, k]) : ∀ n ≥ 1, cSeq a n ≠ 0 :=
   fun n hn ↦ by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   exact cSeq_succ_ne_zero_of_irreducible (hirr (m + 1))
-
-/-- `a` is not a root of `f_n` when `c_{n+1} = ± f_n(a) ≠ 0`: the shifted roots `β - a` of `f_n`,
-whose square roots generate `K_{n+1}` over `K_n`, are nonzero. -/
-lemma sub_ratCast_ne_zero_of_mem_rootSet {n : ℕ} (hc : cSeq a (n + 1) ≠ 0)
-    {β : AlgebraicClosure ℚ} (hβ : β ∈ fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
-    β - (a : AlgebraicClosure ℚ) ≠ 0 := fun hzero ↦ by
-  have hroot := aeval_eq_zero_of_mem_rootSet hβ
-  rw [sub_eq_zero.mp hzero, aeval_ratCast_iteratedPoly, Rat.cast_eq_zero] at hroot
-  exact hc (by rw [cSeq_succ_eq_neg_one_pow_mul_eval, hroot, mul_zero])
-
-/-- An irreducible `f_n` is separable, so it has exactly `2^n = deg f_n` roots in `ℚ̄`. -/
-lemma card_rootSet_iteratedPoly {n : ℕ} (hirr : Irreducible fℚ[a, n]) :
-    Fintype.card ↑(fℚ[a, n].rootSet (AlgebraicClosure ℚ)) = 2 ^ n := by
-  simpa [natDegree_iteratedPoly] using
-    card_rootSet_eq_natDegree hirr.separable (IsAlgClosed.splits _)
-
 end
 
 /-- Corollary 1.3: for an integer `a` with `-a` not a square, all `f_n` are irreducible over `ℚ`

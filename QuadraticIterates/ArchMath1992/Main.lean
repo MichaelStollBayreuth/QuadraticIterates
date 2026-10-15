@@ -6,8 +6,9 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.Galois.Criterion
 
-import QuadraticIterates.ArchMath1992.DegreeCriterion
+import QuadraticIterates.Galois.DegreeCriterion
 import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Int.Order.Units
@@ -106,31 +107,6 @@ end
 section
 
 variable {a : ℚ}
-
-/-- Section 1, `(a) ↔ (b)`, for a rational parameter `a` whose iterates `f_0, …, f_n` are
-irreducible: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on `n`:
-`Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
-(`QuadraticIterates.nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that
-`c_{n+1}` is not a square in `K_n` (`QuadraticIterates.relfinrank_succ_eq_two_pow_iff`, Lemma 1.6,
-which needs `f_n` irreducible and `c_{n+1} ≠ 0`, i.e. `f_{n+1}` irreducible), and given
-`Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent
-(`QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc`, Lemma 1.5). -/
-theorem section1_a_iff_b_of_irreducible {n : ℕ} (hirr : ∀ k ≤ n, Irreducible fℚ[a, k]) :
-    Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
-      TwoIndependent (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1)) := by
-  induction n with
-  | zero =>
-    exact ⟨fun _ S ⟨i, _⟩ ↦ i.elim0, fun _ ↦ (nonempty_mulEquiv_iff_finrank_eq a 0).mpr (by simp)⟩
-  | succ n ih =>
-    have ih := ih fun k hk ↦ hirr k (hk.trans n.le_succ)
-    have h16 := relfinrank_succ_eq_two_pow_iff (hirr n n.le_succ)
-      (cSeq_succ_ne_zero_of_irreducible (hirr (n + 1) le_rfl))
-    rw [← Fin.snoc_init_self (fun i : Fin (n + 1) ↦ cSeq a ((i : ℕ) + 1)),
-      nonempty_mulEquiv_succ_iff a n]
-    refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun h ↦ ?_⟩
-    · exact (not_isSquare_algebraMap_iff_twoIndependent_snoc hiso (ih.mp hiso)).mp (h16.mp hrel)
-    · have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr h.of_snoc
-      exact ⟨hiso, h16.mpr ((not_isSquare_algebraMap_iff_twoIndependent_snoc hiso h.of_snoc).mpr h)⟩
 
 lemma bSeq_ne_zero_of_forall_cSeq_ne_zero (hc : ∀ k ≥ 1, cSeq a k ≠ 0) (n : ℕ) : bSeq a n ≠ 0 :=
   bSeq_eq_moebiusFactorK a n ▸ moebiusFactorK_ne_zero hc n

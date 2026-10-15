@@ -5,10 +5,12 @@ Authors: Michael Stoll
 -/
 module
 
-public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.Galois.Iterates
+public import QuadraticIterates.Galois.TwoIndependent
 public import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 
-import QuadraticIterates.ArchMath1992.Irreducibility
+import QuadraticIterates.Galois.Irreducibility
+import QuadraticIterates.Galois.Tower
 import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 
@@ -39,8 +41,10 @@ when `Ω_n ≅ [C₂]ⁿ` the rationals that are squares in `K_n` are determined
   and `c_1, …, c_n` are 2-independent, a rational `c` is a non-square in `K_n` iff `c_1, …, c_n, c`
   are 2-independent.
 
-Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
-Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
+## References
+
+* M. Stoll, *Galois groups over ℚ of some iterated polynomials*, Arch. Math. **59** (1992),
+  239-244.
 -/
 
 @[expose] public section
