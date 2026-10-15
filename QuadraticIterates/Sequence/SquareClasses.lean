@@ -35,6 +35,11 @@ theorem mulChar_cSeq_one (χ : MulChar ℚ ℤ) (hs : s ≠ 0) :
   congr 1
   field
 
+/-- For every character `χ` of `ℚ`, `χ(c_1) = χ(-1) χ(r) χ(s)`. -/
+theorem mulChar_cSeq_one_eq_mul (χ : MulChar ℚ ℤ) (hs : s ≠ 0) :
+    χ (cSeq ((r : ℚ) / s) 1) = χ (-1) * χ r * χ s := by
+  rw [mulChar_cSeq_one χ hs, neg_eq_neg_one_mul, map_mul, map_mul, mul_assoc]
+
 /-- For `n ≥ 2`, `c_n = r w_n / s^{2^{n-1}}` has the square class of `r w_n`, the exponent
 `2^{n-1}` being even. -/
 theorem mulChar_cSeq_of_two_le (χ : MulChar ℚ ℤ) (hs : s ≠ 0) {n : ℕ} (hn : 2 ≤ n) :

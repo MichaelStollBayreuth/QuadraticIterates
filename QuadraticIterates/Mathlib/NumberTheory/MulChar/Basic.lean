@@ -37,6 +37,9 @@ lemma isQuadratic_int (χ : MulChar M ℤ) : χ.IsQuadratic := fun x ↦ by
   · exact .inr (χ.apply_eq_one_or_eq_neg_one hx)
   · exact .inl (χ.map_nonunit hx)
 
+lemma apply_sq_of_isUnit (χ : MulChar M ℤ) {x : M} (hx : IsUnit x) : χ (x ^ 2) = 1 := by
+  rcases χ.apply_eq_one_or_eq_neg_one hx with h | h <;> simp [map_pow, h]
+
 /-- A square never has the value `-1` under a character into an ordered ring, since
 `χ (y * y) = χ y * χ y ≥ 0`. -/
 lemma apply_ne_neg_one_of_isSquare {R : Type*} [CommRing R] [LinearOrder R]
@@ -59,8 +62,7 @@ variable {K : Type*} [CommGroupWithZero K] (χ : MulChar K ℤ)
 lemma apply_div (x y : K) : χ (x / y) = χ x * χ y := by
   rw [div_eq_mul_inv, map_mul, apply_inv]
 
-lemma apply_sq {x : K} (hx : x ≠ 0) : χ (x ^ 2) = 1 := by
-  rcases χ.apply_eq_one_or_eq_neg_one hx.isUnit with h | h <;> simp [map_pow, h]
+lemma apply_sq {x : K} (hx : x ≠ 0) : χ (x ^ 2) = 1 := χ.apply_sq_of_isUnit hx.isUnit
 
 lemma apply_mul_sq (x : K) {y : K} (hy : y ≠ 0) : χ (x * y ^ 2) = χ x := by
   rw [map_mul, apply_sq χ hy, mul_one]

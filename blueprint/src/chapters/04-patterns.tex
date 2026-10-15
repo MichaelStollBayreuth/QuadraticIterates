@@ -11,15 +11,18 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
 \begin{lemma}[Sign patterns]
   \label{lem:pat-sign}
   \uses{lem:signs, lem:window, def:phin}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_one_of_pos,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_neg_one_lt, Rat.signChar_apply_of_pos,
+    Rat.signChar_apply_of_neg}
+  \leanok
   \begin{enumerate}
     \item If $a > 0$, then $\sgn(c_\bullet) = ({-}{+}{+}\cdots)$: $a$ has $\phi_1$.
     \item If $-1 < a < 0$, then $\sgn(c_\bullet) = ({+}{-}{-}\cdots)$: $a$ has $\tau$.
     \item If $a < -1$ and $c_3 < 0 < c_4$, then
           $\sgn(c_\bullet) = ({+}{+}{-}{+}{-}\cdots)$, alternating from $n = 2$ on.
   \end{enumerate}
-  \formalnote{Proposed: \lname{hasCharPattern\_mulSingle\_one\_of\_pos},
-  \lname{hasCharPattern\_neg\_mulSingle\_one\_of\_neg\_one\_lt}, and for (3) the values of
-  \lname{signChar} directly.}
+  \formalnote{(1) and (2) for any $a \in \QQ$; (3) is used through the values of
+  \lname{Rat.signChar} and Lemma~\ref{lem:window} directly.}
 \end{lemma}
 
 \section{Primes dividing \texorpdfstring{$r$, $s$, $r + s$, $r + 2s$ and $r^2 + s^2$}{r, s, r + s, r + 2s and r^2 + s^2}}
@@ -27,6 +30,11 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
 \begin{lemma}[Primes of $r$]
   \label{lem:pat-r}
   \uses{lem:sqclass, lem:wseq-res, def:chars}
+  \lean{QuadraticIterates.valChar_cSeq_of_dvd_left,
+    QuadraticIterates.unitPartChar_cSeq_of_dvd_left, QuadraticIterates.mulChar_cSeq_one_eq_mul,
+    Rat.valChar_intCast_of_not_dvd, Rat.valChar_neg_one, Rat.valChar_natCast_self,
+    Rat.unitPartChar_neg_one}
+  \leanok
   Let $p$ be a prime dividing $r$.
   \begin{enumerate}
     \item $v_p(c_n) = v_p(r)$ for all $n \ge 1$; if $v_p(r)$ is odd, $\val_p$ is a $\phi_0$.
@@ -35,12 +43,13 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
     \item If $4 \mid r$ and $x = \chi_4(r_2 s)$, then $\chi_4(c_\bullet) = (-x, x, x, \dots)$.
     \item If $8 \mid r$, then $\chi_8(c_n) = \chi_8(r_2 s)$ for all $n \ge 1$.
   \end{enumerate}
-  \formalnote{Proposed: \lname{valChar\_cSeq\_of\_dvd\_left},
-  \lname{unitPartChar\_cSeq\_of\_dvd\_left} (one statement for (2)--(4): for $N \mid r$ a power of
-  $p$ and $\psi$ modulo $N$, $\chi_\psi(c_n) = \psi(s)\chi_\psi(r)$ for $n \ge 2$ and
-  $\chi_\psi(c_1) = \psi(-1)\psi(s)\chi_\psi(r)$).}
+  \formalnote{(2)--(4) are one statement, \lname{unitPartChar\_cSeq\_of\_dvd\_left}: for a power
+  $N = p^k \mid r$, $k \ge 1$, and $\psi$ modulo $N$, $\chi_\psi(c_n) = \psi(s)\chi_\psi(r)$ for
+  $n \ge 2$; at $n = 1$, $\chi(c_1) = \chi(-1)\chi(r)\chi(s)$ for every character $\chi$
+  (\lname{mulChar\_cSeq\_one\_eq\_mul}).}
 \end{lemma}
 \begin{proof}
+  \leanok
   By Lemma~\ref{lem:sqclass}, $\chi(c_n) = \chi(r)\chi(w_n)$ for $n \ge 2$ and
   $\chi(c_1) = \chi(-1)\chi(r)\chi(s)$. As $w_n \equiv s^{2^{n-1}-1} \pmod r$ with an odd
   exponent, $\chi_\psi(w_n) = \psi(s)$ for $\psi$ modulo a divisor $N$ of $r$; and
@@ -50,6 +59,10 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
 \begin{lemma}[Primes of $s$]
   \label{lem:pat-s}
   \uses{lem:sqclass, lem:wseq-res, def:chars}
+  \lean{QuadraticIterates.valChar_cSeq_of_dvd_right,
+    QuadraticIterates.unitPartChar_cSeq_of_dvd_right,
+    QuadraticIterates.unitPartChar_two_cSeq_of_even}
+  \leanok
   \begin{enumerate}
     \item Let $p$ be an odd prime dividing $s$. Then $\val_p(c_n) = \chi_p(c_n) = 1$ for $n \ge 2$,
           while $\val_p(c_1) = (-1)^{v_p(s)}$ and $\chi_p(c_1) = \Leg{-r s_p}{p}$.
@@ -57,10 +70,12 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
           $\val_2(c_2) = 1$.
   \end{enumerate}
   In other words, $c_n$ is a square in $\QQ_p$ for $n \ge 2$, resp.\ in $\QQ_2$ for $n \ge 3$.
-  \formalnote{Proposed: \lname{valChar\_cSeq\_of\_dvd\_right},
-  \lname{unitPartChar\_cSeq\_of\_dvd\_right}.}
+  \formalnote{(1) for $\psi$ modulo any power $N \mid s$ of $p$, $k \ge 1$; (2) for $\psi$
+  modulo a power of $2$ dividing $8$. The values at $c_1$ are those of
+  \lname{mulChar\_cSeq\_one\_eq\_mul}.}
 \end{lemma}
 \begin{proof}
+  \leanok
   For $n \ge 2$, $v_p(c_n) = -2^{n-1} v_p(s)$ is even. (1) $w_n \equiv r^{2^{n-1}-1} \pmod p$, so
   $r w_n \equiv r^{2^{n-1}}$ is a nonzero square modulo $p$. (2) $w_n \equiv r \pmod 8$ for
   $n \ge 3$ (Lemma~\ref{lem:wseq-res}), so $r w_n \equiv r^2 \equiv 1 \pmod 8$.

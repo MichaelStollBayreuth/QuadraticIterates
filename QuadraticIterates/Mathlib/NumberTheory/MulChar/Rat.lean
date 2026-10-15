@@ -126,6 +126,17 @@ lemma valChar_intCast {m : ℤ} (hm : m ≠ 0) : valChar p m = (-1) ^ padicValIn
   rw [valChar, mulCharOfInt_intCast fun n hn ↦ by simp [hn, (isUnit_neg_one (α := ℤ)).pow]]
   simp [hm]
 
+lemma valChar_intCast_of_not_dvd {m : ℤ} (hm : ¬(p : ℤ) ∣ m) : valChar p m = 1 := by
+  rw [valChar_intCast fun h ↦ hm (by simp [h]), padicValInt.eq_zero_of_not_dvd hm, pow_zero]
+
+lemma valChar_natCast_self : valChar p p = -1 := by
+  rw [← Int.cast_natCast, valChar_intCast (mod_cast (Fact.out : p.Prime).ne_zero),
+    padicValInt.self (Fact.out : p.Prime).one_lt, pow_one]
+
+lemma valChar_neg_one : valChar p (-1) = 1 := by
+  exact_mod_cast valChar_intCast_of_not_dvd (p := p) (m := -1) (by
+    simpa using (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit ∘ isUnit_of_dvd_one)
+
 end valChar
 
 /-! ### Characters of the prime-to-`p` part -/
@@ -181,6 +192,11 @@ lemma unitPartChar_natCast_self (hN : N = p ^ k) : unitPartChar p ψ p = 1 := by
       isUnit_apply_sign_mul_ordCompl hN hn]
   simp [hp.ne_zero, hp.factorization_self, Nat.div_self hp.pos,
     Int.sign_eq_one_of_pos (Int.natCast_pos.mpr hp.pos)]
+
+lemma unitPartChar_neg_one {N k : ℕ} (hN : N = p ^ k) (ψ : MulChar (ZMod N) ℤ) :
+    unitPartChar p ψ (-1) = ψ (-1) := by
+  exact_mod_cast unitPartChar_intCast (ψ := ψ) hN (m := -1) (by
+    simpa using (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit ∘ isUnit_of_dvd_one)
 
 end unitPartChar
 
