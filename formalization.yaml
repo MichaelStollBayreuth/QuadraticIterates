@@ -392,7 +392,7 @@ alignment:
       status: "proved"
       note: "the first reflection lemma is in QuadraticIterates.Rational.Reflection"
     - source: "Rational program: the γ_2 route (Li 2020, Lemmas 3.2 and 3.3, rational form)"
-      lean: "not_isSquare_betaInt_of_squarefree_of_dvd_wSeq_two"
+      lean: "not_isSquare_betaInt_of_squarefree_of_dvd_wEps_two"
       module: "QuadraticIterates.Rational.GammaTwo"
       status: "proved"
       note: "for both signs; gives clause (SQ⁺5) of Theorem R⁺ and clause (SQ⁻4) of Theorem R⁻"

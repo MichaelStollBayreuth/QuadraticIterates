@@ -28,7 +28,7 @@ of `γ_k + γ_{k+1}` (`QuadraticIterates.reflNum`) is, for every `k ≥ 2`, `≡
 `r + εs ≡ 3 mod 4`, or `s` even with `r ≡ 3 mod 4`. For odd `s` everything is decided modulo `8`,
 where the `γ`-sequence of `a X² + ε` is `2`-periodic from index `2` on for every `a`
 (`QuadraticIterates.reflNum_emod_of_odd`); for even `s`, `w_n ≡ r mod 8` for `n ≥ 3`
-(`QuadraticIterates.intCast_wSeq_zmod_eight_of_even`,
+(`QuadraticIterates.intCast_wEps_zmod_eight_of_even`,
 `QuadraticIterates.reflNum_emod_four_of_even`). Hence `-1` is not a square modulo `N_k`
 (`QuadraticIterates.not_isSquare_neg_one_zmod_reflNum`), and
 `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum` with the modulus `N_k` makes `β_n` a
@@ -94,7 +94,7 @@ private lemma intCast_reflNum_zmod_eight (hs : s % 2 = 1) (hu : (s : ZMod 8) * u
     grind
   rw [reflNum_eq]
   push_cast
-  rw [intCast_wSeq hu hε, intCast_wSeq hu hε, Nat.add_sub_cancel, mul_right_comm, ← pow_add,
+  rw [intCast_wEps hu hε, intCast_wEps hu hε, Nat.add_sub_cancel, mul_right_comm, ← pow_add,
     ← Nat.two_pow_sub_one_eq_add (one_le_two.trans hk),
     ZMod.intCast_pow_two_pow_sub_one_eight_of_odd (Int.odd_iff.mpr hs) (by lia), ← mul_add, hsum]
 
@@ -150,19 +150,19 @@ variable (hs : s % 2 = 0) (hrs : IsCoprime r s)
 include hs hrs
 
 /-- For even `s` (and `r` coprime to `s`), `w_n` is odd, so `w_n² = 1` in `ZMod 8`. -/
-private lemma intCast_wSeq_sq_zmod_eight_of_even {n : ℕ} (hn : 1 ≤ n) :
-    (wSeq r s ε n : ZMod 8) ^ 2 = 1 :=
+private lemma intCast_wEps_sq_zmod_eight_of_even {n : ℕ} (hn : 1 ≤ n) :
+    (wEps r s ε n : ZMod 8) ^ 2 = 1 :=
   ZMod.intCast_sq_eight_eq_one_of_odd
-    (odd_of_isCoprime_of_even (isCoprime_wSeq_right hrs hn) (Int.even_iff.mpr hs))
+    (odd_of_isCoprime_of_even (isCoprime_wEps_right hrs hn) (Int.even_iff.mpr hs))
 
 /-- For even `s` (and `r` coprime to `s`), `w_n ≡ r mod 8` for all `n ≥ 3`: `w_n` is odd, so
 `w_n² ≡ 1`, and `8 ∣ s^(2^n - 1)` for `n ≥ 2`. -/
-theorem intCast_wSeq_zmod_eight_of_even : ∀ n ≥ 3, (wSeq r s ε n : ZMod 8) = r := fun n hn ↦ by
+theorem intCast_wEps_zmod_eight_of_even : ∀ n ≥ 3, (wEps r s ε n : ZMod 8) = r := fun n hn ↦ by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (by lia : n ≠ 0)
   have h3 : 3 ≤ 2 ^ m - 1 := by lia [Nat.pow_le_pow_right two_pos (by lia : 2 ≤ m)]
-  rw [wSeq_succ r s ε (by lia)]
+  rw [wEps_succ r s ε (by lia)]
   push_cast
-  rw [intCast_wSeq_sq_zmod_eight_of_even hs hrs (by lia),
+  rw [intCast_wEps_sq_zmod_eight_of_even hs hrs (by lia),
     ZMod.intCast_pow_eight_eq_zero_of_even (Int.even_iff.mpr hs) h3]
   ring
 
@@ -171,8 +171,8 @@ every `k ≥ 2`: `4 ∣ s^(2^(k-1))` and `w_{k+1} ≡ r mod 8`. -/
 theorem reflNum_emod_four_of_even (hr : r % 4 = 3) {k : ℕ} (hk : 2 ≤ k) :
     reflNum r s ε k % 4 = 3 := by
   have h1 := (ZMod.intCast_eq_intCast_iff' _ _ 8).mp
-    (intCast_wSeq_zmod_eight_of_even (ε := ε) hs hrs (k + 1) (by lia))
-  have h4 : (4 : ℤ) ∣ wSeq r s ε k * s ^ 2 ^ (k - 1) :=
+    (intCast_wEps_zmod_eight_of_even (ε := ε) hs hrs (k + 1) (by lia))
+  have h4 : (4 : ℤ) ∣ wEps r s ε k * s ^ 2 ^ (k - 1) :=
     ((pow_dvd_pow 2 (Nat.one_lt_two_pow (show k - 1 ≠ 0 by lia))).trans
       (pow_dvd_pow_of_dvd (Int.dvd_of_emod_eq_zero hs) _)).mul_left _
   rw [reflNum_eq]
@@ -206,7 +206,7 @@ theorem not_isSquare_neg_one_zmod_reflNum (hrs : IsCoprime r s) (hε : ε ^ 2 = 
 with `k = n / rad n ≥ 2` and `N_k ≥ 0`: `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum`
 with the modulus `N_k` itself. -/
 theorem not_isSquare_betaInt_of_twoAdicClass_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) (hc : TwoAdicClass r s ε) {n k : ℕ}
+    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0) (hc : TwoAdicClass r s ε) {n k : ℕ}
     (hn : 2 ≤ n) (hk : n = k * radical n) (hk2 : 2 ≤ k) (hN : 0 ≤ reflNum r s ε k) :
     ¬IsSquare (betaInt r s ε n) :=
   not_isSquare_betaInt_of_dvd_reflNum_of_two_le hs hrs hε hw hn rfl hk hk2
@@ -219,29 +219,29 @@ section dvd
 variable {M : ℕ}
 
 /-- Modulo a divisor `M` of `s`, `w_n ≡ r^(2^(n-1) - 1)`: the term `ε s^(2^n - 1)` vanishes. -/
-lemma intCast_wSeq_zmod_of_dvd (hM : (M : ℤ) ∣ s) :
-    ∀ n ≥ 1, (wSeq r s ε n : ZMod M) = (r : ZMod M) ^ (2 ^ (n - 1) - 1) := by
+lemma intCast_wEps_zmod_of_dvd (hM : (M : ℤ) ∣ s) :
+    ∀ n ≥ 1, (wEps r s ε n : ZMod M) = (r : ZMod M) ^ (2 ^ (n - 1) - 1) := by
   have hs : (s : ZMod M) = 0 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr hM
   intro n hn
   induction n, hn using Nat.le_induction with
   | base => simp
   | succ n hn ih =>
-    rw [wSeq_succ r s ε hn]
+    rw [wEps_succ r s ε hn]
     push_cast
     rw [ih, hs, zero_pow (Nat.sub_ne_zero_of_lt (Nat.one_lt_two_pow (by lia))), mul_zero,
       add_zero, Nat.two_pow_sub_one_eq hn]
     ring
 
-private lemma intCast_prod_wSeq_zmod_of_dvd (hM : (M : ℤ) ∣ s) {S : Finset ℕ}
+private lemma intCast_prod_wEps_zmod_of_dvd (hM : (M : ℤ) ∣ s) {S : Finset ℕ}
     (hS : ∀ t ∈ S, 1 ≤ t) :
-    ((∏ t ∈ S, wSeq r s ε t : ℤ) : ZMod M) = (r : ZMod M) ^ ∑ t ∈ S, (2 ^ (t - 1) - 1) := by
+    ((∏ t ∈ S, wEps r s ε t : ℤ) : ZMod M) = (r : ZMod M) ^ ∑ t ∈ S, (2 ^ (t - 1) - 1) := by
   push_cast
-  rw [Finset.prod_congr rfl fun t ht ↦ intCast_wSeq_zmod_of_dvd hM t (hS t ht),
+  rw [Finset.prod_congr rfl fun t ht ↦ intCast_wEps_zmod_of_dvd hM t (hS t ht),
     Finset.prod_pow_eq_pow_sum]
 
 section
 
-variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0)
 include hs hrs hε hw
 
 /-- For squarefree `n` and `M ∣ s`, if `β_n` is a square then `r^F` is a square modulo `M`,
@@ -254,9 +254,9 @@ private lemma isSquare_intCast_pow_of_isSquare_betaInt {n : ℕ} (hsf : Squarefr
   have key := ZMod.isSquare_mul_of_isSquare_div
     (x := (r : ZMod M) ^ ∑ t ∈ n.divisors with μ (n / t) = 1, (2 ^ (t - 1) - 1))
     (y := (r : ZMod M) ^ ∑ t ∈ n.divisors with μ (n / t) = -1, (2 ^ (t - 1) - 1))
-    (by rw [intCast_prod_wSeq_zmod_of_dvd hM (hpos _ (Finset.filter_subset _ _)),
-      intCast_prod_wSeq_zmod_of_dvd hM (hpos _ (Finset.filter_subset _ _))])
-    (by rw [intCast_prod_wSeq_zmod_of_dvd hM (hpos _ (Finset.filter_subset _ _))]
+    (by rw [intCast_prod_wEps_zmod_of_dvd hM (hpos _ (Finset.filter_subset _ _)),
+      intCast_prod_wEps_zmod_of_dvd hM (hpos _ (Finset.filter_subset _ _))])
+    (by rw [intCast_prod_wEps_zmod_of_dvd hM (hpos _ (Finset.filter_subset _ _))]
         exact (ZMod.isUnit_intCast_of_isCoprime_of_dvd hrs hM).pow _)
     (intCast_betaInt_eq_div_of_squarefree hs hrs hε hw hsf ▸ Rat.isSquare_intCast_iff.mpr hsq)
   rwa [← pow_add, hsf.sum_filter_moebius_div_eq_one_add_sum_filter_eq_neg_one] at key
@@ -279,25 +279,25 @@ end dvd
 
 /-- For squarefree `n`, if `β_n` is a square then so is `∏_{t ∣ n} w_t` modulo `8`: the product of
 the numerator and the denominator of `β_n`. -/
-private lemma isSquare_intCast_prod_wSeq_zmod_eight_of_isSquare_betaInt (hs0 : s ≠ 0)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ}
+private lemma isSquare_intCast_prod_wEps_zmod_eight_of_isSquare_betaInt (hs0 : s ≠ 0)
+    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0) {n : ℕ}
     (hsf : Squarefree n) (hsq : IsSquare (betaInt r s ε n)) :
-    IsSquare ((∏ t ∈ n.divisors, wSeq r s ε t : ℤ) : ZMod 8) := by
+    IsSquare ((∏ t ∈ n.divisors, wEps r s ε t : ℤ) : ZMod 8) := by
   have hβ := intCast_betaInt_eq_div_of_squarefree hs0 hrs hε hw hsf
   have key := (Int.isSquare_mul_of_isSquare_div (hβ ▸ Rat.isSquare_intCast_iff.mpr hsq)).map
     (Int.castRingHom (ZMod 8))
   rwa [Int.coe_castRingHom, hsf.prod_filter_moebius_div_eq_one_mul_prod_filter_eq_neg_one] at key
 
 /-- The product `∏_{t ∣ n} w_t` modulo `8` for even `s`: the factors with `t ≥ 3` are `r`. -/
-private lemma intCast_prod_wSeq_zmod_eight_of_even (hs : s % 2 = 0) (hrs : IsCoprime r s)
-    (n : ℕ) : ((∏ t ∈ n.divisors, wSeq r s ε t : ℤ) : ZMod 8) =
-      (∏ t ∈ n.divisors with t ≤ 2, (wSeq r s ε t : ZMod 8)) *
+private lemma intCast_prod_wEps_zmod_eight_of_even (hs : s % 2 = 0) (hrs : IsCoprime r s)
+    (n : ℕ) : ((∏ t ∈ n.divisors, wEps r s ε t : ℤ) : ZMod 8) =
+      (∏ t ∈ n.divisors with t ≤ 2, (wEps r s ε t : ZMod 8)) *
         (r : ZMod 8) ^ #{t ∈ n.divisors | ¬t ≤ 2} := by
   push_cast
   rw [← Finset.prod_filter_mul_prod_filter_not n.divisors (· ≤ 2), ← Finset.prod_const]
   congr 1
   exact Finset.prod_congr rfl fun t ht ↦
-    intCast_wSeq_zmod_eight_of_even hs hrs t (by lia [(Finset.mem_filter.mp ht).2])
+    intCast_wEps_zmod_eight_of_even hs hrs t (by lia [(Finset.mem_filter.mp ht).2])
 
 private lemma divisors_filter_le_two_of_odd {n : ℕ} (hn : Odd n) :
     {t ∈ n.divisors | t ≤ 2} = {1} := by
@@ -347,13 +347,13 @@ private lemma even_card_filter_divisors_of_even {n : ℕ} (hn : 2 ≤ n) (hsf : 
 square: modulo `8`, `∏_{t ∣ n} w_t = r^(τ(n) - 1)` with `τ(n) - 1` odd, and `r` is not a square
 modulo `8`. -/
 theorem not_isSquare_betaInt_of_squarefree_of_odd_of_even (hs : s % 2 = 0) (hs0 : s ≠ 0)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n)
+    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0) {n : ℕ} (hn : 2 ≤ n)
     (hsf : Squarefree n) (hno : Odd n) (hr : r % 4 = 3) :
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
-  have key := isSquare_intCast_prod_wSeq_zmod_eight_of_isSquare_betaInt hs0 hrs hε hw hsf hsq
+  have key := isSquare_intCast_prod_wEps_zmod_eight_of_isSquare_betaInt hs0 hrs hε hw hsf hsq
   have hr2 : Odd r := odd_of_isCoprime_of_even hrs (Int.even_iff.mpr hs)
-  rw [intCast_prod_wSeq_zmod_eight_of_even hs hrs, divisors_filter_le_two_of_odd hno,
-    Finset.prod_singleton, wSeq_one, Int.cast_one, one_mul,
+  rw [intCast_prod_wEps_zmod_eight_of_even hs hrs, divisors_filter_le_two_of_odd hno,
+    Finset.prod_singleton, wEps_one, Int.cast_one, one_mul,
     (ZMod.isUnit_intCast_eight_of_odd hr2).isSquare_pow_iff_of_odd
       (odd_card_filter_divisors_of_odd hn hsf hno)] at key
   exact ZMod.not_isSquare_intCast_eight_of_odd_of_emod_ne_one hr2 (by lia) key
@@ -362,17 +362,17 @@ theorem not_isSquare_betaInt_of_squarefree_of_odd_of_even (hs : s % 2 = 0) (hs0 
 square: modulo `8`, `∏_{t ∣ n} w_t = (r + εs) r^(τ(n) - 2)` with `τ(n) - 2` even, and `r + εs` is
 odd and not a square modulo `8`. No condition on `r` modulo `4` is needed here. -/
 theorem not_isSquare_betaInt_of_squarefree_of_even_of_even (hs : s % 2 = 0) (hs0 : s ≠ 0)
-    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0) {n : ℕ}
+    (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0) {n : ℕ}
     (hsf : Squarefree n) (hne : Even n) (h8 : (r + ε * s) % 8 ≠ 1) :
     ¬IsSquare (betaInt r s ε n) := fun hsq ↦ by
   have hn : 2 ≤ n := by
     obtain ⟨m, hm⟩ := hne
     lia [hsf.ne_zero]
-  have key := isSquare_intCast_prod_wSeq_zmod_eight_of_isSquare_betaInt hs0 hrs hε hw hsf hsq
+  have key := isSquare_intCast_prod_wEps_zmod_eight_of_isSquare_betaInt hs0 hrs hε hw hsf hsq
   have hs' : Even s := Int.even_iff.mpr hs
   have hr2 : Odd r := odd_of_isCoprime_of_even hrs hs'
-  rw [intCast_prod_wSeq_zmod_eight_of_even hs hrs, divisors_filter_le_two_of_even (by lia) hne,
-    Finset.prod_pair one_lt_two.ne, wSeq_one, wSeq_two, Int.cast_one, one_mul,
+  rw [intCast_prod_wEps_zmod_eight_of_even hs hrs, divisors_filter_le_two_of_even (by lia) hne,
+    Finset.prod_pair one_lt_two.ne, wEps_one, wEps_two, Int.cast_one, one_mul,
     (ZMod.isUnit_intCast_eight_of_odd hr2).isSquare_mul_pow_iff_of_even
       (even_card_filter_divisors_of_even hn hsf hne)] at key
   exact ZMod.not_isSquare_intCast_eight_of_odd_of_emod_ne_one (hr2.add_even (hs'.mul_left ε)) h8

@@ -26,7 +26,7 @@ the numerator `N_k = w_k s^(2^(k-1)) + w_{k+1}` of `γ_k + γ_{k+1}` (`Quadratic
 coprime to `s`), where `k = n / rad n`, then `γ_{k+1} ≡ -γ_k mod M` and the
 constant tail of the `γ`-sequence over `ZMod M` makes `β_n ≡ -s^F · (unit)² mod M`, with the
 twist `s^F`, `F = ∑_{t ∣ rad n} (2^(kt-1) - 1)`, coming from the denominators
-(`QuadraticIterates.intCast_wSeq`). So `β_n` is not a square when `-1` (for `n` not squarefree,
+(`QuadraticIterates.intCast_wEps`). So `β_n` is not a square when `-1` (for `n` not squarefree,
 `F` even) resp. `-s` (for `n` squarefree, `F` odd) is not a square modulo `M`.
 
 ## Main statements
@@ -55,25 +55,25 @@ variable {r s ε : ℤ}
 
 section
 
-variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0)
 include hs hrs hε hw
 
 /-- `β_n` as the quotient of the products of `w_{kt}` over the two halves of the divisors `t` of
 `n' = rad n`, `k = n / n'`, by the sign of `μ(n'/t)`. -/
 theorem intCast_betaInt_eq_div {n k n' : ℕ} (hn : 1 ≤ n) (hn' : n' = radical n)
     (hk : n = k * n') : (betaInt r s ε n : ℚ) =
-      ((∏ t ∈ n'.divisors with μ (n' / t) = 1, wSeq r s ε (k * t) : ℤ) : ℚ) /
-        ((∏ t ∈ n'.divisors with μ (n' / t) = -1, wSeq r s ε (k * t) : ℤ) : ℚ) := by
+      ((∏ t ∈ n'.divisors with μ (n' / t) = 1, wEps r s ε (k * t) : ℤ) : ℚ) /
+        ((∏ t ∈ n'.divisors with μ (n' / t) = -1, wEps r s ε (k * t) : ℤ) : ℚ) := by
   rw [intCast_betaInt hs hrs hε hw hn, moebiusFactorK_eq_prod]
   simp only [eq_intCast]
-  rw [prod_pow_moebius_eq_div n k n' hn hn' hk (fun d ↦ ((wSeq r s ε d : ℤ) : ℚ)), Int.cast_prod,
+  rw [prod_pow_moebius_eq_div n k n' hn hn' hk (fun d ↦ ((wEps r s ε d : ℤ) : ℚ)), Int.cast_prod,
     Int.cast_prod]
 
 /-- `β_n` for squarefree `n` as the quotient of the products of `w_t` over the two halves of the
 divisors `t` of `n` by the sign of `μ(n/t)`. -/
 theorem intCast_betaInt_eq_div_of_squarefree {n : ℕ} (hsf : Squarefree n) : (betaInt r s ε n : ℚ) =
-      ((∏ t ∈ n.divisors with μ (n / t) = 1, wSeq r s ε t : ℤ) : ℚ) /
-        ((∏ t ∈ n.divisors with μ (n / t) = -1, wSeq r s ε t : ℤ) : ℚ) := by
+      ((∏ t ∈ n.divisors with μ (n / t) = 1, wEps r s ε t : ℤ) : ℚ) /
+        ((∏ t ∈ n.divisors with μ (n / t) = -1, wEps r s ε t : ℤ) : ℚ) := by
   simpa using intCast_betaInt_eq_div hs hrs hε hw (Nat.pos_of_ne_zero hsf.ne_zero)
     (Nat.squarefree_iff_radical_eq_self.mp hsf).symm (one_mul n).symm
 
@@ -98,7 +98,7 @@ private lemma gammaSeq_zmod_add_succ_eq_zero (hu : (s : ZMod M) * u = 1) (hε : 
   rw [reflNum_eq] at hdvd
   have h := (ZMod.intCast_zmod_eq_zero_iff_dvd _ M).mpr hdvd
   push_cast at h
-  rw [intCast_wSeq hu hε, intCast_wSeq hu hε, Nat.add_sub_cancel, Nat.two_pow_sub_one_eq_add hk,
+  rw [intCast_wEps hu hε, intCast_wEps hu hε, Nat.add_sub_cancel, Nat.two_pow_sub_one_eq_add hk,
     pow_add] at h
   refine (((IsUnit.of_mul_eq_one _ hu).pow (2 ^ (k - 1) - 1)).mul
     ((IsUnit.of_mul_eq_one _ hu).pow (2 ^ (k - 1)))).mul_right_eq_zero.mp ?_
@@ -121,26 +121,26 @@ private lemma isUnit_gammaSeq_zmod_two_mul (hu : (s : ZMod M) * u = 1) (hε : ε
 
 /-- A product of `w_{kt}` in `ZMod M` is the corresponding product of `γ_{kt}` times a power
 of `s`. -/
-private lemma intCast_prod_wSeq_zmod (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 = 1) (k : ℕ)
-    (S : Finset ℕ) : ((∏ t ∈ S, wSeq r s ε (k * t) : ℤ) : ZMod M) =
+private lemma intCast_prod_wEps_zmod (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 = 1) (k : ℕ)
+    (S : Finset ℕ) : ((∏ t ∈ S, wEps r s ε (k * t) : ℤ) : ZMod M) =
       (∏ t ∈ S, (s : ZMod M) ^ (2 ^ (k * t - 1) - 1)) * ∏ t ∈ S, γZ (k * t) := by
   push_cast
-  simp only [intCast_wSeq hu hε]
+  simp only [intCast_wEps hu hε]
   exact Finset.prod_mul_distrib
 
 /-- A product of the `w_{kt}` over positive indices `t` is a unit modulo `M`. -/
-private lemma isUnit_intCast_prod_wSeq_zmod (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 = 1)
+private lemma isUnit_intCast_prod_wEps_zmod (hu : (s : ZMod M) * u = 1) (hε : ε ^ 2 = 1)
     {k : ℕ} (hk : 1 ≤ k)
     (hdvd : (M : ℤ) ∣ reflNum r s ε k) (S : Finset ℕ)
-    (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit ((∏ t ∈ S, wSeq r s ε (k * t) : ℤ) : ZMod M) := by
-  rw [intCast_prod_wSeq_zmod hu hε]
+    (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit ((∏ t ∈ S, wEps r s ε (k * t) : ℤ) : ZMod M) := by
+  rw [intCast_prod_wEps_zmod hu hε]
   exact (IsUnit.prod_iff.mpr fun _ _ ↦ (IsUnit.of_mul_eq_one _ hu).pow _).mul
     (isUnit_prod_gammaSeq_mul evenPoly_gZ hk (gammaSeq_zmod_add_two_mul_eq_zero hu hε hk hdvd)
       (isUnit_gammaSeq_zmod_two_mul hu hε hk hdvd) hS)
 
 section
 
-variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0)
 include hs hrs hε hw
 
 /-- **Reflection with the twist.** Let `n ≥ 2`, `n' = rad n`, `k = n / n'`, and let `M` divide
@@ -157,13 +157,13 @@ theorem not_isSquare_betaInt_of_dvd_reflNum {n k n' : ℕ} (hn : 2 ≤ n) (hn' :
   obtain ⟨u, hu⟩ := (ZMod.isUnit_intCast_of_isCoprime_of_dvd
     (isCoprime_reflNum_right hrs hkpos).symm hdvd).exists_right_inv
   have hz := gammaSeq_zmod_add_two_mul_eq_zero hu hε hkpos hdvd
-  have hQu := isUnit_intCast_prod_wSeq_zmod hu hε hkpos hdvd
+  have hQu := isUnit_intCast_prod_wEps_zmod hu hε hkpos hdvd
     {t ∈ n'.divisors | μ (n' / t) = -1} fun t ht ↦
       Nat.pos_of_mem_divisors (Finset.mem_of_mem_filter t ht)
   have key := ZMod.isSquare_mul_of_isSquare_div
     (x := -∏ t ∈ n'.divisors with μ (n' / t) = 1, (s : ZMod M) ^ (2 ^ (k * t - 1) - 1))
     (y := ∏ t ∈ n'.divisors with μ (n' / t) = -1, (s : ZMod M) ^ (2 ^ (k * t - 1) - 1))
-    (by rw [intCast_prod_wSeq_zmod hu hε, intCast_prod_wSeq_zmod hu hε,
+    (by rw [intCast_prod_wEps_zmod hu hε, intCast_prod_wEps_zmod hu hε,
       prod_gammaSeq_mul_eq_neg_prod evenPoly_gZ hkpos hz hsf hn'1]; ring) hQu
     (intCast_betaInt_eq_div hs hrs hε hw (by lia) hn' hk ▸ Rat.isSquare_intCast_iff.mpr hsq)
   rw [neg_mul, hsf.prod_filter_moebius_div_eq_one_mul_prod_filter_eq_neg_one,

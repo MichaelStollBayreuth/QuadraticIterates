@@ -67,7 +67,7 @@ variable {R : Type*} [CommRing R] (a : R)
 
 /-- Rescaling: for `ε² = 1`, `c_n = εa · γ_n` for `n ≥ 2`, where `γ` is the `γ`-sequence of
 `(εa) X² + ε` with sign `ε`; e.g. `ε = sgn a` gives the rescaled polynomial `|a| X² + sgn a`, and
-`a = εr/s` gives `(r/s) X² + ε`, the polynomial of the sequence `QuadraticIterates.wSeq r s ε`. -/
+`a = εr/s` gives `(r/s) X² + ε`, the polynomial of the sequence `QuadraticIterates.wEps r s ε`. -/
 theorem cSeq_eq_mul_gammaSeq {ε : R} (hε : ε ^ 2 = 1) {n : ℕ} (hn : 2 ≤ n) :
     cSeq a n = ε * a * gammaSeq (C (ε * a) * X ^ 2 + C ε) ε n := by
   induction n, hn using Nat.le_induction with

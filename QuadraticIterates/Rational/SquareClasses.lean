@@ -18,7 +18,7 @@ import QuadraticIterates.Mathlib.NumberTheory.Moebius
 # Square classes for a rational parameter, and the shared-part lemma
 
 For `a = εr/s` (`ε² = 1`, `r` and `s` coprime), `c_n = r w_n / s^(2^(n-1))` for `n ≥ 2`, where
-`w = QuadraticIterates.wSeq r s ε` (`QuadraticIterates.cSeq_div_eq`), so in `ℚˣ/(ℚˣ)²` the class
+`w = QuadraticIterates.wEps r s ε` (`QuadraticIterates.cSeq_div_eq_old`), so in `ℚˣ/(ℚˣ)²` the class
 of `c_n` is that of `r w_n`, and the class of `b_n` is `μ(n) [-εs] + [β_n]` with the integer
 Möbius factors `β_n = QuadraticIterates.betaInt r s ε n` (`QuadraticIterates.sqClass_bSeq_div`).
 Hence a square subproduct of the `b_n` gives a square integer `(-εs)^k r^c ∏ β_n`, and by the
@@ -47,7 +47,7 @@ variable {r s ε : ℤ}
 private lemma isUnit_intCast_of_sq_eq_one (hε : ε ^ 2 = 1) : IsUnit (ε : ℚ) :=
   IsUnit.of_pow_eq_one (mod_cast hε : (ε : ℚ) ^ 2 = 1) two_ne_zero
 
-variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wSeq r s ε n ≠ 0)
+variable (hs : s ≠ 0) (hrs : IsCoprime r s) (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0)
 include hs
 
 /-! ### The sequences `c` and `b` of `a = εr/s` -/
@@ -65,16 +65,16 @@ section
 include hε
 
 /-- For `a = εr/s`, `c_n = r w_n / s^(2^(n-1))` for `n ≥ 2`:
-`QuadraticIterates.cSeq_eq_mul_gammaSeq` with `εa = r/s`, and `QuadraticIterates.intCast_wSeq`
+`QuadraticIterates.cSeq_eq_mul_gammaSeq` with `εa = r/s`, and `QuadraticIterates.intCast_wEps`
 over `ℚ`. -/
-theorem cSeq_div_eq {n : ℕ} (hn : 2 ≤ n) :
-    cSeq (ε * r / s : ℚ) n = r * wSeq r s ε n / s ^ 2 ^ (n - 1) := by
+theorem cSeq_div_eq_old {n : ℕ} (hn : 2 ≤ n) :
+    cSeq (ε * r / s : ℚ) n = r * wEps r s ε n / s ^ 2 ^ (n - 1) := by
   have hs' : (s : ℚ) ≠ 0 := mod_cast hs
   have hu : (s : ℚ) * (s : ℚ)⁻¹ = 1 := mul_inv_cancel₀ hs'
   have hε' : (ε : ℚ) ^ 2 = 1 := mod_cast hε
   have hεa : (ε : ℚ) * (ε * r / s) = r * (s : ℚ)⁻¹ := by
     rw [← mul_div_assoc, ← mul_assoc, ← sq, hε', one_mul, div_eq_mul_inv]
-  rw [cSeq_eq_mul_gammaSeq _ hε' hn, hεa, intCast_wSeq hu hε n,
+  rw [cSeq_eq_mul_gammaSeq _ hε' hn, hεa, intCast_wEps hu hε n,
     ← mul_pow_sub_one (Nat.two_pow_pos (n - 1)).ne' (s : ℚ)]
   have := pow_ne_zero (2 ^ (n - 1) - 1) hs'
   field
@@ -82,12 +82,12 @@ theorem cSeq_div_eq {n : ℕ} (hn : 2 ≤ n) :
 /-- The square class of `c_n`, `n ≥ 2`, is that of `r w_n`: the denominator `s^(2^(n-1))` is a
 square. -/
 theorem sqClass_cSeq_div {n : ℕ} (hn : 2 ≤ n) :
-    sqClass (cSeq (ε * r / s : ℚ) n) = sqClass ((r * wSeq r s ε n : ℤ) : ℚ) := by
+    sqClass (cSeq (ε * r / s : ℚ) n) = sqClass ((r * wEps r s ε n : ℤ) : ℚ) := by
   have h2 : 2 ^ (n - 1) = 2 ^ (n - 2) * 2 := by
     rw [← pow_succ]
     congr 1
     lia
-  rw [cSeq_div_eq hs hε hn, h2, pow_mul, sqClass_div_sq _ (pow_ne_zero _ (mod_cast hs))]
+  rw [cSeq_div_eq_old hs hε hn, h2, pow_mul, sqClass_div_sq _ (pow_ne_zero _ (mod_cast hs))]
   push_cast
   rfl
 
@@ -99,7 +99,7 @@ lemma cSeq_div_ne_zero (hr : r ≠ 0) : ∀ k ≥ 1, cSeq (ε * r / s : ℚ) k �
   rcases (show k = 1 ∨ 2 ≤ k by lia) with rfl | hk2
   · have := (isUnit_intCast_of_sq_eq_one hε).ne_zero
     simp [hr, hs, this]
-  · rw [cSeq_div_eq hs hε hk2]
+  · rw [cSeq_div_eq_old hs hε hk2]
     exact div_ne_zero (mul_ne_zero (mod_cast hr) (mod_cast hw k hk))
       (pow_ne_zero _ (mod_cast hs))
 
@@ -112,7 +112,7 @@ private lemma bSeq_div_ne_zero (hr : r ≠ 0) (n : ℕ) : bSeq (ε * r / s : ℚ
 private lemma sum_erase_sqClass_cSeq_div (hr : r ≠ 0) (n : ℕ) :
     ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), (μ x.1) • sqClass (cSeq (ε * r / s : ℚ) x.2) =
       (∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), μ x.1) • sqClass (r : ℚ) +
-        ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), (μ x.1) • sqClass (wSeq r s ε x.2 : ℚ) := by
+        ∑ x ∈ n.divisorsAntidiagonal.erase (n, 1), (μ x.1) • sqClass (wEps r s ε x.2 : ℚ) := by
   rw [← Finset.sum_zsmul_assoc, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun x hx ↦ ?_
   have hx' := Nat.mem_divisorsAntidiagonal.mp (Finset.mem_of_mem_erase hx)
@@ -132,7 +132,7 @@ include hrs
 /-- In `ℚˣ/(ℚˣ)²`, the class of `β_n` is the Möbius-weighted sum of the classes of the `w_d`. -/
 theorem sqClass_betaInt {n : ℕ} (hn : 1 ≤ n) :
     sqClass (betaInt r s ε n : ℚ) =
-      ∑ x ∈ n.divisorsAntidiagonal, (μ x.1) • sqClass (wSeq r s ε x.2 : ℚ) := by
+      ∑ x ∈ n.divisorsAntidiagonal, (μ x.1) • sqClass (wEps r s ε x.2 : ℚ) := by
   rw [intCast_betaInt hs hrs hε hw hn, moebiusFactorK_eq_prod]
   simp only [eq_intCast]
   exact sqClass_prod_zpow _ fun x hx ↦ mod_cast ne_zero_of_mem_divisorsAntidiagonal hw hx
@@ -148,7 +148,7 @@ theorem sqClass_bSeq_div (hr : r ≠ 0) {n : ℕ} (hn : 2 ≤ n) :
     ← Finset.add_sum_erase _ _ hmem, sum_erase_sqClass_cSeq_div hs hε hw hr, cSeq_one,
     sqClass_neg_div hs, Int.cast_mul,
     sqClass_mul (by simp [hs, (isUnit_intCast_of_sq_eq_one hε).ne_zero]) (mod_cast hr),
-    wSeq_one, Int.cast_one, sqClass_one, zsmul_zero, zero_add,
+    wEps_one, Int.cast_one, sqClass_one, zsmul_zero, zero_add,
     ArithmeticFunction.sum_erase_divisorsAntidiagonal_moebius_eq_neg hn,
     neg_zsmul (sqClass (r : ℚ)) (μ n), zsmul_add]
   push_cast

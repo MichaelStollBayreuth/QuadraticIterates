@@ -73,5 +73,5 @@ theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squaref
     ∀ n ≥ 1, Nonempty (GaloisGroup (-R / s : ℚ) n ≃* WreathPower n) := fun n _ ↦
   (show ((-1 : ℤ) : ℚ) * R / s = (-R / s : ℚ) by simp) ▸
     nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate hs hRs neg_one_sq
-      (wSeq_pos_of_two_mul_le hs hR) (twoAdicClass_iff.mpr (by simpa [sub_eq_add_neg] using hc))
+      (wEps_pos_of_two_mul_le hs hR) (twoAdicClass_iff.mpr (by simpa [sub_eq_add_neg] using hc))
       (by simpa using hsq) (squarefreeCertificate_iff.mpr (by simpa [sub_eq_add_neg] using hcert)) n
