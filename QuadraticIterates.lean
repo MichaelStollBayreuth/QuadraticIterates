@@ -58,4 +58,7 @@ public import QuadraticIterates.Rational.Reflection
 public import QuadraticIterates.Rational.Residues
 public import QuadraticIterates.Rational.Sequence
 public import QuadraticIterates.Rational.SquareClasses
+public import QuadraticIterates.Sequence.Orbit
 public import QuadraticIterates.Sequence.Signs
+public import QuadraticIterates.Sequence.SquareClasses
+public import QuadraticIterates.Sequence.WSeq

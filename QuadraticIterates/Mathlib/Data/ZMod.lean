@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.Group.Even
 public import Mathlib.Algebra.Module.Defs
+public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.RingTheory.Coprime.Basic
@@ -75,6 +76,24 @@ lemma ZMod.isUnit_intCast_of_not_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ 
   refine (ZMod.coe_int_isUnit_iff_isCoprime m N).mpr ?_
   rw [hN, Nat.cast_pow]
   exact ((Nat.prime_iff_prime_int.mp Fact.out).coprime_iff_not_dvd.mpr hm).pow_left
+
+/-- Modulo a power `N = p^k`, `k ≥ 1`, of a prime `p`, an integer divisible by `p` is not a
+unit. -/
+lemma ZMod.not_isUnit_intCast_of_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k ≠ 0)
+    {m : ℤ} (hm : (p : ℤ) ∣ m) : ¬IsUnit (m : ZMod N) := by
+  rw [ZMod.coe_int_isUnit_iff_isCoprime]
+  refine fun h ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit (h.isUnit_of_dvd' ?_ hm)
+  rw [hN, Nat.cast_pow]
+  exact dvd_pow_self _ hk
+
+/-- Congruence modulo an integer `m` is equality in `ZMod |m|`. -/
+lemma ZMod.intCast_eq_intCast_iff_modEq {m a b : ℤ} :
+    (a : ZMod m.natAbs) = b ↔ a ≡ b [ZMOD m] := by
+  rw [ZMod.intCast_eq_intCast_iff, Int.natCast_natAbs, Int.ModEq, Int.ModEq, Int.emod_abs,
+    Int.emod_abs]
+
+@[simp] lemma ZMod.intCast_self_natAbs (m : ℤ) : (m : ZMod m.natAbs) = 0 := by
+  simpa using (ZMod.intCast_eq_intCast_iff_modEq (a := m) (b := 0)).mpr (by simp [Int.ModEq])
 
 /-! ### `ZMod 2`-modules -/
 

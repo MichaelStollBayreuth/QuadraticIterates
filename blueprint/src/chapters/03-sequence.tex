@@ -79,19 +79,26 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
 \begin{definition}[$w_n$, $v_n$, $u_n$]
   \label{def:wseq}
   \uses{def:cseq}
+  \lean{QuadraticIterates.wSeq, QuadraticIterates.wSeq_zero, QuadraticIterates.wSeq_one,
+    QuadraticIterates.wSeq_succ, QuadraticIterates.wSeq_two, QuadraticIterates.vSeq,
+    QuadraticIterates.vSeq_one, QuadraticIterates.uSeq}
+  \leanok
   Let $w_1 = -1$ and $w_{n+1} = r w_n^2 + s^{2^n - 1}$ for $n \ge 1$, and for $n \ge 1$
   \[ v_n = w_{n+1} + w_n s^{2^{n-1}}, \qquad
      u_n = r^2 w_n^2 - r w_n s^{2^{n-1}} + (r + s) s^{2^n - 1}. \]
   So $w_2 = r + s$, $w_3 = r(r+s)^2 + s^3$, and $w_n$ is a binary form of degree $2^{n-1} - 1$ in
   $r$, $s$.
-  \formalnote{Proposed: \lname{wSeq r s : ℕ → ℤ} (junk value $w_0 = 0$),
-  \lname{vSeq r s n}, \lname{uSeq r s n}. The earlier route has a \lname{wSeq} with another
-  normalization ($w_1 = 1$, a sign $\varepsilon$); it is renamed until it is removed.}
+  \formalnote{\lname{wSeq r s : ℕ → ℤ} (junk value $w_0 = 0$), \lname{vSeq r s n},
+  \lname{uSeq r s n}. The earlier route's sequence with another normalization ($w_1 = 1$, a sign
+  $\varepsilon$) is \lname{wEps} until it is removed.}
 \end{definition}
 
 \begin{lemma}[Reduction]
   \label{lem:reduction}
   \uses{def:wseq}
+  \lean{QuadraticIterates.intCast_mul_wSeq, QuadraticIterates.intCast_mul_vSeq,
+    QuadraticIterates.intCast_uSeq, QuadraticIterates.cSeq_div_eq}
+  \leanok
   Let $S$ be a commutative ring and $\sigma \in S$ with $s \sigma = 1$ in $S$, and let
   $(\bar c_n)$ be the sequence of the parameter $\bar a = r\sigma \in S$. Then for $n \ge 1$
   \[ r w_n = s^{2^{n-1}} \bar c_n, \qquad r v_n = s^{2^n} (\bar c_n + \bar c_{n+1}), \qquad
@@ -100,12 +107,12 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
   and $c_n^2 - c_n + a + 1 = u_n / s^{2^n}$; with Lemma~\ref{lem:orbit}(3),
   $c_n + c_{n+2} = r v_n u_n / s^{2^{n+1}}$, so $v_n u_n$ is the numerator of
   $(c_n + c_{n+2})/r$.
-  \formalnote{Proposed: \lname{intCast\_mul\_wSeq} (the first identity for any ring $S$ and
-  $\sigma$), \lname{intCast\_mul\_vSeq}, \lname{intCast\_uSeq}, and over $\QQ$
-  \lname{cSeq\_div\_eq} $: c_n = r w_n / s^{2^{n-1}}$. Used with $S = \QQ$ and $S = \ZZ/N\ZZ$ for $N$
-  prime to $s$.}
+  \formalnote{\lname{cSeq\_div\_eq} is $c_n = r w_n / s^{2^{n-1}}$ over $\QQ$; the other
+  identities over $\QQ$ are the general ones with $S = \QQ$, $\sigma = 1/s$. Used with $S = \QQ$
+  and $S = \ZZ/N\ZZ$ for $N$ prime to $s$.}
 \end{lemma}
 \begin{proof}
+  \leanok
   Induction on $n$: $r w_1 = -r = s \cdot (-\bar a)$, and
   $r w_{n+1} = (r w_n)^2 + r s^{2^n - 1} = s^{2^n}\bar c_n^2 + s^{2^n} \bar a$. The other two
   identities follow by expanding, using $(r + s)\sigma = \bar a + 1$.
@@ -114,6 +121,13 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
 \begin{lemma}[Coprimality and residues]
   \label{lem:wseq-res}
   \uses{def:wseq}
+  \lean{QuadraticIterates.isCoprime_wSeq_left, QuadraticIterates.isCoprime_wSeq_right,
+    QuadraticIterates.isCoprime_vSeq_right, QuadraticIterates.isCoprime_uSeq_right,
+    QuadraticIterates.wSeq_modEq_left, QuadraticIterates.wSeq_modEq_right,
+    QuadraticIterates.vSeq_modEq_left, QuadraticIterates.odd_wSeq_of_even,
+    QuadraticIterates.intCast_wSeq_zmod_eight_of_even,
+    QuadraticIterates.intCast_wSeq_succ_zmod_eight_of_odd}
+  \leanok
   For $n \ge 1$, $w_n$ is prime to $r$ and to $s$, and $v_n$, $u_n$ are prime to $s$. Moreover:
   \begin{enumerate}
     \item $w_n \equiv s^{2^{n-1} - 1} \pmod r$ and $w_n \equiv r^{2^{n-1}-1} \pmod s$ for
@@ -122,11 +136,11 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
     \item if $s$ is even, then $w_n$ is odd and $w_n \equiv r \pmod 8$ for $n \ge 3$;
     \item if $s$ is odd, then $w_{n+1} \equiv r w_n^2 + s \pmod 8$ for $n \ge 1$.
   \end{enumerate}
-  \formalnote{Proposed: \lname{isCoprime\_wSeq\_left}, \lname{isCoprime\_wSeq\_right},
-  \lname{isCoprime\_vSeq\_right}, \lname{isCoprime\_uSeq\_right}, and the congruences in
-  \lname{ZMod} form (\lname{intCast\_wSeq\_of\_dvd\_left}, \dots).}
+  \formalnote{The congruences modulo $r$ and $s$ are stated with \lname{Int.ModEq}, those
+  modulo $8$ in \lname{ZMod 8}; for even $s$, $r$ is odd as $r$ and $s$ are coprime.}
 \end{lemma}
 \begin{proof}
+  \leanok
   $w_{n+1} \equiv s^{2^n - 1} \pmod r$ and $w_{n+1} \equiv r w_n^2 \pmod s$ for $n \ge 1$, with
   $w_1 = -1$; so $v_n \equiv s^{2^n - 1} + s^{2^{n-1} - 1} s^{2^{n-1}} \pmod r$ for $n \ge 2$,
   $v_n \equiv w_{n+1} \pmod s$, and $u_n \equiv r^2 w_n^2 \pmod s$. For even $s$ and $n \ge 2$, $8 \mid s^{2^n - 1}$, so
@@ -139,6 +153,9 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
 \begin{lemma}[Fixed points and two-cycles]
   \label{lem:orbit}
   \uses{def:cseq}
+  \lean{QuadraticIterates.cSeq_add_eq_of_add_eq, QuadraticIterates.cSeq_eq_of_add_succ_eq_zero,
+    QuadraticIterates.cSeq_add_two_eq_of_add_two_eq_neg, QuadraticIterates.cSeq_add_cSeq_add_two}
+  \leanok
   Let $(\bar c_n)$ be the sequence of a parameter $\bar a$ in a commutative ring, and $n \ge 1$.
   \begin{enumerate}
     \item If $\bar c_{n+1} = -\bar c_n$, then $\bar c_m = \bar c_{n+1}$ for all $m > n$.
@@ -146,12 +163,12 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
           $\bar c_{n+2k} = -\bar c_n$ for $k \ge 1$.
     \item $\bar c_n + \bar c_{n+2} = (\bar c_n + \bar c_{n+1})(\bar c_n^2 - \bar c_n + \bar a + 1)$.
   \end{enumerate}
-  \formalnote{Proposed: \lname{cSeq\_eq\_of\_add\_succ\_eq\_zero},
-  \lname{cSeq\_add\_two\_mul\_eq\_of\_add\_two\_eq\_neg}, \lname{cSeq\_add\_cSeq\_add\_two};
-  (1) and (2) are evenness of $f$: $f(-x) = f(x)$; (2) also follows from the existing
-  \lname{gammaSeq\_eq\_ite\_even\_of\_add\_two\_eq} at $n_0 = n + 1$.}
+  \formalnote{(2) is stated as $\bar c_{m+2} = \bar c_m$ for $m \ge n + 1$; (1) and (2) are
+  instances of \lname{cSeq\_add\_eq\_of\_add\_eq}: periodicity from $n_0$ on propagates along
+  the recursion.}
 \end{lemma}
 \begin{proof}
+  \leanok
   (1) $\bar c_{n+2} = f(-\bar c_n) = f(\bar c_n) = \bar c_{n+1}$, so $\bar c_{n+1}$ is a fixed
   point. (2) $\bar c_{n+3} = f(-\bar c_n) = \bar c_{n+1}$, so the sequence is $2$-periodic from
   $n+1$ on. (3) is the identity $f(f(x)) + x = (x^2 + x + a)(x^2 - x + a + 1)$ at $x = \bar c_n$.
@@ -160,12 +177,20 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
 \begin{lemma}[Two-periodicity modulo $(r + s)^2$]
   \label{lem:strongcong}
   \uses{lem:reduction, lem:orbit}
+  \lean{QuadraticIterates.wSeq_two_mul_modEq, QuadraticIterates.wSeq_two_mul_add_one_modEq,
+    QuadraticIterates.cSeq_two_mul_of_sq_eq_zero,
+    QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_zero, ZMod.intCast_eq_intCast_iff_modEq,
+    ZMod.intCast_self_natAbs}
+  \leanok
   Let $r + s \ne 0$. For $k \ge 1$: $w_{2k} = (r + s)\, T_k$ with
   $T_k \equiv s^{2^{2k-1} - 2} \pmod{r + s}$, and $w_{2k+1} \equiv s^{2^{2k} - 1} \pmod{r + s}$.
-  \formalnote{Proposed: \lname{wSeq\_two\_mul\_eq} (with the quotient as an existential or via
-  \lname{Int.ediv}) and \lname{intCast\_wSeq\_two\_mul\_add\_one}.}
+  \formalnote{Stated as $w_{2k} \equiv (r + s) s^{2^{2k-1} - 2} \pmod{(r + s)^2}$, which is the
+  same; it holds for $r + s = 0$ too. The computation of $(\bar c_n)$ is the general fact that
+  $\bar c_{2k} = -t$ and $\bar c_{2k+1} = t - 1$ for $k \ge 1$ in a ring with $t^2 = 0$,
+  $t = \bar a + 1$.}
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:reduction}
   Work in $S = \ZZ/(r+s)^2\ZZ$, where $s$ is a unit, and put $t = \bar a + 1 = (r + s)\sigma$, so
   $t^2 = 0$. Then $\bar c_1 = 1 - t$, $\bar c_2 = -t$, $\bar c_3 = t - 1$, $\bar c_4 = -t$, and by
@@ -180,19 +205,22 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
 \begin{lemma}[Square classes of the terms]
   \label{lem:sqclass}
   \uses{lem:reduction, def:qchar}
+  \lean{QuadraticIterates.mulChar_cSeq_one, QuadraticIterates.mulChar_cSeq_of_two_le}
+  \leanok
   For every quadratic character $\chi$: $\chi(c_1) = \chi(-rs)$ and $\chi(c_n) = \chi(r w_n)$ for
   $n \ge 2$. In particular $\chi(c_2) = \chi(r(r+s))$.
-  \formalnote{Proposed: \lname{mulChar\_cSeq\_one}, \lname{mulChar\_cSeq\_of\_two\_le}; the
-  denominator $s^{2^{n-1}}$ is a square for $n \ge 2$, and $c_1 = -rs/s^2$.}
+  \formalnote{The denominator $s^{2^{n-1}}$ is a square for $n \ge 2$, and $c_1 = -rs/s^2$.}
 \end{lemma}
 
 \begin{lemma}[Local evaluation]
   \label{lem:localeval}
   \uses{lem:reduction, def:chars}
+  \lean{QuadraticIterates.unitPartChar_cSeq, ZMod.not_isUnit_intCast_of_dvd}
+  \leanok
   Let $p$ be a prime not dividing $s$, $N$ a power of $p$, $\psi$ a character modulo $N$ as in
   Definition~\ref{def:chars}, and $(\bar c_n)$ the sequence of $\bar a = r s^{-1}$ in $\ZZ/N\ZZ$.
   If $n \ge 1$ and $\bar c_n$ is a unit, then $\chi_\psi(c_n) = \psi(\bar c_n)$.
-  \formalnote{Proposed: \lname{unitPartChar\_cSeq}. The proof: $c_n = r w_n / s^{2^{n-1}}$ with
+  \formalnote{For $N = p^k$ with $k \ge 1$. The proof: $c_n = r w_n / s^{2^{n-1}}$ with
   $p \nmid r w_n$ (as $\bar c_n$ is a unit, Lemma~\ref{lem:reduction}), so
   $\chi_\psi(c_n) = \psi(r w_n)\,\psi(s)^{2^{n-1}} = \psi(s^{2^{n-1}} \bar c_n)\,\psi(s)^{2^{n-1}}
   = \psi(\bar c_n)$.}
