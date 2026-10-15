@@ -125,12 +125,14 @@ are. Each of the following conditions provides one of them.
 \begin{proposition}[Draft Corollary~2.10]
   \label{prop:crit-reflection}
   \uses{lem:reflection, lem:jump, thm:tfae}
+  \lean{QuadraticIterates.forall_nonempty_mulEquiv_of_forall_dvd_vSeq}
+  \leanok
   Suppose that $a$ has $\phi_0$ and $\phi_1$, and that for every $n \ge 2$ the number $v_n$
   is divisible by a prime $p \equiv 3 \pmod 4$ not dividing $r$, or by $4$ with $r$ odd. Then
   $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{forall\_nonempty\_mulEquiv\_of\_forall\_dvd\_vSeq}.}
 \end{proposition}
 \begin{proof}
+  \leanok
   Lemma~\ref{lem:reflection} gives $\phi_n$ for $n \ge 2$; Theorem~\ref{thm:tfae}.
 \end{proof}
 
@@ -157,6 +159,10 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
 \begin{lemma}[The $2$-adic condition; draft Lemma~4.4]
   \label{lem:twoadic}
   \uses{def:calA, lem:reduction, lem:wseq-res, lem:signs, lem:sumsign, lem:prime3}
+  \lean{QuadraticIterates.TwoAdicClass, QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass,
+    QuadraticIterates.mul_vSeq_pos, QuadraticIterates.vSeq_modEq_add_two_mul,
+    QuadraticIterates.vSeq_modEq_two_mul_add, QuadraticIterates.vSeq_modEq_of_even}
+  \leanok
   Let $a \in \cA$, $\eps = \eps_a$, and assume one of
   \begin{enumerate}
     \item[(C1)] $s$ is odd and $r + 2s \equiv -\eps \pmod 4$;
@@ -164,10 +170,11 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
     \item[(C3)] $s$ is even and $r \equiv -\eps \pmod 4$.
   \end{enumerate}
   Then for every $n \ge 2$ an odd prime $p \equiv 3 \pmod 4$ divides $v_n$, and $p \nmid r$.
-  \formalnote{Proposed: \lname{TwoAdicClass r s ε} for the condition and
-  \lname{exists\_prime\_dvd\_vSeq\_of\_twoAdicClass}.}
+  \formalnote{The condition is \lname{TwoAdicClass r s ε}; the sign, $\eps v_n > 0$, is
+  \lname{mul\_vSeq\_pos}.}
 \end{lemma}
 \begin{proof}
+  \leanok
   \emph{Sign.} By Lemma~\ref{lem:reduction}, $c_n + c_{n+1} = r v_n / s^{2^n}$. For $a > 0$, $r > 0$ and
   $c_n, c_{n+1} > 0$; for $\alpha < a < 0$, $r < 0$ and $c_n + c_{n+1} < 0$
   (Lemma~\ref{lem:sumsign}); for $a \le -2$, $r < 0$ and $c_n, c_{n+1} > 0$. So $\eps v_n = |v_n| > 0$.
@@ -189,29 +196,34 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
 \begin{proposition}[Main theorem, abstract form]
   \label{prop:main-abstract}
   \uses{lem:twoadic, prop:crit-reflection}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern}
+  \leanok
   Let $a \in \cA$ satisfy (C1), (C2) or (C3), and suppose that $a$ has $\phi_0$ and $\phi_1$.
   Then $a$ has $\phi_n$ for all $n \ge 1$, so $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_hasCharPattern}.}
 \end{proposition}
 \begin{proof}
+  \leanok
   Lemma~\ref{lem:twoadic} supplies the primes required by Proposition~\ref{prop:crit-reflection}.
 \end{proof}
 
 \begin{theorem}[Main theorem]
   \label{thm:main}
   \uses{prop:main-abstract, prop:Z, prop:O, prop:T, lem:klein}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria}
+  \leanok
   Let $a = r/s \in \QQ$ with $r, s$ coprime and $s \ge 1$, and let either $a \le -2$ and $\eps = -1$,
-  or $a^3 + 2a^2 + 2a + 2 > 0$, $a \ne -1, 0$ and $\eps = 1$. Assume that one of (C1), (C2),
+  or $a^3 + 2a^2 + 2a + 2 > 0$ and $\eps = 1$. Assume that one of (C1), (C2),
   (C3) of Lemma~\ref{lem:twoadic} holds, and that at least two of the following hold: one of the
   conditions (Z1)--(Z4) of Proposition~\ref{prop:Z}; one of the conditions (O1)--(O5) of
   Proposition~\ref{prop:O}; one of the conditions (T1)--(T4) of Proposition~\ref{prop:T}. Then
   $\Om_n \cong \Ct{n}$ for all $n$: the arboreal representation $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_criteria}, stated with the
-  definitions \lname{NegAllCriterion}, \lname{NegFirstCriterion}, \lname{NegTailCriterion} and
-  \lname{TwoAdicClass}. The comparator challenge for rational parameters reproduces these four
-  definitions and states the theorem with them.}
+  \formalnote{Stated with the definitions \lname{NegAllCriterion}, \lname{NegFirstCriterion},
+  \lname{NegTailCriterion} and \lname{TwoAdicClass}, which use Mathlib's notions only. The
+  exclusion of $a = -1, 0$ from $\cA$ is not needed: $\phi_0$ forces $c_1 = -a \ne 0$ and
+  $c_2 = a(a + 1) \ne 0$.}
 \end{theorem}
 \begin{proof}
+  \leanok
   Propositions~\ref{prop:Z}, \ref{prop:O}, \ref{prop:T} and Lemma~\ref{lem:klein} give $\phi_0$
   and $\phi_1$; apply Proposition~\ref{prop:main-abstract}.
 \end{proof}
@@ -238,12 +250,14 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
 \begin{corollary}[Li 2020 for rational parameters]
   \label{cor:li2020-rat}
   \uses{prop:main-abstract, prop:O, prop:T, lem:klein, thm:tfae}
+  \lean{QuadraticIterates.forall_nonempty_mulEquiv_iff_of_le_neg_two}
+  \leanok
   Let $a \le -2$ with $s \equiv 1 \pmod 4$ and $r \equiv 3 \pmod 4$, and suppose that $a$ has
   $\phi_0$ (e.g.\ $|r|$ is not a square). Then $\rho_a$ is surjective if and only if $-(a + 1)$
   is not a square.
-  \formalnote{Proposed: \lname{forall\_nonempty\_mulEquiv\_iff\_of\_le\_neg\_two}.}
 \end{corollary}
 \begin{proof}
+  \leanok
   If $-(a + 1)$ is a square, so is $c_1 c_2 = -a \cdot a(a + 1)$, and $\rho_a$ is not surjective
   (Theorem~\ref{thm:tfae}). Otherwise: (C1) holds, as $r + 2s \equiv 1 = -\eps \pmod 4$. If $s$ is
   not a square, (O3) gives $\phi_1$. If $s$ is a square, then $4 \mid r + s = s(a + 1) < 0$ and

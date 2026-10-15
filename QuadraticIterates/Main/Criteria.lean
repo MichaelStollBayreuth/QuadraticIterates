@@ -12,6 +12,7 @@ public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 
 import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 import QuadraticIterates.Patterns.Dyadic
 import QuadraticIterates.Patterns.Primes
@@ -186,12 +187,6 @@ private lemma quadraticChar_two {p : ℕ} [Fact p.Prime] (hp8 : p % 8 = 3 ∨ p 
   rw [h, ZMod.χ₈_nat_eq_if_mod_eight]
   split_ifs <;> lia
 
-private lemma quadraticChar_neg_one_of_mod_four_eq_three {p : ℕ} [Fact p.Prime] (hp4 : p % 4 = 3) :
-    quadraticChar (ZMod p) (-1) = -1 := by
-  have h := legendreSym.at_neg_one (p := p) (by lia)
-  rw [legendreSym, Int.cast_neg, Int.cast_one] at h
-  rw [h, ZMod.χ₄_nat_three_mod_four hp4]
-
 section Prime
 
 variable {p : ℕ} [Fact p.Prime]
@@ -285,7 +280,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_left (hrs : IsCoprime r s) (hs : s �
   refine hasCharPattern_mulSingle_one_of_apply (unitPartChar p (quadraticChar (ZMod p))) ?_
     fun n hn ↦ ?_
   · rw [unitPartChar_cSeq_one_of_eq_pow_mul hrs hs hN hk.ne' hr hm,
-      quadraticChar_neg_one_of_mod_four_eq_three hp4, hms, mul_one]
+      ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4, hms, mul_one]
   · rw [unitPartChar_cSeq_of_eq_pow_mul hrs hs hN one_ne_zero
       (by simpa [hr] using (dvd_pow_self (p : ℤ) hk.ne').mul_right m) hr hm _ hn, hms]
 
@@ -421,7 +416,7 @@ theorem hasCharPattern_neg_mulSingle_one_of_dvd_left (hrs : IsCoprime r s) (hs :
   refine hasCharPattern_neg_mulSingle_one_of_apply (unitPartChar p (quadraticChar (ZMod p))) ?_
     fun n hn ↦ ?_
   · rw [unitPartChar_cSeq_one_of_eq_pow_mul hrs hs hN hk.ne' hr hm,
-      quadraticChar_neg_one_of_mod_four_eq_three hp4, hms]
+      ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4, hms]
     rfl
   · rw [unitPartChar_cSeq_of_eq_pow_mul hrs hs hN one_ne_zero
       (by simpa [hr] using (dvd_pow_self (p : ℤ) hk.ne').mul_right m) hr hm _ hn, hms]
@@ -507,7 +502,7 @@ theorem hasCharPattern_neg_mulSingle_one_of_dvd_add_prime (hrs : IsCoprime r s) 
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-Pi.mulSingle 1 (-1)) := by
   refine hasCharPattern_neg_mulSingle_one_of_dvd_add hrs hs (pow_one p).symm one_ne_zero
     (by simpa [hrsm] using (dvd_pow_self (p : ℤ) hk.ne').mul_right m)
-    (quadraticChar_neg_one_of_mod_four_eq_three hp4) ?_
+    (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) ?_
   rw [hrsm, unitPartChar_intCast_pow_mul (pow_one p).symm _ k hm, ← map_mul, ← Int.cast_mul, ← h]
   exact jacobiSym.legendreSym.to_jacobiSym p _
 
@@ -576,7 +571,7 @@ theorem hasCharPattern_neg_mulSingle_one_of_not_isSquare_add (hrs : IsCoprime r 
   · have := Fact.mk hp
     exact hasCharPattern_neg_mulSingle_one_of_dvd_add_of_not_isSquare hrs hs
       (pow_one p).symm one_ne_zero (by simpa using hpd)
-      (quadraticChar_neg_one_of_mod_four_eq_three hp4) h h'
+      (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) h h'
 
 /-- **Criteria for `τ`** (Proposition T): each of (T1)–(T4) gives a character that is `1` at
 `c_1` and `-1` at all later terms. -/

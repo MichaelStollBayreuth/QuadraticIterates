@@ -19,6 +19,8 @@ public import QuadraticIterates.Li.ArchMath2020
 public import QuadraticIterates.Li.ArchMath2021
 public import QuadraticIterates.Li.Residues
 public import QuadraticIterates.Main.Criteria
+public import QuadraticIterates.Main.Theorem
+public import QuadraticIterates.Main.TwoAdic
 public import QuadraticIterates.Mathlib.Algebra.BigOperators
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.GroupWithZero.Finset
@@ -35,6 +37,7 @@ public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Fintype.Basic
 public import QuadraticIterates.Mathlib.Data.Int.Order.Units
 public import QuadraticIterates.Mathlib.Data.Multiset
+public import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
 public import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 public import QuadraticIterates.Mathlib.Data.ZMod
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
@@ -44,6 +47,7 @@ public import QuadraticIterates.Mathlib.GroupTheory.PGroup
 public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
+public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
