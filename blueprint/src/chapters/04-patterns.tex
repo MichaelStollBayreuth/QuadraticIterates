@@ -84,6 +84,12 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
 \begin{lemma}[Primes of $r + s$]
   \label{lem:pat-rs}
   \uses{lem:sqclass, lem:strongcong, def:chars}
+  \lean{QuadraticIterates.valChar_cSeq_two_mul_add_one_of_dvd_add,
+    QuadraticIterates.valChar_cSeq_two_mul_of_dvd_add,
+    QuadraticIterates.unitPartChar_cSeq_one_of_dvd_add,
+    QuadraticIterates.unitPartChar_cSeq_two_mul_add_one_of_dvd_add,
+    QuadraticIterates.unitPartChar_cSeq_two_mul_of_dvd_add}
+  \leanok
   \begin{enumerate}
     \item Let $q$ be a prime dividing $r + s$. Then $v_q(c_n) = 0$ for odd $n$ and
           $v_q(c_n) = v_q(r + s)$ for even $n$; so if $v_q(r + s)$ is odd,
@@ -95,10 +101,12 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
   \end{enumerate}
   Hence $a$ has $\tau$ if (2) applies with $y = -1$ (take $\chi$), or with $y = 1$ and some
   $v_q(r + s)$ is odd, i.e.\ $r + s \ne \pm\sq$ (take $\chi \val_q$).
-  \formalnote{Proposed: \lname{valChar\_cSeq\_of\_dvd\_add},
-  \lname{unitPartChar\_cSeq\_of\_dvd\_add}.}
+  \formalnote{(2) is stated for $\psi$ modulo any power $N = p^k \mid r + s$, $k \ge 1$:
+  $\chi_\psi(c_1) = 1$, $\chi_\psi(c_{2j+1}) = \psi(-1)$ and
+  $\chi_\psi(c_{2j}) = \psi(-1)\psi(s)\chi_\psi(r + s)$ for $j \ge 1$.}
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:strongcong}
   By Lemma~\ref{lem:strongcong}, $w_{2k} = (r + s) T_k$ with $T_k \equiv s^{2^{2k-1} - 2}$ and
   $w_{2k+1} \equiv s^{2^{2k} - 1} \pmod{r + s}$ for $k \ge 1$, and $q \nmid rs$. This gives (1),
@@ -121,10 +129,14 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
 \begin{lemma}[Primes of $r + 2s$; draft Lemma~2.7(2)]
   \label{lem:pat-r2s}
   \uses{lem:localeval, lem:orbit}
+  \lean{QuadraticIterates.unitPartChar_cSeq_of_dvd_add_two_mul, QuadraticIterates.cSeq_neg_two}
+  \leanok
   Let $p$ be an odd prime dividing $r + 2s$. Then $\chi_p(c_n) = \Leg{2}{p}$ for all $n \ge 1$.
-  \formalnote{Proposed: \lname{legendreChar\_cSeq\_of\_dvd\_add\_two\_mul}.}
+  \formalnote{For $\psi$ modulo any power $N = p^k \mid r + 2s$, $k \ge 1$:
+  $\chi_\psi(c_n) = \psi(2)$.}
 \end{lemma}
 \begin{proof}
+  \leanok
   $p \nmid s$, and $\bar a = -2$ in $\ZZ/p\ZZ$, so $\bar c_1 = 2$ is a fixed point of
   $x \mapsto x^2 - 2$; apply Lemma~\ref{lem:localeval}.
 \end{proof}
@@ -132,11 +144,18 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
 \begin{lemma}[Primes of $r^2 + s^2$]
   \label{lem:pat-r2s2}
   \uses{lem:localeval, lem:orbit}
+  \lean{QuadraticIterates.unitPartChar_cSeq_two_mul_add_one_of_dvd_sq_add_sq,
+    QuadraticIterates.unitPartChar_cSeq_two_mul_of_dvd_sq_add_sq,
+    QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_neg_one,
+    QuadraticIterates.cSeq_two_mul_of_sq_eq_neg_one}
+  \leanok
   Let $p$ be an odd prime dividing $r^2 + s^2$. Then $\chi_p(c_n) = \Leg{-rs}{p}$ for odd $n$ and
   $\chi_p(c_n) = \Leg{(r - s)s}{p}$ for even $n$.
-  \formalnote{Proposed: \lname{legendreChar\_cSeq\_of\_dvd\_sq\_add\_sq}.}
+  \formalnote{For $\psi$ modulo any power $N = p^k \mid r^2 + s^2$, $k \ge 1$, with values
+  $\psi(-rs)$ and $\psi((r - s)s)$.}
 \end{lemma}
 \begin{proof}
+  \leanok
   $p \nmid rs$ and $\bar a^2 = -1$ in $\ZZ/p\ZZ$. Since
   $\bar c_3 - \bar c_1 = \bar a(\bar a + 2)(\bar a^2 + 1) = 0$, the sequence has period $2$ from
   $n = 1$ on (Lemma~\ref{lem:orbit}); $\bar c_1 = -\bar a$ and $\bar c_2 = \bar a^2 + \bar a =

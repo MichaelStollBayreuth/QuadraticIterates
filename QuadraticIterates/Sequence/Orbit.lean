@@ -26,6 +26,9 @@ gives the congruences of `w_{2k}` modulo `(r + s)²` and of `w_{2k+1}` modulo `r
   fixed points, two-cycles, and the factorization of `c_n + c_{n+2}`.
 * `QuadraticIterates.wSeq_two_mul_modEq`: `w_{2k} ≡ (r + s) s^{2^{2k-1} - 2} (mod (r + s)²)`.
 * `QuadraticIterates.wSeq_two_mul_add_one_modEq`: `w_{2k+1} ≡ s^{2^{2k} - 1} (mod r + s)`.
+* `QuadraticIterates.cSeq_neg_two`, `QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_neg_one`,
+  `QuadraticIterates.cSeq_two_mul_of_sq_eq_neg_one`: the sequences of `a = -2` and of `a` with
+  `a² = -1`.
 -/
 
 @[expose] public section
@@ -88,6 +91,37 @@ theorem cSeq_two_mul_add_one_of_sq_eq_zero (ht : (a + 1) ^ 2 = 0) {k : ℕ} (hk 
     cSeq a (2 * k + 1) = a := by
   rw [cSeq_succ a (by lia), cSeq_two_mul_of_sq_eq_zero ht hk, neg_sq, ht, zero_add]
 
+/-- For `a = -2`, `2` is a fixed point: `c_n = 2` for `n ≥ 1`. -/
+theorem cSeq_neg_two {n : ℕ} (hn : 1 ≤ n) : cSeq (-2 : R) n = 2 := by
+  have h₂ : cSeq (-2 : R) (1 + 1) = cSeq (-2 : R) 1 := by
+    rw [cSeq_succ _ le_rfl]
+    norm_num
+  induction n, hn using Nat.le_induction with
+  | base => simp
+  | succ n hn ih => rw [cSeq_add_eq_of_add_eq le_rfl h₂ hn, ih]
+
+variable {a : R}
+
+/-- If `a² = -1`, the sequence `-a, a - 1, -a, a - 1, …` has period two: `c_{2j+1} = -a`. -/
+theorem cSeq_two_mul_add_one_of_sq_eq_neg_one (ha : a ^ 2 = -1) (j : ℕ) :
+    cSeq a (2 * j + 1) = -a := by
+  have h₃ : cSeq a (1 + 2) = cSeq a 1 := by
+    rw [cSeq_succ a (by norm_num), cSeq_two]
+    simp only [cSeq_one]
+    linear_combination (a ^ 2 + 2 * a) * ha
+  induction j with
+  | zero => simp
+  | succ j ih =>
+    rw [show 2 * (j + 1) + 1 = 2 * j + 1 + 2 by ring, cSeq_add_eq_of_add_eq le_rfl h₃ (by lia), ih]
+
+/-- If `a² = -1`, then `c_{2j} = a - 1` for `j ≥ 1`. -/
+theorem cSeq_two_mul_of_sq_eq_neg_one (ha : a ^ 2 = -1) {j : ℕ} (hj : 1 ≤ j) :
+    cSeq a (2 * j) = a - 1 := by
+  obtain ⟨i, rfl⟩ : ∃ i, j = i + 1 := ⟨j - 1, by lia⟩
+  rw [show 2 * (i + 1) = 2 * i + 1 + 1 by ring, cSeq_succ a (by lia),
+    cSeq_two_mul_add_one_of_sq_eq_neg_one ha, neg_sq]
+  linear_combination ha
+
 end Orbit
 
 section StrongCong
@@ -142,6 +176,23 @@ theorem wSeq_two_mul_add_one_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k
   refine ZMod.intCast_eq_intCast_iff_modEq.mp ?_
   push_cast at h0 ⊢
   grobner
+
+/-- `r w_{2k+1} ≡ -(s^{2^{2k-1}})² (mod r + s)` for `k ≥ 1`: `r ≡ -s` and
+`w_{2k+1} ≡ s^{2^{2k} - 1}`. -/
+theorem mul_wSeq_two_mul_add_one_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
+    r * wSeq r s (2 * k + 1) ≡ -1 * (s ^ 2 ^ (2 * k - 1)) ^ 2 [ZMOD r + s] := by
+  have hr : r ≡ -1 * s [ZMOD r + s] := Int.modEq_iff_dvd.mpr ⟨-1, by ring⟩
+  have he : 2 ^ (2 * k) - 1 + 1 = 2 ^ (2 * k - 1) * 2 := by
+    rw [Nat.sub_add_cancel Nat.one_le_two_pow, ← pow_succ, Nat.sub_add_cancel (by lia)]
+  refine (hr.mul (wSeq_two_mul_add_one_modEq hrs hk)).trans ?_
+  rw [mul_assoc, ← pow_succ', he, pow_mul]
+
+/-- `w_{2k} = (r + s) T` with `T ≡ s^{2^{2k-1} - 2} (mod r + s)`, for `k ≥ 1`. -/
+theorem exists_wSeq_two_mul_eq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
+    ∃ T, wSeq r s (2 * k) = (r + s) * T ∧ T ≡ s ^ (2 ^ (2 * k - 1) - 2) [ZMOD r + s] := by
+  obtain ⟨t, ht⟩ := Int.modEq_iff_dvd.mp (wSeq_two_mul_modEq hrs hk)
+  exact ⟨s ^ (2 ^ (2 * k - 1) - 2) - (r + s) * t, by linear_combination -ht,
+    Int.modEq_iff_dvd.mpr ⟨t, by ring⟩⟩
 
 end StrongCong
 

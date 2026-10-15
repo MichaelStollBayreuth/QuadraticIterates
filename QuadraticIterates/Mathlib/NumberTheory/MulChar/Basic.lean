@@ -37,6 +37,9 @@ lemma isQuadratic_int (χ : MulChar M ℤ) : χ.IsQuadratic := fun x ↦ by
   · exact .inr (χ.apply_eq_one_or_eq_neg_one hx)
   · exact .inl (χ.map_nonunit hx)
 
+lemma apply_eq_of_mul_eq_one (χ : MulChar M ℤ) {x y : M} (h : x * y = 1) : χ y = χ x :=
+  Int.eq_of_mul_eq_one (by rw [mul_comm, ← map_mul, h, map_one])
+
 lemma apply_sq_of_isUnit (χ : MulChar M ℤ) {x : M} (hx : IsUnit x) : χ (x ^ 2) = 1 := by
   rcases χ.apply_eq_one_or_eq_neg_one hx with h | h <;> simp [map_pow, h]
 
