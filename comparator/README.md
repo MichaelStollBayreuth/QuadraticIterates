@@ -1,11 +1,12 @@
 # Comparator verification harness
 
 This directory lets [Comparator](https://github.com/leanprover/comparator) — "a trustworthy judge
-for Lean proofs" — certify that this repository proves the paper's **Section 3 main result** (`section3_main`, one
-challenge per case) and the **theorems of Li** extending it (`li2021_theorem_3_9`,
-`li2020_theorem_3_5`, and Theorem 3.3 of 2021 in its strengthened form
-`nonempty_mulEquiv_of_eq_neg_mul`, for `a = -(4k+2)(4k+3)` rather than Li's `a = -(8k+2)(8k+3)`),
-independently of the repository's own build and using only the permitted axioms.
+for Lean proofs", built into Lake as `lake comparator` since Lean v4.35.0 — certify that this
+repository proves the paper's **Section 3 main result** (`section3_main`, one challenge per case)
+and the **theorems of Li** extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5`, and Theorem 3.3
+of 2021 in its strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, for `a = -(4k+2)(4k+3)` rather
+than Li's `a = -(8k+2)(8k+3)`), independently of the repository's own build and using only the
+permitted axioms.
 
 ## What is checked
 
@@ -17,8 +18,9 @@ independently of the repository's own build and using only the permitted axioms.
 - [`Solution.lean`](Solution.lean) imports `QuadraticIterates` and proves each statement via the
   corresponding library theorem.
 
-Comparator builds both modules (the solution in a sandbox), exports them with `lean4export`, and
-checks that each challenge theorem in the solution:
+`lake comparator` builds and exports both modules inside a `bubblewrap` sandbox (it never loads
+the project's `.olean`s into its own process) and checks that each challenge theorem in the
+solution:
 
 1. proves the **same statement** as in the challenge — comparing the full bodies (not just the
    types) of every definition the statement transitively refers to, so a solution that redefines
@@ -38,24 +40,23 @@ square), Li's Theorems 3.9 (2021) and 3.5 (2020), and Theorem 3.3 (2021) strengt
 
 ## Running
 
-Prerequisites (see the Comparator README): a built `comparator` binary, plus `landrun` and
-`lean4export` on `PATH` (or pointed to by `COMPARATOR_LANDRUN` / `COMPARATOR_LEAN4EXPORT`).
-
-Run from the **repository root** (Comparator uses the current directory as the project and invokes
-`lake build Challenge` / `lake build Solution` there):
+Run from the **repository root**; the only prerequisite besides Lean is `bubblewrap` (`bwrap`)
+with unprivileged user namespaces (or installed setuid root):
 
 ```bash
-lake exe cache get           # trusted Mathlib oleans, optional
-lake build QuadraticIterates # so the Solution build reuses the library oleans
-# For the strongest sandbox guarantee, run under systemd-run as in the Comparator README:
-lake env /path/to/comparator comparator/challenges.json
+scripts/run-comparator.sh               # = lake build QuadraticIterates && lake comparator --config comparator/challenges.json
+scripts/run-comparator.sh --paranoid    # also run all external checkers bundled with Lean
 ```
 
-Exit code `0` and the line `Your solution is okay!` mean the check passed.
-[`scripts/run-comparator.sh`](../scripts/run-comparator.sh) wraps the last two steps: it locates
-the three binaries (override with `COMPARATOR_BIN`, `COMPARATOR_LEAN4EXPORT`, `COMPARATOR_LANDRUN`;
-`lean4export` must be built at this project's Lean version), builds the library, and runs the
-check on `comparator/challenges.json` or on the config given as its argument.
+Exit code `0` (and `Your solution is okay!`) means the check passed, `1` that it was rejected, `2`
+that it could not start (no `bwrap`, no `lake-manifest.json`, a malformed configuration). The
+wrapper builds the library first: the sandbox cannot write to the project directory, and with a
+current build the sandboxed builds only replay it. A different configuration file can be given as
+the first argument.
+
+Until 2026-10-15 the check ran on the external tools — a separately built `comparator` binary,
+`landrun`, and a `lean4export` built at the project's Lean version — through an earlier version of
+the wrapper (see the history of `scripts/run-comparator.sh`); `lake comparator` replaces all three.
 
 The `Challenge`/`Solution` libraries are declared in the root `lakefile.toml` but are excluded from
 `defaultTargets`, so a plain `lake build` does not build them and the deliberate `sorry`s in
