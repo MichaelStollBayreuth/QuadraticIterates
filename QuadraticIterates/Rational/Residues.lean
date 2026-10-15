@@ -24,7 +24,7 @@ import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
 For a rational parameter `a = r/s` with sign `ε`, the numerator `N_k = w_k s^(2^(k-1)) + w_{k+1}`
 of `γ_k + γ_{k+1}` (`QuadraticIterates.reflNum`) is, for every `k ≥ 2`, `≡ 6 mod 8` or
-`≡ 3 mod 4` in the *2-adic classes* `QuadraticIterates.TwoAdicClass`: `s` odd with `r ≡ 1` or
+`≡ 3 mod 4` in the *2-adic classes* `QuadraticIterates.TwoAdicCases`: `s` odd with `r ≡ 1` or
 `r + εs ≡ 3 mod 4`, or `s` even with `r ≡ 3 mod 4`. For odd `s` everything is decided modulo `8`,
 where the `γ`-sequence of `a X² + ε` is `2`-periodic from index `2` on for every `a`
 (`QuadraticIterates.reflNum_emod_of_odd`); for even `s`, `w_n ≡ r mod 8` for `n ≥ 3`
@@ -185,15 +185,15 @@ end
 /-- The 2-adic classes (C⁺) (for `ε = 1`) and (C⁻) (for `ε = -1`, `|r|` in place of `r`), as a
 condition on `r`, `s`, `ε`: `s` odd with `r ≡ 1 mod 4` or `r + εs ≡ 3 mod 4`, or `s` even with
 `r ≡ 3 mod 4`. -/
-def TwoAdicClass (r s ε : ℤ) : Prop :=
+def TwoAdicCases (r s ε : ℤ) : Prop :=
   (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + ε * s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3)
 
-theorem twoAdicClass_iff : TwoAdicClass r s ε ↔
+theorem twoAdicClass_iff : TwoAdicCases r s ε ↔
     (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + ε * s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3) := .rfl
 
 /-- In the 2-adic classes, `-1` is not a square modulo `N_k` for every `k ≥ 2` with `N_k ≥ 0`. -/
 theorem not_isSquare_neg_one_zmod_reflNum (hrs : IsCoprime r s) (hε : ε ^ 2 = 1)
-    (hc : TwoAdicClass r s ε) {k : ℕ} (hk : 2 ≤ k) (hN : 0 ≤ reflNum r s ε k) :
+    (hc : TwoAdicCases r s ε) {k : ℕ} (hk : 2 ≤ k) (hN : 0 ≤ reflNum r s ε k) :
     ¬IsSquare (-1 : ZMod (reflNum r s ε k).natAbs) :=
   (twoAdicClass_iff.mp hc).elim
     (fun h ↦ (reflNum_emod_of_odd h.1 hε h.2 hk).elim
@@ -206,7 +206,7 @@ theorem not_isSquare_neg_one_zmod_reflNum (hrs : IsCoprime r s) (hε : ε ^ 2 = 
 with `k = n / rad n ≥ 2` and `N_k ≥ 0`: `QuadraticIterates.not_isSquare_betaInt_of_dvd_reflNum`
 with the modulus `N_k` itself. -/
 theorem not_isSquare_betaInt_of_twoAdicClass_of_two_le (hs : s ≠ 0) (hrs : IsCoprime r s)
-    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0) (hc : TwoAdicClass r s ε) {n k : ℕ}
+    (hε : ε ^ 2 = 1) (hw : ∀ n ≥ 1, wEps r s ε n ≠ 0) (hc : TwoAdicCases r s ε) {n k : ℕ}
     (hn : 2 ≤ n) (hk : n = k * radical n) (hk2 : 2 ≤ k) (hN : 0 ≤ reflNum r s ε k) :
     ¬IsSquare (betaInt r s ε n) :=
   not_isSquare_betaInt_of_dvd_reflNum_of_two_le hs hrs hε hw hn rfl hk hk2

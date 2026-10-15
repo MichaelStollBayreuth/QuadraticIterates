@@ -209,7 +209,7 @@ fidelity:
     a ≡ 1 mod 4 (the printed "3 mod 4" is a misprint; a = -5 is a counterexample). Theorem 3.3
     (2021) is formalized in the stronger form a = -(4k+2)(4k+3), Li's statement being the case
     of even k. The rational-parameter theorems R⁺ and R⁻ (not in the papers) are stated with
-    the 2-adic classes as the predicate TwoAdicClass and the squarefree-level clauses as the
+    the 2-adic classes as the predicate TwoAdicCases and the squarefree-level clauses as the
     inductive predicate SquarefreeCertificate, whose constructors take a general modulus M dividing the
     respective quantity (hence coprime to s), modulo which the relevant quantity is not a
     square, in place of the odd primes p with Legendre symbol -1 and the modulus 4 of the
