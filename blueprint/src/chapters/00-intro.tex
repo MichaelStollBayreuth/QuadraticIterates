@@ -1,161 +1,119 @@
-% Introduction: the objects of the paper. This chapter is unnumbered (\chapter*), so its items
-% are numbered 0.1, 0.2, ... and the paper's own numbering starts in the next chapter.
+% Introduction. Unnumbered, so its items are numbered 0.1, 0.2, ...
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-Throughout this paper, $a$ denotes an integer such that $-a$ is not a square in $\QQ$,
-$f := X^2 + a \in \ZZ[X]$, and $f_0 := X$, $f_{n+1} := f(f_n) = f_n^2 + a$ for all $n \ge 0$, are
-the iterates of $f$. Let $c_1 := -a$ and $c_{n+1} := f(c_n) = c_n^2 + a$
-$(= f_n(-a) = f_n(a) = f_{n+1}(0))$ for $n \ge 1$. There exists an integer sequence $(b_n)_{n
-\ge 1}$ such that for all $n \ge 1$ we have $c_n = \prod_{d \dvd n} b_d$
-(Lemma~\ref{lem:1.1}). Let $K_n$ be the splitting field of $f_n$ over $\QQ$ and denote by
-$\Om_n := \Gal(K_n/\QQ) = \Gal(f_n/\QQ)$ its Galois group over the rational numbers.
+Let $a \in \QQ$ and $f = X^2 + a \in \QQ[X]$, with iterates $f_0 = X$ and
+$f_{n+1} = f(f_n) = f_n^2 + a$. The pairs $(n, \alpha)$ with $\alpha \in \Qbar$ a root of $f_n$
+form an infinite binary rooted tree $T$, in which $(n + 1, \beta)$ is a child of $(n, \alpha)$ when
+$\alpha = f(\beta)$. The absolute Galois group of $\QQ$ acts on $T$ by tree automorphisms, which
+gives the \emph{arboreal Galois representation} $\rho_a \colon \Gal(\Qbar/\QQ) \to \operatorname{Aut}(T)$;
+see \cite{jones} for a survey. The automorphism group of the tree $T_n$ of the first $n$ levels is
+the iterated wreath product $\Ct{n}$, a Sylow $2$-subgroup of the symmetric group on $2^n$
+letters, and the image of the induced action on $T_n$ is $\Om_n = \Gal(K_n/\QQ)$. So $\rho_a$ is
+surjective if and only if $\Om_n \cong \Ct{n}$ for every $n \ge 1$.
 
-This paper deals with the problem of determining $\Om_n$. Following R.~W.~K.~Odoni's paper
-\cite{odoni}, we generalize his result concerning the case $a = 1$ to get for all $n \ge 1$:
-\[ \Om_n \cong \Ct{n}, \text{ if and only if } b_1, b_2, \dots, b_n
-   \text{ are $2$-independent in } \QQ \tag{$*$} \]
-(Theorem~\ref{thm:section1}). $\Om_n$ always injects into $\Ct{n}$, the $n$-fold wreath product
-of $C_2$ with itself. In order to prove the condition on the right hand side of $(*)$ (at least
-for some $a \in \ZZ$), we consider more generally iteration sequences associated to certain even
-polynomials $g \in \ZZ[X^2]$ (Chapter~2). Specializing these results, we get with $(*)$: if
-($a > 0$ and $a \equiv 1$ or $2 \bmod 4$) or ($a < 0$ and $a \equiv 0 \bmod 4$), then
-$\Om_n \cong \Ct{n}$ for all $n \ge 1$ (Theorem~\ref{thm:section3}). Moreover, this gives a proof
-of the conjecture of John~E.~Cremona \cite{cremona}, who verified numerically that, for $a = 1$,
-$|b_n|$ is not a square when $2 \le n \le 5 \cdot 10^7$.
+\begin{center}
+  \emph{For which $a \in \QQ$ is $\rho_a$ surjective?}
+\end{center}
 
-Beyond the paper, Chapters~5 and~6 record further values of $a$ with $\Om_n \cong \Ct{n}$ for
-all $n \ge 1$, obtained by the method of Chapters~2 and~3. Li \cite{li2021} proved this for
-$a = -(8k+2)(8k+3)$ and $a = -((4k+1)(4k+2)+1)$, $k \ge 0$ (Theorems~\ref{thm:li-A} and
-\ref{thm:li-B}), and showed \cite{li2020} that for $a < 0$ with $a \equiv 3 \bmod 4$ and $-a$
-not a square, $\Om_n \cong \Ct{n}$ for all $n$ if and only if $-a - 1$ is not a square
-(Theorem~\ref{thm:li-C}). New here are the extension of the first family to
-$a = -(4k+2)(4k+3)$ for all $k \ge 0$ (Theorem~\ref{thm:li-A}) and the rational parameters
-$a = r/s$ of Theorems~\ref{thm:rat-pos} and \ref{thm:rat-neg}: for $(r, s)$ in explicit residue
-classes modulo $8$ and under one of several squarefree-level certificates, $\Om_n \cong \Ct{n}$
-for all $n \ge 1$, both for $a > -1$ and for $a \le -2$.
+The answer is governed by the sequence $c_1 = -a$, $c_{n+1} = c_n^2 + a$, the orbit of $0$ under
+$f$ with the sign of the first term changed. By the criterion of \cite{paper}, $\rho_a$ is
+surjective if and only if the family $(c_n)_{n \ge 1}$ is \emph{$2$-independent}: no product of
+finitely many, but at least one, of its terms is a square in $\QQ$ (Theorem~\ref{thm:criterion}).
 
-\begin{definition}[The iterates $f_n$]
-  \label{def:iterates}
-  \lean{QuadraticIterates.iteratedPoly, QuadraticIterates.iteratedPoly_zero,
-    QuadraticIterates.iteratedPoly_one, QuadraticIterates.iteratedPoly_succ,
-    QuadraticIterates.iteratedPoly_succ_comp,
-    QuadraticIterates.iteratedPoly_add, QuadraticIterates.eval_zero_iteratedPoly_succ,
-    QuadraticIterates.map_iteratedPoly,
-    QuadraticIterates.map_eval_iteratedPoly, QuadraticIterates.intCast_eval_iteratedPoly,
-    QuadraticIterates.aeval_ratCast_iteratedPoly,
-    QuadraticIterates.monic_iteratedPoly, QuadraticIterates.natDegree_iteratedPoly,
-    QuadraticIterates.ncard_rootSet_iteratedPoly_le}
-  \leanok
-  $f_0 := X$ and $f_{n+1} := f_n^2 + a$. These are monic of degree $2^n$ --- so $f_n$ has at
-  most $2^n$ roots --- and they satisfy
-  $f_{m+n} = f_m \circ f_n$; in particular $f_{n+1} = f_n \circ (X^2 + a)$, which is the form in
-  which the iterate is taken apart in Chapter~1.
-  \formalnote{\texttt{iteratedPoly} is defined over an arbitrary commutative semiring; the
-  sequence of the paper is the case $R = \ZZ$. All statements over $\QQ$ are about the iterate
-  with parameter $a \in \QQ$, written \texttt{f}$\QQ$\texttt{[a, n]} in Lean, which is the
-  image of the integer polynomial $f_n$ in $\QQ[X]$ because forming iterates commutes with ring
-  homomorphisms (\lname{map\_iteratedPoly}).}
-\end{definition}
+The proofs in \cite{paper, li2020, li2021} follow Odoni \cite{odoni} and pass from $(c_n)$ to the
+sequence $(b_n)$ obtained by multiplicative Möbius inversion, $c_n = \prod_{d \dvd n} b_d$. For
+$a \in \ZZ \setminus \{-1, 0\}$, $(c_n)$ is a strong divisibility sequence, so the $b_n$ are pairwise
+coprime integers, and $2$-independence reduces to the statement that no $|b_n|$ with $n \ge 2$ is
+a square; this is then shown by congruences. That trades arbitrary finite products for single
+terms, at the price of working with the more complicated $b_n$.
 
-\begin{definition}[The fields $K_n$ and the groups $\Om_n$]
-  \label{def:galois}
-  \uses{def:iterates}
-  \lean{QuadraticIterates.splittingField, QuadraticIterates.GaloisGroup,
-    QuadraticIterates.splittingField.instIsSplittingField,
-    QuadraticIterates.splittingField.instFiniteDimensional,
-    QuadraticIterates.splittingField.instIsGalois,
-    QuadraticIterates.splittingField_zero_eq_bot,
-    QuadraticIterates.card_galoisGroup_eq_finrank}
-  \leanok
-  For $a \in \QQ$, $K_n \subseteq \Qbar$ is the subfield generated by the roots of $f_n$, and
-  $\Om_n = \Gal(f_n/\QQ)$. One has $K_0 = \QQ$ and $\#\Om_n = [K_n : \QQ]$.
-  \formalnote{$K_n$ is realized concretely as an \texttt{IntermediateField} of
-  \texttt{AlgebraicClosure} $\QQ$ --- namely \texttt{IntermediateField.adjoin} of the root set ---
-  rather than as an abstract splitting field, so that the tower $K_n \subseteq K_{n+1}$ is an
-  inclusion of subfields of one fixed field and relative degrees are
-  \texttt{IntermediateField.relfinrank}. That this field \emph{is} a splitting field, is finite
-  over $\QQ$ and is Galois are instances. $\Om_n$ is Mathlib's \texttt{Polynomial.Gal}.}
-\end{definition}
+Here we work with the $c_n$ directly. A group homomorphism $\chi \colon \QQ^\times \to \{\pm 1\}$
+--- a \emph{quadratic character} --- is trivial on squares, so a character with
+$\chi(c_n) = -1$ and $\chi(c_m) = 1$ for all $m > n$ shows that no product of terms whose
+smallest index is $n$ is a square. If such a character $\phi_n$ exists for every $n \ge 1$,
+then $\rho_a$ is surjective (Proposition~\ref{prop:crit}), and conversely
+(Theorem~\ref{thm:tfae}). The characters we use are the sign, the parities $\val_p$ of the
+$p$-adic valuations, and the characters $\chi_p$, $\chi_4$, $\chi_8$ induced by Dirichlet
+characters; their values along $(c_n)$ are periodic or eventually constant for reasons that are
+local at a single prime, and the arguments become short computations in $\ZZ/N\ZZ$.
 
-\begin{definition}[The iterated wreath power $\Ct{n}$]
-  \label{def:wreath}
-  \lean{QuadraticIterates.WreathPower, QuadraticIterates.card_wreathPower}
-  \leanok
-  $\Ct{n}$ is the $n$-fold iterated regular wreath product of $C_2$ with itself; it has order
-  $2^{2^n - 1}$.
-  \formalnote{This is Mathlib's \texttt{IteratedWreathProduct}, applied to the group
-  \texttt{Multiplicative (ZMod 2)}. Statements of the form ``$\Om_n \cong \Ct{n}$'' are
-  formalized as \texttt{Nonempty} of a \texttt{MulEquiv} between \texttt{GaloisGroup a n} and
-  \texttt{WreathPower n}: the \emph{existence} of an isomorphism, which is what the paper
-  asserts, rather than a chosen one.}
-\end{definition}
+This gives, with no more effort than before, the results of \cite{paper, li2020, li2021} for
+integer parameters, and extends them to rational parameters $a = r/s$. The main results are:
+\begin{itemize}
+  \item the criterion: $\rho_a$ is surjective iff $(c_n)_{n \ge 1}$ is $2$-independent iff every
+        $\phi_n$ exists (Theorem~\ref{thm:tfae});
+  \item the main theorem for rational parameters (Theorem~\ref{thm:main}): for $a = r/s$ outside
+        the interval $(-2, \alpha]$, $\alpha \approx -1.5437$, in one of three residue classes
+        modulo~$4$ determined by the sign of $a + 2$ and the parities, $\rho_a$ is surjective
+        as soon as two of three explicit lists of conditions are met;
+  \item two families of rational parameters, $a = -j(j+1)$ and $a = -(\ell^2 + \ell + 1)$, that
+        lie outside these residue classes (Theorems~\ref{thm:famA} and~\ref{thm:famLi});
+  \item the integer results of \cite{paper}, \cite{li2020} and \cite{li2021} as the case $s = 1$
+        (Chapter~\ref{chap:integers}).
+\end{itemize}
 
-\begin{definition}[The sequence $c_n$]
-  \label{def:cseq}
-  \uses{def:iterates}
-  \lean{QuadraticIterates.cSeq, QuadraticIterates.cSeq_zero, QuadraticIterates.cSeq_one,
-    QuadraticIterates.cSeq_succ, QuadraticIterates.cSeq_two,
-    QuadraticIterates.cSeq_succ_eq_neg_one_pow_mul_eval,
-    QuadraticIterates.cSeq_succ_eq_neg_one_pow_mul_eval_zero, QuadraticIterates.map_cSeq,
-    QuadraticIterates.cSeq_eq_mul_gammaSeq,
-    QuadraticIterates.intCast_cSeq, QuadraticIterates.ratCast_cSeq}
-  \leanok
-  $c_1 = -a$ and $c_{n+1} = c_n^2 + a$ for $n \ge 1$. One has $c_{n+1} = (-1)^{2^n} f_n(a)$, so
-  $c_{n+1} = f_n(a) = f_{n+1}(0)$ for $n \ge 1$, while $c_1 = -f_1(0)$.
-  \formalnote{\texttt{cSeq} is defined for a parameter in any commutative ring (the rational
-  program needs it over $\QQ$, $\ZZ/M\ZZ$ and $\ZZ[1/s]$); the integer sequence is the case
-  $a \in \ZZ$, and its cast is the sequence of the cast parameter (\lname{intCast\_cSeq}).
-  \texttt{cSeq} is total, with the junk value $c_0 = 0$; the recursion
-  \lname{cSeq\_succ} therefore carries the hypothesis $n \ge 1$. The junk value is not
-  arbitrary: it is what makes $c$ a \emph{strong divisibility sequence}
-  ($\gcd(c_m, c_n) = |c_{\gcd(m,n)}|$, see Lemma~\ref{lem:1.1}), which is how integrality of the
-  $b_n$ is obtained. \texttt{cSeq} is the specialization to $g = X^2 + a$, $\varepsilon = -1$ of
-  the general sequence of Definition~\ref{def:gammaseq}.}
-\end{definition}
+\begin{remark}[Vanishing terms]
+  \label{rem:nonzero}
+  $c_n = 0$ for some $n \ge 1$ holds if and only if $0$ is periodic under $f$, which for
+  $a \in \QQ$ happens exactly for $a \in \{-1, 0\}$. (If $p$ divides the denominator of $a$, then
+  $v_p(c_n) = 2^{n-1} v_p(a) < 0$; so $a \in \ZZ$, and for $a \ge 1$ or $a \le -3$ the orbit
+  tends to infinity; $a = -2$ gives $0 \mapsto -2 \mapsto 2 \mapsto 2$.) No statement below needs
+  this: a character with $\chi(c_n) = -1$ already forces $c_n \ne 0$.
+\end{remark}
 
-\begin{definition}[The Möbius factors $b_n$]
-  \label{def:bseq}
-  \uses{def:cseq}
-  \lean{QuadraticIterates.bSeq, QuadraticIterates.bSeq_one,
-    QuadraticIterates.bSeq_eq_moebiusFactorR, QuadraticIterates.bSeq_eq_moebiusFactorK,
-    moebiusFactorR_eq_moebiusFactorK}
-  \leanok
-  $b_n := \prod_{d \dvd n} c_d^{\mu(n/d)}$, where $\mu$ is the Möbius function. In particular
-  $b_1 = c_1 = -a$.
-  \formalnote{The paper \emph{constructs} the $b_n$ inside Lemma~1.1~b) and proves integrality
-  afterwards. The formalization instead \emph{defines} $b_n$ at once, for a parameter in any
-  domain $R$: it is \texttt{moebiusFactorR} of the sequence $c$, the preimage in $R$ of the
-  Möbius product in the fraction field (junk when that product is not integral). For $R = \ZZ$,
-  Lemma~\ref{lem:1.1}~b) is then the statement that this preimage really maps to the rational
-  product $\prod_{ed = n} c_d^{\mu(e)}$ (\lname{intCast\_bSeq\_eq\_moebiusFactorK}), i.e.
-  that the product is an integer; for a field the preimage is the product itself
-  (\lname{bSeq\_eq\_moebiusFactorK}), and the integer $b_n$ cast to $\QQ$ is the rational
-  $b_n$ of the cast parameter (\lname{intCast\_bSeq}). The rational product itself is
-  \texttt{moebiusFactorK} with $K = \QQ$, written over the divisor antidiagonal of $n$
-  (Lemma~\ref{lem:moebiusfactor}).}
-\end{definition}
+\begin{remark}[Primitive prime divisors]
+  \label{rem:ppd}
+  Ordering by the \emph{largest} index instead, $(c_n)$ is $2$-independent as soon as for every
+  $n \ge 1$ some character $\phi'_n$ satisfies $\phi'_n(c_n) = -1$ and $\phi'_n(c_m) = 1$ for
+  $1 \le m < n$. For instance $\phi'_n = \val_p$ works when $c_n$ has a primitive prime
+  divisor $p$ (one dividing no earlier term) with $v_p(c_n)$ odd. Primitive prime divisors exist
+  for all $n \ge 2$ when $a \in \ZZ \setminus \{-2, -1, 0\}$ (Rice \cite{rice},
+  Doerksen--Haensch \cite{doerksen-haensch}), and for $a = r/s \notin (-2, -1)$ for every term
+  after the first, except the second one when $r + s = 1$ (Krieger \cite{krieger}, Theorem~1.3);
+  but the parity of $v_p(c_n)$ is hard to control. For $a = 3$: $c_1 = -3$,
+  $c_2 = 3 \cdot 2^2$, $c_3 = 3 \cdot 7^2$, so $c_2 c_3 = 42^2$ is a square and $\rho_3$ is not
+  surjective. The characters $\phi_n$ of the forward ordering are the ones we can construct.
+\end{remark}
 
-\begin{definition}[$2$-independence]
-  \label{def:twoindep}
-  \lean{QuadraticIterates.TwoIndependent, QuadraticIterates.TwoIndependent.ne_zero,
-    QuadraticIterates.TwoIndependent.not_isSquare,
-    QuadraticIterates.twoIndependent_iff_linearIndependent,
-    QuadraticIterates.TwoIndependent.of_snoc, QuadraticIterates.twoIndependent_snoc_iff,
-    Fin.exists_eq_map_castSuccEmb_or_insert_last, sqClass,
-    QuadraticIterates.twoIndependent_intCast_iff,
-    QuadraticIterates.twoIndependent_iff_of_pairwise_isCoprime}
-  \leanok
-  Nonzero rational numbers $a_1, \dots, a_n$ are called \emph{$2$-independent} if their residue
-  classes in the $\FF_2$-vector space $\QQ^*/(\QQ^*)^2$ are linearly independent.
-  \formalnote{\texttt{TwoIndependent} is stated in the equivalent elementary form ``no nonempty
-  subfamily has a square product'', which is what the proofs use, for a family of elements of any
-  commutative monoid; that all $a_i$ are nonzero is then a consequence, $0$ being a square
-  (\lname{TwoIndependent.ne\_zero}). The translation into linear independence of the classes
-  $\texttt{sqClass}(a_i)$ in $L^*/(L^*)^2$, for any field $L$, is
-  \lname{twoIndependent\_iff\_linearIndependent}; a pairwise coprime family of integers is
-  $2$-independent iff none of its members is a square and at most one of their negatives is
-  (\lname{twoIndependent\_iff\_of\_pairwise\_isCoprime}); this is the criterion behind part 2)
-  of Theorem~\ref{thm:section1}. The families of the paper are indexed by \texttt{Fin n}, and
-  $c_1, \dots, c_n$ appears as the family $i \mapsto c_{i+1}$.}
-\end{definition}
+\section{The plan of the formalization}
+\label{sec:order}
+
+\emph{Reused material.} The Galois-theoretic part --- the iterates, their splitting fields and
+Galois groups, Odoni's embedding $\Om_n \hookrightarrow \Ct{n}$, the degree criterion and
+the irreducibility lemma (Chapter~\ref{chap:galois}), with the general theory of
+multiquadratic extensions, wreath products and even polynomials it rests on
+(Appendix~\ref{chap:auxiliary}) --- exists for rational $a$ and is taken over. It contains
+nothing about Möbius inversion. The same holds for the order-theoretic facts about $(c_n)$ for
+$-2 \le a \le 0$ (Lemma~\ref{lem:sumsign}).
+
+\emph{Devices.} Quadratic characters are Mathlib's \lname{MulChar ℚ ℤ} (a commutative group;
+the value at $0$ is $0$, so $\chi(c_n) = -1$ carries $c_n \ne 0$ with it), and the characters
+induced by Dirichlet characters come from Mathlib's \lname{quadraticChar (ZMod p)},
+\lname{ZMod.χ₄} and \lname{ZMod.χ₈} through one construction (Definition~\ref{def:chars}).
+The integer sequence $w_n$ (Definition~\ref{def:wseq}) carries the arithmetic of $c_n = r w_n/s^{2^{n-1}}$;
+for a modulus $N$ prime to $s$, the identity $r w_n = s^{2^{n-1}} \bar c_n$ in $\ZZ/N\ZZ$, with
+$(\bar c_n)$ the sequence of the parameter $\bar a = r/s \bmod N$ (Lemma~\ref{lem:reduction}),
+turns every local argument into a computation with the sequence $(\bar c_n)$ in $\ZZ/N\ZZ$.
+
+\emph{Order of work.} Each step is a round of declarations written and audited in a scratch
+sandbox, then committed through the verification chain.
+\begin{enumerate}
+  \item Galois side: move the reused declarations into the new layout; prove
+        Theorems~\ref{thm:criterion} and~\ref{thm:criterion-infinite} (the converse direction
+        is new).
+  \item Characters: Definition~\ref{def:chars}, Chapter~\ref{chap:characters}, including the
+        converse Theorem~\ref{thm:tfae}.
+  \item The sequence: Chapter~\ref{chap:sequence}.
+  \item Patterns: Chapter~\ref{chap:patterns}.
+  \item Criteria and the main theorem: Chapter~\ref{chap:main}.
+  \item The families: Chapter~\ref{chap:families}.
+  \item Integer parameters: Chapter~\ref{chap:integers}; the comparator challenges for the
+        integer results keep their statements and are re-proved by the new theorems, and the
+        challenge for the main theorem replaces those of the earlier rational results.
+  \item Removal of the earlier route (Möbius factors, the files on Li's results and on rational
+        parameters), dead-code and import scans, documentation.
+\end{enumerate}
+Until step~7 the earlier route stays in the repository, so that every commit keeps all
+comparator challenges proved; declaration names that clash with it are resolved by renaming the
+old declaration.

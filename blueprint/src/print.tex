@@ -14,10 +14,13 @@
 
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
 
+% The Lean names in \lname contain Unicode (ℚ, χ₄, ≃*, ↦) that Latin Modern Mono lacks.
+\IfFontExistsTF{DejaVu Sans Mono}{\setmonofont{DejaVu Sans Mono}[Scale=MatchLowercase]}{}
+
 \input{macros/common}
 \input{macros/print}
 
-\title{Galois groups over $\mathbb{Q}$ of some iterated polynomials: a blueprint}
+\title{When do all iterates of $x^2 + a$ have maximal Galois group? A blueprint}
 \author{Michael Stoll}
 
 \begin{document}

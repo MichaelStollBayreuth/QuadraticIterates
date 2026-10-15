@@ -1,0 +1,224 @@
+\chapter{Patterns of characters along the sequence}
+\label{chap:patterns}
+
+Throughout, $a = r/s$ with $r, s$ coprime, $s \ge 1$, and $a \notin \{-1, 0\}$. For a prime $p$
+and an integer $m \ne 0$, $m_p$ is the prime-to-$p$ part of $m$. Each lemma determines the
+pattern of one character, or of the characters at one prime, along $(c_n)$; the consequences
+for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
+
+\section{The sign}
+
+\begin{lemma}[Sign patterns]
+  \label{lem:pat-sign}
+  \uses{lem:signs, lem:window, def:phin}
+  \begin{enumerate}
+    \item If $a > 0$, then $\sgn(c_\bullet) = ({-}{+}{+}\cdots)$: $a$ has $\phi_1$.
+    \item If $-1 < a < 0$, then $\sgn(c_\bullet) = ({+}{-}{-}\cdots)$: $a$ has $\tau$.
+    \item If $a < -1$ and $c_3 < 0 < c_4$, then
+          $\sgn(c_\bullet) = ({+}{+}{-}{+}{-}\cdots)$, alternating from $n = 2$ on.
+  \end{enumerate}
+  \formalnote{Proposed: \lname{hasCharPattern\_mulSingle\_one\_of\_pos},
+  \lname{hasCharPattern\_neg\_mulSingle\_one\_of\_neg\_one\_lt}, and for (3) the values of
+  \lname{signChar} directly.}
+\end{lemma}
+
+\section{Primes dividing \texorpdfstring{$r$, $s$, $r + s$, $r + 2s$ and $r^2 + s^2$}{r, s, r + s, r + 2s and r^2 + s^2}}
+
+\begin{lemma}[Primes of $r$]
+  \label{lem:pat-r}
+  \uses{lem:sqclass, lem:wseq-res, def:chars}
+  Let $p$ be a prime dividing $r$.
+  \begin{enumerate}
+    \item $v_p(c_n) = v_p(r)$ for all $n \ge 1$; if $v_p(r)$ is odd, $\val_p$ is a $\phi_0$.
+    \item If $p$ is odd and $x = \Leg{r_p s}{p}$, then
+          $\chi_p(c_\bullet) = (\Leg{-1}{p} x, x, x, \dots)$.
+    \item If $4 \mid r$ and $x = \chi_4(r_2 s)$, then $\chi_4(c_\bullet) = (-x, x, x, \dots)$.
+    \item If $8 \mid r$, then $\chi_8(c_n) = \chi_8(r_2 s)$ for all $n \ge 1$.
+  \end{enumerate}
+  \formalnote{Proposed: \lname{valChar\_cSeq\_of\_dvd\_left},
+  \lname{unitPartChar\_cSeq\_of\_dvd\_left} (one statement for (2)--(4): for $N \mid r$ a power of
+  $p$ and $\psi$ modulo $N$, $\chi_\psi(c_n) = \psi(s)\chi_\psi(r)$ for $n \ge 2$ and
+  $\chi_\psi(c_1) = \psi(-1)\psi(s)\chi_\psi(r)$).}
+\end{lemma}
+\begin{proof}
+  By Lemma~\ref{lem:sqclass}, $\chi(c_n) = \chi(r)\chi(w_n)$ for $n \ge 2$ and
+  $\chi(c_1) = \chi(-1)\chi(r)\chi(s)$. As $w_n \equiv s^{2^{n-1}-1} \pmod r$ with an odd
+  exponent, $\chi_\psi(w_n) = \psi(s)$ for $\psi$ modulo a divisor $N$ of $r$; and
+  $\chi_\psi(r) = \psi(r_p)$. For (1), $v_p(w_n) = v_p(s) = 0$.
+\end{proof}
+
+\begin{lemma}[Primes of $s$]
+  \label{lem:pat-s}
+  \uses{lem:sqclass, lem:wseq-res, def:chars}
+  \begin{enumerate}
+    \item Let $p$ be an odd prime dividing $s$. Then $\val_p(c_n) = \chi_p(c_n) = 1$ for $n \ge 2$,
+          while $\val_p(c_1) = (-1)^{v_p(s)}$ and $\chi_p(c_1) = \Leg{-r s_p}{p}$.
+    \item Let $s$ be even. Then $\val_2(c_n) = \chi_4(c_n) = \chi_8(c_n) = 1$ for $n \ge 3$, and
+          $\val_2(c_2) = 1$.
+  \end{enumerate}
+  In other words, $c_n$ is a square in $\QQ_p$ for $n \ge 2$, resp.\ in $\QQ_2$ for $n \ge 3$.
+  \formalnote{Proposed: \lname{valChar\_cSeq\_of\_dvd\_right},
+  \lname{unitPartChar\_cSeq\_of\_dvd\_right}.}
+\end{lemma}
+\begin{proof}
+  For $n \ge 2$, $v_p(c_n) = -2^{n-1} v_p(s)$ is even. (1) $w_n \equiv r^{2^{n-1}-1} \pmod p$, so
+  $r w_n \equiv r^{2^{n-1}}$ is a nonzero square modulo $p$. (2) $w_n \equiv r \pmod 8$ for
+  $n \ge 3$ (Lemma~\ref{lem:wseq-res}), so $r w_n \equiv r^2 \equiv 1 \pmod 8$.
+\end{proof}
+
+\begin{lemma}[Primes of $r + s$]
+  \label{lem:pat-rs}
+  \uses{lem:sqclass, lem:strongcong, def:chars}
+  \begin{enumerate}
+    \item Let $q$ be a prime dividing $r + s$. Then $v_q(c_n) = 0$ for odd $n$ and
+          $v_q(c_n) = v_q(r + s)$ for even $n$; so if $v_q(r + s)$ is odd,
+          $\val_q(c_\bullet) = ({+}{-}{+}{-}\cdots)$.
+    \item Let $p \equiv 3 \pmod 4$ be a prime dividing $r + s$, and $\chi = \chi_p$, or let
+          $4 \mid r + s$, $p = 2$ and $\chi = \chi_4$. Then
+          \[ \chi(c_\bullet) = (1, y, -1, y, -1, y, \dots), \qquad
+             y = \chi(c_2) = -\chi(s\,(r + s)_p). \]
+  \end{enumerate}
+  Hence $a$ has $\tau$ if (2) applies with $y = -1$ (take $\chi$), or with $y = 1$ and some
+  $v_q(r + s)$ is odd, i.e.\ $r + s \ne \pm\sq$ (take $\chi \val_q$).
+  \formalnote{Proposed: \lname{valChar\_cSeq\_of\_dvd\_add},
+  \lname{unitPartChar\_cSeq\_of\_dvd\_add}.}
+\end{lemma}
+\begin{proof}
+  \uses{lem:strongcong}
+  By Lemma~\ref{lem:strongcong}, $w_{2k} = (r + s) T_k$ with $T_k \equiv s^{2^{2k-1} - 2}$ and
+  $w_{2k+1} \equiv s^{2^{2k} - 1} \pmod{r + s}$ for $k \ge 1$, and $q \nmid rs$. This gives (1),
+  as $v_q(c_n) = v_q(w_n)$ and $s$ is prime to $q$. For (2): $\chi(c_1) = \chi(-rs) = 1$ because
+  $-rs \equiv s^2 \pmod{r + s}$. For odd $n \ge 3$, $\chi(c_n) = \chi(r w_n)$ and
+  $r w_n \equiv -s \cdot s^{2^{n-1} - 1} = -s^{2^{n-1}} \pmod{r + s}$, so $\chi(c_n) = \psi(-1) = -1$.
+  For even $n = 2k$, $\chi(c_n) = \chi(r (r + s))\psi(T_k) = \chi(r(r+s)) = \chi(c_2)$, the exponent
+  $2^{2k-1} - 2$ being even. Finally $\chi(r) = \psi(-s)$ and $\chi(r + s) = \psi((r + s)_p)$.
+\end{proof}
+
+\begin{remark}[The shape of the valuations; draft Lemma~1.5]
+  \label{rem:vp}
+  Lemmas~\ref{lem:pat-r}(1), \ref{lem:pat-s} and~\ref{lem:pat-rs}(1) are instances of a general
+  fact (compare \cite{paper}, Lemma~1.1(b)): for every prime $p$ exactly one of the following holds.
+  (1) $v_p(c_n) = 0$ for all $n \ge 1$. (2) There are $m_p, e_p \ge 1$ with $v_p(c_n) = e_p$ if
+  $m_p \mid n$ and $v_p(c_n) = 0$ otherwise. (3) $v_p(c_n) = 2^{n-1} v_p(a)$ for all $n \ge 1$, with
+  $v_p(a) < 0$. Only the instances are formalized.
+\end{remark}
+
+\begin{lemma}[Primes of $r + 2s$; draft Lemma~2.7(2)]
+  \label{lem:pat-r2s}
+  \uses{lem:localeval, lem:orbit}
+  Let $p$ be an odd prime dividing $r + 2s$. Then $\chi_p(c_n) = \Leg{2}{p}$ for all $n \ge 1$.
+  \formalnote{Proposed: \lname{legendreChar\_cSeq\_of\_dvd\_add\_two\_mul}.}
+\end{lemma}
+\begin{proof}
+  $p \nmid s$, and $\bar a = -2$ in $\ZZ/p\ZZ$, so $\bar c_1 = 2$ is a fixed point of
+  $x \mapsto x^2 - 2$; apply Lemma~\ref{lem:localeval}.
+\end{proof}
+
+\begin{lemma}[Primes of $r^2 + s^2$]
+  \label{lem:pat-r2s2}
+  \uses{lem:localeval, lem:orbit}
+  Let $p$ be an odd prime dividing $r^2 + s^2$. Then $\chi_p(c_n) = \Leg{-rs}{p}$ for odd $n$ and
+  $\chi_p(c_n) = \Leg{(r - s)s}{p}$ for even $n$.
+  \formalnote{Proposed: \lname{legendreChar\_cSeq\_of\_dvd\_sq\_add\_sq}.}
+\end{lemma}
+\begin{proof}
+  $p \nmid rs$ and $\bar a^2 = -1$ in $\ZZ/p\ZZ$. Since
+  $\bar c_3 - \bar c_1 = \bar a(\bar a + 2)(\bar a^2 + 1) = 0$, the sequence has period $2$ from
+  $n = 1$ on (Lemma~\ref{lem:orbit}); $\bar c_1 = -\bar a$ and $\bar c_2 = \bar a^2 + \bar a =
+  \bar a - 1$ are units ($\bar a = 1$ would give $2 = 0$). Lemma~\ref{lem:localeval} gives
+  $\chi_p(c_1) = \Leg{-r s^{-1}}{p} = \Leg{-rs}{p}$ and $\chi_p(c_2) = \Leg{(r-s)s}{p}$.
+\end{proof}
+
+\begin{remark}
+  As $\bar a$ has order $4$ in $(\ZZ/p\ZZ)^\times$, $p \equiv 1 \pmod 4$, and
+  $\Leg{-rs}{p} = \Leg{\bar a}{p} = -1$ if and only if $p \equiv 5 \pmod 8$.
+\end{remark}
+
+\section{The dyadic patterns for \texorpdfstring{$a \equiv 1 \bmod 4$}{a = 1 mod 4}}
+
+We write $a \equiv m \bmod N$ when $N$ divides the numerator of $a - m$; for $a \equiv 1 \bmod 4$
+this means that $s$ is odd and $r \equiv s \pmod 4$.
+
+\begin{lemma}[$a \equiv 1 \bmod 4$; draft Lemma~2.8(4)]
+  \label{lem:pat-dyadic}
+  \uses{lem:localeval, lem:pat-rs}
+  Let $a \equiv 1 \bmod 4$. Then $\val_2(c_\bullet) = ({+}{-}{+}{-}\cdots)$, and $\chi_4$ (if
+  $a \equiv 1 \bmod 8$) or $\chi_4 \val_2$ (if $a \equiv 5 \bmod 8$) has pattern
+  $({-}{+}{+}\cdots)$: $a$ has $\phi_1$.
+  \formalnote{Proposed: \lname{hasCharPattern\_mulSingle\_one\_of\_emod\_four}; the sequence
+  modulo $8$ is a computation by \lname{decide} over the two values of $\bar a$.}
+\end{lemma}
+\begin{proof}
+  \uses{lem:reduction}
+  $r + s \equiv 2 \pmod 4$, so the statement on $\val_2$ is Lemma~\ref{lem:pat-rs}(1) with $q = 2$.
+  In $\ZZ/8\ZZ$, $\bar a \in \{1, 5\}$ and $(\bar c_n)$ is $(-1, 2, 5, 2, 5, \dots)$ for
+  $\bar a = 1$ and $(3, 6, 1, 6, 1, \dots)$ for $\bar a = 5$. For $n \ge 2$,
+  $s^{2^{n-1}} \equiv 1 \pmod 8$, so $r w_n \equiv \bar c_n \pmod 8$ (Lemma~\ref{lem:reduction}); for
+  even $n$ the odd part $r w_n / 2$ is $\equiv 1$ resp.\ $3 \pmod 4$. And
+  $c_1 \sim -rs \equiv -\bar a \pmod 8$. So $\chi_4(c_\bullet) = ({-}{+}{+}{+}\cdots)$ for
+  $\bar a = 1$ and $({-}{-}{+}{-}{+}\cdots)$ for $\bar a = 5$, and $\val_2$ turns the latter into
+  $({-}{+}{+}\cdots)$.
+\end{proof}
+
+\begin{remark}[Criteria for $\phi_2$]
+  \label{rem:phi2}
+  Two further criteria are recorded without formalization, as no theorem below uses them.
+  (a) If $a \equiv 1 \bmod 4$, then $\chi_8(c_\bullet) = (x, w, -x, -w, -x, -w, \dots)$ with
+  $x = \chi_8(a)$ and $w = \chi_8(c_2)$, since $2$-adically $c_{2k} \equiv 2 \bmod 4$, hence
+  $c_{2k+1} \equiv a + 4 \bmod 32$, and $c_{2k} \equiv c_2 + 8 \bmod 16$ for $k \ge 2$. So $a$ has
+  $\phi_2$ if $a \equiv 5 \bmod 8$ ($\chi_8$ or $\chi_8 \val_2$), and also if $a \equiv 1 \bmod 8$
+  and $a$ has $\phi_0$ ($\phi_0 \chi_8$ or $\phi_0 \chi_8 \val_2$).
+  (b) If $s$ is even and neither $r(r + s)$ nor $-(r + s)s$ is a square in $\QQ_2$, then some
+  character at $2$ is $1$ on $c_1$ and $-1$ on $c_2$, and $a$ has $\phi_2$
+  (Lemma~\ref{lem:pat-s}(2); $c_2 \sim r(r+s)$, $c_1 c_2 \sim -(r+s)s$).
+\end{remark}
+
+\section{Reflection and period two}
+
+\begin{lemma}[Reflection; draft Lemma~2.9]
+  \label{lem:reflection}
+  \uses{lem:reduction, lem:orbit, lem:localeval, lem:wseq-res}
+  Let $n \ge 1$, and let either $p \equiv 3 \pmod 4$ be a prime and $\chi = \chi_p$, or $p = 2$
+  and $\chi = \chi_4$, $N = p$ resp.\ $N = 4$. If $N \mid v_n$ and $p \nmid r$, then
+  $\chi(c_m) = -\chi(c_n) \ne 0$ for all $m > n$. Consequently, if $a$ has $\phi_0$, it has
+  $\phi_n$ (Lemma~\ref{lem:jump}). For $n \ge 2$ and odd $p$, $p \nmid r$ is automatic
+  (Lemma~\ref{lem:wseq-res}).
+  \formalnote{Proposed: \lname{unitPartChar\_cSeq\_eq\_neg\_of\_dvd\_vSeq}, for a character
+  $\psi$ modulo a power $N$ of $p$ with $\psi(-1) = -1$, $N \mid v_n$ and $p \nmid r$.}
+\end{lemma}
+\begin{proof}
+  $v_n$ is prime to $s$, so $p \nmid s$; by Lemma~\ref{lem:reduction},
+  $\bar c_n + \bar c_{n+1} = 0$ in $\ZZ/N\ZZ$, and Lemma~\ref{lem:orbit}(1) gives
+  $\bar c_m = \bar c_{n+1} = -\bar c_n$ for $m > n$. These are units: otherwise $p$ divides
+  $\bar c_n$, hence $\bar c_{n+1}$, hence $\bar c_{n+1} - \bar c_n^2 = \bar a$, contradicting
+  $p \nmid r$. Lemma~\ref{lem:localeval} and $\psi(-1) = -1$ finish the proof.
+\end{proof}
+
+\begin{lemma}[Period two]
+  \label{lem:period2}
+  \uses{lem:reduction, lem:orbit, lem:localeval, lem:wseq-res}
+  Let $n \ge 1$ and let $p \equiv 3 \pmod 4$ be a prime with $p \mid u_n$ and $p \nmid r + s$.
+  Then $\chi_p$ has the pattern $(x, y, -x, y, -x, \dots)$ from $n$, with
+  $x = \chi_p(c_n)$, $y = \chi_p(c_{n+1}) \in \{\pm 1\}$. Consequently, if $a$ has $\phi_0$
+  and some character alternates from $n$ on, then $a$ has $\phi_n$
+  (Lemma~\ref{lem:jump2}).
+  \formalnote{Proposed: \lname{legendreChar\_cSeq\_of\_dvd\_uSeq}.}
+\end{lemma}
+\begin{proof}
+  $u_n$ is prime to $s$, so $p \nmid s$, and by Lemma~\ref{lem:reduction}
+  $\bar c_n^2 - \bar c_n + \bar a + 1 = 0$ in $\ZZ/p\ZZ$; by Lemma~\ref{lem:orbit}(3),
+  $\bar c_{n+2} = -\bar c_n$, and by Lemma~\ref{lem:orbit}(2) the pattern of $(\bar c_m)_{m \ge n}$ is
+  $(\bar c_n, \bar c_{n+1}, -\bar c_n, \bar c_{n+1}, \dots)$. Units: $\bar c_n = 0$ would give
+  $\bar a + 1 = 0$, i.e.\ $p \mid r + s$; $\bar c_{n+1} = 0$ would give $\bar a = -\bar c_n^2$ and
+  then $1 - \bar c_n = 0$, so again $\bar a = -1$. Lemma~\ref{lem:localeval} and
+  $\Leg{-1}{p} = -1$ finish the proof.
+\end{proof}
+
+\begin{remark}
+  The four ingredients that alternate on a tail and can serve in Lemma~\ref{lem:period2} are:
+  $\val_q$ for $v_q(r + s)$ odd, from $n = 1$ (Lemma~\ref{lem:pat-rs}(1); for
+  $a \equiv 1 \bmod 4$ this includes $q = 2$); $\chi_p$ of Lemma~\ref{lem:pat-r2s2} when its two
+  values differ, from $n = 1$; the sign in the window of Lemma~\ref{lem:window}, from $n = 2$;
+  and $\chi$ of Lemma~\ref{lem:pat-rs}(2) when $y = 1$, from $n = 2$. Only the first one is used
+  below.
+\end{remark}

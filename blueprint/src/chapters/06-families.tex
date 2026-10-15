@@ -1,0 +1,81 @@
+\chapter{Two families}
+\label{chap:families}
+
+For the parameters below the $2$-adic condition of the main theorem fails, but $x^2 + x + a$
+(which governs $c_n + c_{n+1}$) or $x^2 - x + a + 1$ (which governs $c_n + c_{n+2}$) splits over
+$\QQ$, and the factors supply primes $\equiv 3 \pmod 4$ at every level.
+
+\begin{theorem}[Theorem A for rational parameters]
+  \label{thm:famA}
+  \uses{lem:reflection, lem:jump, prop:Z, prop:O, prop:T, lem:klein, lem:prime3, thm:tfae}
+  Let $a = -j(j + 1)$ with $j = u/v > 1$ for coprime positive integers $u$, $v$ with $v$ odd and
+  $(u, v) \equiv (2, 1)$ or $(3, 3) \pmod 4$. Then $\rho_a$ is surjective.
+  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_eq\_neg\_mul\_add\_one}, with
+  $u, v \in \ZZ$ as parameters and the parameter written as
+  $-(u/v)(u/v + 1)$.}
+\end{theorem}
+\begin{proof}
+  \uses{lem:wseq-res, lem:signs, def:wseq}
+  Here $r = -u(u + v)$, $s = v^2$ (coprime), $a < -2$, $\eps_a = -1$, and $v_2(r) = 1$ in both
+  classes. So (Z1) holds ($\val_2$ is a $\phi_0$). A prime $p \equiv 3 \pmod 4$ divides $r$
+  ($p \mid u + v \equiv 3$ resp.\ $p \mid u \equiv 3 \pmod 4$), so (O5) or (T2) holds, and
+  Lemma~\ref{lem:klein} gives $\phi_1$.
+
+  Let $n \ge 2$, $W = -w_n$ and $V = v^{2^n - 1}$. Then
+  \[ -v_n = F_1 F_2, \qquad F_1 = (u + v) W - V, \qquad F_2 = u W + V \]
+  (expand, with $s = v^2$). Since $c_n \ge -a$ (Lemma~\ref{lem:signs}) and
+  $c_n = r w_n / v^{2^n}$, $W \ge v^{2^n - 2}$, so $F_1 \ge u v^{2^n - 2} > 0$ and $F_2 > 0$.
+  Modulo $8$: $s \equiv 1$, so $w_{m+1} \equiv r w_m^2 + 1$, and as $r \equiv 2 \pmod 4$ and $w_m$ is
+  odd, $w_m \equiv r + 1 \pmod 8$ for $m \ge 2$; thus $W \equiv u(u + v) - 1$ and $V \equiv v
+  \pmod 8$. Checking the residues of $u$, $v$ modulo $8$: $F_1 \equiv 6 \pmod 8$ in the class
+  $(2, 1)$ and $F_2 \equiv 6 \pmod 8$ in the class $(3, 3)$. Lemma~\ref{lem:prime3} gives a prime
+  $p \equiv 3 \pmod 4$ dividing $v_n$, and Lemma~\ref{lem:reflection} gives $\phi_n$.
+  Theorem~\ref{thm:tfae} concludes.
+\end{proof}
+
+\begin{theorem}[Li's Theorem 3.9 for rational parameters]
+  \label{thm:famLi}
+  \uses{lem:period2, lem:jump2, cor:odd, prop:Z, prop:O, lem:pat-dyadic, lem:strongcong,
+    lem:prime3, thm:tfae}
+  Let $a = -(\ell^2 + \ell + 1) \le -2$ with $\ell = u/v$ for coprime positive integers $u$, $v$
+  with $v$ odd and $(u, v) \equiv (1, 1)$ or $(2, 3) \pmod 4$. Then $\rho_a$ is surjective.
+  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_eq\_neg\_sq\_add\_add\_one}.}
+\end{theorem}
+\begin{proof}
+  \uses{lem:reduction, lem:signs, lem:wseq-res, lem:period2}
+  Here $r = -(u^2 + uv + v^2)$, $s = v^2$, $r + s = -u(u + v)$, and $a \equiv 1 \bmod 4$ in both
+  classes. $|r| \equiv 3 \pmod 4$ is not a square, so (Z1) gives $\phi_0$; (O2) gives
+  $\phi_1$; Corollary~\ref{cor:odd} gives $\phi_n$ for odd $n \ge 3$; and $\val_2$
+  alternates from $n = 1$ (Lemma~\ref{lem:pat-dyadic}).
+
+  Let $n \ge 2$ be even and $V = v^{2^n - 1}$. Then $u_n = G_n H_n$ with
+  \[ G_n = r w_n - (u + v) V = v^{2^n}(c_n - \ell - 1), \qquad
+     H_n = r w_n + u V = v^{2^n}(c_n + \ell), \]
+  both positive as $c_n \ge -a = \ell^2 + \ell + 1$. By Lemma~\ref{lem:strongcong},
+  $w_n = (r + s) T$ with $T \equiv s^{2^{n-1} - 2} \pmod{r + s}$, so $u$ and $u + v$ divide $w_n$.
+  In the class $(1, 1)$ put $K = H_n / u = -r(u + v) T + V$, in the class $(2, 3)$ put
+  $K = G_n / (u + v) = -r u T - V$; in both cases the divisor is odd and $K > 0$.
+
+  \emph{$K \equiv 3 \pmod 4$.} In $\ZZ/4\ZZ$, $\bar a = 1$, so $\bar c_n = 2$ for even $n$, and
+  $r w_n = s^{2^{n-1}} \bar c_n = 2$ (Lemma~\ref{lem:reduction}); also $V \equiv v \pmod 4$. In the
+  class $(1, 1)$, $uK = H_n \equiv 2 + uv$, so $K \equiv 2 + v \equiv 3$; in the class $(2, 3)$,
+  $(u + v) K = G_n \equiv 2 - (u + v)v$, so $K \equiv 2 - v \equiv 3 \pmod 4$.
+
+  \emph{$K$ is prime to $r + s$.} $K$ is odd. Let $q$ be an odd prime dividing $r + s = -u(u+v)$,
+  so $r \equiv -v^2$ and $r T \equiv -v^{2^n - 2} \pmod q$. In the class $(1, 1)$,
+  $K \equiv (u + v) v^{2^n - 2} + V$, which is $2V$ if $q \mid u$ and $V$ if $q \mid u + v$; in the
+  class $(2, 3)$, $K \equiv u v^{2^n - 2} - V$, which is $-V$ if $q \mid u$ and $-2V$ if
+  $q \mid u + v$. None is $0$ modulo $q$.
+
+  So a prime $p \equiv 3 \pmod 4$ divides $K$, hence $u_n$, and $p \nmid r + s$
+  (Lemma~\ref{lem:prime3}). Lemma~\ref{lem:period2} with $\val_2$ and $\phi_0$ gives
+  $\phi_n$, and Theorem~\ref{thm:tfae} concludes.
+\end{proof}
+
+\begin{remark}
+  For $v = 1$ these are Corollaries~\ref{cor:thmA} and~\ref{cor:li39}. A scan of all classes of
+  $(u, v)$ modulo $4$ (resp.\ $8$) shows that the other classes either fall under the main
+  theorem or admit no certificate of this kind at some level. Examples outside the main theorem:
+  $a = -66/25$ ($j = 6/5$), $a = -70/9$ ($j = 7/3$), $a = -151/25$ ($\ell = 9/5$),
+  $a = -19/9$ ($\ell = 2/3$).
+\end{remark}

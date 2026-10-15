@@ -1,41 +1,49 @@
 \chapter*{About this blueprint}
 
-This blueprint reproduces M.~Stoll, \emph{Galois groups over $\QQ$ of some iterated
-polynomials}, Arch.\ Math.\ \textbf{59} (1992), 239--244, and links each of its definitions and
-statements to the Lean~4 formalization in this repository. Chapters~1--3 correspond to the three
-sections of the paper; their numbering has been chosen so that the numbered items carry the
-\emph{same} numbers as in the paper (Facts~1.0, Lemma~1.1, \dots, Lemma~2.2). Chapter~0 collects
-the definitions from the introduction, and Chapter~4 the general-purpose theory that the
-formalization develops on the side, in Mathlib generality, under
-\texttt{QuadraticIterates/Mathlib/}.
+This blueprint develops a criterion for the surjectivity of the arboreal Galois representation
+attached to $x^2 + a$, $a \in \QQ$, which works directly with the orbit $(c_n)$ of $0$ and with
+quadratic characters of $\QQ^\times$, and links each statement to its formalization in Lean~4.
+It consolidates M.~Stoll, \emph{When do all iterates of $x^2 + a$ have maximal Galois group?}
+(draft of 30 September 2026) with the corrections and additional criteria found while reviewing
+that draft. The known results of \cite{paper, li2020, li2021} for integer parameters are
+derived from the general statements for rational parameters (Chapter~\ref{chap:integers}).
 
-All statements of Chapters~0--6 are formalized and proved: there is no \texttt{sorry} anywhere,
-so every node of the dependency graph is green. Chapter~5 formalizes the results of Li
-\cite{li2020, li2021} that extend the last theorem of the paper to further values of $a$ (one of
-them, Theorem~\ref{thm:li-A}, in a stronger form); it records the mathematics in the notation of
-Chapter~2 and how the proofs reduce to the material of Chapters~2--4. Chapter~6 extends the Section~3 theorem to rational parameters $a = r/s$
-(Theorems R${}^+$ and R${}^-$, new results), with the Galois side of Chapter~1 parametrized by
-$a \in \QQ$; it was written as a plan before the formalization and reduces the proofs to the
-material of Chapters~1--5 plus new lemmas.
+\emph{Status.} This is a plan, written before the formalization. The Galois-theoretic part
+(Chapter~\ref{chap:galois} and Appendix~\ref{chap:auxiliary}) reuses an existing formalization;
+its nodes carry Lean names and are green. Every other node is new; its proposed Lean names are
+given in \lname{typewriter} inside the statement or a \emph{Formalization} remark, and are
+subject to change. The order of work is fixed in Section~\ref{sec:order}.
 
-\emph{Standing hypotheses.} Throughout, $a$ is an integer such that $-a$ is not a square in
-$\QQ$, $f := X^2 + a \in \ZZ[X]$, and $f_0 := X$, $f_{n+1} := f(f_n) = f_n^2 + a$ are its
-iterates. $K_n$ is the splitting field of $f_n$ over $\QQ$ and $\Om_n := \Gal(K_n/\QQ) =
-\Gal(f_n/\QQ)$. $\Ct{n}$ denotes the $n$-fold iterated wreath product of the cyclic group $C_2$
-with itself. In Chapter~2, $g \in \ZZ[X^2]$ is an even polynomial and $\varepsilon = \pm 1$.
+\emph{Standing notation.} $a \in \QQ$, $f = X^2 + a$, $f_0 = X$ and $f_{n+1} = f_n^2 + a$ are
+the iterates of $f$, $K_n \subseteq \Qbar$ is the splitting field of $f_n$ over $\QQ$, and
+$\Om_n = \Gal(K_n/\QQ)$. $\Ct{n}$ denotes the $n$-fold iterated wreath product of $C_2$ with
+itself. From Chapter~\ref{chap:sequence} on, $a = r/s$ with coprime integers $r$, $s$ and
+$s \ge 1$.
 
 \input{chapters/00-intro}
-\input{chapters/01-criterion}
-\input{chapters/02-even}
-\input{chapters/03-values}
-\input{chapters/04-support}
-\input{chapters/05-li}
-\input{chapters/06-rational}
+\input{chapters/01-galois}
+\input{chapters/02-characters}
+\input{chapters/03-sequence}
+\input{chapters/04-patterns}
+\input{chapters/05-main}
+\input{chapters/06-families}
+\input{chapters/07-integers}
+\appendix
+\input{chapters/08-auxiliary}
 
 \begin{thebibliography}{9}
   \bibitem{cremona}
     J.~E.~Cremona, \emph{On the Galois groups of the iterates of $x^2 + 1$}.
     Mathematika \textbf{36}, 259--261 (1989).
+  \bibitem{doerksen-haensch}
+    K.~Doerksen and A.~Haensch, \emph{Primitive prime divisors in zero orbits of polynomials}.
+    Integers \textbf{12}, A7 (2012).
+  \bibitem{jones}
+    R.~Jones, \emph{Galois representations from pre-image trees: an arboreal survey}.
+    Publ.\ Math.\ Besan\c{c}on Alg\`ebre Th\'eorie Nr.\ \textbf{2013}, 107--136 (2013).
+  \bibitem{krieger}
+    H.~Krieger, \emph{Primitive prime divisors in the critical orbit of $z^d + c$}.
+    Int.\ Math.\ Res.\ Not.\ IMRN \textbf{2013}, 5498--5525 (2013).
   \bibitem{li2020}
     H.-C.~Li, \emph{Arboreal Galois representation for a certain type of quadratic polynomials}.
     Arch.\ Math.\ \textbf{114}, 265--269 (2020).
@@ -47,6 +55,9 @@ with itself. In Chapter~2, $g \in \ZZ[X^2]$ is an even polynomial and $\varepsil
   \bibitem{odoni}
     R.~W.~K.~Odoni, \emph{Realising wreath products of cyclic groups as Galois groups}.
     Mathematika \textbf{35}, 101--113 (1988).
+  \bibitem{rice}
+    B.~Rice, \emph{Primitive prime divisors in polynomial arithmetic dynamics}.
+    Integers \textbf{7}, A26 (2007).
   \bibitem{paper}
     M.~Stoll, \emph{Galois groups over $\QQ$ of some iterated polynomials}.
     Arch.\ Math.\ \textbf{59}, 239--244 (1992).

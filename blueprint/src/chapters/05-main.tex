@@ -1,0 +1,252 @@
+\chapter{Criteria and the main theorem}
+\label{chap:main}
+
+Throughout, $a = r/s$ with $r, s$ coprime and $s \ge 1$; $m_p$ denotes the prime-to-$p$ part of an
+integer $m \ne 0$, and ``$m \ne \pm\sq$'' means that neither $m$ nor $-m$ is a square.
+
+\section{Three lists of criteria}
+
+By Lemma~\ref{lem:klein}, $\phi_0$ and $\phi_1$ are available as soon as two of the three
+patterns $\phi_0 = ({-}{-}{-}\cdots)$, $\phi_1 = ({-}{+}{+}\cdots)$, $\tau = ({+}{-}{-}\cdots)$
+are. Each of the following conditions provides one of them.
+
+\begin{proposition}[Criteria for $\phi_0$]
+  \label{prop:Z}
+  \uses{lem:pat-r, lem:pat-r2s, lem:pat-r2s2}
+  $a$ has $\phi_0$ if one of the following holds.
+  \begin{enumerate}
+    \item[(Z1)] $r \ne \pm\sq$.
+    \item[(Z2)] A prime $p \equiv \pm 3 \pmod 8$ divides $r + 2s$.
+    \item[(Z3)] An odd prime $p$ divides $r^2 + s^2$, and $\Leg{-rs}{p} = \Leg{(r - s)s}{p} = -1$.
+    \item[(Z4)] A prime $p \equiv 1 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = -1$; or $8 \mid r$
+          and $r_2 s \equiv \pm 3 \pmod 8$.
+  \end{enumerate}
+  \formalnote{Proposed: an inductive proposition \lname{NegAllCriterion r s} with one
+  constructor per item, and \lname{hasCharPattern\_neg\_one\_of\_negAllCriterion}.}
+\end{proposition}
+\begin{proof}
+  (Z1) Some prime has $v_p(r)$ odd; $\val_p$ (Lemma~\ref{lem:pat-r}(1)). (Z2) $\chi_p$
+  (Lemma~\ref{lem:pat-r2s}). (Z3) $\chi_p$ (Lemma~\ref{lem:pat-r2s2}). (Z4) $\chi_p$
+  (Lemma~\ref{lem:pat-r}(2), $\Leg{-1}{p} = 1$), resp.\ $\chi_8$ (Lemma~\ref{lem:pat-r}(4)).
+\end{proof}
+
+\begin{proposition}[Criteria for $\phi_1$]
+  \label{prop:O}
+  \uses{lem:pat-sign, lem:pat-dyadic, lem:pat-s, lem:pat-r}
+  $a$ has $\phi_1$ if one of the following holds.
+  \begin{enumerate}
+    \item[(O1)] $a > 0$.
+    \item[(O2)] $a \equiv 1 \bmod 4$, i.e.\ $s$ is odd and $r \equiv s \pmod 4$.
+    \item[(O3)] An odd prime $p$ divides $s$ with $v_p(s)$ odd or $\Leg{-r s_p}{p} = -1$.
+    \item[(O4)] $v_2(s)$ is odd, or $v_2(s) = 2$ and $r s_2 \equiv 1 \pmod 4$, or $v_2(s) \ge 4$ is
+          even and $r s_2 \not\equiv -1 \pmod 8$.
+    \item[(O5)] A prime $p \equiv 3 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = 1$; or $4 \mid r$
+          and $r_2 s \equiv 1 \pmod 4$.
+  \end{enumerate}
+  In particular, $a$ has $\phi_1$ if $s$ is not a square (O3 or O4).
+  \formalnote{Proposed: \lname{NegFirstCriterion r s} and
+  \lname{hasCharPattern\_mulSingle\_one\_of\_negFirstCriterion}.}
+\end{proposition}
+\begin{proof}
+  \uses{lem:sqclass}
+  (O1) the sign (Lemma~\ref{lem:pat-sign}). (O2) Lemma~\ref{lem:pat-dyadic}. (O3) $\val_p$ or
+  $\chi_p$ (Lemma~\ref{lem:pat-s}(1)). (O4) By Lemma~\ref{lem:pat-s}(2) the characters at $2$
+  are trivial on $c_n$, $n \ge 3$, so it suffices to find one with value $-1$ at $c_1$ and $1$ at
+  $c_2$; here $c_1 \sim -rs$, $c_2 \sim r(r+s)$ (Lemma~\ref{lem:sqclass}), $r$ odd. If $v_2(s)$ is
+  odd, $\val_2$ works. If $v_2(s) = 2$, then $r + s \equiv r + 4 \pmod 8$, so
+  $\chi_4(c_2) = \chi_4(r^2) = 1$, and $\chi_4(c_1) = \chi_4(-r s_2) = -1$. If $v_2(s) \ge 4$, then
+  $r(r + s) \equiv 1 \pmod 8$, so every character at $2$ is $1$ at $c_2$, and as $-r s_2$ is a
+  $2$-adic unit $\not\equiv 1 \pmod 8$ one of $\chi_4$, $\chi_8$, $\chi_4\chi_8$ is $-1$ at $c_1$.
+  (O5) $\chi_p$, resp.\ $\chi_4$ (Lemma~\ref{lem:pat-r}(2), (3)).
+\end{proof}
+
+\begin{proposition}[Criteria for $\tau$]
+  \label{prop:T}
+  \uses{lem:pat-sign, lem:pat-r, lem:pat-rs}
+  $a$ has $\tau$ if one of the following holds.
+  \begin{enumerate}
+    \item[(T1)] $-1 < a < 0$.
+    \item[(T2)] A prime $p \equiv 3 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = -1$; or $4 \mid r$
+          and $r_2 s \equiv 3 \pmod 4$.
+    \item[(T3)] A prime $p \equiv 3 \pmod 4$ divides $r + s$ with $\Leg{s (r+s)_p}{p} = 1$; or
+          $4 \mid r + s$ and $s (r+s)_2 \equiv 1 \pmod 4$; or $r + s \ne \pm\sq$ and $r + s$ is
+          divisible by $4$ or by a prime $p \equiv 3 \pmod 4$.
+    \item[(T4)] $a < -1$, $c_3 < 0 < c_4$ (i.e.\ $a_* < a < -1$), and $r + s \ne \pm\sq$.
+  \end{enumerate}
+  \formalnote{Proposed: \lname{NegTailCriterion r s} and
+  \lname{hasCharPattern\_neg\_mulSingle\_one\_of\_negTailCriterion}.}
+\end{proposition}
+\begin{proof}
+  \uses{lem:pat-rs}
+  (T1) the sign (Lemma~\ref{lem:pat-sign}). (T2) $\chi_p$ resp.\ $\chi_4$
+  (Lemma~\ref{lem:pat-r}(2), (3)). (T3) Lemma~\ref{lem:pat-rs}: $\chi$ itself when $y = -1$,
+  and $\chi \val_q$ for a prime $q$ with $v_q(r + s)$ odd otherwise. (T4) $\sgn \cdot \val_q$ with
+  $v_q(r + s)$ odd: $({+}{+}{-}{+}{-}\cdots) \cdot ({+}{-}{+}{-}\cdots) = ({+}{-}{-}{-}\cdots)$
+  (Lemmas~\ref{lem:pat-sign}(3), \ref{lem:pat-rs}(1)).
+\end{proof}
+
+\section{Reflection at every level}
+
+\begin{proposition}[Draft Corollary~2.10]
+  \label{prop:crit-reflection}
+  \uses{lem:reflection, lem:jump, thm:tfae}
+  Suppose that $a$ has $\phi_0$ and $\phi_1$, and that for every $n \ge 2$ the number $v_n$
+  is divisible by a prime $p \equiv 3 \pmod 4$ not dividing $r$, or by $4$ with $r$ odd. Then
+  $\rho_a$ is surjective.
+  \formalnote{Proposed: \lname{forall\_nonempty\_mulEquiv\_of\_forall\_dvd\_vSeq}.}
+\end{proposition}
+\begin{proof}
+  Lemma~\ref{lem:reflection} gives $\phi_n$ for $n \ge 2$; Theorem~\ref{thm:tfae}.
+\end{proof}
+
+A sufficient condition for the hypothesis on $v_n$ is $|v_n| \equiv 3 \pmod 4$ or
+$|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} for $p \nmid r$).
+
+\section{The \texorpdfstring{$2$}{2}-adic condition}
+
+\begin{lemma}[Prime divisors in residue classes]
+  \label{lem:prime3}
+  Let $m > 0$. If $m \equiv 3 \pmod 4$ or $m \equiv 6 \pmod 8$, then a prime $p \equiv 3 \pmod 4$
+  divides $m$. If $m \equiv \pm 3 \pmod 8$, then a prime $p \equiv \pm 3 \pmod 8$ divides $m$.
+  \formalnote{Proposed: \lname{Nat.exists\_prime\_dvd\_of\_mod\_four\_eq\_three},
+  \lname{Nat.exists\_prime\_dvd\_of\_mod\_eight\_eq\_six},
+  \lname{Nat.exists\_prime\_dvd\_of\_mod\_eight\_eq\_three\_or\_five}; the existing
+  \lname{ZMod.not\_isSquare\_neg\_one\_of\_emod\_four\_eq\_three} is a related fact.}
+\end{lemma}
+\begin{proof}
+  The residues $\{1\}$ modulo $4$ and $\{\pm 1\}$ modulo $8$ are closed under multiplication, so
+  a product of primes in them stays in them; for $m \equiv 6 \pmod 8$ apply the first statement to
+  $m/2$.
+\end{proof}
+
+\begin{lemma}[The $2$-adic condition; draft Lemma~4.4]
+  \label{lem:twoadic}
+  \uses{def:calA, lem:reduction, lem:wseq-res, lem:signs, lem:sumsign, lem:prime3}
+  Let $a \in \cA$, $\eps = \eps_a$, and assume one of
+  \begin{enumerate}
+    \item[(C1)] $s$ is odd and $r + 2s \equiv -\eps \pmod 4$;
+    \item[(C2)] $s$ is odd and $r + s \equiv -\eps \pmod 4$;
+    \item[(C3)] $s$ is even and $r \equiv -\eps \pmod 4$.
+  \end{enumerate}
+  Then for every $n \ge 2$ an odd prime $p \equiv 3 \pmod 4$ divides $v_n$, and $p \nmid r$.
+  \formalnote{Proposed: \lname{TwoAdicClass r s ε} for the condition and
+  \lname{exists\_prime\_dvd\_vSeq\_of\_twoAdicClass}.}
+\end{lemma}
+\begin{proof}
+  \emph{Sign.} By Lemma~\ref{lem:reduction}, $c_n + c_{n+1} = r v_n / s^{2^n}$. For $a > 0$, $r > 0$ and
+  $c_n, c_{n+1} > 0$; for $\alpha < a < 0$, $r < 0$ and $c_n + c_{n+1} < 0$
+  (Lemma~\ref{lem:sumsign}); for $a \le -2$, $r < 0$ and $c_n, c_{n+1} > 0$. So $\eps v_n = |v_n| > 0$.
+
+  \emph{Residues.} If $s$ is odd, then $s^{2^{n-1}} \equiv 1 \pmod 8$, so
+  $v_n \equiv w_{n+1} + w_n \pmod 8$, and $w_{m+1} \equiv r w_m^2 + s \pmod 8$
+  (Lemma~\ref{lem:wseq-res}). If moreover $r$ is odd, then $w_{2k} \equiv r + s$ and
+  $w_{2k+1} \equiv s \pmod 4$ for $k \ge 1$, so $v_n \equiv r + 2s \pmod 4$ and
+  $|v_n| \equiv \eps(r + 2s) \equiv 3 \pmod 4$ under (C1). If $r$ is even, then
+  $w_m \equiv r + s \pmod 8$ for $m \ge 2$, so $v_n \equiv 2(r + s) \pmod 8$ and
+  $|v_n| \equiv 6 \pmod 8$ under (C2). If $s$ is even, then $v_n \equiv w_{n+1} \equiv r \pmod 4$ and
+  $|v_n| \equiv 3 \pmod 4$ under (C3). (In (C1) $r$ is necessarily odd, in (C2) even.)
+
+  Lemma~\ref{lem:prime3} gives $p$, and $p \nmid r$ by Lemma~\ref{lem:wseq-res}.
+\end{proof}
+
+\section{The main theorem}
+
+\begin{proposition}[Main theorem, abstract form]
+  \label{prop:main-abstract}
+  \uses{lem:twoadic, prop:crit-reflection}
+  Let $a \in \cA$ satisfy (C1), (C2) or (C3), and suppose that $a$ has $\phi_0$ and $\phi_1$.
+  Then $a$ has $\phi_n$ for all $n \ge 1$, so $\rho_a$ is surjective.
+  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_hasCharPattern}.}
+\end{proposition}
+\begin{proof}
+  Lemma~\ref{lem:twoadic} supplies the primes required by Proposition~\ref{prop:crit-reflection}.
+\end{proof}
+
+\begin{theorem}[Main theorem]
+  \label{thm:main}
+  \uses{prop:main-abstract, prop:Z, prop:O, prop:T, lem:klein}
+  Let $a = r/s \in \QQ$ with $r, s$ coprime and $s \ge 1$, and let either $a \le -2$ and $\eps = -1$,
+  or $a^3 + 2a^2 + 2a + 2 > 0$, $a \ne -1, 0$ and $\eps = 1$. Assume that one of (C1), (C2),
+  (C3) of Lemma~\ref{lem:twoadic} holds, and that at least two of the following hold: one of the
+  conditions (Z1)--(Z4) of Proposition~\ref{prop:Z}; one of the conditions (O1)--(O5) of
+  Proposition~\ref{prop:O}; one of the conditions (T1)--(T4) of Proposition~\ref{prop:T}. Then
+  $\Om_n \cong \Ct{n}$ for all $n$: the arboreal representation $\rho_a$ is surjective.
+  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_criteria}, stated with the
+  definitions \lname{NegAllCriterion}, \lname{NegFirstCriterion}, \lname{NegTailCriterion} and
+  \lname{TwoAdicClass}. The comparator challenge for rational parameters reproduces these four
+  definitions and states the theorem with them.}
+\end{theorem}
+\begin{proof}
+  Propositions~\ref{prop:Z}, \ref{prop:O}, \ref{prop:T} and Lemma~\ref{lem:klein} give $\phi_0$
+  and $\phi_1$; apply Proposition~\ref{prop:main-abstract}.
+\end{proof}
+
+\begin{remark}[Comparison with the draft]
+  \label{rem:draft}
+  Condition (C) is the draft's Lemma~4.4. Its criteria (A-1), (A-2) are (Z1), (Z2); (B-1),
+  $a > -1$, is (O1) together with (T1); (B-2), $s \ne \sq$, is contained in (O3) and (O4); (B-3) is
+  (O2); and (B-4), $-1$ not a square modulo $r$, is (O5) together with (T2). Its condition (A-3),
+  $(r, s) \equiv (1, 2) \pmod 4$, is not among the criteria. Its
+  argument covers $c_2$ only: for even $s$, every $c_n$ with $n \ge 3$ is a square in $\QQ_2$
+  (Lemma~\ref{lem:pat-s}), so no character at $2$ contributes to a $\phi_0$. When (Z1) fails
+  under (A-3), $r$ is a positive square, so $\eps = 1$ and (C3) fails; so (A-3) was never needed.
+  Whether it gives $\phi_0$ is open (no counterexample is known).
+\end{remark}
+
+\begin{remark}[Numerical evidence]
+  In the box $|r| \le 250$, $1 \le s \le 50$, Theorem~\ref{thm:main} covers $7399$ parameters, and
+  none of them has a square product among $c_1, \dots, c_6$. Each item of the three lists was
+  checked to produce the claimed pattern on $c_1, \dots, c_8$ for all $5518$ parameters with
+  $|r| \le 150$, $s \le 30$.
+\end{remark}
+
+\begin{corollary}[Li 2020 for rational parameters]
+  \label{cor:li2020-rat}
+  \uses{prop:main-abstract, prop:O, prop:T, lem:klein, thm:tfae}
+  Let $a \le -2$ with $s \equiv 1 \pmod 4$ and $r \equiv 3 \pmod 4$, and suppose that $a$ has
+  $\phi_0$ (e.g.\ $|r|$ is not a square). Then $\rho_a$ is surjective if and only if $-(a + 1)$
+  is not a square.
+  \formalnote{Proposed: \lname{forall\_nonempty\_mulEquiv\_iff\_of\_le\_neg\_two}.}
+\end{corollary}
+\begin{proof}
+  If $-(a + 1)$ is a square, so is $c_1 c_2 = -a \cdot a(a + 1)$, and $\rho_a$ is not surjective
+  (Theorem~\ref{thm:tfae}). Otherwise: (C1) holds, as $r + 2s \equiv 1 = -\eps \pmod 4$. If $s$ is
+  not a square, (O3) gives $\phi_1$. If $s$ is a square, then $4 \mid r + s = s(a + 1) < 0$ and
+  $-(r + s) = s \cdot (-(a+1))$ is not a square, so (T3) gives $\tau$, and $\phi_1$ follows by
+  Lemma~\ref{lem:klein}. Apply Proposition~\ref{prop:main-abstract}.
+\end{proof}
+
+\section{Odd levels for \texorpdfstring{$a \equiv 1 \bmod 4$}{a = 1 mod 4}}
+
+\begin{corollary}[Odd levels]
+  \label{cor:odd}
+  \uses{lem:period2, lem:pat-dyadic, lem:jump2, lem:reduction, lem:signs, lem:window, lem:prime3}
+  Let $a \equiv 1 \bmod 4$ with $a \le -2$, or $a > -1$, or $a < -1$ and $c_3 < 0 < c_4$. If $a$
+  has $\phi_0$, then $a$ has $\phi_n$ for every odd $n \ge 3$.
+  \formalnote{Proposed: \lname{hasCharPattern\_mulSingle\_of\_odd}.}
+\end{corollary}
+\begin{proof}
+  \uses{lem:pat-rs}
+  Let $n \ge 3$ be odd. In $\ZZ/8\ZZ$, $\bar c_n = 5$ for $\bar a = 1$ and $\bar c_n = 1$ for
+  $\bar a = 5$, and $s^{2^n} \equiv 1$, so $u_n \equiv \bar c_n^2 - \bar c_n + \bar a + 1 \equiv 6
+  \pmod 8$ (Lemma~\ref{lem:reduction}). Also $u_n > 0$: $u_n / s^{2^n} = c_n^2 - c_n + a + 1$, which is
+  positive for $a > 0$ (no real root), for $-1 < a < 0$ (as $c_n < 0$), in the window (as
+  $c_n \le c_3 < -1$, Lemma~\ref{lem:window}), and for $a \le -2$ (as $c_n \ge -a \ge 2$ gives
+  $c_n(c_n - 1) + a + 1 \ge (a + 1)^2$). So a prime $p \equiv 3 \pmod 4$ divides $u_n$
+  (Lemma~\ref{lem:prime3}). It does not divide $r + s$: modulo an odd prime $q \mid r + s$,
+  $\bar a = -1$ and $(\bar c_m) = (1, 0, -1, 0, -1, \dots)$, so
+  $\bar c_n^2 - \bar c_n + \bar a + 1 = 2 \ne 0$. Lemma~\ref{lem:period2}, with the alternating
+  character $\val_2$ (Lemma~\ref{lem:pat-dyadic}) and $\phi_0$, gives $\phi_n$.
+\end{proof}
+
+\begin{remark}[The even levels]
+  \label{rem:even}
+  For $a \le -2$, $a \equiv 1 \bmod 4$ and $s \equiv 1 \pmod 4$ (for $s \equiv 3 \pmod 4$ the
+  main theorem applies), one has $\phi_0$ (when given), $\phi_1$ (O2), $\phi_2$
+  (Remark~\ref{rem:phi2}) and $\phi_n$ for odd $n$, but no argument of this kind reaches the
+  even $n \ge 4$: $|v_n| \equiv 1 \pmod 4$, and $u_n$ is $4$ times an odd number whose part prime
+  to $r + s$ is $\equiv 1 \pmod 4$ (checked for all integers $-1203 \le a \le -3$,
+  $a \equiv 1 \pmod 4$, and $n = 4, 6, 8$, in every class modulo $64$). This is the counterpart of
+  the barrier $n_0 \in \{4, 8, 16, \dots\}$ of the approach via $b_n$. The families of
+  Chapter~\ref{chap:families} get past it because $x^2 + x + a$ or $x^2 - x + a + 1$ splits.
+\end{remark}

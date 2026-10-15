@@ -1,0 +1,194 @@
+\chapter{\texorpdfstring{The sequence $(c_n)$}{The sequence (c_n)}}
+\label{chap:sequence}
+
+\section{Signs}
+
+\begin{lemma}[Signs; draft Lemma~2.5]
+  \label{lem:signs}
+  \uses{def:cseq}
+  \begin{enumerate}
+    \item If $a > 0$, then $c_1 < 0$ and $c_n > 0$ for $n \ge 2$.
+    \item If $-1 < a < 0$, then $c_1 > 0$ and $c_n < 0$ for $n \ge 2$.
+    \item If $a \le -2$, then $c_n \ge -a > 0$ for $n \ge 1$.
+  \end{enumerate}
+  \formalnote{In a linearly ordered commutative ring. Proposed: \lname{cSeq\_pos\_of\_pos},
+  \lname{cSeq\_neg\_of\_neg\_one\_lt}, \lname{neg\_le\_cSeq\_of\_le\_neg\_two}; (2) follows from
+  the existing \lname{le\_cSeq} and \lname{cSeq\_le\_sq\_add}.}
+\end{lemma}
+\begin{proof}
+  (1) $c_{n+1} = c_n^2 + a > 0$. (2) For $-2 \le a \le 0$ the interval $[a, a^2 + a]$ is mapped
+  into itself by $f$, and $c_2 = a^2 + a$; here $a^2 + a < 0$. (3) If $c_n \ge -a$, then
+  $c_{n+1} \ge a^2 + a \ge -a$ since $a(a + 2) \ge 0$.
+\end{proof}
+
+\begin{lemma}[A sign window below $-1$]
+  \label{lem:window}
+  \uses{def:cseq}
+  Let $a < -1$ with $c_3 < 0 < c_4$ (equivalently $a_* < a < -1$, where
+  $a_* \approx -1.3107026$ is the largest root of $c_4 = ((a^2+a)^2+a)^2+a$ below $-1$). Then
+  for all $k \ge 1$: $0 < c_4 \le c_{2k} \le c_2$ and $a \le c_{2k+1} \le c_3 < -1$. So
+  $\sgn(c_\bullet) = ({+}{+}{-}{+}{-}{+}\cdots)$.
+  \formalnote{Proposed: \lname{cSeq\_mem\_Icc\_of\_even} and \lname{cSeq\_mem\_Icc\_of\_odd}, with
+  the hypotheses \lname{a < -1}, \lname{cSeq a 3 < 0}, \lname{0 < cSeq a 4}; no root $a_*$
+  appears in the formal statements.}
+\end{lemma}
+\begin{proof}
+  $c_4 = c_3^2 + a > 0$ gives $c_3^2 > -a > 1$, so $c_3 < -1$; and $c_2 = a(a+1) > 0$. On
+  $B_1 = [a, c_3] \subset (-\infty, 0)$ the map $f$ is decreasing, so $f(B_1) = [c_4, c_2]$, using
+  $f(a) = c_2$; on $B_2 = [c_4, c_2] \subset (0, \infty)$ it is increasing, so
+  $f(B_2) = [c_5, c_3] \subseteq B_1$, as $c_5 \ge a$. Also $c_2 \in B_2$ (as $c_3 \in [a, 0)$
+  gives $c_4 \le a^2 + a$) and $c_3 \in B_1$; induction on $k$.
+\end{proof}
+
+\begin{lemma}[Sums of successive terms; draft Lemma~4.1]
+  \label{lem:sumsign}
+  \uses{def:cseq}
+  \lean{QuadraticIterates.le_cSeq, QuadraticIterates.cSeq_le_sq_add,
+    QuadraticIterates.add_cSeq_two_neg, QuadraticIterates.cSeq_add_cSeq_succ_neg,
+    QuadraticIterates.cSeq_add_cSeq_succ_neg_of_lt, quadratic_le_max_of_nonneg_of_mem_Icc}
+  \leanok
+  Let $\alpha \approx -1.543689$ be the real root of $x^3 + 2x^2 + 2x + 2$. If $\alpha < a < 0$,
+  then $c_n + c_{n+1} < 0$ for all $n \ge 2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  For $-2 \le a \le 0$ the interval $[a, a^2 + a]$ is $f$-invariant and contains $c_n$ for
+  $n \ge 2$. The quadratic $x^2 + x + a = c_{n+1} + c_n$ (at $x = c_n$) is at most the larger of
+  its values at the endpoints, $a(a + 2) < 0$ and $(a^2+a)^2 + (a^2 + a) + a =
+  a(a^3 + 2a^2 + 2a + 2) < 0$.
+\end{proof}
+
+\begin{definition}[The admissible region]
+  \label{def:calA}
+  \uses{lem:sumsign}
+  Let $\cA = \{a \in \QQ : a \le -2\} \cup \{a \in \QQ : a > \alpha,\ a \ne -1, 0\}$, and for
+  $a \in \cA$ let $\eps_a = -1$ if $a \le -2$ and $\eps_a = 1$ if $a > \alpha$.
+  \formalnote{$a > \alpha$ is $a^3 + 2a^2 + 2a + 2 > 0$, the cubic being increasing; no
+  definition is introduced, the theorems take the two cases as hypotheses.}
+\end{definition}
+
+\section{The integer sequence \texorpdfstring{$(w_n)$}{(w_n)}}
+
+From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
+
+\begin{definition}[$w_n$, $v_n$, $u_n$]
+  \label{def:wseq}
+  \uses{def:cseq}
+  Let $w_1 = -1$ and $w_{n+1} = r w_n^2 + s^{2^n - 1}$ for $n \ge 1$, and for $n \ge 1$
+  \[ v_n = w_{n+1} + w_n s^{2^{n-1}}, \qquad
+     u_n = r^2 w_n^2 - r w_n s^{2^{n-1}} + (r + s) s^{2^n - 1}. \]
+  So $w_2 = r + s$, $w_3 = r(r+s)^2 + s^3$, and $w_n$ is a binary form of degree $2^{n-1} - 1$ in
+  $r$, $s$.
+  \formalnote{Proposed: \lname{wSeq r s : ℕ → ℤ} (junk value $w_0 = 0$),
+  \lname{vSeq r s n}, \lname{uSeq r s n}. The earlier route has a \lname{wSeq} with another
+  normalization ($w_1 = 1$, a sign $\varepsilon$); it is renamed until it is removed.}
+\end{definition}
+
+\begin{lemma}[Reduction]
+  \label{lem:reduction}
+  \uses{def:wseq}
+  Let $S$ be a commutative ring and $\sigma \in S$ with $s \sigma = 1$ in $S$, and let
+  $(\bar c_n)$ be the sequence of the parameter $\bar a = r\sigma \in S$. Then for $n \ge 1$
+  \[ r w_n = s^{2^{n-1}} \bar c_n, \qquad r v_n = s^{2^n} (\bar c_n + \bar c_{n+1}), \qquad
+     u_n = s^{2^n} (\bar c_n^2 - \bar c_n + \bar a + 1) \]
+  in $S$. For $S = \QQ$ this is $c_n = r w_n / s^{2^{n-1}}$, $c_n + c_{n+1} = r v_n / s^{2^n}$
+  and $c_n^2 - c_n + a + 1 = u_n / s^{2^n}$; with Lemma~\ref{lem:orbit}(3),
+  $c_n + c_{n+2} = r v_n u_n / s^{2^{n+1}}$, so $v_n u_n$ is the numerator of
+  $(c_n + c_{n+2})/r$.
+  \formalnote{Proposed: \lname{intCast\_mul\_wSeq} (the first identity for any ring $S$ and
+  $\sigma$), \lname{intCast\_mul\_vSeq}, \lname{intCast\_uSeq}, and over $\QQ$
+  \lname{cSeq\_div\_eq} $: c_n = r w_n / s^{2^{n-1}}$. Used with $S = \QQ$ and $S = \ZZ/N\ZZ$ for $N$
+  prime to $s$.}
+\end{lemma}
+\begin{proof}
+  Induction on $n$: $r w_1 = -r = s \cdot (-\bar a)$, and
+  $r w_{n+1} = (r w_n)^2 + r s^{2^n - 1} = s^{2^n}\bar c_n^2 + s^{2^n} \bar a$. The other two
+  identities follow by expanding, using $(r + s)\sigma = \bar a + 1$.
+\end{proof}
+
+\begin{lemma}[Coprimality and residues]
+  \label{lem:wseq-res}
+  \uses{def:wseq}
+  For $n \ge 1$, $w_n$ is prime to $r$ and to $s$, and $v_n$, $u_n$ are prime to $s$. Moreover:
+  \begin{enumerate}
+    \item $w_n \equiv s^{2^{n-1} - 1} \pmod r$ and $w_n \equiv r^{2^{n-1}-1} \pmod s$ for
+          $n \ge 2$; $v_1 = r$, and $v_n \equiv 2 s^{2^n - 1} \pmod r$ for $n \ge 2$, so an odd
+          prime dividing $v_n$, $n \ge 2$, does not divide $r$;
+    \item if $s$ is even, then $w_n$ is odd and $w_n \equiv r \pmod 8$ for $n \ge 3$;
+    \item if $s$ is odd, then $w_{n+1} \equiv r w_n^2 + s \pmod 8$ for $n \ge 1$.
+  \end{enumerate}
+  \formalnote{Proposed: \lname{isCoprime\_wSeq\_left}, \lname{isCoprime\_wSeq\_right},
+  \lname{isCoprime\_vSeq\_right}, \lname{isCoprime\_uSeq\_right}, and the congruences in
+  \lname{ZMod} form (\lname{intCast\_wSeq\_of\_dvd\_left}, \dots).}
+\end{lemma}
+\begin{proof}
+  $w_{n+1} \equiv s^{2^n - 1} \pmod r$ and $w_{n+1} \equiv r w_n^2 \pmod s$ for $n \ge 1$, with
+  $w_1 = -1$; so $v_n \equiv s^{2^n - 1} + s^{2^{n-1} - 1} s^{2^{n-1}} \pmod r$ for $n \ge 2$,
+  $v_n \equiv w_{n+1} \pmod s$, and $u_n \equiv r^2 w_n^2 \pmod s$. For even $s$ and $n \ge 2$, $8 \mid s^{2^n - 1}$, so
+  $w_{n+1} \equiv r w_n^2 \equiv r \pmod 8$, $w_n$ being odd. For odd $s$, $s^2 \equiv 1 \pmod 8$
+  and $2^n - 1$ is odd.
+\end{proof}
+
+\section{Orbits of an even map}
+
+\begin{lemma}[Fixed points and two-cycles]
+  \label{lem:orbit}
+  \uses{def:cseq}
+  Let $(\bar c_n)$ be the sequence of a parameter $\bar a$ in a commutative ring, and $n \ge 1$.
+  \begin{enumerate}
+    \item If $\bar c_{n+1} = -\bar c_n$, then $\bar c_m = \bar c_{n+1}$ for all $m > n$.
+    \item If $\bar c_{n+2} = -\bar c_n$, then $\bar c_{n+2k+1} = \bar c_{n+1}$ for $k \ge 0$ and
+          $\bar c_{n+2k} = -\bar c_n$ for $k \ge 1$.
+    \item $\bar c_n + \bar c_{n+2} = (\bar c_n + \bar c_{n+1})(\bar c_n^2 - \bar c_n + \bar a + 1)$.
+  \end{enumerate}
+  \formalnote{Proposed: \lname{cSeq\_eq\_of\_add\_succ\_eq\_zero},
+  \lname{cSeq\_add\_two\_mul\_eq\_of\_add\_two\_eq\_neg}, \lname{cSeq\_add\_cSeq\_add\_two};
+  (1) and (2) are evenness of $f$: $f(-x) = f(x)$; (2) also follows from the existing
+  \lname{gammaSeq\_eq\_ite\_even\_of\_add\_two\_eq} at $n_0 = n + 1$.}
+\end{lemma}
+\begin{proof}
+  (1) $\bar c_{n+2} = f(-\bar c_n) = f(\bar c_n) = \bar c_{n+1}$, so $\bar c_{n+1}$ is a fixed
+  point. (2) $\bar c_{n+3} = f(-\bar c_n) = \bar c_{n+1}$, so the sequence is $2$-periodic from
+  $n+1$ on. (3) is the identity $f(f(x)) + x = (x^2 + x + a)(x^2 - x + a + 1)$ at $x = \bar c_n$.
+\end{proof}
+
+\begin{lemma}[Two-periodicity modulo $(r + s)^2$]
+  \label{lem:strongcong}
+  \uses{lem:reduction, lem:orbit}
+  Let $r + s \ne 0$. For $k \ge 1$: $w_{2k} = (r + s)\, T_k$ with
+  $T_k \equiv s^{2^{2k-1} - 2} \pmod{r + s}$, and $w_{2k+1} \equiv s^{2^{2k} - 1} \pmod{r + s}$.
+  \formalnote{Proposed: \lname{wSeq\_two\_mul\_eq} (with the quotient as an existential or via
+  \lname{Int.ediv}) and \lname{intCast\_wSeq\_two\_mul\_add\_one}.}
+\end{lemma}
+\begin{proof}
+  \uses{lem:reduction}
+  Work in $S = \ZZ/(r+s)^2\ZZ$, where $s$ is a unit, and put $t = \bar a + 1 = (r + s)\sigma$, so
+  $t^2 = 0$. Then $\bar c_1 = 1 - t$, $\bar c_2 = -t$, $\bar c_3 = t - 1$, $\bar c_4 = -t$, and by
+  induction $\bar c_{2k} = -t$, $\bar c_{2k+1} = t - 1$ for $k \ge 1$. By
+  Lemma~\ref{lem:reduction}, $r w_{2k} = -s^{2^{2k-1}} t = -s^{2^{2k-1} - 1}(r + s)$ in $S$; since
+  $-s \equiv r \pmod{r + s}$, this is $r s^{2^{2k-1} - 2}(r + s)$, and $r$ is a unit in $S$. For
+  odd indices, reduce modulo $r + s$ only: $r w_{2k+1} \equiv -s^{2^{2k}}$ and $r \equiv -s$.
+\end{proof}
+
+\section{Evaluating characters on \texorpdfstring{$c_n$}{c_n}}
+
+\begin{lemma}[Square classes of the terms]
+  \label{lem:sqclass}
+  \uses{lem:reduction, def:qchar}
+  For every quadratic character $\chi$: $\chi(c_1) = \chi(-rs)$ and $\chi(c_n) = \chi(r w_n)$ for
+  $n \ge 2$. In particular $\chi(c_2) = \chi(r(r+s))$.
+  \formalnote{Proposed: \lname{mulChar\_cSeq\_one}, \lname{mulChar\_cSeq\_of\_two\_le}; the
+  denominator $s^{2^{n-1}}$ is a square for $n \ge 2$, and $c_1 = -rs/s^2$.}
+\end{lemma}
+
+\begin{lemma}[Local evaluation]
+  \label{lem:localeval}
+  \uses{lem:reduction, def:chars}
+  Let $p$ be a prime not dividing $s$, $N$ a power of $p$, $\psi$ a character modulo $N$ as in
+  Definition~\ref{def:chars}, and $(\bar c_n)$ the sequence of $\bar a = r s^{-1}$ in $\ZZ/N\ZZ$.
+  If $n \ge 1$ and $\bar c_n$ is a unit, then $\chi_\psi(c_n) = \psi(\bar c_n)$.
+  \formalnote{Proposed: \lname{unitPartChar\_cSeq}. The proof: $c_n = r w_n / s^{2^{n-1}}$ with
+  $p \nmid r w_n$ (as $\bar c_n$ is a unit, Lemma~\ref{lem:reduction}), so
+  $\chi_\psi(c_n) = \psi(r w_n)\,\psi(s)^{2^{n-1}} = \psi(s^{2^{n-1}} \bar c_n)\,\psi(s)^{2^{n-1}}
+  = \psi(\bar c_n)$.}
+\end{lemma}
