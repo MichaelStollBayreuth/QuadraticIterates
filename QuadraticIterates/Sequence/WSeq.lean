@@ -36,7 +36,8 @@ this turns congruences for `w_n` into computations with `c̄`.
 * `QuadraticIterates.isCoprime_wSeq_left`, `QuadraticIterates.isCoprime_wSeq_right`: for coprime
   `r, s`, `w_n` is prime to `r` and to `s`; `v_n` and `u_n` are prime to `s`.
 * `QuadraticIterates.wSeq_modEq_left`, `QuadraticIterates.wSeq_modEq_right`,
-  `QuadraticIterates.vSeq_modEq_left`: residues modulo `r` and `s`; residues modulo `8`.
+  `QuadraticIterates.vSeq_modEq_left`: residues modulo `r` and `s`; residues modulo `8`
+  (`QuadraticIterates.intCast_mul_wSeq_zmod_eight`: `r w_n ≡ c̄_n (mod 8)` for odd `s`).
 -/
 
 @[expose] public section
@@ -123,6 +124,25 @@ theorem cSeq_div_eq (hs : s ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
   have hs' : (s : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hs
   rw [intCast_mul_wSeq r (mul_inv_cancel₀ hs') hn, div_eq_mul_inv]
   field
+
+variable {r} in
+/-- If `v_n` vanishes in a ring where `s` has an inverse `σ`, then `c̄_n + c̄_{n+1} = 0` for the
+sequence `c̄` of the parameter `r σ`. -/
+theorem cSeq_add_cSeq_succ_eq_zero_of_vSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n)
+    (hv : (vSeq r s n : S) = 0) : cSeq ((r : S) * σ) n + cSeq ((r : S) * σ) (n + 1) = 0 := by
+  have h := intCast_mul_vSeq r hσ hn
+  rw [hv, mul_zero, eq_comm] at h
+  exact ((IsUnit.of_mul_eq_one σ hσ).pow _).mul_right_eq_zero.mp h
+
+variable {r} in
+/-- If `u_n` vanishes in a ring where `s` has an inverse `σ`, then `c̄_n² - c̄_n + a + 1 = 0` for
+the sequence `c̄` of the parameter `a = r σ`. -/
+theorem cSeq_sq_sub_cSeq_add_eq_zero_of_uSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n)
+    (hu : (uSeq r s n : S) = 0) :
+    cSeq ((r : S) * σ) n ^ 2 - cSeq ((r : S) * σ) n + r * σ + 1 = 0 := by
+  have h := intCast_uSeq r hσ hn
+  rw [hu, eq_comm] at h
+  exact ((IsUnit.of_mul_eq_one σ hσ).pow _).mul_right_eq_zero.mp h
 
 end Reduction
 
@@ -229,6 +249,17 @@ theorem intCast_wSeq_succ_zmod_eight_of_odd (hs : Odd s) {n : ℕ} (hn : 1 ≤ n
   rw [wSeq_succ r s hn]
   push_cast
   rw [ZMod.intCast_pow_two_pow_sub_one_eight_of_odd hs hn]
+
+variable (r) in
+/-- For odd `s` and `n ≥ 2`, `r w_n ≡ c̄_n (mod 8)`, where `c̄` is the sequence of `r s` in
+`ZMod 8`: `s` is its own inverse modulo `8`, and `s^{2^{n-1}} ≡ 1`. -/
+theorem intCast_mul_wSeq_zmod_eight (hs : Odd s) {n : ℕ} (hn : 2 ≤ n) :
+    ((r * wSeq r s n : ℤ) : ZMod 8) = cSeq ((r : ZMod 8) * s) n := by
+  have hσ : (s : ZMod 8) * s = 1 := by rw [← sq]; exact ZMod.intCast_sq_eight_eq_one_of_odd hs
+  have he : (s : ZMod 8) ^ 2 ^ (n - 1) = 1 := by
+    rw [show 2 ^ (n - 1) = 2 * 2 ^ (n - 2) by rw [← pow_succ']; congr 1; lia, pow_mul,
+      ZMod.intCast_sq_eight_eq_one_of_odd hs, one_pow]
+  rw [Int.cast_mul, intCast_mul_wSeq r hσ (by lia), he, one_mul]
 
 end Dyadic
 

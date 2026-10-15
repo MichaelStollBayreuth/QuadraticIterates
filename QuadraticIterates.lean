@@ -51,7 +51,9 @@ public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 public import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 public import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
+public import QuadraticIterates.Patterns.Dyadic
 public import QuadraticIterates.Patterns.Primes
+public import QuadraticIterates.Patterns.Reflection
 public import QuadraticIterates.Patterns.Sign
 public import QuadraticIterates.Rational
 public import QuadraticIterates.Rational.GammaTwo

@@ -124,6 +124,31 @@ theorem cSeq_two_mul_of_sq_eq_neg_one (ha : a ^ 2 = -1) {j : ℕ} (hj : 1 ≤ j)
 
 end Orbit
 
+section ZModEight
+
+variable {a : ZMod 8} (ha : a = 1 ∨ a = 5)
+include ha
+
+private lemma cSeq_four_eq_two_zmod_eight : cSeq a (2 + 2) = cSeq a 2 := by
+  rw [cSeq_succ a (by norm_num), cSeq_succ a (by norm_num), cSeq_two]
+  rcases ha with rfl | rfl <;> decide
+
+/-- For `a ≡ 1 mod 4` in `ZMod 8`, the even terms are `a + 1`:
+`(c_n) = (-a, a + 1, a + 4, a + 1, …)`. -/
+theorem cSeq_two_mul_zmod_eight {j : ℕ} (hj : 1 ≤ j) : cSeq a (2 * j) = a + 1 := by
+  induction j, hj using Nat.le_induction with
+  | base => rw [mul_one, cSeq_two]; rcases ha with rfl | rfl <;> decide
+  | succ j hj ih =>
+    rw [mul_add, mul_one, cSeq_add_eq_of_add_eq (by norm_num) (cSeq_four_eq_two_zmod_eight ha)
+      (by lia : 2 ≤ 2 * j), ih]
+
+/-- For `a ≡ 1 mod 4` in `ZMod 8`, the odd terms from `n = 3` on are `a + 4`. -/
+theorem cSeq_two_mul_add_one_zmod_eight {j : ℕ} (hj : 1 ≤ j) : cSeq a (2 * j + 1) = a + 4 := by
+  rw [cSeq_succ a (by lia), cSeq_two_mul_zmod_eight ha hj]
+  rcases ha with rfl | rfl <;> decide
+
+end ZModEight
+
 section StrongCong
 
 variable {r s : ℤ}
