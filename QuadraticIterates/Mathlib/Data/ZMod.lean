@@ -7,12 +7,15 @@ module
 
 public import Mathlib.Algebra.Group.Even
 public import Mathlib.Algebra.Module.Defs
+public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.RingTheory.Coprime.Basic
 
 import Mathlib.Algebra.Ring.Int.Parity
+import Mathlib.Data.Nat.Prime.Int
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.Units
+import Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
 
 /-!
@@ -65,6 +68,13 @@ lemma ZMod.intCast_pow_two_pow_sub_one_eight_of_odd {x : ℤ} (hx : Odd x) {k : 
     (x : ZMod 8) ^ (2 ^ k - 1) = x := by
   rw [Nat.two_pow_sub_one_eq hk, pow_succ, pow_mul, intCast_sq_eight_eq_one_of_odd hx, one_pow,
     one_mul]
+
+/-- Modulo a power `N` of a prime `p`, an integer prime to `p` is a unit. -/
+lemma ZMod.isUnit_intCast_of_not_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) {m : ℤ}
+    (hm : ¬(p : ℤ) ∣ m) : IsUnit (m : ZMod N) := by
+  refine (ZMod.coe_int_isUnit_iff_isCoprime m N).mpr ?_
+  rw [hN, Nat.cast_pow]
+  exact ((Nat.prime_iff_prime_int.mp Fact.out).coprime_iff_not_dvd.mpr hm).pow_left
 
 /-! ### `ZMod 2`-modules -/
 

@@ -23,7 +23,7 @@ their classes in the `𝔽₂`-vector space `Lˣ/(Lˣ)²` are linearly independe
 
 ## Main statements
 
-* `QuadraticIterates.twoIndependent_iff_linearIndependent`: for a finite family in a field,
+* `QuadraticIterates.twoIndependent_iff_linearIndependent`: for a family in a field,
   2-independence is linear independence of the square classes.
 * `QuadraticIterates.twoIndependent_snoc_iff`: when a family extended by one member is
   2-independent.
@@ -96,10 +96,8 @@ theorem twoIndependent_intCast_iff (f : ι → ℤ) :
   forall_congr' fun _ ↦ imp_congr_right fun _ ↦
     not_congr (by rw [← Int.cast_prod, Rat.isSquare_intCast_iff])
 
-/-- A family in a field `L` is 2-independent iff the family of its classes in `Lˣ/(Lˣ)²` is
-`𝔽₂`-linearly independent. -/
-theorem twoIndependent_iff_linearIndependent [Finite ι] {L : Type*} [Field L] [DecidableEq L]
-    (v : ι → L) :
+private theorem twoIndependent_iff_linearIndependent_of_finite [Finite ι] {L : Type*} [Field L]
+    [DecidableEq L] (v : ι → L) :
     TwoIndependent v ↔ LinearIndependent (ZMod 2) fun i ↦ sqClass (v i) := by
   have := Fintype.ofFinite ι
   refine ⟨fun h ↦ (rootRelations_eq_bot_iff v).mp ((Submodule.eq_bot_iff _).mpr fun ε hε ↦ ?_),
@@ -115,6 +113,19 @@ theorem twoIndependent_iff_linearIndependent [Finite ι] {L : Type*} [Field L] [
     obtain ⟨i, hiS⟩ := hS
     have h0 := (Submodule.mem_bot (ZMod 2)).mp (((rootRelations_eq_bot_iff v).mpr H).le hmem)
     simpa [hiS] using congrFun h0 i
+
+/-- A family is 2-independent iff all its finite subfamilies are. -/
+theorem twoIndependent_iff_forall_finset [CommMonoid M] {v : ι → M} :
+    TwoIndependent v ↔ ∀ s : Finset ι, TwoIndependent fun i : s ↦ v i := by
+  refine ⟨fun h s ↦ h.comp _ Subtype.val_injective, fun h S hS ↦ ?_⟩
+  simpa [Finset.prod_attach] using h S Finset.univ (by simpa using hS)
+
+/-- A family in a field `L` is 2-independent iff the family of its classes in `Lˣ/(Lˣ)²` is
+`𝔽₂`-linearly independent. -/
+theorem twoIndependent_iff_linearIndependent {L : Type*} [Field L] [DecidableEq L] (v : ι → L) :
+    TwoIndependent v ↔ LinearIndependent (ZMod 2) fun i ↦ sqClass (v i) := by
+  rw [twoIndependent_iff_forall_finset, linearIndependent_iff_finset_linearIndependent]
+  exact congr(∀ s, $(twoIndependent_iff_linearIndependent_of_finite _))
 
 /-- Square roots of a 2-independent family of radicands `r : ι → L` generate an extension of the
 full degree `2^|ι|`: there are no relations in `finrank_adjoin_range_eq_two_pow_sub`. -/

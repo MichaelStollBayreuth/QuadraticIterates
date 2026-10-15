@@ -5,6 +5,10 @@
 
 \begin{definition}[Quadratic characters]
   \label{def:qchar}
+  \lean{MulChar.apply_eq_one_or_eq_neg_one, MulChar.isQuadratic_int,
+    MulChar.apply_ne_neg_one_of_isSquare, MulChar.apply_inv, MulChar.apply_div, MulChar.apply_sq,
+    MulChar.apply_mul_sq, MulChar.apply_div_sq}
+  \leanok
   A \emph{quadratic character} of $\QQ$ is a homomorphism $\chi \colon \QQ^\times \to \{\pm 1\}$,
   extended to $\QQ$ by $\chi(0) = 0$. Equivalently, a multiplicative map $\chi \colon \QQ \to \ZZ$
   with $\chi(1) = 1$ and $\chi(0) = 0$; its values on $\QQ^\times$ are units of $\ZZ$, i.e.\
@@ -13,16 +17,22 @@
   $\chi(1/x) = \chi(x)$.
   \formalnote{Mathlib's \lname{MulChar ℚ ℤ}, a \lname{CommGroup}; it corresponds to
   \lname{ℚˣ →* ℤˣ} by \lname{MulChar.equivToUnitHom}, i.e.\ to the characters of
-  $\QQ^\times/\QQ^{\times 2}$. Proposed general lemmas, for a character $\chi$ of a commutative
-  group with zero $M$ with values in $\ZZ$: \lname{MulChar.apply\_eq\_one\_or\_eq\_neg\_one}
-  ($x \ne 0$), \lname{MulChar.apply\_mul\_sq}, \lname{MulChar.apply\_div\_sq},
-  \lname{MulChar.apply\_ne\_neg\_one\_of\_isSquare}. The last one is the whole reason a character
-  detects non-squares: $\chi(y^2) = \chi(y)^2 \ge 0$ in $\ZZ$.}
+  $\QQ^\times/\QQ^{\times 2}$. The general lemmas are stated for a character with values in $\ZZ$
+  of a commutative monoid (\lname{MulChar.apply\_eq\_one\_or\_eq\_neg\_one} at units, so every
+  such character is quadratic) or of a commutative group with zero (\lname{MulChar.apply\_inv},
+  \lname{MulChar.apply\_div}, \lname{MulChar.apply\_mul\_sq}, \lname{MulChar.apply\_div\_sq}).
+  \lname{MulChar.apply\_ne\_neg\_one\_of\_isSquare}, for values in an ordered ring, is the whole
+  reason a character detects non-squares: $\chi(y^2) = \chi(y)^2 \ge 0$.}
 \end{definition}
 
 \begin{definition}[The characters used]
   \label{def:chars}
   \uses{def:qchar}
+  \lean{Rat.mulCharOfInt, Rat.mulCharOfInt_apply, Rat.mulCharOfInt_intCast,
+    Rat.map_num_mul_map_den_mul, Rat.signChar, Rat.signChar_apply, Rat.signChar_apply_of_pos,
+    Rat.signChar_apply_of_neg, Rat.valChar, Rat.valChar_intCast, Rat.unitPartChar,
+    Rat.unitPartChar_intCast, Rat.unitPartChar_natCast_self, ZMod.isUnit_intCast_of_not_dvd}
+  \leanok
   For $x \in \QQ^\times$ and a prime $p$ let $x_p = p^{-v_p(x)} x$ be the prime-to-$p$ part.
   \begin{enumerate}
     \item $\sgn(x)$, the sign.
@@ -39,14 +49,15 @@
   more generally $\chi_\psi(m/k) = \psi(m)\psi(k)$ for integers $m$, $k$ prime to $p$.
   We call $\val_p$, $\chi_p$ (resp.\ $\val_2$, $\chi_4$, $\chi_8$) and their products the
   \emph{characters at $p$}; they are the characters of $\QQ_p^\times/\QQ_p^{\times 2}$.
-  \formalnote{Proposed: \lname{signChar}, \lname{valChar p}, and one construction
-  \lname{unitPartChar p ψ} for $\psi$ a \lname{MulChar (ZMod N) ℤ} with $N$ a power of~$p$,
-  defined through the numerator and denominator of the prime-to-$p$ part; then
-  $\chi_p$, $\chi_4$, $\chi_8$ are \lname{unitPartChar} of \lname{quadraticChar (ZMod p)},
-  \lname{ZMod.χ₄}, \lname{ZMod.χ₈}. Value lemmas: \lname{valChar\_apply},
-  \lname{unitPartChar\_intCast} ($p \nmid m$), \lname{unitPartChar\_natCast\_self}
-  ($\chi_\psi(p) = 1$), \lname{unitPartChar\_div}. The characters are general, and can live in a
-  mirror file (proposed: \lname{QuadraticIterates/Mathlib/NumberTheory/MulChar/Rat.lean}).}
+  \formalnote{In the mirror file \lname{QuadraticIterates/Mathlib/NumberTheory/MulChar/Rat.lean}.
+  All three are extensions $x \mapsto f(\mathrm{num}\,x) f(\mathrm{den}\,x)$ of multiplicative
+  functions $f$ on $\ZZ$ that are $\pm 1$ at nonzero integers (\lname{Rat.mulCharOfInt}):
+  \lname{Rat.signChar}, \lname{Rat.valChar p} and \lname{Rat.unitPartChar p ψ}, the last one
+  defined for any \lname{ψ : MulChar (ZMod N) ℤ}, through $\psi(\operatorname{sign}(m) \cdot
+  |m|/p^{v_p(m)})$, with value lemmas for $N = p^k$: \lname{Rat.unitPartChar\_intCast}
+  ($p \nmid m$) and \lname{Rat.unitPartChar\_natCast\_self} ($\chi_\psi(p) = 1$). The value at
+  $m/k$ follows from \lname{MulChar.apply\_div}. $\chi_p$, $\chi_4$, $\chi_8$ are
+  \lname{Rat.unitPartChar} of \lname{quadraticChar (ZMod p)}, \lname{ZMod.χ₄} and \lname{ZMod.χ₈}.}
 \end{definition}
 
 \section{Patterns}
@@ -54,18 +65,21 @@
 \begin{definition}[Patterns]
   \label{def:pattern}
   \uses{def:qchar}
+  \lean{QuadraticIterates.HasCharPattern, QuadraticIterates.HasCharPattern.mul,
+    QuadraticIterates.HasCharPattern.mono, QuadraticIterates.HasCharPattern.congr}
+  \leanok
   Let $(v_m)_{m \ge 1}$ be a sequence of rational numbers, $n \ge 1$ and
   $\varepsilon \colon \ZZ_{\ge n} \to \{\pm 1\}$. The \emph{pattern $\varepsilon$ is realized
   from $n$} if some quadratic character $\chi$ satisfies $\chi(v_m) = \varepsilon_m$ for all
   $m \ge n$. Patterns realized from $n$ are closed under pointwise products (multiply the
-  characters), contain the constant pattern $1$ (the trivial character), and a pattern realized
+  characters), contain the constant pattern $1$ if all $v_m$ are nonzero (the trivial
+  character), and a pattern realized
   from $n$ is realized from every $n' \ge n$. We write patterns as strings of signs:
   $\chi(v_\bullet) = ({+}{-}{-}\cdots)$.
-  \formalnote{Proposed: \lname{HasCharPattern (v : ℕ → ℚ) (n : ℕ) (ε : ℕ → ℤ) : Prop :=
-  ∃ χ : MulChar ℚ ℤ, ∀ m ≥ n, χ (v m) = ε m}, with \lname{HasCharPattern.mul},
-  \lname{HasCharPattern.mono}, \lname{hasCharPattern\_one} and \lname{HasCharPattern.congr}
-  (patterns agreeing from $n$ on). Values of $\varepsilon$ before $n$ are irrelevant. The
-  definition makes sense for a sequence in any commutative monoid.}
+  \formalnote{\lname{HasCharPattern (v : ℕ → M) (n : ℕ) (ε : ℕ → ℤ) : Prop :=
+  ∃ χ : MulChar M ℤ, ∀ m ≥ n, χ (v m) = ε m}, for a sequence in a commutative monoid $M$, with
+  \lname{HasCharPattern.congr} for patterns agreeing from $n$ on. Values of $\varepsilon$ before
+  $n$ are irrelevant. The constant pattern $1$ is not needed.}
 \end{definition}
 
 \begin{definition}[$\phi_n$, $\phi_0$ and $\tau$]
@@ -91,14 +105,18 @@
 \begin{proposition}[The criterion with characters; draft Proposition~2.3]
   \label{prop:crit}
   \uses{def:pattern, def:twoindep}
+  \lean{QuadraticIterates.twoIndependent_of_forall_hasCharPattern,
+    QuadraticIterates.forall_nonempty_mulEquiv_of_forall_hasCharPattern}
+  \leanok
   Let $(v_m)_{m \ge 1}$ be a sequence of rational numbers such that for every $n \ge 1$ the pattern
   $-1$ at $n$, $+1$ after $n$ is realized from $n$. Then $(v_m)_{m \ge 1}$ is $2$-independent.
   In particular, if $a$ has $\phi_n$ for every $n \ge 1$, then $(c_n)_{n \ge 1}$ is
   $2$-independent and $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{twoIndependent\_of\_forall\_hasCharPattern}, for a sequence in
-  any commutative monoid, with conclusion \lname{TwoIndependent (fun m : ℕ ↦ v (m + 1))}.}
+  \formalnote{For a sequence in any commutative monoid, with conclusion
+  \lname{TwoIndependent (fun m : ℕ ↦ v (m + 1))}.}
 \end{proposition}
 \begin{proof}
+  \leanok
   \uses{thm:criterion-infinite}
   Let $S \subseteq \ZZ_{\ge 1}$ be finite and nonempty, $n = \min S$, and $\phi_n$ as in the
   hypothesis. Then $\phi_n(\prod_{k \in S} v_k) = \phi_n(v_n) \prod_{k \in S, k > n}
@@ -109,16 +127,19 @@
 \begin{lemma}[Characters from linear forms]
   \label{lem:dual}
   \uses{def:qchar, def:twoindep}
+  \lean{QuadraticIterates.mulCharOfDual, QuadraticIterates.mulCharOfDual_apply}
+  \leanok
   Let $f \colon \QQ^\times/\QQ^{\times 2} \to \FF_2$ be $\FF_2$-linear. Then
   $x \mapsto (-1)^{f([x])}$ on $\QQ^\times$, $0 \mapsto 0$, is a quadratic character.
   If $V$ is a subspace of $\QQ^\times/\QQ^{\times 2}$ and $[x] \notin V$, there is such an $f$
   with $f([x]) = 1$ and $f(V) = 0$.
   \formalnote{For any field $K$ in place of $\QQ$, with \lname{SquareClasses K} and
-  \lname{sqClass}. Proposed: \lname{mulCharOfDual (f : Module.Dual (ZMod 2) (SquareClasses K))
-  : MulChar K ℤ} with \lname{mulCharOfDual\_apply}; the separation is Mathlib's
+  \lname{sqClass}: \lname{mulCharOfDual (f : Module.Dual (ZMod 2) (SquareClasses K)) :
+  MulChar K ℤ}; the separation is Mathlib's
   \lname{Submodule.exists\_dual\_map\_eq\_bot\_of\_notMem} (every module over a field is free).}
 \end{lemma}
 \begin{proof}
+  \leanok
   The map is the composition of the class map, $f$, and the isomorphism
   $\FF_2 \cong \{\pm 1\}$; vector spaces over a field have enough linear forms to separate a
   vector from a subspace.
@@ -127,12 +148,17 @@
 \begin{proposition}[The converse]
   \label{prop:crit-converse}
   \uses{lem:dual}
+  \lean{QuadraticIterates.hasCharPattern_of_twoIndependent}
+  \leanok
   If $(v_m)_{m \ge 1}$ is $2$-independent, then for every $n \ge 1$ the pattern $-1$ at $n$,
   $+1$ after $n$ is realized from $n$.
-  \formalnote{Proposed: \lname{hasCharPattern\_of\_twoIndependent}, for a sequence in a field.}
+  \formalnote{For a sequence in a field. The classes of $v_1, v_2, \dots$ are linearly
+  independent (\lname{twoIndependent\_iff\_linearIndependent} holds for families indexed by any
+  type), and \lname{LinearIndependent.notMem\_span\_image} gives $[v_n] \notin V$.}
 \end{proposition}
 \begin{proof}
-  \uses{lem:dual}
+  \leanok
+  \uses{lem:dual, def:twoindep}
   All $v_m$ are nonzero. If $[v_n]$ lay in the span of the $[v_m]$, $m > n$, then $v_n$ times a
   finite product of later terms would be a square, contradicting $2$-independence. So
   Lemma~\ref{lem:dual} gives $f$ with $f([v_n]) = 1$ and $f([v_m]) = 0$ for $m > n$, and the
@@ -148,9 +174,11 @@
     \item $(c_n)_{n \ge 1}$ is $2$-independent;
     \item $a$ has $\phi_n$ for every $n \ge 1$.
   \end{enumerate}
-  \formalnote{Proposed: \lname{tfae\_forall\_nonempty\_mulEquiv (a : ℚ) : List.TFAE [...]}.}
+  \lean{QuadraticIterates.tfae_forall_nonempty_mulEquiv}
+  \leanok
 \end{theorem}
 \begin{proof}
+  \leanok
   \uses{thm:criterion-infinite, prop:crit, prop:crit-converse}
   (1)$\iff$(2) is Theorem~\ref{thm:criterion-infinite}, (3)$\Rightarrow$(2) is
   Proposition~\ref{prop:crit}, (2)$\Rightarrow$(3) is Proposition~\ref{prop:crit-converse}.
@@ -163,13 +191,18 @@ The lemmas of this section produce $\phi_n$ from simpler patterns by multiplying
 \begin{lemma}[Two of three]
   \label{lem:klein}
   \uses{def:phin}
+  \lean{QuadraticIterates.hasCharPattern_neg_mulSingle_of_neg_of_mulSingle,
+    QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_neg_mulSingle,
+    QuadraticIterates.hasCharPattern_neg_of_mulSingle_of_neg_mulSingle}
+  \leanok
   If $a$ has two of $\phi_0$, $\phi_1$, $\tau$, it has the third.
   \formalnote{The patterns $({-}{-}{-}\cdots)$, $({-}{+}{+}\cdots)$, $({+}{-}{-}\cdots)$ are the
   non-trivial elements of a Klein four-group under pointwise multiplication; three one-line
-  consequences of \lname{HasCharPattern.mul} (proposed:
-  \lname{hasCharPattern\_neg\_mulSingle\_of\_neg\_of\_mulSingle} and its two siblings).}
+  consequences of \lname{HasCharPattern.mul}, stated for \lname{Pi.mulSingle k (-1)} with any
+  $k$ and from any $n$.}
 \end{lemma}
 \begin{proof}
+  \leanok
   The product of the patterns of any two of $\phi_0$, $\phi_1$, $\tau$ is the pattern of the
   third.
 \end{proof}
@@ -177,26 +210,33 @@ The lemmas of this section produce $\phi_n$ from simpler patterns by multiplying
 \begin{lemma}[A jump after $n$; draft Lemma~2.6]
   \label{lem:jump}
   \uses{def:phin}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt}
+  \leanok
   Let $n \ge 1$. If $a$ has $\phi_0$ and some character $\psi$ satisfies $\psi(c_n) \ne 0$ and
   $\psi(c_m) = -\psi(c_n)$ for all $m > n$, then $a$ has $\phi_n$.
-  \formalnote{Proposed: \lname{hasCharPattern\_mulSingle\_of\_neg\_of\_forall\_lt}.}
 \end{lemma}
 \begin{proof}
+  \leanok
   Take $\phi_n = \psi$ if $\psi(c_n) = -1$ and $\phi_n = \phi_0 \psi$ if $\psi(c_n) = 1$.
 \end{proof}
 
 \begin{lemma}[A period-two jump]
   \label{lem:jump2}
   \uses{def:phin}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_alternating}
+  \leanok
   Let $n \ge 1$. Assume that $a$ has $\phi_0$, that some character $\psi$ satisfies
-  $\psi(c_m) \ne 0$ and $\psi(c_{m+1}) = -\psi(c_m)$ for all $m \ge n$, and that some character
+  $\psi(c_n) \ne 0$ and $\psi(c_{m+1}) = -\psi(c_m)$ for all $m \ge n$, and that some character
   $\chi$ has the pattern $(x, y, -x, y, -x, y, \dots)$ from $n$, i.e.\ $\chi(c_n) = x$,
   $\chi(c_{n+2k}) = -x$ for $k \ge 1$ and $\chi(c_{n+2k+1}) = y$ for $k \ge 0$, with
   $x, y \in \{\pm 1\}$. Then $a$ has $\phi_n$.
-  \formalnote{Proposed: \lname{hasCharPattern\_mulSingle\_of\_neg\_of\_alternating}.}
+  \formalnote{The pattern of $\chi$ is stated as $\chi(c_{n+2}) = -\chi(c_n) \ne 0$,
+  $\chi(c_{n+1}) \ne 0$, and $\chi(c_{m+2}) = \chi(c_m)$ for $m > n$.}
 \end{lemma}
 \begin{proof}
-  On $\ZZ_{\ge n}$, the characters $1$, $\phi_0$, $\psi$, $\phi_0 \psi$ realize the four
-  sign patterns of period two. Multiplying $\chi$ by the one with pattern $(-x, y, -x, y, \dots)$
-  gives $(-1, 1, 1, 1, \dots)$.
+  \leanok
+  \uses{lem:jump}
+  If $y = -x$, then $\chi$ is $x$ at $c_n$ and $-x$ at all later terms. If $y = x$, then with
+  $s = \psi(c_n)$ the character $\chi\psi$ has the pattern $(xs, -xs, -xs, \dots)$ from $n$.
+  In both cases Lemma~\ref{lem:jump} applies.
 \end{proof}

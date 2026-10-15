@@ -5,6 +5,8 @@ public import QuadraticIterates.ArchMath1992.Irreducibility
 public import QuadraticIterates.ArchMath1992.Iterates
 public import QuadraticIterates.ArchMath1992.Main
 public import QuadraticIterates.ArchMath1992.Sequences
+public import QuadraticIterates.Characters.Criterion
+public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.EvenPoly
 public import QuadraticIterates.Galois.Criterion
 public import QuadraticIterates.Galois.DegreeCriterion
@@ -41,6 +43,8 @@ public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
 public import QuadraticIterates.Mathlib.NumberTheory.Moebius
+public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
+public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 public import QuadraticIterates.Mathlib.RingTheory.Localization.Away.Basic
 public import QuadraticIterates.Mathlib.RingTheory.Localization.Basic
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
