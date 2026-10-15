@@ -137,7 +137,8 @@ automation:
         Initial autonomous formalization of the paper; the resulting code compiled but did not
         meet Mathlib quality standards. It was fully replaced (see next entry).
     - method: "agent"
-      models: ["claude-opus-4.8", "claude-fable-5", "claude-opus-5", "claude-fable-5.1"]
+      models: ["claude-opus-4.8", "claude-fable-5", "claude-opus-5", "claude-fable-5.1",
+        "claude-opus-5.5"]
       framework: "Claude Code"
       tool_setup: >
         Interactive agent sessions directed by the author, with project-specific style and
@@ -181,6 +182,9 @@ automation:
         paper files: five lenses (hypotheses, general content, placement and naming, proof
         structure, style and documentation) run by parallel sub-agents, applied in four themed
         rounds, each verified by the chain and, where a challenge name changed, by the comparator.
+        The update to Lean and Mathlib v4.35.0 (2026-10-15) was done with claude-opus-5.5: the
+        build fixes, the switch of the comparator check to Lake's built-in `lake comparator`,
+        and a simplification pass toward the new versions, each step gated by the verification chain.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
