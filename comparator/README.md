@@ -7,15 +7,18 @@ the **theorems of Li** extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5`,
 2021 in its strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, for `a = -(4k+2)(4k+3)` rather than
 Li's `a = -(8k+2)(8k+3)`) and the **main theorem for rational parameters**
 (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`, with its `2`-adic classes and three lists of
-criteria reproduced as definitions), independently of the repository's own build and using only
-the permitted axioms.
+criteria reproduced as definitions) with its two corollaries — **level two decides** outside the
+interval `α < a ≤ a_*` (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`) and shorter
+lists of criteria on the interval `α < a < -1` (`nonempty_mulEquiv_of_lt_neg_one_of_criteria`) —
+independently of the repository's own build and using only the permitted axioms.
 
 ## What is checked
 
 - [`Challenge.lean`](Challenge.lean) imports **only Mathlib**. It reproduces from the library the
   non-Mathlib definitions the statements mention — `iteratedPoly`, `GaloisGroup`, `WreathPower`,
-  and for the main theorem `NegAllCriterion`, `NegFirstCriterion`, `NegTailCriterion` and
-  `TwoAdicClass`, under their library names in the `QuadraticIterates` namespace — and states the
+  for the main theorem `NegAllCriterion`, `NegFirstCriterion`, `NegTailCriterion` and
+  `TwoAdicClass`, and for the second corollary `NegFirstCriterion'` and `NegTailCriterion'`, under
+  their library names in the `QuadraticIterates` namespace — and states the
   results with `sorry` proofs. Because it depends on nothing in this repository, it is a
   self-contained specification of the claims.
 - [`Solution.lean`](Solution.lean) imports `QuadraticIterates` and proves each statement via the
@@ -36,10 +39,11 @@ Mathlib's `Polynomial.Gal`, so reproducing the three definitions pulls in only M
 
 ## Config
 
-[`challenges.json`](challenges.json) — the seven challenge theorems: the three cases of the
+[`challenges.json`](challenges.json) — the nine challenge theorems: the three cases of the
 Section 3 main result (`a > 0`, `a ≡ 1 mod 4`; `a > 0`, `a ≡ 2 mod 4`; `a < 0`, `a ≡ 0 mod 4`,
 `-a` not a square), Li's Theorems 3.9 (2021) and 3.5 (2020), Theorem 3.3 (2021) strengthened to
-`a = -(4k+2)(4k+3)`, and the main theorem for rational parameters `a = r/s`.
+`a = -(4k+2)(4k+3)`, the main theorem for rational parameters `a = r/s`, and its two corollaries,
+where the 2-independence of `c₁ = -a` and `c₂ = a² + a` is spelled out as three non-squares.
 
 ## Running
 

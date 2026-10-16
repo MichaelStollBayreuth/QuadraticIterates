@@ -10,13 +10,18 @@ Self-contained restatements, with `sorry` proofs, of the main results for verifi
 Section 3 main result (`section3_main`), one challenge per case, the theorems of Li extending it
 (`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its strengthened form
 `nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in `QuadraticIterates/Main/Integers`),
-and the main theorem for rational parameters `a = r/s`
-(`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`).
+the main theorem for rational parameters `a = r/s`
+(`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`), and its two
+corollaries: level two decides outside the interval `(α, a_*]`
+(`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass` in
+`QuadraticIterates/Main/LevelTwo`), and shorter lists of criteria on the interval `α < a < -1`
+(`nonempty_mulEquiv_of_lt_neg_one_of_criteria` in `QuadraticIterates/Main/Interval`).
 
 This file imports **only Mathlib**: the non-Mathlib definitions the statements refer to
 (`QuadraticIterates.iteratedPoly`, `.GaloisGroup`, `.WreathPower`, and for the main theorem the
 criteria `.NegAllCriterion`, `.NegFirstCriterion`, `.NegTailCriterion` and the `2`-adic classes
-`.TwoAdicClass`) are reproduced here from the library — under their library names, and with the
+`.TwoAdicClass`, and for the second corollary `.NegFirstCriterion'` and `.NegTailCriterion'`) are
+reproduced here from the library — under their library names, and with the
 library's local notation `fℚ[a, n]` spelled out — so the challenge does not depend on the repository
 being formalized. The Galois group is defined for a rational parameter, as in the library; the
 integer parameters of the challenges are cast to `ℚ`. Comparator compares the full definition
@@ -108,6 +113,29 @@ inductive NegTailCriterion (r s : ℤ) : Prop
 def TwoAdicClass (r s ε : ℤ) : Prop :=
   (Odd s ∧ r + 2 * s ≡ -ε [ZMOD 4]) ∨ (Odd s ∧ r + s ≡ -ε [ZMOD 4]) ∨ (Even s ∧ r ≡ -ε [ZMOD 4])
 
+/-- Criteria for `φ₁` (the pattern `(-1, 1, 1, …)`) for `a = r/s` with `α < a < -1`. -/
+inductive NegFirstCriterion' (r s : ℤ) : Prop
+  /-- `a ≡ 1 mod 4`: `s` is odd and `r ≡ s (mod 4)`. -/
+  | modEq_four (hs : Odd s) (h : r ≡ s [ZMOD 4])
+  /-- `s` is not a square. -/
+  | not_isSquare_right (h : ¬IsSquare s)
+  /-- `-r` is not a square modulo an odd prime `p ∣ s`. -/
+  | dvd_right (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (hdvd : (p : ℤ) ∣ s)
+      (h : jacobiSym (-r) p = -1)
+  /-- `16 ∣ s` and `r ≡ 3 (mod 8)`. -/
+  | dvd_right_sixteen (h : 16 ∣ s) (hr : r % 8 = 3)
+  /-- (O5) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
+  | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
+      (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = 1)
+
+/-- Criteria for `τ` (the pattern `(1, -1, -1, …)`) for `a = r/s` with `α < a < -1`. -/
+inductive NegTailCriterion' (r s : ℤ) : Prop
+  /-- (T2) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = -1`. -/
+  | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
+      (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = -1)
+  /-- A prime `p ≡ 3 (mod 4)` divides `r + s`. -/
+  | dvd_add (p : ℕ) (hp : p.Prime) (hp4 : p % 4 = 3) (hdvd : (p : ℤ) ∣ r + s)
+
 end QuadraticIterates
 
 open QuadraticIterates
@@ -162,5 +190,36 @@ theorem challenge_nonempty_mulEquiv_of_twoAdicClass_of_criteria (r s : ℤ) (hrs
     (hc : TwoAdicClass r s ε)
     (h : NegAllCriterion r s ∧ NegFirstCriterion r s ∨ NegAllCriterion r s ∧ NegTailCriterion r s ∨
       NegFirstCriterion r s ∧ NegTailCriterion r s) (n : ℕ) :
+    Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
+  sorry
+
+/-- **Level two decides** (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`): let
+`a = r/s` with `r, s` coprime and `s > 0`, and either `a ≤ -2` and `ε = -1`, or `a > -1` or
+`a < -1` with `c₃ < 0 < c₄` (here `r w₃ = (r² + rs)² + rs³` and `r w₄ = (r w₃)² + rs⁷`) and
+`ε = 1`. If `(r, s, ε)` lies in one of the `2`-adic classes `TwoAdicClass r s ε`, then `Ω_n ≅ [C₂]ⁿ`
+for all `n` if and only if `c₁ = -a` and `c₂ = a² + a` are 2-independent: none of `c₁`, `c₂`,
+`c₁ c₂` is a square. -/
+theorem challenge_forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass (r s : ℤ)
+    (hrs : IsCoprime r s) (hs : 0 < s) (ε : ℤ)
+    (hε : r ≤ -2 * s ∧ ε = -1 ∨ (-s < r ∨ r < -s ∧ (r ^ 2 + r * s) ^ 2 + r * s ^ 3 < 0 ∧
+      0 < ((r ^ 2 + r * s) ^ 2 + r * s ^ 3) ^ 2 + r * s ^ 7) ∧ ε = 1)
+    (hc : TwoAdicClass r s ε) :
+    (∀ n, Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n)) ↔
+      ¬IsSquare (-(r / s : ℚ)) ∧ ¬IsSquare ((r / s : ℚ) ^ 2 + r / s) ∧
+        ¬IsSquare (-(r / s : ℚ) * ((r / s : ℚ) ^ 2 + r / s)) :=
+  sorry
+
+/-- **The interval** `α < a < -1` (`nonempty_mulEquiv_of_lt_neg_one_of_criteria`): let `a = r/s`
+with `r, s` coprime, `s > 0`, `a < -1` and `a³ + 2a² + 2a + 2 > 0`, in one of the `2`-adic classes
+`TwoAdicClass r s 1`, and let `c₁ = -a` and `c₂ = a² + a` be 2-independent. If two of the lists of
+criteria `NegAllCriterion r s`, `NegFirstCriterion' r s`, `NegTailCriterion' r s` apply, then
+`Ω_n ≅ [C₂]ⁿ` for all `n`. -/
+theorem challenge_nonempty_mulEquiv_of_lt_neg_one_of_criteria (r s : ℤ) (hrs : IsCoprime r s)
+    (hs : 0 < s) (hr : r < -s) (hα : 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3)
+    (hc : TwoAdicClass r s 1)
+    (h2 : ¬IsSquare (-(r / s : ℚ)) ∧ ¬IsSquare ((r / s : ℚ) ^ 2 + r / s) ∧
+      ¬IsSquare (-(r / s : ℚ) * ((r / s : ℚ) ^ 2 + r / s)))
+    (h : NegAllCriterion r s ∧ NegFirstCriterion' r s ∨ NegAllCriterion r s ∧
+      NegTailCriterion' r s ∨ NegFirstCriterion' r s ∧ NegTailCriterion' r s) (n : ℕ) :
     Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
   sorry
