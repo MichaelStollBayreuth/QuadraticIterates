@@ -5,7 +5,7 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.Group.Nat.Defs
+import Mathlib.Algebra.Group.Nat.Defs
 
 /-!
 # The exponents `2^n - 1`

@@ -7,7 +7,6 @@ module
 
 public import QuadraticIterates.Mathlib.FieldTheory.Multiquadratic
 
-import Mathlib.Data.Finset.Fin
 import QuadraticIterates.Mathlib.Data.Fintype.Basic
 
 /-!

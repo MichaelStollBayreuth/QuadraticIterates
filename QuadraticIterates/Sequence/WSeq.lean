@@ -5,12 +5,8 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.ZMod.Defs
-public import Mathlib.RingTheory.Coprime.Basic
 public import QuadraticIterates.Galois.Iterates
 
-import Mathlib.Tactic.Field
 import QuadraticIterates.Mathlib.Data.ZMod
 
 /-!

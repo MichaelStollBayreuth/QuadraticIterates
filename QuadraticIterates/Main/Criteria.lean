@@ -10,7 +10,6 @@ public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 
-import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
@@ -20,7 +19,6 @@ import QuadraticIterates.Patterns.Primes
 import QuadraticIterates.Patterns.Sign
 import QuadraticIterates.Sequence.Signs
 import QuadraticIterates.Sequence.SquareClasses
-import QuadraticIterates.Sequence.WSeq
 
 /-!
 # Three lists of criteria

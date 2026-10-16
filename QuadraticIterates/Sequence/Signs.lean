@@ -5,7 +5,6 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.Order.Ring.Defs
 public import QuadraticIterates.Galois.Iterates
 
 import QuadraticIterates.Mathlib.Algebra.QuadraticDiscriminant

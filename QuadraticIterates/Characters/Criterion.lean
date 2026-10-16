@@ -10,8 +10,6 @@ public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Galois.TwoIndependent
 
 import Mathlib.Algebra.Field.ZMod
-import Mathlib.Algebra.Module.Projective
-import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.LinearAlgebra.Dual.Lemmas
 import QuadraticIterates.Galois.Criterion
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic

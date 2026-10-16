@@ -13,7 +13,6 @@ import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Patterns.Dyadic
 import QuadraticIterates.Sequence.Orbit
-import QuadraticIterates.Sequence.WSeq
 
 /-!
 # Two families

@@ -5,7 +5,6 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.FieldTheory.Relrank
 public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Galois.TwoIndependent
 

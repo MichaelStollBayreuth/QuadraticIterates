@@ -5,7 +5,6 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.GCDMonoid.Basic
 public import Mathlib.Algebra.Polynomial.Expand
 
 import Mathlib.Tactic.LinearCombination

@@ -5,17 +5,16 @@ Authors: Michael Stoll
 -/
 module
 
-public import QuadraticIterates.Characters.Pattern
-public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 public import Mathlib.NumberTheory.LegendreSymbol.ZModChar
+public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.Galois.Iterates
+public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 import QuadraticIterates.Patterns.Primes
 import QuadraticIterates.Sequence.Orbit
 import QuadraticIterates.Sequence.SquareClasses
-import QuadraticIterates.Sequence.WSeq
 
 /-!
 # The dyadic patterns for `a ≡ 1 mod 4`

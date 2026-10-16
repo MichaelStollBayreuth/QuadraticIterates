@@ -8,7 +8,6 @@ module
 public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.FieldTheory.Relrank
-public import Mathlib.LinearAlgebra.Pi
 
 import Mathlib.Data.FunLike.Fintype
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas

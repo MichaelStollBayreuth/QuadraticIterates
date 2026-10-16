@@ -6,7 +6,6 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.Characters.Pattern
-public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 public import QuadraticIterates.Sequence.WSeq
 
 import QuadraticIterates.Mathlib.Data.ZMod

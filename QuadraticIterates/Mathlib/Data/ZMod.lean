@@ -5,16 +5,12 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.Group.Even
 public import Mathlib.Algebra.Module.Defs
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.RingTheory.Coprime.Basic
 
-import Mathlib.Algebra.Ring.Int.Parity
-import Mathlib.Data.Nat.Prime.Int
-import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.Units
 import Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs

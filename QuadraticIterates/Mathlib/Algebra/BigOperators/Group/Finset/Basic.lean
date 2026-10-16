@@ -7,9 +7,6 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
-import Mathlib.Data.Int.Cast.Lemmas
-import Mathlib.Tactic.ToAdditive
-
 /-!
 # Products over a filtered finset, indexed by the finset as a type
 

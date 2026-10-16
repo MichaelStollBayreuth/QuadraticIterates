@@ -7,8 +7,6 @@ module
 
 public import QuadraticIterates.Sequence.WSeq
 
-import Mathlib.Data.Nat.Prime.Int
-import Mathlib.Tactic.Field
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Patterns.Dyadic

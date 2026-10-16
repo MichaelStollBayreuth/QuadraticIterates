@@ -6,7 +6,8 @@ Authors: Michael Stoll
 module
 
 public import Mathlib.Data.Nat.Prime.Defs
-public import Mathlib.RingTheory.Multiplicity
+
+import Mathlib.RingTheory.Multiplicity
 
 /-!
 # The `p`-part of an integer divisible by `p`

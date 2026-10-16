@@ -5,12 +5,9 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Data.Nat.Factorization.Defs
-public import Mathlib.Data.ZMod.Defs
 public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
-import Mathlib.Data.Rat.Lemmas
 import QuadraticIterates.Mathlib.Data.ZMod
 
 /-!

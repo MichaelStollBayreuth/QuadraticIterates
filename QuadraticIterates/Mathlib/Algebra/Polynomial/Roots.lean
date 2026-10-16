@@ -7,8 +7,6 @@ module
 
 public import Mathlib.Algebra.Polynomial.Roots
 
-import Mathlib.Tactic.ToAdditive
-
 /-!
 # Root-set lemmas
 

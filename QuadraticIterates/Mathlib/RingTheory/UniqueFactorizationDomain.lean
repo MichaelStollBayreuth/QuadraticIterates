@@ -5,7 +5,6 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.RingTheory.UniqueFactorizationDomain.Finsupp
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
 
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
