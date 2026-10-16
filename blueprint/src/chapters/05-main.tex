@@ -328,6 +328,39 @@ lists of criteria collapse to a single condition.
   $c_1, c_2$ are $2$-independent.
 \end{remark}
 
+\begin{remark}[Square products among $c_1, \dots, c_{10}$]
+  \label{rem:square-products}
+  As polynomials in $a$, $c_1 = -b_1$ and $c_n = \prod_{d \mid n} b_d$ for $n \ge 2$, where
+  $b_1 = a$, $b_2 = a + 1$, $b_3 = a^3 + 2a^2 + a + 1$, $b_4 = a^6 + 3a^5 + 3a^4 + 3a^3 + 2a^2 + 1$,
+  and in general the roots of $b_d$ are the $a$ for which $0$ is periodic of exact period $d$. For
+  $d \le 10$ the $b_d$ are irreducible, of degrees $1, 1, 3, 6, 15, 27, 63, 120, 252, 495$. For a
+  nonempty $S \subseteq \{1, \dots, 10\}$ let $D$ be the set of $d$ that divide an odd number of
+  elements of $S$, and $\eps_S = -1$ if $1 \in S$, $\eps_S = 1$ otherwise. For $a \ne -1, 0$, the
+  product $\prod_{n \in S} c_n$ is a square if and only if $\eps_S \prod_{d \in D} b_d(a)$ is, so
+  these $a$ are the abscissae of the rational points on $y^2 = \eps_S \prod_{d \in D} b_d(a)$. As
+  $\max D = \max S$, this curve has genus $0$ exactly for $S \subseteq \{1, 2\}$, and genus $1$
+  exactly for $S = \{3\}$, $\{1, 3\}$, $\{2, 3\}$. A search with \texttt{ratpoints}
+  \cite{ratpoints}, its degree bound raised to $1024$, for the points with $a = r/s$,
+  $\max(|r|, s) \le 10^5$, on the $1020$ curves of positive genus finds some with
+  $a \notin \{-2, -1, 0\}$ in three cases only. The nonempty lists are:
+  \begin{itemize}
+    \item $S = \{1\}$: $a = -t^2$; $S = \{2\}$: $a = 1/(t^2 - 1)$; $S = \{1, 2\}$: $a = -1 - t^2$,
+          with $t \in \QQ$;
+    \item $S = \{1, 3\}$, $y^2 = -b_3(a)$, the elliptic curve 368d1 of rank $1$: $a = -17/4$,
+          $-586/81$, $-81185/44944$;
+    \item $S = \{2, 3\}$, $y^2 = (a + 1)\,b_3(a)$, the elliptic curve 92b1 of rank $1$: $a = 3$,
+          $-2/3$, $-4/5$, $6/19$, $-20/11$, $-55/56$, $-38/159$, $-616/255$, $-1007/223$,
+          $-2856/5665$, $-23638/26239$, $26265/23464$;
+    \item $S = \{2, 4\}$, $y^2 = b_4(a)$, of genus $2$, whose Jacobian has rank $3$ (by
+          $2$-descent), so that Chabauty's method does not apply: $a = 2/3$, $-6/7$.
+  \end{itemize}
+  For $S = \{3\}$, $y^2 = a\,b_3(a)$ is the elliptic curve 92a1 of rank $0$, and $c_3$ is a square
+  only for $a = 0$. So for $a \notin \{-2, -1, 0\}$ with $\max(|r|, s) \le 10^5$, the numbers
+  $c_1, \dots, c_{10}$ are $2$-dependent if and only if one of $-a$, $a(a + 1)$, $-(a + 1)$ is a
+  square or $a$ is one of the $17$ values listed; for all other such $a$,
+  $\Om_{10} \cong \Ct{10}$ (Theorem~\ref{thm:criterion}).
+\end{remark}
+
 \section{\texorpdfstring{The interval $(\alpha, -1)$}{The interval (alpha, -1)}}
 
 \begin{corollary}[The interval]
@@ -384,6 +417,23 @@ lists of criteria collapse to a single condition.
   $s \le 3000$. Unlike outside the interval, the criteria are not sharp here: for $s \le 2500$,
   $127$ parameters in the classes $(2,1)$, $(0,3)$, $(3,0)$ fail them although
   $c_1, \dots, c_6$ are $2$-independent, for instance $a = -634/441$, $-225/164$ and $-1296/887$.
+\end{remark}
+
+\begin{remark}[Density]
+  \label{rem:density}
+  Order the parameters $a = r/s$ by the height $\max(|r|, s)$. Asymptotically, the coprime pairs
+  $(r, s)$ are equidistributed among the $12$ residue classes modulo $4$ in which $r$ or $s$ is
+  odd, those with $|r|$ or $s$ a square have density zero, and $a$ is distributed with density
+  $\frac14$ on $[-1, 1]$ and $\frac{1}{4a^2}$ outside it. Theorem~\ref{thm:main} applies whenever
+  $a \in \cA$ lies in one of the six classes (C1)--(C3) for $\eps_a$ and neither $|r|$ nor $s$ is a
+  square: then (Z1) holds, and (O3) or (O4). So it covers the proportion $\frac12$ of the
+  parameters in every interval contained in $\cA$, in $(\alpha, a_*]$ just as outside it (the
+  interval differs only on the density-zero set where the criteria are not sharp), and none in
+  $(-2, \alpha]$, which carries the proportion $\frac{1}{4|\alpha|} - \frac18 \approx 0.0370$.
+  Altogether the main theorem covers the proportion $\frac{9}{16} - \frac{1}{8|\alpha|} \approx
+  0.4815$ of all $a \in \QQ$; the families of Chapter~\ref{chap:families}, with $s$ a square, have
+  density zero. Numerically, for $\max(|r|, s) \le 400$ the two proportions are $0.0369$ and
+  $0.4796$.
 \end{remark}
 
 \section{Odd levels for \texorpdfstring{$a \equiv 1 \bmod 4$}{a = 1 mod 4}}
