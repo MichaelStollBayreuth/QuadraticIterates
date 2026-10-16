@@ -66,7 +66,7 @@ private lemma emod_eight_eq {x : ℤ} {y : ℕ} (h : (x : ZMod 8) = y) (hy : y <
 variable {r s : ℤ}
 
 /-- For odd `s` and `r ≡ s (mod 4)`, the parameter `r s` modulo `8` is `1` or `5`. -/
-private lemma intCast_mul_zmod_eight (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) :
+lemma intCast_mul_zmod_eight_of_modEq_four (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) :
     (r : ZMod 8) * s = 1 ∨ (r : ZMod 8) * s = 5 := by
   obtain ⟨t, ht⟩ := h4.symm.dvd
   have hr : (r : ZMod 8) = s + 4 * t := by
@@ -107,10 +107,10 @@ theorem unitPartChar_two_χ₄_cSeq_two_mul_add_one_of_modEq_four (hs : Odd s)
     unitPartChar 2 ZMod.χ₄ (cSeq ((r : ℚ) / s) (2 * j + 1)) = 1 := by
   have hs0 : s ≠ 0 := by rintro rfl; simp at hs
   have h := intCast_mul_wSeq_zmod_eight r hs (n := 2 * j + 1) (by lia)
-  rw [cSeq_two_mul_add_one_zmod_eight (intCast_mul_zmod_eight hs h4) hj] at h
+  rw [cSeq_two_mul_add_one_zmod_eight (intCast_mul_zmod_eight_of_modEq_four hs h4) hj] at h
   rw [mulChar_cSeq_of_two_le _ hs0 (by lia), ← Int.cast_mul]
   refine unitPartChar_two_χ₄_of_emod_four_eq_one ?_
-  rcases intCast_mul_zmod_eight hs h4 with ha | ha
+  rcases intCast_mul_zmod_eight_of_modEq_four hs h4 with ha | ha
   · rw [ha, show (1 : ZMod 8) + 4 = ((5 : ℕ) : ZMod 8) by decide] at h
     have := emod_eight_eq h (by norm_num)
     lia
@@ -125,9 +125,9 @@ theorem unitPartChar_two_χ₄_cSeq_two_mul_of_modEq_four (hs : Odd s) (h4 : r �
     unitPartChar 2 ZMod.χ₄ (cSeq ((r : ℚ) / s) (2 * j)) = ZMod.χ₈ ((r : ZMod 8) * s) := by
   have hs0 : s ≠ 0 := by rintro rfl; simp at hs
   have h := intCast_mul_wSeq_zmod_eight r hs (n := 2 * j) (by lia)
-  rw [cSeq_two_mul_zmod_eight (intCast_mul_zmod_eight hs h4) hj] at h
+  rw [cSeq_two_mul_zmod_eight (intCast_mul_zmod_eight_of_modEq_four hs h4) hj] at h
   rw [mulChar_cSeq_of_two_le _ hs0 (by lia), ← Int.cast_mul]
-  rcases intCast_mul_zmod_eight hs h4 with ha | ha
+  rcases intCast_mul_zmod_eight_of_modEq_four hs h4 with ha | ha
   · rw [ha, show (1 : ZMod 8) + 1 = ((2 : ℕ) : ZMod 8) by decide] at h
     rw [ha, unitPartChar_two_χ₄_of_emod_eight_eq_two (emod_eight_eq h (by norm_num))]
     decide
@@ -183,7 +183,7 @@ theorem hasCharPattern_mulSingle_one_of_modEq_four (hrs : IsCoprime r s) (hs : O
   have hodd (j : ℕ) := valChar_cSeq_two_mul_add_one_of_dvd_add hrs hs0 h2 j
   have heven (j : ℕ) (hj : 1 ≤ j) := (valChar_cSeq_two_mul_of_dvd_add hrs hs0 h2 hj).trans
     (valChar_two_add_of_modEq_four hs h4)
-  rcases intCast_mul_zmod_eight hs h4 with ha | ha
+  rcases intCast_mul_zmod_eight_of_modEq_four hs h4 with ha | ha
   · refine hasCharPattern_mulSingle_one_of_parity _
       (unitPartChar_two_χ₄_cSeq_one_of_modEq_four hs h4)
       (fun j hj ↦ unitPartChar_two_χ₄_cSeq_two_mul_add_one_of_modEq_four hs h4 hj) fun j hj ↦ ?_

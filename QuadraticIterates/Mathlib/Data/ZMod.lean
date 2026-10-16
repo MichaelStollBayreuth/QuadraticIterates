@@ -64,6 +64,11 @@ lemma ZMod.intCast_pow_eight_eq_zero_of_even {x : ℤ} (hx : Even x) {m : ℕ} (
   push_cast
   rw [mul_pow, show (2 : ZMod 8) ^ 3 = 0 by decide, zero_mul, zero_mul]
 
+/-- For odd `x`, `x^(2^k) = 1` in `ZMod 8` (`k ≥ 1`). -/
+lemma ZMod.intCast_pow_two_pow_eight_of_odd {x : ℤ} (hx : Odd x) {k : ℕ} (hk : 1 ≤ k) :
+    (x : ZMod 8) ^ 2 ^ k = 1 := by
+  rw [← Nat.sub_add_cancel hk, pow_succ, pow_mul', intCast_sq_eight_eq_one_of_odd hx, one_pow]
+
 /-- For odd `x`, `x^(2^k - 1) = x` in `ZMod 8` (`k ≥ 1`): the exponent is odd and `x² = 1`. -/
 lemma ZMod.intCast_pow_two_pow_sub_one_eight_of_odd {x : ℤ} (hx : Odd x) {k : ℕ} (hk : 1 ≤ k) :
     (x : ZMod 8) ^ (2 ^ k - 1) = x := by

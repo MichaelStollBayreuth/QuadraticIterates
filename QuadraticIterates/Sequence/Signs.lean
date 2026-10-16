@@ -148,6 +148,30 @@ theorem cSeq_mem_Icc_of_odd (ha : a < -1) (h₃ : cSeq a 3 < 0) (h₄ : 0 < cSeq
   obtain ⟨k, rfl⟩ := ho
   exact (cSeq_mem_Icc_and_mem_Icc ha h₃ h₄ (by lia)).2
 
+/-- For `a ≤ -2`, `c_n² - c_n + a + 1 ≥ (a + 1)² > 0` (`n ≥ 1`), as `c_n ≥ -a ≥ 2`. -/
+theorem cSeq_sq_sub_cSeq_add_pos_of_le_neg_two (ha : a ≤ -2) {n : ℕ} (hn : 1 ≤ n) :
+    0 < cSeq a n ^ 2 - cSeq a n + a + 1 := by
+  have h := neg_le_cSeq_of_le_neg_two ha hn
+  linear_combination mul_nonneg (by linarith : 0 ≤ cSeq a n + a)
+    (by linarith : 0 ≤ cSeq a n - a - 1) + pow_pos (by linarith : 0 < -(a + 1)) 2
+
+/-- For `a > -1`, `c_n² - c_n + a + 1 > 0` (`n ≥ 2`): for `a ≥ 0` as `x² - x + 1 > 0`, and for
+`a < 0` as `c_n < 0`. -/
+theorem cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt (ha : -1 < a) {n : ℕ} (hn : 2 ≤ n) :
+    0 < cSeq a n ^ 2 - cSeq a n + a + 1 := by
+  rcases le_or_gt 0 a with h | h
+  · nlinarith [sq_nonneg (cSeq a n), sq_nonneg (cSeq a n - 1)]
+  · nlinarith [cSeq_neg_of_neg_one_lt ha h hn, sq_nonneg (cSeq a n)]
+
+/-- In the window `a < -1`, `c_3 < 0 < c_4`, `c_n² - c_n + a + 1 > 0` for odd `n ≥ 3`: there
+`c_n ≤ c_3 < -1`, and `a > -2`. -/
+theorem cSeq_sq_sub_cSeq_add_pos_of_odd (ha : a < -1) (h₃ : cSeq a 3 < 0) (h₄ : 0 < cSeq a 4)
+    {n : ℕ} (hn : 3 ≤ n) (ho : Odd n) : 0 < cSeq a n ^ 2 - cSeq a n + a + 1 := by
+  have hc := (cSeq_mem_Icc_of_odd ha h₃ h₄ hn ho).2.trans_lt (cSeq_three_lt_neg_one ha h₃ h₄)
+  have ha₂ : -2 < a := lt_of_not_ge fun h ↦
+    h₃.not_ge ((neg_nonneg.mpr (by linarith)).trans (neg_le_cSeq_of_le_neg_two h (by norm_num)))
+  nlinarith
+
 end
 
 end QuadraticIterates

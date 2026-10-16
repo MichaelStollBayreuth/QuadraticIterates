@@ -64,6 +64,13 @@ theorem congr (h : HasCharPattern v n ε) (he : ∀ m ≥ n, ε m = ε' m) : Has
   let ⟨χ, hχ⟩ := h
   ⟨χ, fun m hm ↦ (hχ m hm).trans (he m hm)⟩
 
+/-- A sequence has no zero term where a realized pattern is nonzero. -/
+theorem ne_zero {M₀ : Type*} [CommMonoidWithZero M₀] [Nontrivial M₀] {u : ℕ → M₀}
+    (h : HasCharPattern u n ε) {m : ℕ} (hm : n ≤ m) (hε : ε m ≠ 0) :
+    u m ≠ 0 := fun hu ↦ hε <| by
+  obtain ⟨χ, hχ⟩ := h
+  rw [← hχ m hm, hu, MulChar.map_zero]
+
 end HasCharPattern
 
 /-! ### Two of three -/

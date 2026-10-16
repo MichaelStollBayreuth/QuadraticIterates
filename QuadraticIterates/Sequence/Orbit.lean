@@ -212,6 +212,21 @@ theorem mul_wSeq_two_mul_add_one_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 �
   refine (hr.mul (wSeq_two_mul_add_one_modEq hrs hk)).trans ?_
   rw [mul_assoc, ← pow_succ', he, pow_mul]
 
+/-- Modulo `r + s`, `u_{2k+1} ≡ 2 s^{2^{2k+1}}` (`k ≥ 1`): there `a ≡ -1` and
+`r w_{2k+1} ≡ -s^{2^{2k}}`. -/
+theorem uSeq_two_mul_add_one_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
+    uSeq r s (2 * k + 1) ≡ 2 * s ^ 2 ^ (2 * k + 1) [ZMOD r + s] := by
+  have hX := mul_wSeq_two_mul_add_one_modEq hrs hk
+  rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel (by lia)] at hX
+  have h0 : (r + s) * s ^ (2 ^ (2 * k + 1) - 1) ≡ 0 [ZMOD r + s] :=
+    Int.modEq_zero_iff_dvd.mpr (dvd_mul_right _ _)
+  calc uSeq r s (2 * k + 1)
+      = (r * wSeq r s (2 * k + 1)) ^ 2 - r * wSeq r s (2 * k + 1) * s ^ 2 ^ (2 * k) +
+          (r + s) * s ^ (2 ^ (2 * k + 1) - 1) := by rw [uSeq, Nat.add_sub_cancel]; ring
+    _ ≡ (-1 * s ^ 2 ^ (2 * k)) ^ 2 - -1 * s ^ 2 ^ (2 * k) * s ^ 2 ^ (2 * k) + 0 [ZMOD r + s] :=
+      ((hX.pow 2).sub (hX.mul_right _)).add h0
+    _ = 2 * s ^ 2 ^ (2 * k + 1) := by rw [pow_succ 2 (2 * k), pow_mul]; ring
+
 /-- `w_{2k} = (r + s) T` with `T ≡ s^{2^{2k-1} - 2} (mod r + s)`, for `k ≥ 1`. -/
 theorem exists_wSeq_two_mul_eq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
     ∃ T, wSeq r s (2 * k) = (r + s) * T ∧ T ≡ s ^ (2 ^ (2 * k - 1) - 2) [ZMOD r + s] := by

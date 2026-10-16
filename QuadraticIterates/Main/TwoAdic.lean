@@ -11,6 +11,8 @@ import Mathlib.Data.Nat.Prime.Int
 import Mathlib.Tactic.Field
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Patterns.Dyadic
+import QuadraticIterates.Sequence.Orbit
 import QuadraticIterates.Sequence.Signs
 
 /-!
@@ -20,7 +22,10 @@ For `a = r/s ∈ 𝒜` with its sign `ε` (`a ≤ -2` and `ε = -1`, or `a³ + 2
 `ε = 1`), the integers `v_n` of `QuadraticIterates.vSeq` satisfy `ε v_n > 0` for `n ≥ 2`, and their
 residues modulo `4` and `8` are determined by those of `r` and `s`. In the three `2`-adic classes
 (C1)–(C3) this gives every `v_n`, `n ≥ 2`, a prime factor `p ≡ 3 (mod 4)` not dividing `r`
-(Lemma 4.4 of the draft), which is what reflection at level `n` needs.
+(Lemma 4.4 of the draft), which is what reflection at level `n` needs. Likewise, for
+`a ≡ 1 mod 4` and odd `n ≥ 3`, a positive `u_n` (`QuadraticIterates.uSeq`) is `≡ 6 (mod 8)` and
+has a prime factor `p ≡ 3 (mod 4)` not dividing `r + s`, which is what period two at level `n`
+needs.
 
 ## Main definitions
 
@@ -32,6 +37,7 @@ residues modulo `4` and `8` are determined by those of `r` and `s`. In the three
 * `QuadraticIterates.vSeq_modEq_add_two_mul`, `QuadraticIterates.vSeq_modEq_two_mul_add`,
   `QuadraticIterates.vSeq_modEq_of_even`: the residues of `v_n`.
 * `QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass`: the prime factor.
+* `QuadraticIterates.exists_prime_dvd_uSeq_of_odd`: the prime factor of `u_n`.
 -/
 
 @[expose] public section
@@ -81,11 +87,6 @@ private lemma wSeq_modEq_four (hr : Odd r) (hs : Odd s) {k : ℕ} (hk : 1 ≤ k)
     have h := wSeq_succ_modEq_add_of_odd hs (by lia) (ho ih.2)
     exact ⟨h, wSeq_succ_modEq_of_even hs (by lia) (he h)⟩
 
-private lemma pow_two_pow_zmod_eight_of_odd (hs : Odd s) {n : ℕ} (hn : 2 ≤ n) :
-    (s : ZMod 8) ^ 2 ^ (n - 1) = 1 := by
-  rw [show 2 ^ (n - 1) = 2 * 2 ^ (n - 2) by rw [← pow_succ']; congr 1; lia, pow_mul,
-    ZMod.intCast_sq_eight_eq_one_of_odd hs, one_pow]
-
 /-- For odd `r` and `s`, `v_n ≡ r + 2s (mod 4)` for `n ≥ 2`. -/
 theorem vSeq_modEq_add_two_mul (hr : Odd r) (hs : Odd s) {n : ℕ} (hn : 2 ≤ n) :
     vSeq r s n ≡ r + 2 * s [ZMOD 4] := by
@@ -117,7 +118,8 @@ theorem vSeq_modEq_two_mul_add (hr : Even r) (hs : Odd s) {n : ℕ} (hn : 2 ≤ 
   refine (ZMod.intCast_eq_intCast_iff _ _ 8).mp ?_
   rw [vSeq]
   push_cast
-  rw [pow_two_pow_zmod_eight_of_odd hs hn, intCast_wSeq_zmod_eight_of_even_left hr hs (by lia),
+  rw [ZMod.intCast_pow_two_pow_eight_of_odd hs (by lia),
+    intCast_wSeq_zmod_eight_of_even_left hr hs (by lia),
     intCast_wSeq_zmod_eight_of_even_left hr hs hn]
   ring
 
@@ -247,5 +249,56 @@ theorem exists_prime_dvd_vSeq_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s)
   · have := Int.le_of_dvd two_pos h
     lia
   · exact hp'.not_isUnit (hrs.isUnit_of_dvd' hpr (hp'.dvd_of_dvd_pow h))
+
+/-! ### `u_n` at odd levels for `a ≡ 1 mod 4` -/
+
+/-- `u_n > 0` when `c_n² - c_n + a + 1 > 0` at `a = r/s`, `s > 0`. -/
+theorem uSeq_pos (hs : 0 < s) {n : ℕ} (hn : 1 ≤ n)
+    (h : 0 < cSeq ((r : ℚ) / s) n ^ 2 - cSeq ((r : ℚ) / s) n + (r : ℚ) / s + 1) :
+    0 < uSeq r s n := by
+  have hu := intCast_uSeq r (mul_inv_cancel₀ (mod_cast hs.ne' : (s : ℚ) ≠ 0)) hn
+  rw [← div_eq_mul_inv] at hu
+  have : (0 : ℚ) < uSeq r s n := by
+    rw [hu]
+    exact mul_pos (pow_pos (mod_cast hs) _) h
+  exact_mod_cast this
+
+/-- For odd `s` and `r ≡ s (mod 4)` (`a ≡ 1 mod 4`), `u_n ≡ 6 (mod 8)` for odd `n ≥ 3`. -/
+theorem uSeq_emod_eight_of_odd (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) {n : ℕ} (hn : 3 ≤ n)
+    (ho : Odd n) : uSeq r s n % 8 = 6 := by
+  obtain ⟨j, rfl⟩ := ho
+  have hX := intCast_mul_wSeq_zmod_eight r hs (n := 2 * j + 1) (by lia)
+  rw [cSeq_two_mul_add_one_zmod_eight (intCast_mul_zmod_eight_of_modEq_four hs h4) (by lia)] at hX
+  have h : (uSeq r s (2 * j + 1) : ZMod 8) = 6 := by
+    rw [show uSeq r s (2 * j + 1) = (r * wSeq r s (2 * j + 1)) ^ 2 -
+      r * wSeq r s (2 * j + 1) * s ^ 2 ^ (2 * j) + (r + s) * s ^ (2 ^ (2 * j + 1) - 1) by
+        rw [uSeq, Nat.add_sub_cancel]; ring]
+    push_cast
+    rw [← Int.cast_mul, hX, ZMod.intCast_pow_two_pow_eight_of_odd hs (by lia),
+      ZMod.intCast_pow_two_pow_sub_one_eight_of_odd hs (by lia), mul_one, add_mul, ← sq,
+      ZMod.intCast_sq_eight_eq_one_of_odd hs]
+    rcases intCast_mul_zmod_eight_of_modEq_four hs h4 with h | h <;> rw [h] <;> decide
+  have := (ZMod.intCast_eq_intCast_iff' (uSeq r s (2 * j + 1)) 6 8).mp (mod_cast h)
+  lia
+
+/-- For `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`) and odd `n ≥ 3` with `u_n > 0`, a prime
+`p ≡ 3 (mod 4)` divides `u_n` and not `r + s`: `u_n ≡ 6 (mod 8)`, and `u_n ≡ 2 s^{2^n} (mod r + s)`
+(`QuadraticIterates.uSeq_two_mul_add_one_modEq`). -/
+theorem exists_prime_dvd_uSeq_of_odd (hrs : IsCoprime r s) (hs : Odd s) (h4 : r ≡ s [ZMOD 4])
+    {n : ℕ} (hn : 3 ≤ n) (ho : Odd n) (hpos : 0 < uSeq r s n) :
+    ∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ uSeq r s n ∧ ¬(p : ℤ) ∣ r + s := by
+  obtain ⟨p, hp, hp4, hpd⟩ := Nat.exists_prime_dvd_of_mod_eight_eq_six (m := (uSeq r s n).toNat)
+    (by lia [uSeq_emod_eight_of_odd hs h4 hn ho])
+  have hpu : (p : ℤ) ∣ uSeq r s n := by
+    simpa [Int.toNat_of_nonneg hpos.le] using Int.natCast_dvd_natCast.mpr hpd
+  refine ⟨p, hp, hp4, hpu, fun hprs ↦ ?_⟩
+  obtain ⟨k, rfl⟩ := ho
+  have hp' := Nat.prime_iff_prime_int.mp hp
+  rcases hp'.dvd_or_dvd (((uSeq_two_mul_add_one_modEq hrs (by lia)).of_dvd hprs).dvd_iff.mp
+    hpu) with h | h
+  · have := Int.le_of_dvd two_pos h
+    lia
+  · have hps := hp'.dvd_of_dvd_pow h
+    exact hp'.not_isUnit (hrs.isUnit_of_dvd' ((dvd_add_left hps).mp hprs) hps)
 
 end QuadraticIterates

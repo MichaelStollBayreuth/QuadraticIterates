@@ -264,10 +264,8 @@ variable (r) in
 theorem intCast_mul_wSeq_zmod_eight (hs : Odd s) {n : ℕ} (hn : 2 ≤ n) :
     ((r * wSeq r s n : ℤ) : ZMod 8) = cSeq ((r : ZMod 8) * s) n := by
   have hσ : (s : ZMod 8) * s = 1 := by rw [← sq]; exact ZMod.intCast_sq_eight_eq_one_of_odd hs
-  have he : (s : ZMod 8) ^ 2 ^ (n - 1) = 1 := by
-    rw [show 2 ^ (n - 1) = 2 * 2 ^ (n - 2) by rw [← pow_succ']; congr 1; lia, pow_mul,
-      ZMod.intCast_sq_eight_eq_one_of_odd hs, one_pow]
-  rw [Int.cast_mul, intCast_mul_wSeq r hσ (by lia), he, one_mul]
+  rw [Int.cast_mul, intCast_mul_wSeq r hσ (by lia),
+    ZMod.intCast_pow_two_pow_eight_of_odd hs (by lia), one_mul]
 
 end Dyadic
 

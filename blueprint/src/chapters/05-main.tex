@@ -270,12 +270,21 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
 \begin{corollary}[Odd levels]
   \label{cor:odd}
   \uses{lem:period2, lem:pat-dyadic, lem:jump2, lem:reduction, lem:signs, lem:window, lem:prime3}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_odd,
+    QuadraticIterates.exists_prime_dvd_uSeq_of_odd, QuadraticIterates.uSeq_emod_eight_of_odd,
+    QuadraticIterates.uSeq_two_mul_add_one_modEq, QuadraticIterates.uSeq_pos,
+    QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_le_neg_two,
+    QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt,
+    QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_odd}
+  \leanok
   Let $a \equiv 1 \bmod 4$ with $a \le -2$, or $a > -1$, or $a < -1$ and $c_3 < 0 < c_4$. If $a$
   has $\phi_0$, then $a$ has $\phi_n$ for every odd $n \ge 3$.
-  \formalnote{Proposed: \lname{hasCharPattern\_mulSingle\_of\_odd}.}
+  \formalnote{For $a = r/s$, the condition $a \equiv 1 \bmod 4$ is stated as $s$ odd and
+  $r \equiv s \pmod 4$.}
 \end{corollary}
 \begin{proof}
   \uses{lem:pat-rs}
+  \leanok
   Let $n \ge 3$ be odd. In $\ZZ/8\ZZ$, $\bar c_n = 5$ for $\bar a = 1$ and $\bar c_n = 1$ for
   $\bar a = 5$, and $s^{2^n} \equiv 1$, so $u_n \equiv \bar c_n^2 - \bar c_n + \bar a + 1 \equiv 6
   \pmod 8$ (Lemma~\ref{lem:reduction}). Also $u_n > 0$: $u_n / s^{2^n} = c_n^2 - c_n + a + 1$, which is
