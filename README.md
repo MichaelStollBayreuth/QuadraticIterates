@@ -35,7 +35,10 @@ characters) are found by short computations modulo a single prime power, and the
 - a **criterion for rational parameters** `a = r/s`
   (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`): if `a ≤ −2` or `a³ + 2a² + 2a + 2 > 0`, the
   pair `(r, s)` lies in one of three explicit 2-adic classes, and two of three explicit lists of
-  conditions on `r` and `s` hold, then `Ω_n ≅ [C₂]ⁿ` for all `n`;
+  conditions on `r` and `s` hold, then `Ω_n ≅ [C₂]ⁿ` for all `n`. Outside the interval
+  `α < a ≤ a_* ≈ −1.31` this is sharp: in these classes every level is maximal as soon as the
+  second one is (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), that is, as soon
+  as none of `−a`, `a(a + 1)` and `−a²(a + 1)` is a square;
 - **two families** of rational parameters, `a = −j(j + 1)` and `a = −(ℓ² + ℓ + 1)` with `j`, `ℓ`
   in certain classes of fractions, outside the reach of the criterion;
 - the **results for integer `a`**, as the case `s = 1`: the main result of Section 3 of the
@@ -87,8 +90,9 @@ includes a table aligning each result of the three papers with the declaration t
 it, or recording that it is not formalized on this branch.
 [`comparator/`](comparator) holds a [comparator](https://github.com/leanprover/comparator)
 harness for the main result of Section 3 (one challenge per case), for the theorems of Li (the
-first one in its strengthened form) and for the criterion for rational parameters, whose
-challenge reproduces the definitions of its 2-adic classes and lists of conditions.
+first one in its strengthened form), and for the criterion for rational parameters and its two
+corollaries, whose challenges reproduce the definitions of the 2-adic classes and lists of
+conditions.
 
 ## Blueprint
 

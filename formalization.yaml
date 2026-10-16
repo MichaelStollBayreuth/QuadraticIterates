@@ -44,11 +44,14 @@ status:
     n ≥ 1, some character ℚ* → {±1} takes the value -1 at c_n and 1 at all c_m, m > n), and of
     a criterion for rational parameters a = r/s built on it (QuadraticIterates/Main/): if
     a ≤ -2 or a³ + 2a² + 2a + 2 > 0, the pair (r, s) lies in one of three 2-adic classes, and
-    two of three explicit lists of conditions on r and s hold, then Ω_n ≅ [C₂]ⁿ for all n. The
-    method is the author's and not yet published. The main result of Section 3 of the paper and
-    the theorems of H.-C. Li (Theorem 3.5 of 2020, Theorems 3.3, strengthened to
-    a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case s = 1 of the rational statements
-    and of two rational families extending Li's
+    two of three explicit lists of conditions on r and s hold, then Ω_n ≅ [C₂]ⁿ for all n. Outside
+    the interval α < a ≤ a_* ≈ -1.3107 the criterion is sharp: in these 2-adic classes all levels
+    are maximal if and only if c_1, c_2 are 2-independent, i.e. Ω_2 ≅ [C₂]²
+    (QuadraticIterates/Main/LevelTwo.lean); on α < a < -1 shorter lists of criteria suffice
+    (QuadraticIterates/Main/Interval.lean). The method is the author's and not yet published. The
+    main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
+    Theorems 3.3, strengthened to a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case
+    s = 1 of the rational statements and of two rational families extending Li's
     (QuadraticIterates/Main/Integers.lean and Families.lean). The theorems R⁺ and R⁻ for rational
     parameters of the author's earlier notes are rederived from the main theorem
     (QuadraticIterates/Main/SquarefreeCertificates.lean, a consistency check outside the
@@ -78,6 +81,18 @@ status:
     literature_dependencies: []
   - declaration: "QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria"
     file: "QuadraticIterates/Main/Theorem.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass"
+    file: "QuadraticIterates/Main/LevelTwo.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_criteria"
+    file: "QuadraticIterates/Main/Interval.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
@@ -201,7 +216,11 @@ automation:
         formalized it step by step (Galois side, characters, sequences, patterns, main theorem,
         families, integer corollaries) in an unattended overnight run, each step a scratch
         sandbox audited against the conventions and then one or two commits through the
-        verification chain and the comparator, and finally removed the b_n route.
+        verification chain and the comparator, and finally removed the b_n route. A case
+        analysis of the main theorem by the classes of (r, s) mod 4 (2026-10-16), asked for by
+        the author and checked numerically in PARI/GP on several hundred thousand parameters
+        before any Lean, gave the two corollaries of Main/LevelTwo.lean and Main/Interval.lean,
+        planned in the blueprint, reviewed by the author, then formalized the same way.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
