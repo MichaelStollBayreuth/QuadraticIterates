@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{tikz}
+
 \definecolor{cone}{HTML}{0072B2}
 \definecolor{ctwo}{HTML}{009E73}
 \definecolor{cthree}{HTML}{E69F00}
@@ -16,8 +17,7 @@
 \newcommand{\markF}[3]{\fill[#1] (#2,#3) circle[radius=0.85mm];}
 \newcommand{\markH}[3]{\draw[#1, line width=0.6pt, fill=white] (#2,#3) circle[radius=0.62mm];}
 \tikzset{sq/.style={draw=ink, line width=0.3pt}}
-\newcommand{\markQ}[3]{\filldraw[sq, fill=#1] (#2,#3)
-  ++(-0.95mm,-0.95mm) rectangle ++(1.9mm,1.9mm);}
+\newcommand{\markQ}[3]{\filldraw[sq, fill=#1] (#2,#3) +(-0.95mm,-0.95mm) rectangle +(0.95mm,0.95mm);}
 \newcommand{\markD}[2]{\fill[dot] (#1,#2) circle[radius=0.3mm];}
 \newcommand{\mk}[1]{\tikz[baseline=-0.6ex]{#1}}
 \begin{document}
@@ -1549,20 +1549,20 @@
 \multicolumn{2}{@{}l}{coprime $r, s$ with $s \ge 1$, $a = r/s$} \\[1.5ex]
 \multicolumn{2}{@{}l}{\bfseries Main theorem: circles, by $2$-adic class} \\[0.3ex]
 & $(r, s) \bmod 4$ for $a \le -2$; for $a > \alpha$ \\[0.3ex]
-\mk{\fill[cone] (0mm,0) circle[radius=0.85mm];} & (C1): $(3,1)$, $(3,3)$; $(1,1)$, $(1,3)$ \\[0.5ex]
-\mk{\fill[ctwo] (0mm,0) circle[radius=0.85mm];} & (C2): $(0,1)$, $(2,3)$; $(2,1)$, $(0,3)$ \\[0.5ex]
-\mk{\fill[cthree] (0mm,0) circle[radius=0.85mm];} & (C3): $(1,0)$, $(1,2)$; $(3,0)$, $(3,2)$ \\[0.5ex]
-\mk{\fill[cone] (-2.1mm,0) circle[radius=0.85mm];\fill[ctwo] (0mm,0) circle[radius=0.85mm];\fill[cthree] (2.1mm,0) circle[radius=0.85mm];} & two of (Z), (O), (T) hold, so $\rho_a$ is surjective \\[0.5ex]
-\mk{\draw[cone, line width=0.6pt] (-2.1mm,0) circle[radius=0.62mm];\draw[ctwo, line width=0.6pt] (0mm,0) circle[radius=0.62mm];\draw[cthree, line width=0.6pt] (2.1mm,0) circle[radius=0.62mm];} & $c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.5ex]
+\mk{\markF{cone}{0.00mm}{0mm}} & (C1): $(3,1)$, $(3,3)$; $(1,1)$, $(1,3)$ \\[0.5ex]
+\mk{\markF{ctwo}{0.00mm}{0mm}} & (C2): $(0,1)$, $(2,3)$; $(2,1)$, $(0,3)$ \\[0.5ex]
+\mk{\markF{cthree}{0.00mm}{0mm}} & (C3): $(1,0)$, $(1,2)$; $(3,0)$, $(3,2)$ \\[0.5ex]
+\mk{\markF{cone}{-2.12mm}{0mm}\markF{ctwo}{0.00mm}{0mm}\markF{cthree}{2.12mm}{0mm}} & two of (Z), (O), (T) hold, so $\rho_a$ is surjective \\[0.5ex]
+\mk{\markH{cone}{-2.12mm}{0mm}\markH{ctwo}{0.00mm}{0mm}\markH{cthree}{2.12mm}{0mm}} & $c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.5ex]
 \multicolumn{2}{@{}l}{} \\[0.5ex]
 \multicolumn{2}{@{}l}{\bfseries The two families: squares} \\[0.3ex]
-\mk{\filldraw[sq, fill=famA] (-0.95mm,-0.95mm) rectangle (0.95mm,0.95mm);} & $a = -j(j + 1)$, $j = u/v > 1$, $(u, v) \equiv (2,1), (3,3) \bmod 4$ \\[0.5ex]
-\mk{\filldraw[sq, fill=famLi] (-0.95mm,-0.95mm) rectangle (0.95mm,0.95mm);} & $a = -(\ell^2 + \ell + 1) \le -2$, $\ell = u/v$, $(u, v) \equiv (1,1), (2,3) \bmod 4$ \\[0.5ex]
+\mk{\markQ{famA}{0.00mm}{0mm}} & $a = -j(j + 1)$, $j = u/v > 1$, $(u, v) \equiv (2,1), (3,3) \bmod 4$ \\[0.5ex]
+\mk{\markQ{famLi}{0.00mm}{0mm}} & $a = -(\ell^2 + \ell + 1) \le -2$, $\ell = u/v$, $(u, v) \equiv (1,1), (2,3) \bmod 4$ \\[0.5ex]
 \multicolumn{2}{@{}l}{} \\[0.5ex]
 \multicolumn{2}{@{}l}{\bfseries Not covered} \\[0.3ex]
-\mk{\draw[ink, line width=0.6pt] (0mm,0) circle[radius=0.62mm];} & $c_1, \dots, c_6$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.5ex]
-\mk{\fill[dot] (0,0) circle[radius=0.3mm];} & $c_1, \dots, c_6$ are $2$-independent \\[0.5ex]
-\mk{} & no mark: $\gcd(r, s) > 1$; $a$ appears at its reduced fraction, whose residues mod $4$ may differ \\[0.5ex]
+\mk{\markH{ink}{0.00mm}{0mm}} & $c_1, \dots, c_6$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.5ex]
+\mk{\markD{0.00mm}{0mm}} & $c_1, \dots, c_6$ are $2$-independent \\[0.5ex]
+ & no mark: $\gcd(r, s) > 1$; $a$ appears at its reduced fraction, whose residues mod $4$ may differ \\[0.5ex]
 \multicolumn{2}{@{}l}{} \\[0.5ex]
 \multicolumn{2}{@{}l}{\bfseries Regions} \\[0.3ex]
 \mk{\fill[excl] (-1.4mm,-1.1mm) rectangle (1.4mm,1.1mm);} & $-2 < a \le \alpha$: not covered \\[0.5ex]

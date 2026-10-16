@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Draw the parameters a = r/s covered by the main theorem and by the two families.
 
-Horizontal axis: the denominator s; vertical axis: the numerator r; one mark per coprime pair.
+One mark per coprime pair (r, s), in two layouts: coverage.pdf has the denominator s across and the
+numerator r up, with a full legend; coverage-slide.pdf, for a 16:9 slide, has r across and s up, a
+sans-serif font and a compact legend.
 
 * Circles: a lies in the region and in one of the 2-adic classes (C1)-(C3) of the main theorem
   (`QuadraticIterates.TwoAdicClass`), coloured by the class. Filled when two of the lists (Z), (O),
@@ -18,10 +20,11 @@ Horizontal axis: the denominator s; vertical axis: the numerator r; one mark per
 The script checks, on the plotted box, that outside (alpha, a_*] the hypotheses of the main theorem
 hold exactly when c_1, c_2 are 2-independent
 (`QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), and that every
-hollow circle has c_1, c_2 2-dependent, so that rho_a is not surjective there; the legend says so.
+hollow coloured circle has c_1, c_2 2-dependent, so that rho_a is not surjective there; the legends
+say so.
 
-Usage: python3 plots/coverage.py. Writes coverage.tex, coverage.pdf and coverage.png next to this
-script; needs pdflatex (with TikZ) and pdftocairo.
+Usage: python3 plots/coverage.py. Writes coverage.{tex,pdf,png} and coverage-slide.{tex,pdf,png}
+next to this script; needs pdflatex (with TikZ and sansmath) and pdftocairo.
 """
 
 import shutil
@@ -249,14 +252,23 @@ def classify(r, s):
     return ('main', c, filled)
 
 
-# The picture
+# The pictures
 
-PREAMBLE = r"""\documentclass[border=4mm]{standalone}
+CLASS_COLOR = {1: 'cone', 2: 'ctwo', 3: 'cthree'}
+FAMILY_COLOR = {'A': 'famA', 'Li': 'famLi'}
+
+# Radii in mm of filled circles (f), hollow circles (h) and dots (d), half the side of a square (q),
+# and the line width in pt of hollow circles (lw)
+PORTRAIT = dict(f=0.85, h=0.62, q=0.95, d=0.3, lw=0.6)
+SLIDE = dict(f=0.64, h=0.47, q=0.72, d=0.22, lw=0.5)
+
+PREAMBLE = r"""\documentclass[border=@border@mm]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{tikz}
+@FONTS@
 \definecolor{cone}{HTML}{0072B2}
 \definecolor{ctwo}{HTML}{009E73}
 \definecolor{cthree}{HTML}{E69F00}
@@ -266,50 +278,89 @@ PREAMBLE = r"""\documentclass[border=4mm]{standalone}
 \definecolor{excl}{HTML}{E4E4E4}
 \definecolor{intv}{HTML}{FBF0D4}
 \definecolor{ink}{HTML}{303030}
-\newcommand{\markF}[3]{\fill[#1] (#2,#3) circle[radius=0.85mm];}
-\newcommand{\markH}[3]{\draw[#1, line width=0.6pt, fill=white] (#2,#3) circle[radius=0.62mm];}
+\newcommand{\markF}[3]{\fill[#1] (#2,#3) circle[radius=@f@mm];}
+\newcommand{\markH}[3]{\draw[#1, line width=@lw@pt, fill=white] (#2,#3) circle[radius=@h@mm];}
 \tikzset{sq/.style={draw=ink, line width=0.3pt}}
-\newcommand{\markQ}[3]{\filldraw[sq, fill=#1] (#2,#3)
-  ++(-0.95mm,-0.95mm) rectangle ++(1.9mm,1.9mm);}
-\newcommand{\markD}[2]{\fill[dot] (#1,#2) circle[radius=0.3mm];}
+\newcommand{\markQ}[3]{\filldraw[sq, fill=#1] (#2,#3) +(-@q@mm,-@q@mm) rectangle +(@q@mm,@q@mm);}
+\newcommand{\markD}[2]{\fill[dot] (#1,#2) circle[radius=@d@mm];}
 \newcommand{\mk}[1]{\tikz[baseline=-0.6ex]{#1}}
 \begin{document}
-"""
-
-CLASS_COLOR = {1: 'cone', 2: 'ctwo', 3: 'cthree'}
-FAMILY_COLOR = {'A': 'famA', 'Li': 'famLi'}
+@BEGIN@"""
 
 
-def legend():
-    """The legend, a tabular to the right of the plot."""
+def preamble(sans, sizes, border):
+    """The document preamble: the marks of the given sizes, a sans-serif font if sans, and a border
+    of the given width in mm."""
+    t = PREAMBLE.replace('@FONTS@', r"\usepackage{sansmath}" "\n"
+                         r"\renewcommand{\familydefault}{\sfdefault}" if sans else "")
+    t = t.replace('@BEGIN@', r"\sansmath" if sans else "").replace('@border@', str(border))
+    for k, v in sizes.items():
+        t = t.replace(f'@{k}@', str(v))
+    return t
+
+
+def mark_tex(m, x, y):
+    """The TeX command drawing the mark m of classify at (x, y)."""
+    if m is None:
+        return rf"\markD{{{x}}}{{{y}}}"
+    if m == 'dep':
+        return rf"\markH{{ink}}{{{x}}}{{{y}}}"
+    if m[0] == 'fam':
+        return rf"\markQ{{{FAMILY_COLOR[m[1]]}}}{{{x}}}{{{y}}}"
+    return rf"\mark{'F' if m[2] else 'H'}{{{CLASS_COLOR[m[1]]}}}{{{x}}}{{{y}}}"
+
+
+def sample(*marks, step=0.0):
+    """A legend sample: the marks (macro, colour), side by side at distance step (in mm)."""
+    x0 = -step * (len(marks) - 1) / 2
+    body = "".join(
+        rf"\markD{{{x0 + i * step:.2f}mm}}{{0mm}}" if m == 'markD' else
+        rf"\{m}{{{c}}}{{{x0 + i * step:.2f}mm}}{{0mm}}" for i, (m, c) in enumerate(marks))
+    return rf"\mk{{{body}}}"
+
+
+def swatch(c):
+    return rf"\mk{{\fill[{c}] (-1.4mm,-1.1mm) rectangle (1.4mm,1.1mm);}}"
+
+
+def regions(x1, y1, along):
+    """The two wedges and the five lines a = -2, alpha, a_*, -1, 0 from the origin to the edge
+    x1 (along = 's') or y1 (along = 'r') of the frame."""
+    pt = (lambda a: f"({x1},{a * x1:.3f})") if along == 's' else (lambda a: f"({a * y1:.3f},{y1})")
+    out = [rf"\fill[excl] (0,0) -- {pt(-2)} -- {pt(ALPHA)} -- cycle;",
+           rf"\fill[intv] (0,0) -- {pt(ALPHA)} -- {pt(A_STAR)} -- cycle;"]
+    out += [rf"\draw[ink!55, line width=0.4pt] (0,0) -- {pt(a)};"
+            for a in (-2, ALPHA, A_STAR, -1, 0)]
+    return out
+
+
+def legend_portrait():
+    """The legend of the portrait picture, a tabular to the right of the plot."""
     def row(marker, text):
-        return rf"\mk{{{marker}}} & {text} \\[0.5ex]"
-    filled = lambda c, x=0: rf"\fill[{c}] ({x}mm,0) circle[radius=0.85mm];"
-    hollow = lambda c, x=0: rf"\draw[{c}, line width=0.6pt] ({x}mm,0) circle[radius=0.62mm];"
-    trio = lambda f: "".join(f(c, x) for c, x in (('cone', -2.1), ('ctwo', 0), ('cthree', 2.1)))
-    square = lambda c: rf"\filldraw[sq, fill={c}] (-0.95mm,-0.95mm) rectangle (0.95mm,0.95mm);"
-    swatch = lambda c: rf"\fill[{c}] (-1.4mm,-1.1mm) rectangle (1.4mm,1.1mm);"
+        return rf"{marker} & {text} \\[0.5ex]"
+    trio = lambda m: sample((m, 'cone'), (m, 'ctwo'), (m, 'cthree'), step=2.5 * PORTRAIT['f'])
     lines = [
         r"\begin{tabular}{@{}c@{\hspace{0.7em}}>{\raggedright\arraybackslash}p{6.2cm}@{}}",
         r"\multicolumn{2}{@{}l}{\large\bfseries Arboreal representations of $x^2 + a$} \\",
         r"\multicolumn{2}{@{}l}{coprime $r, s$ with $s \ge 1$, $a = r/s$} \\[1.5ex]",
         r"\multicolumn{2}{@{}l}{\bfseries Main theorem: circles, by $2$-adic class} \\[0.3ex]",
         r"& $(r, s) \bmod 4$ for $a \le -2$; for $a > \alpha$ \\[0.3ex]",
-        row(filled('cone'), r"(C1): $(3,1)$, $(3,3)$; $(1,1)$, $(1,3)$"),
-        row(filled('ctwo'), r"(C2): $(0,1)$, $(2,3)$; $(2,1)$, $(0,3)$"),
-        row(filled('cthree'), r"(C3): $(1,0)$, $(1,2)$; $(3,0)$, $(3,2)$"),
-        row(trio(filled), r"two of (Z), (O), (T) hold, so $\rho_a$ is surjective"),
-        row(trio(hollow), r"$c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective"),
+        row(sample(('markF', 'cone')), r"(C1): $(3,1)$, $(3,3)$; $(1,1)$, $(1,3)$"),
+        row(sample(('markF', 'ctwo')), r"(C2): $(0,1)$, $(2,3)$; $(2,1)$, $(0,3)$"),
+        row(sample(('markF', 'cthree')), r"(C3): $(1,0)$, $(1,2)$; $(3,0)$, $(3,2)$"),
+        row(trio('markF'), r"two of (Z), (O), (T) hold, so $\rho_a$ is surjective"),
+        row(trio('markH'), r"$c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective"),
         r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
         r"\multicolumn{2}{@{}l}{\bfseries The two families: squares} \\[0.3ex]",
-        row(square('famA'), r"$a = -j(j + 1)$, $j = u/v > 1$, "
+        row(sample(('markQ', 'famA')), r"$a = -j(j + 1)$, $j = u/v > 1$, "
             r"$(u, v) \equiv (2,1), (3,3) \bmod 4$"),
-        row(square('famLi'), r"$a = -(\ell^2 + \ell + 1) \le -2$, $\ell = u/v$, "
+        row(sample(('markQ', 'famLi')), r"$a = -(\ell^2 + \ell + 1) \le -2$, $\ell = u/v$, "
             r"$(u, v) \equiv (1,1), (2,3) \bmod 4$"),
         r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
         r"\multicolumn{2}{@{}l}{\bfseries Not covered} \\[0.3ex]",
-        row(hollow('ink'), r"$c_1, \dots, c_6$ are $2$-dependent, so $\rho_a$ is not surjective"),
-        row(r"\fill[dot] (0,0) circle[radius=0.3mm];", r"$c_1, \dots, c_6$ are $2$-independent"),
+        row(sample(('markH', 'ink')),
+            r"$c_1, \dots, c_6$ are $2$-dependent, so $\rho_a$ is not surjective"),
+        row(sample(('markD', None)), r"$c_1, \dots, c_6$ are $2$-independent"),
         row("", r"no mark: $\gcd(r, s) > 1$; $a$ appears at its reduced fraction, "
             r"whose residues mod $4$ may differ"),
         r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
@@ -322,32 +373,14 @@ def legend():
     return "\n".join(lines)
 
 
-def picture():
+def picture_portrait(marks):
+    """The denominator s across, the numerator r up, with a full legend on the right."""
     x0, x1, y0, y1 = 0.3, S_MAX + 0.7, R_MIN - 1.5, R_MAX + 1.5
-    out = [PREAMBLE, r"\begin{tikzpicture}[x=0.42cm, y=0.21cm, font=\footnotesize]"]
-    # regions and lines through the origin, clipped to the frame
-    out.append(rf"\begin{{scope}}\clip ({x0},{y0}) rectangle ({x1},{y1});")
-    out.append(rf"\fill[excl] (0,0) -- ({x1},{-2 * x1:.3f}) -- ({x1},{ALPHA * x1:.3f}) -- cycle;")
-    out.append(rf"\fill[intv] (0,0) -- ({x1},{ALPHA * x1:.3f}) -- "
-               rf"({x1},{A_STAR * x1:.3f}) -- cycle;")
-    for a in (-2, ALPHA, A_STAR, -1, 0):
-        out.append(rf"\draw[ink!55, line width=0.4pt] (0,0) -- ({x1},{a * x1:.3f});")
-    out.append(r"\end{scope}")
-    # the marks
-    for s in range(1, S_MAX + 1):
-        for r in range(R_MIN, R_MAX + 1):
-            if gcd(r, s) != 1:
-                continue
-            m = classify(r, s)
-            if m is None:
-                out.append(rf"\markD{{{s}}}{{{r}}}")
-            elif m == 'dep':
-                out.append(rf"\markH{{ink}}{{{s}}}{{{r}}}")
-            elif m[0] == 'fam':
-                out.append(rf"\markQ{{{FAMILY_COLOR[m[1]]}}}{{{s}}}{{{r}}}")
-            else:
-                out.append(rf"\mark{'F' if m[2] else 'H'}{{{CLASS_COLOR[m[1]]}}}{{{s}}}{{{r}}}")
-    # frame, ticks, labels
+    out = [preamble(False, PORTRAIT, 4),
+           r"\begin{tikzpicture}[x=0.42cm, y=0.21cm, font=\footnotesize]",
+           rf"\begin{{scope}}\clip ({x0},{y0}) rectangle ({x1},{y1});",
+           *regions(x1, y1, 's'), r"\end{scope}"]
+    out += [mark_tex(m, s, r) for r, s, m in marks]
     out.append(rf"\draw[ink, line width=0.5pt] ({x0},{y0}) rectangle ({x1},{y1});")
     for s in (1, 5, 10, 15, 20, 25):
         out.append(rf"\draw[ink] ({s},{y0}) -- +(0,-0.8) node[below] {{${s}$}};")
@@ -360,22 +393,83 @@ def picture():
               (A_STAR, rf"a = a_* \approx {A_STAR:.3f}"), (-1, r"a = -1"), (0, r"a = 0")]
     for a, text in labels:
         out.append(rf"\node[right, ink] at ({x1},{a * x1:.3f}) {{${text}$}};")
-    out.append(rf"\node[anchor=north west] at ({x1 + 6.2},{y1}) {{{legend()}}};")
-    out.append(r"\end{tikzpicture}")
-    out.append(r"\end{document}")
+    out.append(rf"\node[anchor=north west] at ({x1 + 6.2},{y1}) {{{legend_portrait()}}};")
+    out += [r"\end{tikzpicture}", r"\end{document}"]
     return "\n".join(out) + "\n"
 
 
-def main():
-    tex = HERE / "coverage.tex"
-    tex.write_text(picture())
+def legend_slide():
+    """The legend of the slide picture: four groups side by side, the headings over the texts."""
+    step = 2.5 * SLIDE['f']
+    groups = [
+        [r"\bfseries Main theorem",
+         ("", r"$(r, s) \bmod 4$ for $a \le -2 \mid a > \alpha$"),
+         (sample(('markF', 'cone')), r"(C1)\enspace $(3,1), (3,3) \mid (1,1), (1,3)$"),
+         (sample(('markF', 'ctwo')), r"(C2)\enspace $(0,1), (2,3) \mid (2,1), (0,3)$"),
+         (sample(('markF', 'cthree')), r"(C3)\enspace $(1,0), (1,2) \mid (3,0), (3,2)$")],
+        [r"\bfseries Families",
+         (sample(('markQ', 'famA')), r"$a = -j(j + 1)$"),
+         (sample(('markQ', 'famLi')), r"$a = -(\ell^2 + \ell + 1)$")],
+        [r"\bfseries Marks",
+         (sample(('markF', 'cone'), ('markQ', 'famA'), step=step), r"$\rho_a$ surjective"),
+         (sample(('markH', 'cone'), ('markH', 'ink'), step=step), r"$\rho_a$ not surjective"),
+         (sample(('markD', None)), r"not covered")],
+        [r"\bfseries Regions",
+         (swatch('excl'), r"$-2 < a \le \alpha$"),
+         (swatch('intv'), r"$\alpha < a \le a_*$")],
+    ]
+    height = max(len(g) for g in groups)
+    cells = [[("", g[0])] + g[1:] + [("", "")] * (height - len(g)) for g in groups]
+    spec = r"@{\hspace{2.2em}}".join([r"c@{\hspace{0.5em}}l"] * len(groups))
+    lines = [rf"\begin{{tabular}}{{@{{}}{spec}@{{}}}}"]
+    for i in range(height):
+        lines.append(" & ".join(f"{m} & {t}" for m, t in (c[i] for c in cells)) + r" \\")
+    lines.append(r"\end{tabular}")
+    return "\n".join(lines)
+
+
+def picture_slide(marks):
+    """The numerator r across, the denominator s up, with a compact legend below: for a slide."""
+    x0, x1, y0, y1 = R_MIN - 1.2, R_MAX + 1.2, 0.3, S_MAX + 0.7
+    out = [preamble(True, SLIDE, 1),
+           r"\begin{tikzpicture}[x=1.6mm, y=2.15mm, font=\small]",
+           rf"\begin{{scope}}\clip ({x0},{y0}) rectangle ({x1},{y1});",
+           *regions(x1, y1, 'r'), r"\end{scope}"]
+    out += [mark_tex(m, r, s) for r, s, m in marks]
+    out.append(rf"\draw[ink, line width=0.5pt] ({x0},{y0}) rectangle ({x1},{y1});")
+    for r in range(-70, R_MAX + 1, 10):
+        out.append(rf"\draw[ink] ({r},{y0}) -- +(0,-1mm) node[below] {{${r}$}};")
+    for s in (1, 5, 10, 15, 20, 25):
+        out.append(rf"\draw[ink] ({x0},{s}) -- +(-1mm,0) node[left] {{${s}$}};")
+    out.append(rf"\node[below=5.5mm] at ({(x0 + x1) / 2},{y0}) {{numerator $r$}};")
+    out.append(rf"\node[left=7mm, rotate=90, anchor=south] at ({x0},{(y0 + y1) / 2}) "
+               r"{denominator $s$};")
+    labels = [(-2, r"a = -2"), (ALPHA, r"\alpha"), (A_STAR, r"a_*"), (-1, r"-1"), (0, r"0")]
+    for a, text in labels:
+        out.append(rf"\node[above, ink] at ({a * y1:.3f},{y1}) {{${text}$}};")
+    out.append(rf"\node[anchor=north, font=\footnotesize] at ({(x0 + x1) / 2},{y0}) "
+               rf"[yshift=-12mm] {{{legend_slide()}}};")
+    out += [r"\end{tikzpicture}", r"\end{document}"]
+    return "\n".join(out) + "\n"
+
+
+def render(name, tex, dpi):
+    """Write name.tex next to this script and compile it to name.pdf and name.png."""
+    (HERE / f"{name}.tex").write_text(tex)
     with tempfile.TemporaryDirectory() as tmp:
         subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error",
-                        "-output-directory", tmp, str(tex)], check=True,
+                        "-output-directory", tmp, str(HERE / f"{name}.tex")], check=True,
                        stdout=subprocess.DEVNULL)
-        shutil.copy(Path(tmp) / "coverage.pdf", HERE / "coverage.pdf")
-    subprocess.run(["pdftocairo", "-png", "-r", "200", "-singlefile",
-                    str(HERE / "coverage.pdf"), str(HERE / "coverage")], check=True)
+        shutil.copy(Path(tmp) / f"{name}.pdf", HERE / f"{name}.pdf")
+    subprocess.run(["pdftocairo", "-png", "-r", str(dpi), "-singlefile",
+                    str(HERE / f"{name}.pdf"), str(HERE / name)], check=True)
+
+
+def main():
+    marks = [(r, s, classify(r, s)) for s in range(1, S_MAX + 1)
+             for r in range(R_MIN, R_MAX + 1) if gcd(r, s) == 1]
+    render("coverage", picture_portrait(marks), 200)
+    render("coverage-slide", picture_slide(marks), 300)
 
 
 if __name__ == "__main__":
