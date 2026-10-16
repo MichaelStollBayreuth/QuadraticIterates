@@ -6,10 +6,9 @@ public import QuadraticIterates
 # Comparator solutions
 
 Proofs of the challenge statements of `Challenge.lean`, discharged by the library theorems
-`QuadraticIterates.section3_main` (`QuadraticIterates.ArchMath1992.Main`),
-`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`, `QuadraticIterates.li2021_theorem_3_9`
-(`QuadraticIterates.Li.ArchMath2021`), `QuadraticIterates.li2020_theorem_3_5`
-(`QuadraticIterates.Li.ArchMath2020`) and the rational-parameter theorems
+`QuadraticIterates.section3_main`, `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`,
+`QuadraticIterates.li2021_theorem_3_9`, `QuadraticIterates.li2020_theorem_3_5`
+(`QuadraticIterates.Main.Integers`) and the rational-parameter theorems
 `QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate` and
 `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_squarefreeCertificate`
 (`QuadraticIterates.Rational.Main`), whose class and certificate hypotheses are the spelled-out

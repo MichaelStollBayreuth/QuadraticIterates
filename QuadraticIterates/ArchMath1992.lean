@@ -50,8 +50,6 @@ Corollary 1.3.
   `QuadraticIterates.section1_tfae_of_irreducible`;
 * `QuadraticIterates.section1_of_not_isSquare_abs_bSeq` (Theorem, part 2): if none of
   `|b_2|, …, |b_n|` is a square, then `Ω_n ≅ [C₂]ⁿ`;
-* `QuadraticIterates.section3_main` (Section 3): if `a > 0` with `a ≡ 1, 2 mod 4`, or `a < 0`,
-  `a ≡ 0 mod 4` and `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`;
 * `QuadraticIterates.exists_injective_monoidHom_wreathPower` (Odoni): `Ω_n` embeds into `[C₂]ⁿ`;
 * `QuadraticIterates.irreducible_iteratedPoly` (Corollary 1.3): every `f_n` is irreducible over
   `ℚ`; by Lemma 1.2 (`QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq`) this

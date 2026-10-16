@@ -74,25 +74,25 @@ status:
     comparator_config: ""
     literature_dependencies: []
   - declaration: "QuadraticIterates.section3_main"
-    file: "QuadraticIterates/ArchMath1992/Main.lean"
+    file: "QuadraticIterates/Main/Integers.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
   - declaration: "QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul"
-    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    file: "QuadraticIterates/Main/Integers.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
   - declaration: "QuadraticIterates.li2021_theorem_3_3"
-    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    file: "QuadraticIterates/Main/Integers.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: ""
     literature_dependencies: []
   - declaration: "QuadraticIterates.li2021_theorem_3_9"
-    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    file: "QuadraticIterates/Main/Integers.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
@@ -104,7 +104,7 @@ status:
     comparator_config: ""
     literature_dependencies: []
   - declaration: "QuadraticIterates.li2020_theorem_3_5"
-    file: "QuadraticIterates/Li/ArchMath2020.lean"
+    file: "QuadraticIterates/Main/Integers.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
@@ -290,7 +290,7 @@ alignment:
       status: "proved"
     - source: "Section 3, main result"
       lean: "section3_main"
-      module: "QuadraticIterates.ArchMath1992.Main"
+      module: "QuadraticIterates.Main.Integers"
       status: "proved"
     - source: "Li 2021, Lemma 2.1 (Stoll's criterion at one index)"
       lean: "not_isSquare_betaSeq_of_dvd_add_two_mul"
@@ -316,13 +316,13 @@ alignment:
       note: "stated for a = -(4k+2)(4k+3); Li's lemma is the case of even k"
     - source: "Li 2021, Theorem 3.3"
       lean: "li2021_theorem_3_3"
-      module: "QuadraticIterates.Li.ArchMath2021"
+      module: "QuadraticIterates.Main.Integers"
       status: "proved"
     - source: "Li 2021, Theorem 3.3 for a = -(4k+2)(4k+3), all k (not in the paper)"
-      lean: "nonempty_mulEquiv_of_eq_neg_mul, not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul"
-      module: "QuadraticIterates.Li.ArchMath2021"
+      lean: "nonempty_mulEquiv_of_eq_neg_mul"
+      module: "QuadraticIterates.Main.Integers"
       status: "proved"
-      note: "Li's argument with the residue of γ_k₀ modulo 8 in place of the one modulo 4"
+      note: "the case v = 1 of Theorem A for rational parameters (nonempty_mulEquiv_of_eq_neg_mul_add_one)"
     - source: "Li 2021, Lemma 3.4"
       lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one"
       module: "QuadraticIterates.Li.ArchMath2021"
@@ -338,7 +338,7 @@ alignment:
       status: "proved"
     - source: "Li 2021, Theorem 3.9"
       lean: "li2021_theorem_3_9"
-      module: "QuadraticIterates.Li.ArchMath2021"
+      module: "QuadraticIterates.Main.Integers"
       status: "proved"
     - source: "Li 2020, Lemma 3.1"
       lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three"
@@ -355,7 +355,7 @@ alignment:
       status: "proved"
     - source: "Li 2020, Theorem 3.5"
       lean: "li2020_theorem_3_5"
-      module: "QuadraticIterates.Li.ArchMath2020"
+      module: "QuadraticIterates.Main.Integers"
       status: "proved"
       note: "the index-2 statement in the exceptional case is not formalized"
     - source: "Theorem R⁺ (rational a = r/s > -1; author's working notes, not in the papers)"

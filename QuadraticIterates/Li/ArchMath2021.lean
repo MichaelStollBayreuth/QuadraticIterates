@@ -25,9 +25,6 @@ one modulo `4`.
 
 ## Main statements
 
-* `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when
-  `a = -(4k+2)(4k+3)`; `QuadraticIterates.li2021_theorem_3_3` (Theorem 3.3) is the case of even
-  `k`, `a = -(8k+2)(8k+3)`.
 * `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree` (Lemma 2.2): for squarefree `n > 1`,
   `|b_n|` is not a square once `-1` is not a square modulo `γ_1 + γ_2`; its three cases
   `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_pos_of_emod_eight_eq_four`,
@@ -37,8 +34,6 @@ one modulo `4`.
 * `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul` (Lemma 3.1, for
   all `k`): for `a = -(4k+2)(4k+3)` and `n` not squarefree, `|b_n|` is not a square; for
   squarefree `n`, `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul`.
-* `QuadraticIterates.li2021_theorem_3_9`: `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` when
-  `a = -((4k+1)(4k+2)+1)`.
 * `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one`
   (Lemma 3.4): for `a < 0`, `a ≡ 1 mod 4` and `n` not squarefree with `4 ∤ n`, `|b_n|` is not a
   square.
@@ -163,22 +158,7 @@ theorem not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul {n : ℕ} (hsf : Squar
     (by rw [abs_of_neg ha0, Int.sign_eq_neg_one_of_neg ha0, ha]; push_cast; ring)
     (ZMod.not_isSquare_neg_one_of_dvd (dvd_mul_right _ _) (by lia)) hsf hn
 
-/-- For `a = -(4k+2)(4k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. Theorem 3.3 of [Li 2021]
-(`QuadraticIterates.li2021_theorem_3_3`) is the case of even `k`; the proof is Li's, with the
-residue `γ_{k₀} ≡ -a - 1 mod 8` of `QuadraticIterates.gammaSeq_normPoly_zmod_eight_of_even`, valid
-for all even `a`, in place of `γ_{k₀} ≡ 1 mod 4`, which needs `a ≡ 2 mod 8`. -/
-theorem nonempty_mulEquiv_of_eq_neg_mul : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
-  nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq (not_isSquare_neg_of_eq_neg_mul ha)
-    (fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul ha hsf hn)
-    fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul ha hn hsf
-
 end
-
-/-- Theorem 3.3 of [Li 2021]: for `a = -(8k+2)(8k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`; the case of
-even `k` of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`. -/
-theorem li2021_theorem_3_3 {k : ℕ} (ha : a = -((8 * k + 2) * (8 * k + 3))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
-  nonempty_mulEquiv_of_eq_neg_mul (k := 2 * k) (by rw [ha]; push_cast; ring)
 
 /-- Lemma 3.4 of [Li 2021]: for `a < 0` with `a ≡ 1 mod 4` and `n ≥ 1` not squarefree with
 `4 ∤ n`, `|b_n|` is not a square: `k = n / rad n ≥ 3` is odd, `γ_k + γ_{k+2} ≡ 6 mod 8`, and the
@@ -329,19 +309,6 @@ theorem not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one {n : ℕ
     (Nat.div_mul_cancel radical_dvd_self).symm hke (dvd_add_two_of_mul_eq ha (by lia) hm)
     (isCoprime_gammaSeq_two_of_mul_eq ha hk₀2 hke hm (Int.odd_iff.mpr (by lia)))
     (ZMod.not_isSquare_neg_one_of_emod_four_eq_three hm4)
-
-/-- Theorem 3.9 of [Li 2021]: for `a = -((4k+1)(4k+2)+1)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem li2021_theorem_3_9 : ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) :=
-  have ha0 := neg_of_eq_neg_mul_add_one ha
-  have ha4 := emod_four_eq_one_of_eq_neg_mul_add_one ha
-  nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq
-    (mod_cast Int.not_isSquare_of_emod_four_eq_three (by lia))
-    (fun _ hsf hn ↦ not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_one ha0 ha4 hsf hn)
-    fun n hsf hn ↦ (em (4 ∣ n)).elim
-      (fun h4 ↦ not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one ha hn
-        ((Nat.even_div_radical_iff_four_dvd (by lia)).mpr h4))
-      fun h4 ↦ not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one ha0 ha4
-        hn hsf h4
 
 end
 

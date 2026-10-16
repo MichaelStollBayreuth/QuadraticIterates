@@ -88,4 +88,11 @@ theorem exists_prime_dvd_of_emod_eight_eq_six {x : ℤ} (hx : 0 < x) (h : x % 8 
   obtain ⟨p, hp, hp4, hpd⟩ := Nat.exists_prime_dvd_of_mod_eight_eq_six (m := x.toNat) (by lia)
   exact ⟨p, hp, hp4, by simpa [Int.toNat_of_nonneg hx.le] using Int.natCast_dvd_natCast.mpr hpd⟩
 
+
+theorem exists_prime_dvd_of_emod_eight_eq_three_or_five {x : ℤ} (hx : 0 < x)
+    (h : x % 8 = 3 ∨ x % 8 = 5) : ∃ p : ℕ, p.Prime ∧ (p % 8 = 3 ∨ p % 8 = 5) ∧ (p : ℤ) ∣ x := by
+  obtain ⟨p, hp, hp8, hpd⟩ := Nat.exists_prime_dvd_of_mod_eight_eq_three_or_five (m := x.toNat)
+    (by lia)
+  exact ⟨p, hp, hp8, by simpa [Int.toNat_of_nonneg hx.le] using Int.natCast_dvd_natCast.mpr hpd⟩
+
 end Int

@@ -34,12 +34,11 @@ integer statements are its corollaries through Corollary 1.3.
   `b_1, …, b_n` are 2-independent (`QuadraticIterates.section1_a_iff_b`).
 * `QuadraticIterates.section1_of_not_isSquare_abs_bSeq`: if none of `|b_2|, …, |b_n|` is a square,
   then `Ω_n ≅ [C₂]ⁿ`.
-* `QuadraticIterates.section3_main`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and
-  `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. The proof rescales `X² + a` to
-  `normPoly a = |a| X² + sgn a`, whose `γ`-sequence is `|c_n| / |a|`
+* `QuadraticIterates.not_isSquare_abs_bSeq`: if `a > 0` and `a ≡ 1, 2 mod 4`, or `a < 0`,
+  `a ≡ 0 mod 4` and `-a` is not a square, then no `|b_n|`, `n ≥ 2`, is a square. The proof
+  rescales `X² + a` to `normPoly a = |a| X² + sgn a`, whose `γ`-sequence is `|c_n| / |a|`
   (`QuadraticIterates.abs_cSeq_eq_gammaSeq_mul_abs`) and whose `β`-sequence is `|b_n|`
-  (`QuadraticIterates.abs_bSeq_eq_betaSeq`), and applies Lemma 2.2
-  (`QuadraticIterates.not_isSquare_abs_bSeq`).
+  (`QuadraticIterates.abs_bSeq_eq_betaSeq`), and applies Lemma 2.2.
 
 Part of the formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
 Arch. Math. **59** (1992), 239-244; see `QuadraticIterates.ArchMath1992`.
@@ -289,14 +288,6 @@ theorem not_isSquare_abs_bSeq
   refine not_isSquare_betaSeq_of_pos (evenPoly_normPoly a)
     (Int.sign_sq_of_ne_zero (ne_zero_of_not_isSquare_neg ha)) (gammaSeq_normPoly_pos ha) ?_ n hn
   grind [eval_normPoly, Int.sign_eq_one_of_pos, Int.sign_eq_neg_one_of_neg, abs_of_pos, abs_of_neg]
-
-/-- Section 3, main result: if `a > 0` and `a ≡ 1 or 2 mod 4`, or `a < 0`, `a ≡ 0 mod 4` and `-a` is
-not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem section3_main
-    (hcase : (0 < a ∧ a % 4 = 1) ∨ (0 < a ∧ a % 4 = 2) ∨ (a < 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n) := fun n _ ↦
-  section1_of_not_isSquare_abs_bSeq (not_isSquare_neg_of_cases hcase) n fun _ hk2 _ ↦
-    not_isSquare_abs_bSeq hcase hk2
 
 end
 

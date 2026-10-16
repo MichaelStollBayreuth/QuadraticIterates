@@ -20,6 +20,7 @@ public import QuadraticIterates.Li.ArchMath2021
 public import QuadraticIterates.Li.Residues
 public import QuadraticIterates.Main.Criteria
 public import QuadraticIterates.Main.Families
+public import QuadraticIterates.Main.Integers
 public import QuadraticIterates.Main.Theorem
 public import QuadraticIterates.Main.TwoAdic
 public import QuadraticIterates.Mathlib.Algebra.BigOperators

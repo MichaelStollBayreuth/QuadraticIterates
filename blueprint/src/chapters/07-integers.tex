@@ -8,16 +8,22 @@ unchanged.
 \begin{corollary}[\cite{paper}, Section~3]
   \label{cor:stoll1992}
   \uses{thm:main, prop:Z, prop:O, prop:T, lem:prime3}
+  \lean{QuadraticIterates.section3_main,
+    QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_one,
+    QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_two,
+    QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_zero}
+  \leanok
   Let $a \in \ZZ$. Then $\rho_a$ is surjective in each of the following cases:
   \begin{enumerate}
     \item $a > 0$ and $a \equiv 1 \pmod 4$;
     \item $a > 0$ and $a \equiv 2 \pmod 4$;
     \item $a < 0$, $a \equiv 0 \pmod 4$ and $-a$ is not a square.
   \end{enumerate}
-  \formalnote{Proposed: \lname{section3\_main} and the three case lemmas, with the statements of
-  the existing challenges \lname{challenge\_section3\_main\_pos\_emod\_four\_eq\_one} etc.}
+  \formalnote{The three case lemmas hold for all $n$; \lname{section3\_main} combines them in the
+  form of the challenges \lname{challenge\_section3\_main\_pos\_emod\_four\_eq\_one} etc.}
 \end{corollary}
 \begin{proof}
+  \leanok
   Here $r = a$, $s = 1$. (1) $\eps = 1$; (O1); (C1), as $a + 2 \equiv 3 \pmod 4$; and (Z1) unless
   $a$ is a square, in which case $a \equiv 1 \pmod 8$ and $a + 2 \equiv 3 \pmod 8$ has a prime
   divisor $\equiv \pm 3 \pmod 8$ (Lemma~\ref{lem:prime3}), so (Z2) holds. (2) $\eps = 1$; (O1);
@@ -29,12 +35,14 @@ unchanged.
 \begin{corollary}[\cite{li2020}, Theorem~3.5]
   \label{cor:li2020}
   \uses{cor:li2020-rat, prop:Z}
+  \lean{QuadraticIterates.li2020_theorem_3_5}
+  \leanok
   Let $a \in \ZZ$, $a < 0$, $a \equiv 3 \pmod 4$, and $-a$ not a square. Then $\rho_a$ is
   surjective if and only if $-a - 1$ is not a square.
-  \formalnote{Proposed: \lname{li2020\_theorem\_3\_5}, the statement of
-  \lname{challenge\_li2020\_theorem\_3\_5}.}
+  \formalnote{The statement of \lname{challenge\_li2020\_theorem\_3\_5}.}
 \end{corollary}
 \begin{proof}
+  \leanok
   $a \ne -1$, so $a \le -5$; $s = 1$, $r = a \equiv 3 \pmod 4$, and (Z1) gives $\phi_0$. Apply
   Corollary~\ref{cor:li2020-rat}.
 \end{proof}
@@ -42,22 +50,26 @@ unchanged.
 \begin{corollary}[Theorem A; \cite{li2021}, Theorem~3.3 for even $k$]
   \label{cor:thmA}
   \uses{thm:famA}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul, QuadraticIterates.li2021_theorem_3_3}
+  \leanok
   For $k \ge 0$ and $a = -(4k + 2)(4k + 3)$, $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_eq\_neg\_mul}, the statement of
-  \lname{challenge\_nonempty\_mulEquiv\_of\_eq\_neg\_mul}; \lname{li2021\_theorem\_3\_3} is its case
-  $k$ even.}
+  \formalnote{The statement of \lname{challenge\_nonempty\_mulEquiv\_of\_eq\_neg\_mul};
+  \lname{li2021\_theorem\_3\_3} is its case $k$ even.}
 \end{corollary}
 \begin{proof}
+  \leanok
   Theorem~\ref{thm:famA} with $j = 4k + 2$, $v = 1$, class $(2, 1)$.
 \end{proof}
 
 \begin{corollary}[\cite{li2021}, Theorem~3.9]
   \label{cor:li39}
   \uses{thm:famLi}
+  \lean{QuadraticIterates.li2021_theorem_3_9}
+  \leanok
   For $k \ge 0$ and $a = -((4k + 1)(4k + 2) + 1)$, $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{li2021\_theorem\_3\_9}, the statement of
-  \lname{challenge\_li2021\_theorem\_3\_9}.}
+  \formalnote{The statement of \lname{challenge\_li2021\_theorem\_3\_9}.}
 \end{corollary}
 \begin{proof}
+  \leanok
   Theorem~\ref{thm:famLi} with $\ell = 4k + 1$, $v = 1$, class $(1, 1)$; $a \le -3$.
 \end{proof}

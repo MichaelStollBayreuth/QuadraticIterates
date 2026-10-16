@@ -23,7 +23,7 @@ a square) is not formalized.
 
 ## Main statements
 
-* `QuadraticIterates.li2020_theorem_3_4`, `QuadraticIterates.li2020_theorem_3_5`: the two theorems.
+* `QuadraticIterates.li2020_theorem_3_4`: Theorem 3.4.
 * `QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three`
   (Lemma 3.1): `n` not squarefree, with the modulus `γ_k + γ_{k+1} ≡ 3 mod 4`, `k = n / rad n ≥ 2`.
 * `QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three` (Lemmas 3.2
@@ -79,19 +79,5 @@ theorem li2020_theorem_3_4 (ha : a < 0) (ha4 : a % 4 = 3) (hsq : ¬IsSquare (-a)
     (fun h ↦ not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three ha ha4 hsq h (by lia))
     fun h ↦
       not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three ha ha4 hsq (by lia) h
-
-/-- Theorem 3.5 of [Li 2020]: for `a < 0` with `a ≡ 3 mod 4` and `-a` not a square, `Ω_n ≅ [C₂]ⁿ`
-for all `n ≥ 1` if and only if `-a - 1` is not a square. -/
-theorem li2020_theorem_3_5 (ha : a < 0) (ha4 : a % 4 = 3) (hsq : ¬IsSquare (-a)) :
-    (∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) := by
-  have ha' : ¬IsSquare (-a : ℚ) := mod_cast hsq
-  refine ⟨fun h hsq2 ↦ ?_, fun h n _ ↦ section1_of_not_isSquare_abs_bSeq ha' n fun k hk _ ↦ ?_⟩
-  · have hind := ((section1_tfae ha' 2).out 1 3).mp (h 2 one_le_two)
-    exact hind.not_isSquare 1 (by
-      simpa [← intCast_bSeq ha' one_le_two, bSeq_two ha'] using Rat.isSquare_intCast_iff.mpr hsq2)
-  · rcases eq_or_ne k 2 with rfl | hk2
-    · have : a ≠ -1 := fun h ↦ hsq ⟨1, by rw [h]; norm_num⟩
-      rwa [bSeq_two ha', abs_of_pos (by lia)]
-    · exact li2020_theorem_3_4 ha ha4 hsq (by lia)
 
 end QuadraticIterates
