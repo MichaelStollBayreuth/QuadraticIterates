@@ -1,10 +1,5 @@
 module  -- shake: keep-all --deprecated_module: ignore
 
-public import QuadraticIterates.ArchMath1992
-public import QuadraticIterates.ArchMath1992.Irreducibility
-public import QuadraticIterates.ArchMath1992.Iterates
-public import QuadraticIterates.ArchMath1992.Main
-public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Characters.Criterion
 public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.EvenPoly
@@ -14,10 +9,6 @@ public import QuadraticIterates.Galois.Irreducibility
 public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Galois.Tower
 public import QuadraticIterates.Galois.TwoIndependent
-public import QuadraticIterates.Li
-public import QuadraticIterates.Li.ArchMath2020
-public import QuadraticIterates.Li.ArchMath2021
-public import QuadraticIterates.Li.Residues
 public import QuadraticIterates.Main.Criteria
 public import QuadraticIterates.Main.Families
 public import QuadraticIterates.Main.Integers
@@ -25,9 +16,7 @@ public import QuadraticIterates.Main.Theorem
 public import QuadraticIterates.Main.TwoAdic
 public import QuadraticIterates.Mathlib.Algebra.BigOperators
 public import QuadraticIterates.Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import QuadraticIterates.Mathlib.Algebra.BigOperators.GroupWithZero.Finset
 public import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
-public import QuadraticIterates.Mathlib.Algebra.Group.Basic
 public import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
 public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
@@ -35,10 +24,7 @@ public import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 public import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 public import QuadraticIterates.Mathlib.Algebra.QuadraticDiscriminant
-public import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
-public import QuadraticIterates.Mathlib.Algebra.Squares
 public import QuadraticIterates.Mathlib.Data.Fintype.Basic
-public import QuadraticIterates.Mathlib.Data.Int.Order.Units
 public import QuadraticIterates.Mathlib.Data.Multiset
 public import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
 public import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
@@ -48,30 +34,16 @@ public import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 public import QuadraticIterates.Mathlib.GroupTheory.Card
 public import QuadraticIterates.Mathlib.GroupTheory.PGroup
 public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
-public import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
 public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
-public import QuadraticIterates.Mathlib.NumberTheory.Moebius
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
-public import QuadraticIterates.Mathlib.RingTheory.Localization.Away.Basic
-public import QuadraticIterates.Mathlib.RingTheory.Localization.Basic
-public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 public import QuadraticIterates.Mathlib.RingTheory.Multiplicity
-public import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
-public import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 public import QuadraticIterates.Patterns.Dyadic
 public import QuadraticIterates.Patterns.Primes
 public import QuadraticIterates.Patterns.Reflection
 public import QuadraticIterates.Patterns.Sign
-public import QuadraticIterates.Rational
-public import QuadraticIterates.Rational.GammaTwo
-public import QuadraticIterates.Rational.Main
-public import QuadraticIterates.Rational.Reflection
-public import QuadraticIterates.Rational.Residues
-public import QuadraticIterates.Rational.Sequence
-public import QuadraticIterates.Rational.SquareClasses
 public import QuadraticIterates.Sequence.Orbit
 public import QuadraticIterates.Sequence.Signs
 public import QuadraticIterates.Sequence.SquareClasses
