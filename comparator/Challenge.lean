@@ -7,21 +7,22 @@ public import Mathlib
 
 Self-contained restatements, with `sorry` proofs, of the main results for verification with
 [leanprover/comparator](https://github.com/leanprover/comparator): the three cases of the paper's
-Section 3 main result (`section3_main` in `QuadraticIterates/ArchMath1992/`), one challenge per
-case, the theorems of Li extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its
-strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in
-`QuadraticIterates/Li/`), and the two theorems extending it to rational parameters `a = r/s`
-(Theorems R⁺ and R⁻ of `QuadraticIterates/Rational/Main.lean`, with the 2-adic classes and the
-squarefree-level certificates spelled out).
+Section 3 main result (`section3_main`), one challenge per case, the theorems of Li extending it
+(`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its strengthened form
+`nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in `QuadraticIterates/Main/Integers`),
+and the main theorem for rational parameters `a = r/s`
+(`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`).
 
-This file imports **only Mathlib**: the three non-Mathlib definitions the statement refers to
-(`QuadraticIterates.iteratedPoly`, `.GaloisGroup`, `.WreathPower`) are reproduced here from the
-library — under their library names, and with the library's local notation `fℚ[a, n]` spelled out —
-so the challenge does not depend on the repository being formalized. The Galois group is defined
-for a rational parameter, as in the library (which also treats rational `a = r/s`); the integer
-parameters of the challenges are cast to `ℚ`. Comparator compares the full definition bodies (not
-just types) between challenge and solution, so a solution that alters any of these definitions is
-rejected. The companion `Solution.lean` discharges the `sorry`s with the library theorems.
+This file imports **only Mathlib**: the non-Mathlib definitions the statements refer to
+(`QuadraticIterates.iteratedPoly`, `.GaloisGroup`, `.WreathPower`, and for the main theorem the
+criteria `.NegAllCriterion`, `.NegFirstCriterion`, `.NegTailCriterion` and the `2`-adic classes
+`.TwoAdicClass`) are reproduced here from the library — under their library names, and with the
+library's local notation `fℚ[a, n]` spelled out — so the challenge does not depend on the repository
+being formalized. The Galois group is defined for a rational parameter, as in the library; the
+integer parameters of the challenges are cast to `ℚ`. Comparator compares the full definition
+bodies (not just types) between challenge and solution, so a solution that alters any of these
+definitions is rejected. The companion `Solution.lean` discharges the `sorry`s with the library
+theorems.
 -/
 
 @[expose] public section
@@ -43,6 +44,69 @@ noncomputable abbrev GaloisGroup (a : ℚ) (n : ℕ) : Type :=
 Mathlib's `IteratedWreathProduct`. -/
 abbrev WreathPower (n : ℕ) : Type :=
   IteratedWreathProduct (Multiplicative (ZMod 2)) n
+
+/-- Criteria (Z1)–(Z4) for `φ₀` (the pattern `(-1, -1, -1, …)`), for `a = r/s`. -/
+inductive NegAllCriterion (r s : ℤ) : Prop
+  /-- (Z1) `r ≠ ±□`. -/
+  | not_isSquare (h : ¬IsSquare r) (h' : ¬IsSquare (-r))
+  /-- (Z2) A prime `p ≡ ±3 (mod 8)` divides `r + 2s`. -/
+  | dvd_add_two_mul (p : ℕ) (hp : p.Prime) (hp8 : p % 8 = 3 ∨ p % 8 = 5)
+      (hdvd : (p : ℤ) ∣ r + 2 * s)
+  /-- (Z3) An odd prime `p` divides `r² + s²`, and `(-rs / p) = ((r - s)s / p) = -1`. -/
+  | dvd_sq_add_sq (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2)
+      (h₁ : jacobiSym (-(r * s)) p = -1) (h₂ : jacobiSym ((r - s) * s) p = -1)
+  /-- (Z4) A prime `p ≡ 1 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(m s / p) = -1`. -/
+  | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 1) (hk : 0 < k)
+      (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = -1)
+  /-- (Z4) `r = 2^k m` with `k ≥ 3` and `m s ≡ ±3 (mod 8)`. -/
+  | dvd_left_two (k : ℕ) (m : ℤ) (hk : 3 ≤ k) (hr : r = 2 ^ k * m)
+      (h : m * s % 8 = 3 ∨ m * s % 8 = 5)
+
+/-- Criteria (O1)–(O5) for `φ₁` (the pattern `(-1, 1, 1, …)`), for `a = r/s` with `s > 0`. -/
+inductive NegFirstCriterion (r s : ℤ) : Prop
+  /-- (O1) `a > 0`. -/
+  | pos (h : 0 < r)
+  /-- (O2) `a ≡ 1 mod 4`: `s` is odd and `r ≡ s (mod 4)`. -/
+  | modEq_four (hs : Odd s) (h : r ≡ s [ZMOD 4])
+  /-- (O3) An odd prime `p` divides `s = p^k m` (`p ∤ m`) with `k` odd or `(-rm / p) = -1`. -/
+  | dvd_right (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp2 : p ≠ 2) (hk : 0 < k) (hs : s = p ^ k * m)
+      (hm : ¬(p : ℤ) ∣ m) (h : Odd k ∨ jacobiSym (-(r * m)) p = -1)
+  /-- (O4) `s = 2^k m` with `m` odd, and `k` is odd, or `k = 2` and `rm ≡ 1 (mod 4)`, or `k ≥ 4`
+  is even and `rm ≢ -1 (mod 8)`. -/
+  | dvd_right_two (k : ℕ) (m : ℤ) (hs : s = 2 ^ k * m) (hm : Odd m)
+      (h : Odd k ∨ (k = 2 ∧ r * m % 4 = 1) ∨ (Even k ∧ 4 ≤ k ∧ r * m % 8 ≠ 7))
+  /-- (O5) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
+  | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
+      (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = 1)
+  /-- (O5) `r = 2^k m` with `k ≥ 2` and `ms ≡ 1 (mod 4)`. -/
+  | dvd_left_two (k : ℕ) (m : ℤ) (hk : 2 ≤ k) (hr : r = 2 ^ k * m) (h : m * s % 4 = 1)
+
+/-- Criteria (T1)–(T4) for `τ` (the pattern `(1, -1, -1, …)`), for `a = r/s` with `s > 0`. -/
+inductive NegTailCriterion (r s : ℤ) : Prop
+  /-- (T1) `-1 < a < 0`. -/
+  | neg_one_lt (h₁ : -s < r) (h₀ : r < 0)
+  /-- (T2) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = -1`. -/
+  | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
+      (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = -1)
+  /-- (T2) `r = 2^k m` with `k ≥ 2` and `ms ≡ 3 (mod 4)`. -/
+  | dvd_left_two (k : ℕ) (m : ℤ) (hk : 2 ≤ k) (hr : r = 2 ^ k * m) (h : m * s % 4 = 3)
+  /-- (T3) A prime `p ≡ 3 (mod 4)` divides `r + s = p^k m` (`p ∤ m`) with `(sm / p) = 1`. -/
+  | dvd_add (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
+      (hrs : r + s = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (s * m) p = 1)
+  /-- (T3) `r + s = 2^k m` with `k ≥ 2` and `sm ≡ 1 (mod 4)`. -/
+  | dvd_add_two (k : ℕ) (m : ℤ) (hk : 2 ≤ k) (hrs : r + s = 2 ^ k * m) (h : s * m % 4 = 1)
+  /-- (T3) `r + s ≠ ±□`, and `r + s` is divisible by `4` or by a prime `p ≡ 3 (mod 4)`. -/
+  | not_isSquare_add (h : ¬IsSquare (r + s)) (h' : ¬IsSquare (-(r + s)))
+      (hdvd : 4 ∣ r + s ∨ ∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ r + s)
+  /-- (T4) `a < -1`, `c_3 < 0 < c_4` (that is, `r w_3 < 0 < r w_4`), and `r + s ≠ ±□`. -/
+  | window (hr : r < -s) (h₃ : (r ^ 2 + r * s) ^ 2 + r * s ^ 3 < 0)
+      (h₄ : 0 < ((r ^ 2 + r * s) ^ 2 + r * s ^ 3) ^ 2 + r * s ^ 7) (h : ¬IsSquare (r + s))
+      (h' : ¬IsSquare (-(r + s)))
+
+/-- The `2`-adic classes (C1)–(C3) of the main theorem for `a = r/s` with sign `ε`: `s` odd and
+`r + 2s ≡ -ε (mod 4)`; `s` odd and `r + s ≡ -ε (mod 4)`; or `s` even and `r ≡ -ε (mod 4)`. -/
+def TwoAdicClass (r s ε : ℤ) : Prop :=
+  (Odd s ∧ r + 2 * s ≡ -ε [ZMOD 4]) ∨ (Odd s ∧ r + s ≡ -ε [ZMOD 4]) ∨ (Even s ∧ r ≡ -ε [ZMOD 4])
 
 end QuadraticIterates
 
@@ -87,41 +151,16 @@ theorem challenge_li2020_theorem_3_5 (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 3)
     (∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) :=
   sorry
 
-/-- **Theorem R⁺** (`nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate`), the
-extension of the Section 3 main result to a rational parameter `a = r/s > -1` (`s > 0`, `r` and
-`s` coprime): if `-rs` is not a square, `(r, s)` lies in one of the 2-adic classes (`s` odd with
-`r ≡ 1 mod 4` or `r + s ≡ 3 mod 4`, or `s` even with `r ≡ 3 mod 4`), and one of the four
-squarefree-level certificates holds — a divisor `M` of `s` modulo which `r` is not a square; a
-divisor `M` of `r + 2s` modulo which `-s` is not a square; `s` even with `r ≡ 3 mod 4` and
-`r + s ≢ 1 mod 8`; or `r + s` not a square with a divisor `M` of `r + s` modulo which `s` is not
-a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_nonempty_mulEquiv_of_neg_lt_of_twoAdicClass_of_squarefreeCertificate (r s : ℤ)
-    (hs : 0 < s) (hrs : IsCoprime r s) (hr : -s < r) (hsq : ¬IsSquare (-(r * s)))
-    (hc : (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3))
-    (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (r : ZMod M)) ∨
-      (∃ M : ℕ, (M : ℤ) ∣ r + 2 * s ∧ ¬IsSquare (-(s : ZMod M))) ∨
-        (s % 2 = 0 ∧ r % 4 = 3 ∧ (r + s) % 8 ≠ 1) ∨
-          (¬IsSquare (r + s) ∧
-            ∃ M : ℕ, (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
-  sorry
-
-/-- **Theorem R⁻**
-(`nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate`), the
-extension of the Section 3 main result to a rational parameter `a = -R/s ≤ -2` (`R, s > 0`
-coprime): if `Rs` is not a square, `(R, s)` lies in one of the 2-adic classes (`s` odd with
-`R ≡ 1 mod 4` or `R - s ≡ 3 mod 4`, or `s` even with `R ≡ 3 mod 4`), and one of the four
-squarefree-level certificates holds — a divisor `M` of `s` modulo which `R` is not a square; a
-divisor `M` of `R` modulo which `-s` is not a square; `s` even with `R ≡ 3 mod 4` and
-`R - s ≢ 1 mod 8`; or `R - s` not a square with a divisor `M` of `R - s` modulo which `-s` is not
-a square — then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_nonempty_mulEquiv_of_two_mul_le_neg_of_twoAdicClass_of_squarefreeCertificate
-    (R s : ℤ) (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R) (hsq : ¬IsSquare (R * s))
-    (hc : (s % 2 = 1 ∧ (R % 4 = 1 ∨ (R - s) % 4 = 3)) ∨ (s % 2 = 0 ∧ R % 4 = 3))
-    (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
-      (∃ M : ℕ, (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
-        (s % 2 = 0 ∧ R % 4 = 3 ∧ (R - s) % 8 ≠ 1) ∨
-          (¬IsSquare (R - s) ∧
-            ∃ M : ℕ, (M : ℤ) ∣ R - s ∧ ¬IsSquare (-(s : ZMod M)))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (-R / s : ℚ) n ≃* WreathPower n) :=
+/-- **The main theorem** for rational parameters (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`):
+let `a = r/s` with `r, s` coprime and `s > 0`, and either `a ≤ -2` and `ε = -1`, or
+`a³ + 2a² + 2a + 2 > 0` and `ε = 1`. If `(r, s, ε)` lies in one of the `2`-adic classes
+`TwoAdicClass r s ε` and two of the three lists of criteria `NegAllCriterion r s`,
+`NegFirstCriterion r s`, `NegTailCriterion r s` apply, then `Ω_n ≅ [C₂]ⁿ` for all `n`. -/
+theorem challenge_nonempty_mulEquiv_of_twoAdicClass_of_criteria (r s : ℤ) (hrs : IsCoprime r s)
+    (hs : 0 < s) (ε : ℤ)
+    (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
+    (hc : TwoAdicClass r s ε)
+    (h : NegAllCriterion r s ∧ NegFirstCriterion r s ∨ NegAllCriterion r s ∧ NegTailCriterion r s ∨
+      NegFirstCriterion r s ∧ NegTailCriterion r s) (n : ℕ) :
+    Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
   sorry
