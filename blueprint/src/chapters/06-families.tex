@@ -8,14 +8,16 @@ $\QQ$, and the factors supply primes $\equiv 3 \pmod 4$ at every level.
 \begin{theorem}[Theorem A for rational parameters]
   \label{thm:famA}
   \uses{lem:reflection, lem:jump, prop:Z, prop:O, prop:T, lem:klein, lem:prime3, thm:tfae}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one,
+    QuadraticIterates.exists_prime_dvd_vSeq_neg_mul_add, QuadraticIterates.neg_vSeq_neg_mul_add_eq}
+  \leanok
   Let $a = -j(j + 1)$ with $j = u/v > 1$ for coprime positive integers $u$, $v$ with $v$ odd and
   $(u, v) \equiv (2, 1)$ or $(3, 3) \pmod 4$. Then $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_eq\_neg\_mul\_add\_one}, with
-  $u, v \in \ZZ$ as parameters and the parameter written as
-  $-(u/v)(u/v + 1)$.}
+  \formalnote{With $u, v \in \ZZ$ as parameters and the parameter written as $-(u/v)(u/v + 1)$.}
 \end{theorem}
 \begin{proof}
   \uses{lem:wseq-res, lem:signs, def:wseq}
+  \leanok
   Here $r = -u(u + v)$, $s = v^2$ (coprime), $a < -2$, $\eps_a = -1$, and $v_2(r) = 1$ in both
   classes. So (Z1) holds ($\val_2$ is a $\phi_0$). A prime $p \equiv 3 \pmod 4$ divides $r$
   ($p \mid u + v \equiv 3$ resp.\ $p \mid u \equiv 3 \pmod 4$), so (O5) or (T2) holds, and
@@ -37,12 +39,17 @@ $\QQ$, and the factors supply primes $\equiv 3 \pmod 4$ at every level.
   \label{thm:famLi}
   \uses{lem:period2, lem:jump2, cor:odd, prop:Z, prop:O, lem:pat-dyadic, lem:strongcong,
     lem:prime3, thm:tfae}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one,
+    QuadraticIterates.exists_prime_dvd_uSeq_neg_sq_add_add, QuadraticIterates.uSeq_eq_mul_of_add_eq}
+  \leanok
   Let $a = -(\ell^2 + \ell + 1) \le -2$ with $\ell = u/v$ for coprime positive integers $u$, $v$
   with $v$ odd and $(u, v) \equiv (1, 1)$ or $(2, 3) \pmod 4$. Then $\rho_a$ is surjective.
-  \formalnote{Proposed: \lname{nonempty\_mulEquiv\_of\_eq\_neg\_sq\_add\_add\_one}.}
+  \formalnote{With $u, v \in \ZZ$ as parameters, the parameter written as
+  $-((u/v)^2 + u/v + 1)$, and $a \le -2$ as $v^2 \le u(u + v)$.}
 \end{theorem}
 \begin{proof}
   \uses{lem:reduction, lem:signs, lem:wseq-res, lem:period2}
+  \leanok
   Here $r = -(u^2 + uv + v^2)$, $s = v^2$, $r + s = -u(u + v)$, and $a \equiv 1 \bmod 4$ in both
   classes. $|r| \equiv 3 \pmod 4$ is not a square, so (Z1) gives $\phi_0$; (O2) gives
   $\phi_1$; Corollary~\ref{cor:odd} gives $\phi_n$ for odd $n \ge 3$; and $\val_2$

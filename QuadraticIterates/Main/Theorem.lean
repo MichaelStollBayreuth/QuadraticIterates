@@ -35,6 +35,8 @@ criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriteri
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`: the main theorem.
 * `QuadraticIterates.forall_nonempty_mulEquiv_iff_of_le_neg_two`: Li's theorem of 2020 for
   rational parameters `a ≤ -2`.
+* `QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_uSeq`: period two with `val₂` for
+  `a ≡ 1 mod 4`.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_odd`: for `a ≡ 1 mod 4`, `φ₀` gives `φ_n` at
   every odd level `n ≥ 3`.
 -/
@@ -134,6 +136,19 @@ theorem forall_nonempty_mulEquiv_iff_of_le_neg_two (hrs : IsCoprime r s) (hs : 0
   simp [Fin.prod_univ_two, cSeq_two]
   linear_combination ((r : ℚ) / s) ^ 2 * ht
 
+/-- **Period two with `val₂`** for `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`): a prime
+`p ≡ 3 (mod 4)` dividing `u_n` and not `r + s` gives `φ_n` from `φ₀`. -/
+theorem hasCharPattern_mulSingle_of_prime_dvd_uSeq (hrs : IsCoprime r s) (hs : Odd s)
+    (h4 : r ≡ s [ZMOD 4]) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ} (hn : 1 ≤ n)
+    {p : ℕ} [Fact p.Prime] (hp4 : p % 4 = 3) (hpu : (p : ℤ) ∣ uSeq r s n)
+    (hprs : ¬(p : ℤ) ∣ r + s) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
+  refine hasCharPattern_mulSingle_of_dvd_uSeq hrs (pow_one p).symm one_ne_zero
+    (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) hn (by simpa using hpu) hprs
+    (h₀.mono hn) (χ := Rat.valChar 2) ?_
+    fun m hm ↦ valChar_two_cSeq_succ_of_modEq_four hrs hs h4 (by lia)
+  have hc := h₀.ne_zero hn (by simp)
+  rcases (Rat.valChar 2).apply_eq_one_or_eq_neg_one (Ne.isUnit hc) with h | h <;> simp [h]
+
 /-- **Odd levels** for `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`) with `a ≤ -2`, or `a > -1`,
 or `a < -1` and `c₃ < 0 < c₄`: `φ₀` gives `φ_n` for every odd `n ≥ 3`. Here `u_n > 0`, a prime
 `p ≡ 3 (mod 4)` divides `u_n` and not `r + s`, and `val₂` alternates. -/
@@ -150,11 +165,6 @@ theorem hasCharPattern_mulSingle_of_odd (hrs : IsCoprime r s) (hs : 0 < s) (hodd
       cSeq_sq_sub_cSeq_add_pos_of_odd ha h₃ h₄ hn ho]
   obtain ⟨p, hp, hp4, hpu, hprs⟩ := exists_prime_dvd_uSeq_of_odd hrs hodd h4 hn ho hpos
   have := Fact.mk hp
-  refine hasCharPattern_mulSingle_of_dvd_uSeq hrs (pow_one p).symm one_ne_zero
-    (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) (by lia) (by simpa using hpu) hprs
-    (h₀.mono (by lia)) (χ := Rat.valChar 2) ?_
-    fun m hm ↦ valChar_two_cSeq_succ_of_modEq_four hrs hodd h4 (by lia)
-  have hc := h₀.ne_zero (by lia : 1 ≤ n) (by simp)
-  rcases (Rat.valChar 2).apply_eq_one_or_eq_neg_one (Ne.isUnit hc) with h | h <;> simp [h]
+  exact hasCharPattern_mulSingle_of_prime_dvd_uSeq hrs hodd h4 h₀ (by lia) hp4 hpu hprs
 
 end QuadraticIterates

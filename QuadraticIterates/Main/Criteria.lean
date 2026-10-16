@@ -14,6 +14,7 @@ import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
+import QuadraticIterates.Mathlib.RingTheory.Multiplicity
 import QuadraticIterates.Patterns.Dyadic
 import QuadraticIterates.Patterns.Primes
 import QuadraticIterates.Patterns.Sign
@@ -647,5 +648,21 @@ theorem hasCharPattern_neg_one_of_negAllCriterion (hrs : IsCoprime r s) (hs : s 
     have := Fact.mk hp
     exact hasCharPattern_neg_one_of_dvd_left hrs hs hp4 hk hr hm h
   | dvd_left_two k m hk hr h => exact hasCharPattern_neg_one_of_dvd_left_two hrs hs hk hr h
+
+/-- A prime `p ≡ 3 (mod 4)` dividing `r ≠ 0` gives `φ₁` from `φ₀`: by (O5) or (T2), according to
+the Jacobi symbol `(ms/p)` for `r = p^k m`, and `φ₀ τ = φ₁`. -/
+theorem hasCharPattern_mulSingle_one_of_prime_dvd (hrs : IsCoprime r s) (hs : s ≠ 0)
+    (hr : r ≠ 0) {p : ℕ} [Fact p.Prime] (hp4 : p % 4 = 3) (hpr : (p : ℤ) ∣ r)
+    (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
+  obtain ⟨k, m, hk, hrm, hm⟩ := Int.exists_pow_mul_of_dvd Fact.out hr hpr
+  have hp := Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)
+  have hps : ¬(p : ℤ) ∣ s := fun h ↦ hp.not_isUnit (hrs.isUnit_of_dvd' hpr h)
+  have hgcd : (m * s).gcd p = 1 := Int.isCoprime_iff_gcd_eq_one.mp
+    (hp.coprime_iff_not_dvd.mpr fun h ↦ (hp.dvd_or_dvd h).elim hm hps).symm
+  rcases jacobiSym.eq_one_or_neg_one hgcd with h | h
+  · exact hasCharPattern_mulSingle_one_of_dvd_left hrs hs hp4 hk hrm hm h
+  · exact hasCharPattern_mulSingle_of_neg_of_neg_mulSingle h₀
+      (hasCharPattern_neg_mulSingle_one_of_dvd_left hrs hs hp4 hk hrm hm h)
 
 end QuadraticIterates

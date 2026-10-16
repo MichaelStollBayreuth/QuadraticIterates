@@ -75,6 +75,13 @@ lemma ZMod.intCast_pow_two_pow_sub_one_eight_of_odd {x : ℤ} (hx : Odd x) {k : 
   rw [Nat.two_pow_sub_one_eq hk, pow_succ, pow_mul, intCast_sq_eight_eq_one_of_odd hx, one_pow,
     one_mul]
 
+/-- An integer `≡ c (mod 4)` is `c` or `c + 4` in `ZMod 8`. -/
+lemma ZMod.intCast_eight_eq_or_eq_of_emod_four {x c : ℤ} (h : x % 4 = c) :
+    (x : ZMod 8) = c ∨ (x : ZMod 8) = c + 4 := by
+  rcases (by lia : x % 8 = c % 8 ∨ x % 8 = (c + 4) % 8) with h8 | h8
+  · exact .inl ((ZMod.intCast_eq_intCast_iff' x c 8).mpr h8)
+  · exact .inr (mod_cast (ZMod.intCast_eq_intCast_iff' x (c + 4) 8).mpr h8)
+
 /-- Modulo a power `N` of a prime `p`, an integer prime to `p` is a unit. -/
 lemma ZMod.isUnit_intCast_of_not_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) {m : ℤ}
     (hm : ¬(p : ℤ) ∣ m) : IsUnit (m : ZMod N) := by

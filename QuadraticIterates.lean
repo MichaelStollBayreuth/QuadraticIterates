@@ -19,6 +19,7 @@ public import QuadraticIterates.Li.ArchMath2020
 public import QuadraticIterates.Li.ArchMath2021
 public import QuadraticIterates.Li.Residues
 public import QuadraticIterates.Main.Criteria
+public import QuadraticIterates.Main.Families
 public import QuadraticIterates.Main.Theorem
 public import QuadraticIterates.Main.TwoAdic
 public import QuadraticIterates.Mathlib.Algebra.BigOperators
@@ -31,6 +32,7 @@ public import QuadraticIterates.Mathlib.Algebra.Group.Subgroup.Ker
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
+public import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 public import QuadraticIterates.Mathlib.Algebra.QuadraticDiscriminant
 public import QuadraticIterates.Mathlib.Algebra.Ring.Int.Defs
 public import QuadraticIterates.Mathlib.Algebra.Squares
@@ -54,6 +56,7 @@ public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 public import QuadraticIterates.Mathlib.RingTheory.Localization.Away.Basic
 public import QuadraticIterates.Mathlib.RingTheory.Localization.Basic
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
+public import QuadraticIterates.Mathlib.RingTheory.Multiplicity
 public import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 public import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain

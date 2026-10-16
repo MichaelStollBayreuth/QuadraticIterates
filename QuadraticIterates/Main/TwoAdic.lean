@@ -102,7 +102,7 @@ theorem vSeq_modEq_add_two_mul (hr : Odd r) (hs : Odd s) {n : ℕ} (hn : 2 ≤ n
     exact (by ring : r + s + s * 1 = r + 2 * s) ▸ h₁.add (h₂.mul he)
 
 /-- For even `r` and odd `s`, `w_m ≡ r + s (mod 8)` for `m ≥ 2`. -/
-private lemma intCast_wSeq_zmod_eight_of_even_left (hr : Even r) (hs : Odd s) {m : ℕ}
+theorem intCast_wSeq_zmod_eight_of_even_left (hr : Even r) (hs : Odd s) {m : ℕ}
     (hm : 2 ≤ m) : (wSeq r s m : ZMod 8) = r + s := by
   have hsq : ((r + s : ℤ) : ZMod 8) ^ 2 = 1 := ZMod.intCast_sq_eight_eq_one_of_odd (hr.add_odd hs)
   induction m, hm using Nat.le_induction with
@@ -165,6 +165,21 @@ theorem vSeq_neg_of_le_neg_two_mul (hs : 0 < s) (h : r ≤ -2 * s) {n : ℕ} (hn
     exact mul_pos (by positivity) (by linarith [neg_le_cSeq_of_le_neg_two ha hn])
   exact neg_of_mul_pos_right (mod_cast hrv) (by lia)
 
+/-- For `r ≤ -2s` and `s > 0`, `-w_n ≥ s^{2^{n-1} - 1}` (`n ≥ 1`): `c_n = r w_n / s^{2^{n-1}}` is
+at least `-r/s`. -/
+theorem pow_le_neg_wSeq (hs : 0 < s) (h : r ≤ -2 * s) {n : ℕ} (hn : 1 ≤ n) :
+    s ^ (2 ^ (n - 1) - 1) ≤ -wSeq r s n := by
+  have hs' : (0 : ℚ) < s := mod_cast hs
+  have hc := neg_le_cSeq_of_le_neg_two (a := (r : ℚ) / s)
+    (by rw [div_le_iff₀ hs']; exact_mod_cast h) hn
+  rw [cSeq_div_eq r hs.ne' hn, neg_div', div_le_div_iff₀ hs' (by positivity),
+    ← Nat.sub_add_cancel (Nat.one_le_two_pow (n := n - 1)), pow_succ] at hc
+  have hr : (0 : ℚ) < -r * s := mul_pos (neg_pos.mpr (mod_cast (by lia : r < 0))) hs'
+  have : (s : ℚ) ^ (2 ^ (n - 1) - 1) ≤ -wSeq r s n := by
+    refine le_of_mul_le_mul_left ?_ hr
+    linear_combination hc
+  exact_mod_cast this
+
 /-- For `r > 0` and `s > 0`, `v_n > 0` for `n ≥ 2`. -/
 theorem vSeq_pos_of_pos (hs : 0 < s) (hr : 0 < r) {n : ℕ} (hn : 2 ≤ n) : 0 < vSeq r s n := by
   have ha : 0 < (r : ℚ) / s := div_pos (mod_cast hr) (mod_cast hs)
@@ -225,6 +240,14 @@ private lemma emod_of_twoAdicClass (hrs : IsCoprime r s) {ε : ℤ} (hε : ε = 
     rw [Int.ModEq] at this hc
     rcases hε with rfl | rfl <;> lia
 
+/-- An odd prime dividing `v_n` (`n ≥ 2`) does not divide `r`: `v_n ≡ 2 s^{2^n - 1} (mod r)`. -/
+theorem not_dvd_left_of_dvd_vSeq (hrs : IsCoprime r s) {n : ℕ} (hn : 2 ≤ n) {p : ℕ}
+    (hp : p.Prime) (hp2 : p ≠ 2) (hpv : (p : ℤ) ∣ vSeq r s n) : ¬(p : ℤ) ∣ r := fun hpr ↦ by
+  have hp' := Nat.prime_iff_prime_int.mp hp
+  rcases hp'.dvd_or_dvd (((vSeq_modEq_left r s hn).of_dvd hpr).dvd_iff.mp hpv) with h | h
+  · exact hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp (mod_cast h))
+  · exact hp'.not_isUnit (hrs.isUnit_of_dvd' hpr (hp'.dvd_of_dvd_pow h))
+
 /-- **The `2`-adic condition** (Lemma 4.4 of the draft): for `a = r/s ∈ 𝒜` with sign `ε` in one of
 the classes (C1)–(C3), every `v_n`, `n ≥ 2`, has a prime factor `p ≡ 3 (mod 4)` not dividing `r`:
 `ε v_n > 0` is `≡ 3 (mod 4)` or `≡ 6 (mod 8)`, and `v_n ≡ 2 s^{2^n - 1} (mod r)`. -/
@@ -235,20 +258,12 @@ theorem exists_prime_dvd_vSeq_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s)
     ∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ vSeq r s n ∧ ¬(p : ℤ) ∣ r := by
   have hpos := mul_vSeq_pos hs hr0 hε hn
   have hε1 : ε = 1 ∨ ε = -1 := by rcases hε with ⟨-, h⟩ | ⟨-, h⟩ <;> simp [h]
-  obtain ⟨p, hp, hp4, hpd⟩ : ∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ p ∣ (ε * vSeq r s n).toNat := by
+  obtain ⟨p, hp, hp4, hpd⟩ : ∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ ε * vSeq r s n := by
     rcases emod_of_twoAdicClass hrs hε1 hc hn with h | h
-    · exact Nat.exists_prime_dvd_of_mod_four_eq_three (by lia)
-    · exact Nat.exists_prime_dvd_of_mod_eight_eq_six (by lia)
-  have hpv : (p : ℤ) ∣ vSeq r s n := by
-    have := Int.natCast_dvd_natCast.mpr hpd
-    rw [Int.toNat_of_nonneg hpos.le] at this
-    rcases hε1 with rfl | rfl <;> simpa using this
-  refine ⟨p, hp, hp4, hpv, fun hpr ↦ ?_⟩
-  have hp' := Nat.prime_iff_prime_int.mp hp
-  rcases hp'.dvd_or_dvd (((vSeq_modEq_left r s hn).of_dvd hpr).dvd_iff.mp hpv) with h | h
-  · have := Int.le_of_dvd two_pos h
-    lia
-  · exact hp'.not_isUnit (hrs.isUnit_of_dvd' hpr (hp'.dvd_of_dvd_pow h))
+    exacts [Int.exists_prime_dvd_of_emod_four_eq_three hpos h,
+      Int.exists_prime_dvd_of_emod_eight_eq_six hpos h]
+  have hpv : (p : ℤ) ∣ vSeq r s n := by rcases hε1 with rfl | rfl <;> simpa using hpd
+  exact ⟨p, hp, hp4, hpv, not_dvd_left_of_dvd_vSeq hrs hn hp (by lia) hpv⟩
 
 /-! ### `u_n` at odd levels for `a ≡ 1 mod 4` -/
 
@@ -281,16 +296,27 @@ theorem uSeq_emod_eight_of_odd (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) {n : ℕ} (h
   have := (ZMod.intCast_eq_intCast_iff' (uSeq r s (2 * j + 1)) 6 8).mp (mod_cast h)
   lia
 
+/-- For odd `s` and `r ≡ s (mod 4)` (`a ≡ 1 mod 4`), `r w_n ≡ 2 (mod 4)` for even `n ≥ 2`:
+modulo `8` it is `c̄_n = a + 1` with `a ∈ {1, 5}`. -/
+theorem intCast_mul_wSeq_zmod_four_of_even (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) {n : ℕ}
+    (hn : 2 ≤ n) (he : Even n) : ((r * wSeq r s n : ℤ) : ZMod 4) = 2 := by
+  obtain ⟨j, rfl⟩ := he
+  rw [← two_mul] at hn ⊢
+  have h := intCast_mul_wSeq_zmod_eight r hs hn
+  rw [cSeq_two_mul_zmod_eight (intCast_mul_zmod_eight_of_modEq_four hs h4) (by lia)] at h
+  have h' := congr(ZMod.castHom (by norm_num : 4 ∣ 8) (ZMod 4) $h)
+  rw [map_intCast] at h'
+  rw [h']
+  rcases intCast_mul_zmod_eight_of_modEq_four hs h4 with ha | ha <;> rw [ha] <;> decide
+
 /-- For `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`) and odd `n ≥ 3` with `u_n > 0`, a prime
 `p ≡ 3 (mod 4)` divides `u_n` and not `r + s`: `u_n ≡ 6 (mod 8)`, and `u_n ≡ 2 s^{2^n} (mod r + s)`
 (`QuadraticIterates.uSeq_two_mul_add_one_modEq`). -/
 theorem exists_prime_dvd_uSeq_of_odd (hrs : IsCoprime r s) (hs : Odd s) (h4 : r ≡ s [ZMOD 4])
     {n : ℕ} (hn : 3 ≤ n) (ho : Odd n) (hpos : 0 < uSeq r s n) :
     ∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ uSeq r s n ∧ ¬(p : ℤ) ∣ r + s := by
-  obtain ⟨p, hp, hp4, hpd⟩ := Nat.exists_prime_dvd_of_mod_eight_eq_six (m := (uSeq r s n).toNat)
-    (by lia [uSeq_emod_eight_of_odd hs h4 hn ho])
-  have hpu : (p : ℤ) ∣ uSeq r s n := by
-    simpa [Int.toNat_of_nonneg hpos.le] using Int.natCast_dvd_natCast.mpr hpd
+  obtain ⟨p, hp, hp4, hpu⟩ :=
+    Int.exists_prime_dvd_of_emod_eight_eq_six hpos (uSeq_emod_eight_of_odd hs h4 hn ho)
   refine ⟨p, hp, hp4, hpu, fun hprs ↦ ?_⟩
   obtain ⟨k, rfl⟩ := ho
   have hp' := Nat.prime_iff_prime_int.mp hp
