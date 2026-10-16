@@ -59,12 +59,6 @@ theorem map {S : Type*} [CommSemiring S] (hg : EvenPoly g) (φ : R →+* S) : Ev
 
 end EvenPoly
 
-lemma evenPoly_X_sq_add_C (a : R) : EvenPoly (X ^ 2 + C a) :=
-  ⟨X + C a, by rw [map_add, expand_X, expand_C]⟩
-
-lemma evenPoly_C_mul_X_sq_add_C (b c : R) : EvenPoly (C b * X ^ 2 + C c) :=
-  ⟨C b * X + C c, by simp⟩
-
 end EvenPoly
 
 section EvenPoly
@@ -125,13 +119,6 @@ lemma gammaSeq_succ (ε : R) {n : ℕ} (hn : 1 ≤ n) :
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
   rfl
 
-lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
-    gammaSeq g ε (m + n) = (g.eval ·)^[n] (gammaSeq g ε m) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [← add_assoc, gammaSeq_succ g ε (by lia), ih, Function.iterate_succ_apply']
-
 lemma map_gammaSeq {S : Type*} [CommSemiring S] (φ : R →+* S) (ε : R) (n : ℕ) :
     φ (gammaSeq g ε n) = gammaSeq (g.map φ) (φ ε) n := by
   induction n with
@@ -140,13 +127,6 @@ lemma map_gammaSeq {S : Type*} [CommSemiring S] (φ : R →+* S) (ε : R) (n : �
     rcases Nat.eq_zero_or_pos m with rfl | hm
     · simp [eval_zero_map]
     · rw [gammaSeq_succ g ε hm, gammaSeq_succ (g.map φ) (φ ε) hm, ← ih, eval_map_apply]
-
-/-- The recursion `γ_{n+1} = g(γ_n)` for the `ε = 1` sequence, valid at every index (including `0`,
-since `γ_0 = 0` and `γ_1 = g(0)`). -/
-lemma gammaSeq_one_succ (n : ℕ) : gammaSeq g 1 (n + 1) = g.eval (gammaSeq g 1 n) := by
-  cases n with
-  | zero => simp
-  | succ m => exact gammaSeq_succ g 1 (by lia)
 
 /-- If `γ_{n₀+2} = γ_{n₀}` (`n₀ ≥ 1`), then the sequence is `2`-periodic from index `n₀` on:
 `γ_n = γ_{n₀}` for `n ≡ n₀ mod 2` and `γ_n = γ_{n₀+1}` otherwise, for all `n ≥ n₀`. -/

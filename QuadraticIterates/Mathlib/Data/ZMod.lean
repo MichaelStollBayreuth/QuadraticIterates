@@ -31,38 +31,12 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 @[expose] public section
 
-lemma ZMod.intCast_eq_neg_intCast_of_dvd_add {a b : ℤ} {m : ℕ} (h : (m : ℤ) ∣ a + b) :
-    (b : ZMod m) = -(a : ZMod m) := by
-  rw [← Int.cast_neg, intCast_eq_intCast_iff_dvd_sub, ← neg_add']
-  exact h.neg_right
-
-lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd {a b : ℤ} {m : ℕ} (h : IsCoprime a b)
-    (hm : (m : ℤ) ∣ b) : IsUnit (a : ZMod m) :=
-  (coe_int_isUnit_iff_isCoprime a m).mpr (h.of_isCoprime_of_dvd_right hm).symm
-
-lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd_add {a b : ℤ} {m : ℕ}
-    (hcop : IsCoprime (m : ℤ) a) (h : (m : ℤ) ∣ a + b) : IsUnit ((b : ZMod m)) := by
-  have hu := (coe_int_isUnit_iff_isCoprime a m).mpr hcop
-  simpa [intCast_eq_neg_intCast_of_dvd_add h] using hu.neg
-
 /-! ### Residues modulo `8` -/
 
 /-- The square of an odd integer is `1` in `ZMod 8`. -/
 lemma ZMod.intCast_sq_eight_eq_one_of_odd {x : ℤ} (hx : Odd x) : (x : ZMod 8) ^ 2 = 1 := by
   rw [← Int.cast_pow, ← Int.cast_one, intCast_eq_intCast_iff_dvd_sub]
   exact_mod_cast dvd_sub_comm.mp (Int.eight_dvd_sq_sub_one_of_odd hx)
-
-lemma ZMod.isUnit_intCast_eight_of_odd {x : ℤ} (hx : Odd x) : IsUnit (x : ZMod 8) :=
-  .of_mul_eq_one _ (sq (x : ZMod 8) ▸ intCast_sq_eight_eq_one_of_odd hx)
-
-/-- A power `≥ 3` of an even integer is `0` in `ZMod 8`. -/
-lemma ZMod.intCast_pow_eight_eq_zero_of_even {x : ℤ} (hx : Even x) {m : ℕ} (hm : 3 ≤ m) :
-    (x : ZMod 8) ^ m = 0 := by
-  obtain ⟨t, rfl⟩ := hx.two_dvd
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hm
-  rw [pow_add]
-  push_cast
-  rw [mul_pow, show (2 : ZMod 8) ^ 3 = 0 by decide, zero_mul, zero_mul]
 
 /-- For odd `x`, `x^(2^k) = 1` in `ZMod 8` (`k ≥ 1`). -/
 lemma ZMod.intCast_pow_two_pow_eight_of_odd {x : ℤ} (hx : Odd x) {k : ℕ} (hk : 1 ≤ k) :

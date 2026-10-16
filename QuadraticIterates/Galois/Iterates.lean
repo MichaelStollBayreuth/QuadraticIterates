@@ -62,10 +62,6 @@ lemma map_iteratedPoly {S : Type*} [CommSemiring S] (φ : R →+* S) (n : ℕ) :
     (iteratedPoly a n).map φ = iteratedPoly (φ a) n := by
   induction n <;> simp [iteratedPoly_succ, *]
 
-lemma map_eval_iteratedPoly {S : Type*} [CommSemiring S] (φ : R →+* S) (x : R) (n : ℕ) :
-    φ ((iteratedPoly a n).eval x) = (iteratedPoly (φ a) n).eval (φ x) := by
-  rw [← map_iteratedPoly, eval_map, eval₂_at_apply]
-
 /-- `f_{n+1} = f_n ∘ (X² + a)`: the iterate grows on the right as well as on the left
 (`QuadraticIterates.iteratedPoly_succ`, `f_{n+1} = f_n ^ 2 + a`). -/
 lemma iteratedPoly_succ_comp (n : ℕ) :
@@ -75,13 +71,6 @@ lemma iteratedPoly_succ_comp (n : ℕ) :
   | succ k ih =>
     nth_rw 1 [iteratedPoly_succ a (k + 1), ih]
     rw [iteratedPoly_succ, add_comp, pow_comp, C_comp]
-
-lemma iteratedPoly_add (m n : ℕ) :
-    iteratedPoly a (m + n) = (iteratedPoly a m).comp (iteratedPoly a n) := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    rw [← add_assoc, iteratedPoly_succ_comp, ih, comp_assoc, ← iteratedPoly_succ_comp]
 
 lemma eval_zero_iteratedPoly_succ (n : ℕ) :
     (iteratedPoly a (n + 1)).eval 0 = (iteratedPoly a n).eval a := by

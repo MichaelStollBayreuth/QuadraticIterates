@@ -91,11 +91,6 @@ theorem twoIndependent_snoc_iff [CommMonoid M] {n : ℕ} (v : Fin n → M) (c : 
     · exact hprod S ▸ hv S (Finset.map_nonempty.mp hT)
     · simpa [Finset.prod_insert, Fin.snoc_last, hprod] using hc S
 
-theorem twoIndependent_intCast_iff (f : ι → ℤ) :
-    TwoIndependent (fun i ↦ (f i : ℚ)) ↔ TwoIndependent f :=
-  forall_congr' fun _ ↦ imp_congr_right fun _ ↦
-    not_congr (by rw [← Int.cast_prod, Rat.isSquare_intCast_iff])
-
 private theorem twoIndependent_iff_linearIndependent_of_finite [Finite ι] {L : Type*} [Field L]
     [DecidableEq L] (v : ι → L) :
     TwoIndependent v ↔ LinearIndependent (ZMod 2) fun i ↦ sqClass (v i) := by
