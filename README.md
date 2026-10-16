@@ -58,6 +58,11 @@ the eight sign-and-residue classes of `a` against what is proved in each, links 
 declaration that formalizes it, and collects the neighbouring work that moves the basepoint off
 the critical point, bounds finitely many levels, or assumes *abc* or Vojta.
 
+The plot [`plots/coverage.pdf`](plots/coverage.pdf) shows, for `1 ≤ s ≤ 26` and `−72 ≤ r ≤ 20`,
+which `a = r/s` the criterion and the two families cover, coloured by 2-adic class and family, and
+marks the uncovered `a` with `c_1, …, c_6` 2-dependent; [`plots/coverage.py`](plots/coverage.py)
+generates it.
+
 There is no `sorry`, and no axiom beyond the three of Mathlib. The paper's own proofs, through
 the `b_n` (part 2 of its Section 1 theorem, Lemmas 1.1, 2.1 and 2.2), and those of Li are
 formalized on the `main` branch of this repository.
