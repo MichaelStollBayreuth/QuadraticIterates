@@ -42,11 +42,6 @@ variable {r s : ℤ}
 
 /-! ### Jacobi symbols -/
 
-private lemma jacobiSym_sq {p : ℕ} (hp : p.Prime) {t : ℤ} (ht : ¬(p : ℤ) ∣ t) :
-    jacobiSym (t ^ 2) p = 1 :=
-  jacobiSym.sq_one' (Int.isCoprime_iff_gcd_eq_one.mp
-    ((Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd.mpr ht).symm)
-
 private lemma emod_eight_of_jacobiSym_two {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
     (h : jacobiSym 2 p = -1) : p % 8 = 3 ∨ p % 8 = 5 := by
   have ho := hp.odd_of_ne_two hp2
@@ -101,7 +96,7 @@ private lemma negAllCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r s
       (Nat.prime_iff_prime_int.mp hp) (not_two_dvd_of_prime hp hp2) hpN
       (ht ▸ dvd_pow hpt two_ne_zero)
     have h1 := (jacobiSym.mod_left' (Int.modEq_iff_dvd.mpr (by rw [← ht]; simpa using hpN) :
-      2 * -s ≡ t ^ 2 [ZMOD p])).trans (jacobiSym_sq hp hpt)
+      2 * -s ≡ t ^ 2 [ZMOD p])).trans (jacobiSym.sq_one_of_not_dvd hp hpt)
     rw [jacobiSym.mul_left, hj] at h1
     exact .dvd_add_two_mul p hp (emod_eight_of_jacobiSym_two hp hp2 (by lia)) hpN
   · lia [Int.sq_emod_four t]
@@ -121,7 +116,7 @@ private lemma negTailCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r 
     have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ not_dvd_left_of_dvd_add_mul hrs hp'
       (c := 1) hp'.not_dvd_one (by simpa using hpN) (ht ▸ dvd_pow hpt two_ne_zero)
     have h1 := (jacobiSym.mod_left' (Int.modEq_iff_dvd.mpr (by rw [← ht]; simpa using hpN) :
-      -1 * s ≡ t ^ 2 [ZMOD p])).trans (jacobiSym_sq hp hpt)
+      -1 * s ≡ t ^ 2 [ZMOD p])).trans (jacobiSym.sq_one_of_not_dvd hp hpt)
     rw [jacobiSym.mul_left, hj] at h1
     exact .inr ⟨p, hp, emod_four_of_jacobiSym_neg_one hp hp2 (by lia), hpN⟩
   · exact .inl h4
@@ -191,12 +186,6 @@ theorem nonempty_mulEquiv_of_neg_lt_of_certificate (hs : 0 < s) (hrs : IsCoprime
 
 /-! ### Theorem R⁻ -/
 
-/-- The `p`-part of a square: for `p ∣ t ≠ 0`, `t² = p^{2j} u²` with `j > 0` and `p ∤ u`. -/
-private lemma exists_sq_eq_pow_mul {p : ℕ} (hp : p.Prime) {t : ℤ} (ht : t ≠ 0)
-    (hpt : (p : ℤ) ∣ t) : ∃ j : ℕ, ∃ u : ℤ, 0 < j ∧ t ^ 2 = p ^ (2 * j) * u ^ 2 ∧ ¬(p : ℤ) ∣ u := by
-  obtain ⟨j, u, hj, rfl, hu⟩ := Int.exists_pow_mul_of_dvd hp ht hpt
-  exact ⟨j, u, hj, by ring, hu⟩
-
 private lemma not_dvd_neg_sq {p : ℕ} (hp : p.Prime) {u : ℤ} (hu : ¬(p : ℤ) ∣ u) :
     ¬(p : ℤ) ∣ -u ^ 2 := by
   rw [dvd_neg]
@@ -207,10 +196,11 @@ private lemma not_dvd_neg_sq {p : ℕ} (hp : p.Prime) {u : ℤ} (hu : ¬(p : ℤ
 private lemma negAll_or_negTail_of_dvd_sq {t : ℤ} (ht : t ≠ 0) {p : ℕ} (hp : p.Prime)
     (hp2 : p ≠ 2) (hpt : (p : ℤ) ∣ t) (hj : jacobiSym (-s) p = -1) :
     NegAllCriterion (-t ^ 2) s ∨ NegTailCriterion (-t ^ 2) s := by
-  obtain ⟨j, u, hj0, htu, hu⟩ := exists_sq_eq_pow_mul hp ht hpt
+  obtain ⟨j, u, hj0, htu, hu⟩ := Int.exists_sq_eq_pow_mul_of_dvd hp ht hpt
   have hr : -t ^ 2 = p ^ (2 * j) * -u ^ 2 := by rw [htu]; ring
   have h : jacobiSym (-u ^ 2 * s) p = -1 := by
-    rw [show -u ^ 2 * s = u ^ 2 * -s by ring, jacobiSym.mul_left, jacobiSym_sq hp hu, hj, one_mul]
+    rw [show -u ^ 2 * s = u ^ 2 * -s by ring, jacobiSym.mul_left,
+      jacobiSym.sq_one_of_not_dvd hp hu, hj, one_mul]
   have := Nat.odd_iff.mp (hp.odd_of_ne_two hp2)
   rcases (by lia : p % 4 = 1 ∨ p % 4 = 3) with h4 | h4
   · exact .inl (.dvd_left p (2 * j) (-u ^ 2) hp h4 (by lia) hr (not_dvd_neg_sq hp hu) h)
@@ -220,7 +210,7 @@ private lemma negAll_or_negTail_of_dvd_sq {t : ℤ} (ht : t ≠ 0) {p : ℕ} (hp
 `u² ≡ 1 (mod 8)`. -/
 private lemma exists_sq_eq_two_pow_mul {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t) :
     ∃ j : ℕ, ∃ u : ℤ, 0 < j ∧ t ^ 2 = 2 ^ (2 * j) * u ^ 2 ∧ Odd u ∧ u ^ 2 % 8 = 1 := by
-  obtain ⟨j, u, hj, htu, hu⟩ := exists_sq_eq_pow_mul Nat.prime_two ht (mod_cast h2t)
+  obtain ⟨j, u, hj, htu, hu⟩ := Int.exists_sq_eq_pow_mul_of_dvd Nat.prime_two ht (mod_cast h2t)
   have hu' : Odd u := Int.not_even_iff_odd.mp fun he ↦ hu (mod_cast he.two_dvd)
   exact ⟨j, u, hj, by simpa using htu, hu', by lia [Int.eight_dvd_sq_sub_one_of_odd hu']⟩
 
@@ -299,7 +289,7 @@ private lemma negAll_or_negTail_of_eq_sq_of_two_mul_le (hs : 0 < s) (hRs : IsCop
     have hp' := Nat.prime_iff_prime_int.mp hp
     have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ hp'.not_isUnit (hRs.isUnit_of_dvd'
       (ht ▸ dvd_pow hpt two_ne_zero) ((dvd_sub_right (ht ▸ dvd_pow hpt two_ne_zero)).mp hpN))
-    rw [← jacobiSym_sq hp hpt, ← ht]
+    rw [← jacobiSym.sq_one_of_not_dvd hp hpt, ← ht]
     exact jacobiSym.mod_left' (Int.modEq_iff_dvd.mpr hpN)
 
 /-- (O4) for `s = t²` with `t` even: `R ≡ 3 (mod 4)`, or `8 ∣ s` and `R ≡ 5 (mod 8)`. -/
@@ -330,11 +320,11 @@ private lemma negFirstCriterion_of_eq_sq_right_of_cert {t : ℤ} (hRs : IsCoprim
   rcases exists_of_not_isSquare_of_dvd (x := R) (N := t ^ 2) (by positivity) hRs hM h
     with ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, hR4⟩ | ⟨h8, hR8⟩
   · have hp' := Nat.prime_iff_prime_int.mp hp
-    obtain ⟨j, u, hj0, htu, hu⟩ := exists_sq_eq_pow_mul hp ht0 (hp'.dvd_of_dvd_pow hpN)
+    obtain ⟨j, u, hj0, htu, hu⟩ := Int.exists_sq_eq_pow_mul_of_dvd hp ht0 (hp'.dvd_of_dvd_pow hpN)
     refine .dvd_right p (2 * j) (u ^ 2) hp hp2 (by lia) htu
       (fun h ↦ hu (hp'.dvd_of_dvd_pow h)) (.inr ?_)
-    rw [show -(-R * u ^ 2) = u ^ 2 * R by ring, jacobiSym.mul_left, jacobiSym_sq hp hu, hj,
-      one_mul]
+    rw [show -(-R * u ^ 2) = u ^ 2 * R by ring, jacobiSym.mul_left,
+      jacobiSym.sq_one_of_not_dvd hp hu, hj, one_mul]
   · exact negFirstCriterion_of_two_dvd_sq_right ht0
       (Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 4).trans h4)) (.inl hR4)
   · have h2t := Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 8).trans h8)
@@ -354,8 +344,8 @@ private lemma negFirst_or_negTail_of_eq_sq_right_of_cert (hRs : IsCoprime R s) (
   · have hp' := Nat.prime_iff_prime_int.mp hp
     have hps : ¬(p : ℤ) ∣ s := fun hps ↦ hp'.not_isUnit (hRs.isUnit_of_dvd' hpN hps)
     have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ hps (ht ▸ dvd_pow hpt two_ne_zero)
-    rw [ht, show -t ^ 2 = -1 * t ^ 2 by ring, jacobiSym.mul_left, jacobiSym_sq hp hpt,
-      mul_one] at hj
+    rw [ht, show -t ^ 2 = -1 * t ^ 2 by ring, jacobiSym.mul_left,
+      jacobiSym.sq_one_of_not_dvd hp hpt, mul_one] at hj
     exact negFirstCriterion_or_negTailCriterion_of_prime_dvd (neg_ne_zero.mpr hR0) hp
       (emod_four_of_jacobiSym_neg_one hp hp2 hj) hpN.neg_right hps
   · exact negFirstCriterion_or_negTailCriterion_of_four_dvd (neg_ne_zero.mpr hR0) h4.neg_right
@@ -385,7 +375,7 @@ private lemma negFirst_or_negTail_of_eq_sq_right (hs : 0 < s) (hRs : IsCoprime R
     have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ hp'.not_isUnit (hRs.isUnit_of_dvd'
       ((dvd_sub_left (ht ▸ dvd_pow hpt two_ne_zero)).mp hpN) (ht ▸ dvd_pow hpt two_ne_zero))
     rw [ht]
-    exact jacobiSym_sq hp hpt
+    exact jacobiSym.sq_one_of_not_dvd hp hpt
 
 /-- The hypotheses of Theorem R⁻ (`a = -R/s ≤ -2`) give two of the three lists of criteria. -/
 theorem criteria_of_two_mul_le_of_certificate (hs : 0 < s) (hRs : IsCoprime R s)

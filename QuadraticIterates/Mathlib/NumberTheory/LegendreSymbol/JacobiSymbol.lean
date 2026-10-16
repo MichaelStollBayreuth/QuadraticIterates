@@ -177,3 +177,9 @@ theorem exists_of_not_isSquare_intCast {x : ℤ} {M : ℕ} (hM : M ≠ 0) (hx : 
     lia [h4 h4M]
 
 end ZMod
+
+/-- `jacobiSym.sq_one'` for a prime `p` not dividing `t`. -/
+theorem jacobiSym.sq_one_of_not_dvd {p : ℕ} (hp : p.Prime) {t : ℤ} (ht : ¬(p : ℤ) ∣ t) :
+    jacobiSym (t ^ 2) p = 1 :=
+  jacobiSym.sq_one' (Int.isCoprime_iff_gcd_eq_one.mp
+    ((Nat.prime_iff_prime_int.mp hp).coprime_iff_not_dvd.mpr ht).symm)
