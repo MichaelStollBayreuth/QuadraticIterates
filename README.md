@@ -48,7 +48,9 @@ characters) are found by short computations modulo a single prime power, and the
 There is no `sorry`, and no axiom beyond the three of Mathlib. The `main` branch of this
 repository holds the complete formalization of the paper along its own route through the `b_n`
 (part 2 of its Section 1 theorem, Lemmas 1.1, 2.1 and 2.2), of Li's lemmas on the `b_n`, and of
-two earlier theorems for rational parameters; that route is not part of this branch.
+two earlier theorems for rational parameters; that route is not part of this branch, which
+instead derives those two theorems from its criterion for rational parameters
+([`Main/SquarefreeCertificates.lean`](QuadraticIterates/Main/SquarefreeCertificates.lean)).
 
 For integer `a`, these three papers are everything that is unconditionally known: apart from that
 half-family, no further value of `a` has been settled since 2021.
