@@ -21,8 +21,7 @@ import QuadraticIterates.Sequence.SquareClasses
 
 For `a = r/s` with `s` odd and `r ≡ s (mod 4)`, modulo `8` the parameter is `rs ∈ {1, 5}` and the
 sequence is `(-rs, rs + 1, rs + 4, rs + 1, …)`, so `χ₄(c_n)` is `-1`, `χ₈(rs)`, `1`, `χ₈(rs)`, `1`,
-…, while `val₂(c_n)` alternates, `v₂(r + s)` being `1`. Hence `a` has `φ₁` (Lemma 2.8(4) of the
-draft).
+…, while `val₂(c_n)` alternates, `v₂(r + s)` being `1`. Hence `a` has `φ₁`.
 
 ## Main statements
 
@@ -172,9 +171,9 @@ private lemma hasCharPattern_mulSingle_one_of_parity {M : Type*} [CommMonoid M] 
     · simpa using h₁
     · rw [hodd j hj, Pi.mulSingle_eq_of_ne (by lia)]
 
-/-- Lemma 2.8(4) of the draft: for `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s mod 4`), `a` has `φ₁`:
-`χ₄` has the pattern `(-1, χ₈(rs), 1, χ₈(rs), 1, …)`, and `val₂` the pattern
-`(1, -1, 1, -1, …)`, so `χ₄` (if `rs ≡ 1 mod 8`) or `χ₄ val₂` (if `rs ≡ 5 mod 8`) realizes `φ₁`. -/
+/-- For `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s mod 4`), `a` has `φ₁`: `χ₄` has the pattern
+`(-1, χ₈(rs), 1, χ₈(rs), 1, …)`, and `val₂` the pattern `(1, -1, 1, -1, …)`, so `χ₄` (if
+`rs ≡ 1 mod 8`) or `χ₄ val₂` (if `rs ≡ 5 mod 8`) realizes `φ₁`. -/
 theorem hasCharPattern_mulSingle_one_of_modEq_four (hrs : IsCoprime r s) (hs : Odd s)
     (h4 : r ≡ s [ZMOD 4]) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
   have hs0 : s ≠ 0 := by rintro rfl; simp at hs

@@ -19,11 +19,10 @@ import QuadraticIterates.Sequence.Signs
 For `a = r/s ∈ 𝒜` with its sign `ε` (`a ≤ -2` and `ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and
 `ε = 1`), the integers `v_n` of `QuadraticIterates.vSeq` satisfy `ε v_n > 0` for `n ≥ 2`, and their
 residues modulo `4` and `8` are determined by those of `r` and `s`. In the three `2`-adic classes
-(C1)–(C3) this gives every `v_n`, `n ≥ 2`, a prime factor `p ≡ 3 (mod 4)` not dividing `r`
-(Lemma 4.4 of the draft), which is what reflection at level `n` needs. Likewise, for
-`a ≡ 1 mod 4` and odd `n ≥ 3`, a positive `u_n` (`QuadraticIterates.uSeq`) is `≡ 6 (mod 8)` and
-has a prime factor `p ≡ 3 (mod 4)` not dividing `r + s`, which is what period two at level `n`
-needs.
+(C1)–(C3) this gives every `v_n`, `n ≥ 2`, a prime factor `p ≡ 3 (mod 4)` not dividing `r`,
+which is what reflection at level `n` needs. Likewise, for `a ≡ 1 mod 4` and odd `n ≥ 3`, a
+positive `u_n` (`QuadraticIterates.uSeq`) is `≡ 6 (mod 8)` and has a prime factor `p ≡ 3 (mod 4)`
+not dividing `r + s`, which is what period two at level `n` needs.
 
 ## Main definitions
 
@@ -246,9 +245,9 @@ theorem not_dvd_left_of_dvd_vSeq (hrs : IsCoprime r s) {n : ℕ} (hn : 2 ≤ n) 
   · exact hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp (mod_cast h))
   · exact hp'.not_isUnit (hrs.isUnit_of_dvd' hpr (hp'.dvd_of_dvd_pow h))
 
-/-- **The `2`-adic condition** (Lemma 4.4 of the draft): for `a = r/s ∈ 𝒜` with sign `ε` in one of
-the classes (C1)–(C3), every `v_n`, `n ≥ 2`, has a prime factor `p ≡ 3 (mod 4)` not dividing `r`:
-`ε v_n > 0` is `≡ 3 (mod 4)` or `≡ 6 (mod 8)`, and `v_n ≡ 2 s^{2^n - 1} (mod r)`. -/
+/-- **The `2`-adic condition**: for `a = r/s ∈ 𝒜` with sign `ε` in one of the classes (C1)–(C3),
+every `v_n`, `n ≥ 2`, has a prime factor `p ≡ 3 (mod 4)` not dividing `r`: `ε v_n > 0` is
+`≡ 3 (mod 4)` or `≡ 6 (mod 8)`, and `v_n ≡ 2 s^{2^n - 1} (mod r)`. -/
 theorem exists_prime_dvd_vSeq_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s) (hr0 : r ≠ 0)
     {ε : ℤ}
     (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))

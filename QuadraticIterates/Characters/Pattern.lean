@@ -94,9 +94,9 @@ theorem hasCharPattern_neg_of_mulSingle_of_neg_mulSingle
 
 /-! ### Jumps -/
 
-/-- Lemma 2.6 of the draft: given `φ₀` (the constant pattern `-1`) from `n`, a character `ψ` with
-`ψ (v n) ≠ 0` whose later values are all `-ψ (v n)` yields `φ_n`: `ψ` itself if `ψ (v n) = -1`,
-`φ₀ ψ` if `ψ (v n) = 1`. -/
+/-- Given `φ₀` (the constant pattern `-1`) from `n`, a character `ψ` with `ψ (v n) ≠ 0` whose
+later values are all `-ψ (v n)` yields `φ_n`: `ψ` itself if `ψ (v n) = -1`, `φ₀ ψ` if
+`ψ (v n) = 1`. -/
 theorem hasCharPattern_mulSingle_of_neg_of_forall_lt (h₀ : HasCharPattern v n (-1))
     {ψ : MulChar M ℤ} (hψ : ψ (v n) ≠ 0) (h : ∀ m > n, ψ (v m) = -ψ (v n)) :
     HasCharPattern v n (Pi.mulSingle n (-1)) := by

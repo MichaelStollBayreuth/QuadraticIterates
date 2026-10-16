@@ -18,10 +18,9 @@ import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 # The criterion with characters
 
 A sequence `v 1, v 2, …` in a commutative monoid is 2-independent as soon as for every `n ≥ 1`
-some character `φ_n` with values in `ℤ` is `-1` at `v n` and `1` at all later terms
-(Proposition 2.3 of the draft); in a field the converse holds, by duality in `Kˣ/(Kˣ)²`. With
-Stoll's criterion this characterizes the parameters `a ∈ ℚ` whose arboreal Galois representation
-is surjective.
+some character `φ_n` with values in `ℤ` is `-1` at `v n` and `1` at all later terms; in a field
+the converse holds, by duality in `Kˣ/(Kˣ)²`. With Stoll's criterion this characterizes the
+parameters `a ∈ ℚ` whose arboreal Galois representation is surjective.
 
 ## Main definitions
 
@@ -69,9 +68,9 @@ lemma mulCharOfDual_apply (f : Module.Dual (ZMod 2) (SquareClasses K)) {x : K} (
 
 end mulCharOfDual
 
-/-- Proposition 2.3 of the draft: if for every `n ≥ 1` some character is `-1` at `v n` and `1` at
-all later terms, then `v 1, v 2, …` are 2-independent. For a finite nonempty set of indices with
-least element `n`, that character is `-1` at the product, which is therefore not a square. -/
+/-- If for every `n ≥ 1` some character is `-1` at `v n` and `1` at all later terms, then
+`v 1, v 2, …` are 2-independent. For a finite nonempty set of indices with least element `n`, that
+character is `-1` at the product, which is therefore not a square. -/
 theorem twoIndependent_of_forall_hasCharPattern {M : Type*} [CommMonoid M] {v : ℕ → M}
     (h : ∀ n ≥ 1, HasCharPattern v n (Pi.mulSingle n (-1))) :
     TwoIndependent fun m ↦ v (m + 1) := fun S hS hsq ↦ by

@@ -28,8 +28,7 @@ criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriteri
 
 ## Main statements
 
-* `QuadraticIterates.forall_nonempty_mulEquiv_of_forall_dvd_vSeq`: reflection at every level
-  (Corollary 2.10 of the draft).
+* `QuadraticIterates.forall_nonempty_mulEquiv_of_forall_dvd_vSeq`: reflection at every level.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern`: the main theorem,
   abstract form.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`: the main theorem.
@@ -47,9 +46,9 @@ namespace QuadraticIterates
 
 variable {r s : ℤ}
 
-/-- **Reflection at every level** (Corollary 2.10 of the draft): if `a = r/s` has `φ₀` and `φ₁`,
-and for every `n ≥ 2` the integer `v_n` is divisible by a prime `p ≡ 3 (mod 4)` not dividing `r`,
-or by `4` with `r` odd, then `Ω_n ≅ [C₂]ⁿ` for all `n`. -/
+/-- **Reflection at every level**: if `a = r/s` has `φ₀` and `φ₁`, and for every `n ≥ 2` the
+integer `v_n` is divisible by a prime `p ≡ 3 (mod 4)` not dividing `r`, or by `4` with `r` odd, then
+`Ω_n ≅ [C₂]ⁿ` for all `n`. -/
 theorem forall_nonempty_mulEquiv_of_forall_dvd_vSeq (hrs : IsCoprime r s)
     (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1))
     (h₁ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)))

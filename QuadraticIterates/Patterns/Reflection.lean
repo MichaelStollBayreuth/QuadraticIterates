@@ -25,8 +25,8 @@ on, both give `φ_n`.
 
 ## Main statements
 
-* `QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq` (Lemma 2.9 of the draft).
-* `QuadraticIterates.hasCharPattern_mulSingle_of_dvd_uSeq`.
+* `QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`: reflection.
+* `QuadraticIterates.hasCharPattern_mulSingle_of_dvd_uSeq`: period two.
 -/
 
 @[expose] public section
@@ -56,10 +56,9 @@ private lemma exists_inv_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N =
   exact ⟨σ, hσ, hsum, isUnit_of_mul_isUnit_left (ha ▸ (ZMod.isUnit_intCast_of_not_dvd hN hpr).mul
     (.of_mul_eq_one (s : ZMod N) (by rwa [mul_comm])))⟩
 
-/-- **Reflection** (Lemma 2.9 of the draft): let `ψ` be a character modulo a power `N = p^k`
-(`k ≥ 1`) with `ψ(-1) = -1`. If `N ∣ v_n` and `p ∤ r`, then `χ_ψ(c_m) = -χ_ψ(c_n) ≠ 0` for all
-`m > n`: modulo `N`, `c̄_n + c̄_{n+1} = 0`, so `c̄_{n+1}` is a fixed point. With `φ₀` this gives
-`φ_n`. -/
+/-- **Reflection**: let `ψ` be a character modulo a power `N = p^k` (`k ≥ 1`) with `ψ(-1) = -1`.
+If `N ∣ v_n` and `p ∤ r`, then `χ_ψ(c_m) = -χ_ψ(c_n) ≠ 0` for all `m > n`: modulo `N`,
+`c̄_n + c̄_{n+1} = 0`, so `c̄_{n+1}` is a fixed point. With `φ₀` this gives `φ_n`. -/
 theorem hasCharPattern_mulSingle_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N = p ^ k)
     (hk : k ≠ 0) {ψ : MulChar (ZMod N) ℤ} (hψ : ψ (-1) = -1) {n : ℕ} (hn : 1 ≤ n)
     (hdvd : (N : ℤ) ∣ vSeq r s n) (hpr : ¬(p : ℤ) ∣ r)

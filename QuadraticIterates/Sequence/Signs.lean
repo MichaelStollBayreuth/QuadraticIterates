@@ -20,7 +20,7 @@ negativity of `c_n + c_{n+1}` for `α < a < 0`, `α` the real root of `x³ + 2x�
 ## Main statements
 
 * `QuadraticIterates.cSeq_pos_of_pos`, `QuadraticIterates.cSeq_neg_of_neg_one_lt`,
-  `QuadraticIterates.neg_le_cSeq_of_le_neg_two`: the signs (Lemma 2.5 of the draft).
+  `QuadraticIterates.neg_le_cSeq_of_le_neg_two`: the signs.
 * `QuadraticIterates.cSeq_mem_Icc_of_even`, `QuadraticIterates.cSeq_mem_Icc_of_odd`: the window.
 * `QuadraticIterates.cSeq_add_cSeq_succ_neg`: `c_n + c_{n+1} < 0` for `α < a < 0` and `n ≥ 2`.
 -/
