@@ -12,6 +12,8 @@ public import QuadraticIterates.Galois.TwoIndependent
 public import QuadraticIterates.Main.Criteria
 public import QuadraticIterates.Main.Families
 public import QuadraticIterates.Main.Integers
+public import QuadraticIterates.Main.Interval
+public import QuadraticIterates.Main.LevelTwo
 public import QuadraticIterates.Main.SquarefreeCertificates
 public import QuadraticIterates.Main.Theorem
 public import QuadraticIterates.Main.TwoAdic

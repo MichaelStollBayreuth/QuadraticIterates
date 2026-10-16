@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.Ring.Int.Parity
 
 /-!
-# Squares modulo `4`
+# Squares modulo `4` and `8`
 
 Auxiliary material for the formalization of the surjectivity of arboreal Galois representations of
 `X² + a`; upstreaming candidates for Mathlib.
@@ -24,5 +24,10 @@ theorem not_isSquare_of_two_le_emod_four {x : ℤ} (h : 2 ≤ x % 4) : ¬IsSquar
     have := Int.sq_emod_four t
     rw [sq, ← ht] at this
     lia
+
+theorem sq_emod_eight_eq_one_of_odd {x : ℤ} (hx : Odd x) : x ^ 2 % 8 = 1 := by
+  rw [sq, Int.mul_emod]
+  rcases (by lia [Int.odd_iff.mp hx] : x % 8 = 1 ∨ x % 8 = 3 ∨ x % 8 = 5 ∨ x % 8 = 7) with
+    h | h | h | h <;> simp [h]
 
 end Int

@@ -71,4 +71,37 @@ theorem unitPartChar_cSeq {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k 
     Int.cast_mul, hred, Int.cast_pow, map_mul, map_pow, mul_right_comm, ← mul_pow, ← sq,
     hψs, one_pow, one_mul]
 
+/-- `c_1 = -r/s = -rs/s²`. -/
+theorem isSquare_cSeq_one_of_isSquare (h : IsSquare (-(r * s))) :
+    IsSquare (cSeq ((r : ℚ) / s) 1) := by
+  obtain ⟨t, ht⟩ := h
+  rcases eq_or_ne (s : ℚ) 0 with hs | hs
+  · simp [hs]
+  refine ⟨t / s, ?_⟩
+  rw [cSeq_one, div_mul_div_comm, ← Int.cast_mul, ← ht]
+  push_cast
+  field
+
+/-- `c_2 = r(r + s)/s²`. -/
+theorem isSquare_cSeq_two_of_isSquare (h : IsSquare (r * (r + s))) :
+    IsSquare (cSeq ((r : ℚ) / s) 2) := by
+  obtain ⟨t, ht⟩ := h
+  rcases eq_or_ne (s : ℚ) 0 with hs | hs
+  · simp [hs, cSeq_two]
+  refine ⟨t / s, ?_⟩
+  rw [cSeq_two, div_mul_div_comm, ← Int.cast_mul, ← ht]
+  push_cast
+  field
+
+/-- `c_1 c_2 = (r/s²)² · (-s(r + s))`. -/
+theorem isSquare_cSeq_one_mul_cSeq_two_of_isSquare (h : IsSquare (-(s * (r + s)))) :
+    IsSquare (cSeq ((r : ℚ) / s) 1 * cSeq ((r : ℚ) / s) 2) := by
+  obtain ⟨t, ht⟩ := h
+  rcases eq_or_ne (s : ℚ) 0 with hs | hs
+  · simp [hs]
+  refine ⟨r * t / s ^ 2, ?_⟩
+  rw [cSeq_one, cSeq_two, div_mul_div_comm, mul_mul_mul_comm, ← Int.cast_mul t, ← ht]
+  push_cast
+  field
+
 end QuadraticIterates

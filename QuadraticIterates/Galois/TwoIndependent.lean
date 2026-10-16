@@ -71,6 +71,17 @@ theorem twoIndependent_iff_forall_fin [CommMonoid M] {v : ℕ → M} :
   simpa [hprod] using
     h n (S.attachFin hlt) (Finset.map_nonempty.mp (by rwa [Finset.map_valEmbedding_attachFin]))
 
+theorem twoIndependent_fin_two_iff [CommMonoid M] {v : Fin 2 → M} :
+    TwoIndependent v ↔ ¬IsSquare (v 0) ∧ ¬IsSquare (v 1) ∧ ¬IsSquare (v 0 * v 1) := by
+  refine ⟨fun h ↦ ⟨h.not_isSquare 0, h.not_isSquare 1, by
+    simpa [Fin.prod_univ_two] using h Finset.univ Finset.univ_nonempty⟩,
+    fun ⟨h₀, h₁, h₀₁⟩ S hS ↦ ?_⟩
+  rcases (by revert S; decide : ∀ S : Finset (Fin 2), S.Nonempty → S = {0} ∨ S = {1} ∨
+    S = Finset.univ) S hS with rfl | rfl | rfl
+  · simpa using h₀
+  · simpa using h₁
+  · simpa [Fin.prod_univ_two] using h₀₁
+
 theorem TwoIndependent.of_snoc [CommMonoid M] {n : ℕ} {v : Fin n → M} {c : M}
     (h : TwoIndependent (Fin.snoc v c)) :
     TwoIndependent v := fun S hS ↦ by
