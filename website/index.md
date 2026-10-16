@@ -7,23 +7,23 @@ title: QuadraticIterates
   <h1>{{ site.title }}</h1>
 </header>
 
-A complete formalization in [Lean 4](https://lean-lang.org), based on
-[Mathlib](https://github.com/leanprover-community/mathlib4), of
+A formalization in [Lean 4](https://lean-lang.org), based on
+[Mathlib](https://github.com/leanprover-community/mathlib4), of the criterion of
 
 > [Michael Stoll](https://www.mathe2.uni-bayreuth.de/stoll/),
 > *Galois groups over ℚ of some iterated polynomials*,
 > Arch. Math. **59** (1992), 239–244
-> ([DOI: 10.1007/BF01197321](https://doi.org/10.1007/BF01197321)).
+> ([DOI: 10.1007/BF01197321](https://doi.org/10.1007/BF01197321))
 
-For an integer `a` such that `-a` is not a square, the paper determines when the Galois group
-over ℚ of the `n`-th iterate of `X² + a` is the full iterated wreath power `[C₂]ⁿ`. The
-extensions of its last result by H.-C. Li (Arch. Math. 2020 and 2021) to further values of `a`
-are formalized as well, one of them in a stronger form (`a = −(4k+2)(4k+3)` for all `k`, where Li
-has even `k`), and so is an extension of the last result to rational parameters `a = r/s` in
-explicit residue classes (Chapter 6 of the blueprint).
+for the Galois group over ℚ of the `n`-th iterate of `X² + a` to be the full iterated wreath
+power `[C₂]ⁿ`, for every rational `a`, and of its reformulation by quadratic characters. With it,
+a criterion for rational parameters `a = r/s` in explicit 2-adic classes is proved, together
+with two families of rational parameters; the main result of the paper's Section 3 and the
+theorems of H.-C. Li (Arch. Math. 2020 and 2021) are their integer cases, one of them in a
+stronger form (`a = −(4k+2)(4k+3)` for all `k`, where Li has even `k`).
 
-- [Blueprint]({{ site.baseurl }}/blueprint/) — the paper, with each definition and statement
-  linked to the declaration that formalizes it
+- [Blueprint]({{ site.baseurl }}/blueprint/) — the mathematics, with each definition and
+  statement linked to the declaration that formalizes it
   ([PDF version]({{ site.baseurl }}/blueprint.pdf))
 - [API documentation]({{ site.baseurl }}/docs/) — generated from the Lean sources
 - [Maximality for `x² + a`]({{ site.baseurl }}/literature.html) — a survey of the literature:
