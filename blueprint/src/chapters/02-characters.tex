@@ -48,7 +48,7 @@
   Then $\chi_\psi(p) = 1$, and $\chi_\psi(m) = \psi(m \bmod N)$ for an integer $m$ prime to $p$;
   more generally $\chi_\psi(m/k) = \psi(m)\psi(k)$ for integers $m$, $k$ prime to $p$.
   We call $\val_p$, $\chi_p$ (resp.\ $\val_2$, $\chi_4$, $\chi_8$) and their products the
-  \emph{characters at $p$}; they are the characters of $\QQ_p^\times/\QQ_p^{\times 2}$.
+  \emph{characters at $p$}; they are induced by the characters of $\QQ_p^\times/\QQ_p^{\times 2}$.
   \formalnote{In the mirror file \lname{QuadraticIterates/Mathlib/NumberTheory/MulChar/Rat.lean}.
   All three are extensions $x \mapsto f(\mathrm{num}\,x) f(\mathrm{den}\,x)$ of multiplicative
   functions $f$ on $\ZZ$ that are $\pm 1$ at nonzero integers (\lname{Rat.mulCharOfInt}):
@@ -103,7 +103,7 @@
 
 \section{The criterion}
 
-\begin{proposition}[The criterion with characters; draft Proposition~2.3]
+\begin{proposition}[The criterion with characters]
   \label{prop:crit}
   \uses{def:pattern, def:twoindep}
   \lean{QuadraticIterates.twoIndependent_of_forall_hasCharPattern,
@@ -208,7 +208,7 @@ The lemmas of this section produce $\phi_n$ from simpler patterns by multiplying
   third.
 \end{proof}
 
-\begin{lemma}[A jump after $n$; draft Lemma~2.6]
+\begin{lemma}[A jump after $n$]
   \label{lem:jump}
   \uses{def:phin}
   \lean{QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt}

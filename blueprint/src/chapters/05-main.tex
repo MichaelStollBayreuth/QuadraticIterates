@@ -122,7 +122,7 @@ are. Each of the following conditions provides one of them.
 
 \section{Reflection at every level}
 
-\begin{proposition}[Draft Corollary~2.10]
+\begin{proposition}[Surjectivity by reflection]
   \label{prop:crit-reflection}
   \uses{lem:reflection, lem:jump, thm:tfae}
   \lean{QuadraticIterates.forall_nonempty_mulEquiv_of_forall_dvd_vSeq}
@@ -156,7 +156,7 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
   $m/2$.
 \end{proof}
 
-\begin{lemma}[The $2$-adic condition; draft Lemma~4.4]
+\begin{lemma}[The $2$-adic condition]
   \label{lem:twoadic}
   \uses{def:calA, lem:reduction, lem:wseq-res, lem:signs, lem:sumsign, lem:prime3}
   \lean{QuadraticIterates.TwoAdicClass, QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass,
@@ -227,18 +227,6 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
   Propositions~\ref{prop:Z}, \ref{prop:O}, \ref{prop:T} and Lemma~\ref{lem:klein} give $\phi_0$
   and $\phi_1$; apply Proposition~\ref{prop:main-abstract}.
 \end{proof}
-
-\begin{remark}[Comparison with the draft]
-  \label{rem:draft}
-  Condition (C) is the draft's Lemma~4.4. Its criteria (A-1), (A-2) are (Z1), (Z2); (B-1),
-  $a > -1$, is (O1) together with (T1); (B-2), $s \ne \sq$, is contained in (O3) and (O4); (B-3) is
-  (O2); and (B-4), $-1$ not a square modulo $r$, is (O5) together with (T2). Its condition (A-3),
-  $(r, s) \equiv (1, 2) \pmod 4$, is not among the criteria. Its
-  argument covers $c_2$ only: for even $s$, every $c_n$ with $n \ge 3$ is a square in $\QQ_2$
-  (Lemma~\ref{lem:pat-s}), so no character at $2$ contributes to a $\phi_0$. When (Z1) fails
-  under (A-3), $r$ is a positive square, so $\eps = 1$ and (C3) fails; so (A-3) was never needed.
-  Whether it gives $\phi_0$ is open (no counterexample is known).
-\end{remark}
 
 \begin{remark}[Numerical evidence]
   In the box $|r| \le 250$, $1 \le s \le 50$, Theorem~\ref{thm:main} covers $7399$ parameters, and

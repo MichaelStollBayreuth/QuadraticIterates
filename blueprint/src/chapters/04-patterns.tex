@@ -69,7 +69,7 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
     \item Let $s$ be even. Then $\val_2(c_n) = \chi_4(c_n) = \chi_8(c_n) = 1$ for $n \ge 3$, and
           $\val_2(c_2) = 1$.
   \end{enumerate}
-  In other words, $c_n$ is a square in $\QQ_p$ for $n \ge 2$, resp.\ in $\QQ_2$ for $n \ge 3$.
+  In particular, $c_n$ is a square in $\QQ_p$ for $n \ge 2$, resp.\ in $\QQ_2$ for $n \ge 3$.
   \formalnote{(1) for $\psi$ modulo any power $N \mid s$ of $p$, $k \ge 1$; (2) for $\psi$
   modulo a power of $2$ dividing $8$. The values at $c_1$ are those of
   \lname{mulChar\_cSeq\_one\_eq\_mul}.}
@@ -117,7 +117,7 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
   $2^{2k-1} - 2$ being even. Finally $\chi(r) = \psi(-s)$ and $\chi(r + s) = \psi((r + s)_p)$.
 \end{proof}
 
-\begin{remark}[The shape of the valuations; draft Lemma~1.5]
+\begin{remark}[The shape of the valuations]
   \label{rem:vp}
   Lemmas~\ref{lem:pat-r}(1), \ref{lem:pat-s} and~\ref{lem:pat-rs}(1) are instances of a general
   fact (compare \cite{paper}, Lemma~1.1(b)): for every prime $p$ exactly one of the following holds.
@@ -126,7 +126,7 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
   $v_p(a) < 0$. Only the instances are formalized.
 \end{remark}
 
-\begin{lemma}[Primes of $r + 2s$; draft Lemma~2.7(2)]
+\begin{lemma}[Primes of $r + 2s$]
   \label{lem:pat-r2s}
   \uses{lem:localeval, lem:orbit}
   \lean{QuadraticIterates.unitPartChar_cSeq_of_dvd_add_two_mul, QuadraticIterates.cSeq_neg_two}
@@ -173,7 +173,7 @@ for $\phi_0$, $\phi_1$ and $\tau$ are collected in Chapter~\ref{chap:main}.
 We write $a \equiv m \bmod N$ when $N$ divides the numerator of $a - m$; for $a \equiv 1 \bmod 4$
 this means that $s$ is odd and $r \equiv s \pmod 4$.
 
-\begin{lemma}[$a \equiv 1 \bmod 4$; draft Lemma~2.8(4)]
+\begin{lemma}[$a \equiv 1 \bmod 4$]
   \label{lem:pat-dyadic}
   \uses{lem:localeval, lem:pat-rs}
   \lean{QuadraticIterates.hasCharPattern_mulSingle_one_of_modEq_four,
@@ -220,7 +220,7 @@ this means that $s$ is odd and $r \equiv s \pmod 4$.
 
 \section{Reflection and period two}
 
-\begin{lemma}[Reflection; draft Lemma~2.9]
+\begin{lemma}[Reflection]
   \label{lem:reflection}
   \uses{lem:reduction, lem:orbit, lem:localeval, lem:wseq-res}
   \lean{QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq,

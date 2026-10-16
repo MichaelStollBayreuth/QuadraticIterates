@@ -3,7 +3,8 @@
 
 The Galois-theoretic part rests on general facts about multiquadratic extensions, invariants of
 $2$-groups, wreath products and even polynomials. They are formalized in Mathlib generality under
-\texttt{QuadraticIterates/Mathlib/} and are taken over unchanged.
+\texttt{QuadraticIterates/Mathlib/}, except for the iteration sequences of even polynomials
+(\texttt{QuadraticIterates/EvenPoly.lean}).
 
 \section{The iteration sequence of an even polynomial}
 
@@ -19,9 +20,7 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
   $\varepsilon$ is $\gamma_1 = \varepsilon g(0)$, $\gamma_{n+1} = g(\gamma_n)$ for $n \ge 1$; it
   commutes with ring homomorphisms, and if $\gamma_{n_0 + 2} = \gamma_{n_0}$ for some $n_0 \ge 1$, it
   is $2$-periodic from $n_0$ on.
-  \formalnote{The sequence $c$ is the case $g = X^2 + a$, $\varepsilon = -1$. The rest of the
-  existing theory of these sequences (Möbius factors, strong divisibility, valuation shape) is
-  not used and is removed in the last step of the plan.}
+  \formalnote{The sequence $c$ is the case $g = X^2 + a$, $\varepsilon = -1$.}
 \end{definition}
 
 \section{Multiquadratic extensions}

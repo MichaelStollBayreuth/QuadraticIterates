@@ -3,7 +3,7 @@
 
 \section{Signs}
 
-\begin{lemma}[Signs; draft Lemma~2.5]
+\begin{lemma}[Signs]
   \label{lem:signs}
   \uses{def:cseq}
   \lean{QuadraticIterates.cSeq_pos_of_pos, QuadraticIterates.cSeq_neg_of_neg_one_lt,
@@ -45,7 +45,7 @@
   gives $c_4 \le a^2 + a$) and $c_3 \in B_1$; induction on $k$.
 \end{proof}
 
-\begin{lemma}[Sums of successive terms; draft Lemma~4.1]
+\begin{lemma}[Sums of successive terms]
   \label{lem:sumsign}
   \uses{def:cseq}
   \lean{QuadraticIterates.le_cSeq, QuadraticIterates.cSeq_le_sq_add,
@@ -90,8 +90,7 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
   So $w_2 = r + s$, $w_3 = r(r+s)^2 + s^3$, and $w_n$ is a binary form of degree $2^{n-1} - 1$ in
   $r$, $s$.
   \formalnote{\lname{wSeq r s : ℕ → ℤ} (junk value $w_0 = 0$), \lname{vSeq r s n},
-  \lname{uSeq r s n}. The earlier route's sequence with another normalization ($w_1 = 1$, a sign
-  $\varepsilon$) is \lname{wEps} until it is removed.}
+  \lname{uSeq r s n}.}
 \end{definition}
 
 \begin{lemma}[Reduction]

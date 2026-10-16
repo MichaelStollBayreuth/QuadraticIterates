@@ -3,16 +3,14 @@
 This blueprint develops a criterion for the surjectivity of the arboreal Galois representation
 attached to $x^2 + a$, $a \in \QQ$, which works directly with the orbit $(c_n)$ of $0$ and with
 quadratic characters of $\QQ^\times$, and links each statement to its formalization in Lean~4.
-It consolidates M.~Stoll, \emph{When do all iterates of $x^2 + a$ have maximal Galois group?}
-(draft of 30 September 2026) with the corrections and additional criteria found while reviewing
-that draft. The known results of \cite{paper, li2020, li2021} for integer parameters are
-derived from the general statements for rational parameters (Chapter~\ref{chap:integers}).
+The known results of \cite{paper, li2020, li2021} for integer parameters are derived from the
+general statements for rational parameters (Chapter~\ref{chap:integers}).
 
-\emph{Status.} This is a plan, written before the formalization. The Galois-theoretic part
-(Chapter~\ref{chap:galois} and Appendix~\ref{chap:auxiliary}) reuses an existing formalization;
-its nodes carry Lean names and are green. Every other node is new; its proposed Lean names are
-given in \lname{typewriter} inside the statement or a \emph{Formalization} remark, and are
-subject to change. The order of work is fixed in Section~\ref{sec:order}.
+\emph{Status.} Every definition and theorem is formalized. The aim is not to reproduce the
+proofs of \cite{paper, li2020, li2021}, which go through the Möbius quotients $b_n$ of the $c_n$,
+but to give different, simpler proofs of their main results and to extend them to further cases
+and to rational parameters. Lean names are given in \lname{typewriter} inside the statement or a
+\emph{Formalization} remark; Section~\ref{sec:formalization} describes the formalization.
 
 \emph{Standing notation.} $a \in \QQ$, $f = X^2 + a$, $f_0 = X$ and $f_{n+1} = f_n^2 + a$ are
 the iterates of $f$, $K_n \subseteq \Qbar$ is the splitting field of $f_n$ over $\QQ$, and
