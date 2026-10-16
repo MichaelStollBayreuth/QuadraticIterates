@@ -45,10 +45,10 @@ status:
     a criterion for rational parameters a = r/s built on it (QuadraticIterates/Main/): if
     a ≤ -2 or a³ + 2a² + 2a + 2 > 0, the pair (r, s) lies in one of three 2-adic classes, and
     two of three explicit lists of conditions on r and s hold, then Ω_n ≅ [C₂]ⁿ for all n. The
-    method is that of the author's draft notes on the arboreal representation of X² + a. The
-    main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
-    Theorems 3.3, strengthened to a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case
-    s = 1 of the rational statements and of two rational families extending Li's
+    method is the author's and not yet published. The main result of Section 3 of the paper and
+    the theorems of H.-C. Li (Theorem 3.5 of 2020, Theorems 3.3, strengthened to
+    a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case s = 1 of the rational statements
+    and of two rational families extending Li's
     (QuadraticIterates/Main/Integers.lean and Families.lean). The theorems R⁺ and R⁻ for rational
     parameters of the author's earlier notes are rederived from the main theorem
     (QuadraticIterates/Main/SquarefreeCertificates.lean, a consistency check outside the
@@ -195,9 +195,9 @@ automation:
         build fixes, the switch of the comparator check to Lake's built-in `lake comparator`,
         and a simplification pass toward the new versions, each step gated by the verification chain.
         On the branch `simplified` (2026-10-15/16) the formalization was rebuilt with
-        claude-opus-5.5 around the quadratic-character method of the author's draft notes: a new
-        blueprint, written from the notes and the agent's comments on them and reviewed by the
-        author before any Lean, fixed the statements, names and order of work; the agent then
+        claude-opus-5.5 around the author's quadratic-character method: a new blueprint, written
+        from the author's notes and the agent's comments on them and reviewed by the author before
+        any Lean, fixed the statements, names and order of work; the agent then
         formalized it step by step (Galois side, characters, sequences, patterns, main theorem,
         families, integer corollaries) in an unattended overnight run, each step a scratch
         sandbox audited against the conventions and then one or two commits through the
@@ -210,8 +210,11 @@ automation:
 # fidelity
 fidelity:
   divergences: >
-    The Galois side (splitting fields, Lemmas 1.4-1.6, part 1 of the Section 1 theorem) is
-    formalized for a rational parameter a. Part 1 of the Section 1 theorem, (a) ⟺ (b), needs no
+    The aim of this branch is not to reproduce the proofs of the three papers, but to give
+    different, simpler proofs of their main results and to extend them to further cases and to
+    rational parameters; the deviations listed here follow from that. The Galois side (splitting
+    fields, Lemmas 1.4-1.6, part 1 of the Section 1 theorem) is formalized for a rational
+    parameter a. Part 1 of the Section 1 theorem, (a) ⟺ (b), needs no
     hypothesis on a: maximality of Ω_n forces f_1, …, f_n to be irreducible. Lemma 1.6
     (`relfinrank_succ_eq_two_pow_iff`) is proved for irreducible f_n with c_{n+1} ≠ 0, uniformly in
     n, which is weaker than the paper's maximality hypothesis; Lemma 1.5 needs no hypothesis on a.
@@ -221,10 +224,10 @@ fidelity:
     a = -(4k+2)(4k+3), his statement being the case of even k; his Theorems 3.3, 3.9 (2021) and
     3.5 (2020) are the case v = 1 of rational families, not proved by his method. The rational
     main theorem needs no exclusion of a = -1, 0, which its hypotheses rule out. The theorems R⁺
-    and R⁻ for rational parameters of the author's working notes, formalized on the main branch
-    by the b_n route, are rederived here from the rational main theorem: their hypotheses imply
-    its hypotheses. The index-2 statement
-    of the 2020 paper and the b_n-based lemmas of all three papers are not formalized.
+    and R⁻ for rational parameters of the author's working notes are rederived here from the
+    rational main theorem: their hypotheses imply its hypotheses. The index-2 statement of the 2020 paper and the b_n-based
+    lemmas of all three papers are not formalized on this branch; the main branch formalizes the
+    b_n route.
 
 # review status
 review:

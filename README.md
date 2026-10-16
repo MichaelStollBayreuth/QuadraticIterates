@@ -24,8 +24,10 @@ criterion of
 embedding theorem, and without the paper's assumption that the iterates are irreducible:
 maximality of `Ω_n` forces `f_1, …, f_n` to be irreducible.
 
-Instead of passing from the `c_n` to their Möbius quotients `b_n`, as the paper and its successors
-do, the formalization works with quadratic characters: every level is maximal if and only if, for
+The aim of this branch is not to reproduce the proofs of the paper and its successors, but to give
+different, simpler proofs of their main results and to extend them to further cases and to rational
+parameters. Instead of passing from the `c_n` to their Möbius quotients `b_n`, as those proofs do,
+the formalization works with quadratic characters: every level is maximal if and only if, for
 every `n ≥ 1`, some character `χ : ℚ* → {±1}` has `χ(c_n) = −1` and `χ(c_m) = 1` for all `m > n`.
 Such characters (the sign, the parities of `p`-adic valuations, and characters induced by Dirichlet
 characters) are found by short computations modulo a single prime power, and they give:
@@ -45,20 +47,17 @@ characters) are found by short computations modulo a single prime power, and the
   even `k`) or `a = −((4k+1)(4k+2)+1)`, and, for `a < 0` with `a ≡ 3 mod 4` and `−a` not a square,
   exactly when `−a − 1` is not a square.
 
-There is no `sorry`, and no axiom beyond the three of Mathlib. The `main` branch of this
-repository holds the complete formalization of the paper along its own route through the `b_n`
-(part 2 of its Section 1 theorem, Lemmas 1.1, 2.1 and 2.2), of Li's lemmas on the `b_n`, and of
-two earlier theorems for rational parameters; that route is not part of this branch, which
-instead derives those two theorems from its criterion for rational parameters
-([`Main/SquarefreeCertificates.lean`](QuadraticIterates/Main/SquarefreeCertificates.lean)).
-
-For integer `a`, these three papers are everything that is unconditionally known: apart from that
-half-family, no further value of `a` has been settled since 2021.
+For integer `a`, these three papers are everything that is unconditionally known: apart from the
+values `a = −(4k+2)(4k+3)` with odd `k`, no further value of `a` has been settled since 2021.
 [Maximality for `x² + a`](https://michaelstollbayreuth.github.io/QuadraticIterates/literature.html)
 (source: [`website/literature.html`](website/literature.html)) surveys the literature — it maps
 the eight sign-and-residue classes of `a` against what is proved in each, links every box to the
 declaration that formalizes it, and collects the neighbouring work that moves the basepoint off
 the critical point, bounds finitely many levels, or assumes *abc* or Vojta.
+
+There is no `sorry`, and no axiom beyond the three of Mathlib. The paper's own proofs, through
+the `b_n` (part 2 of its Section 1 theorem, Lemmas 1.1, 2.1 and 2.2), and those of Li are
+formalized on the `main` branch of this repository.
 
 ## Contents
 
@@ -76,8 +75,8 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
   period-two mechanisms;
 - [`Main`](QuadraticIterates/Main): the three lists of criteria, the 2-adic condition, the main
   theorem, the two families and the integer parameters;
-- [`EvenPoly.lean`](QuadraticIterates/EvenPoly.lean): even polynomials, for the irreducibility of
-  the iterates;
+- [`EvenPoly.lean`](QuadraticIterates/EvenPoly.lean): even polynomials and their iteration
+  sequences, of which `c_n` is one;
 - [`QuadraticIterates/Mathlib`](QuadraticIterates/Mathlib): auxiliary declarations missing from
   the current version of Mathlib, stated in their natural generality and following Mathlib's
   directory structure; these are candidates for upstreaming.
