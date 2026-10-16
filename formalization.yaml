@@ -49,7 +49,10 @@ status:
     main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
     Theorems 3.3, strengthened to a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case
     s = 1 of the rational statements and of two rational families extending Li's
-    (QuadraticIterates/Main/Integers.lean and Families.lean). Not formalized on this branch:
+    (QuadraticIterates/Main/Integers.lean and Families.lean). The theorems R⁺ and R⁻ for rational
+    parameters of the author's earlier notes are rederived from the main theorem
+    (QuadraticIterates/Main/SquarefreeCertificates.lean, a consistency check outside the
+    blueprint). Not formalized on this branch:
     the paper's second criterion via the Möbius quotients b_n (part 2 of the Section 1 theorem
     and Lemmas 1.1, 2.1, 2.2), Corollary 1.3, the lemmas of Li's papers about b_n, and the
     index-2 statement of Li 2020. Supporting theory (multiquadratic extensions, iterated wreath
@@ -218,8 +221,9 @@ fidelity:
     a = -(4k+2)(4k+3), his statement being the case of even k; his Theorems 3.3, 3.9 (2021) and
     3.5 (2020) are the case v = 1 of rational families, not proved by his method. The rational
     main theorem needs no exclusion of a = -1, 0, which its hypotheses rule out. The theorems R⁺
-    and R⁻ for rational parameters of the author's working notes, formalized on the main branch,
-    are superseded by the rational main theorem and not formalized here. The index-2 statement
+    and R⁻ for rational parameters of the author's working notes, formalized on the main branch
+    by the b_n route, are rederived here from the rational main theorem: their hypotheses imply
+    its hypotheses. The index-2 statement
     of the 2020 paper and the b_n-based lemmas of all three papers are not formalized.
 
 # review status
@@ -314,6 +318,16 @@ alignment:
       module: ""
       status: "not formalized"
       note: "the b_n route is not formalized on this branch"
+    - source: "Theorem R⁺ (rational a = r/s > -1; author's working notes, not in the papers)"
+      lean: "nonempty_mulEquiv_of_neg_lt_of_certificate, criteria_of_neg_lt_of_certificate"
+      module: "QuadraticIterates.Main.SquarefreeCertificates"
+      status: "proved"
+      note: "derived from the rational main theorem: the hypotheses of R⁺ imply its 2-adic class and two of its three lists of criteria"
+    - source: "Theorem R⁻ (rational a = r/s ≤ -2; author's working notes, not in the papers)"
+      lean: "nonempty_mulEquiv_of_two_mul_le_of_certificate, criteria_of_two_mul_le_of_certificate"
+      module: "QuadraticIterates.Main.SquarefreeCertificates"
+      status: "proved"
+      note: "derived from the rational main theorem, as for R⁺"
     - source: "Li 2020, Theorem 3.5"
       lean: "li2020_theorem_3_5"
       module: "QuadraticIterates.Main.Integers"

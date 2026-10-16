@@ -10,6 +10,7 @@ public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 
+import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
@@ -662,5 +663,41 @@ theorem hasCharPattern_mulSingle_one_of_prime_dvd (hrs : IsCoprime r s) (hs : s 
   · exact hasCharPattern_mulSingle_one_of_dvd_left hrs hs hp4 hk hrm hm h
   · exact hasCharPattern_mulSingle_of_neg_of_neg_mulSingle h₀
       (hasCharPattern_neg_mulSingle_one_of_dvd_left hrs hs hp4 hk hrm hm h)
+
+/-! ### Criteria from divisibility -/
+
+/-- (O3) or (O4): a positive non-square `s` has a prime with odd exponent. -/
+theorem negFirstCriterion_of_not_isSquare_right (hs : 0 ≤ s) (h : ¬IsSquare s) :
+    NegFirstCriterion r s := by
+  obtain ⟨p, k, m, hp, hk, hsm, hm⟩ := Int.exists_prime_pow_mul_of_not_isSquare hs h
+  rcases eq_or_ne p 2 with rfl | hp2
+  · exact .dvd_right_two k m (by simpa using hsm)
+      (Int.not_even_iff_odd.mp fun he ↦ hm (mod_cast he.two_dvd)) (.inl hk)
+  · exact .dvd_right p k m hp hp2 hk.pos hsm hm (.inl hk)
+
+/-- (O5) or (T2): a prime `p ≡ 3 (mod 4)` dividing `r ≠ 0` and not `s`. -/
+theorem negFirstCriterion_or_negTailCriterion_of_prime_dvd (hr : r ≠ 0) {p : ℕ} (hp : p.Prime)
+    (hp4 : p % 4 = 3) (hpr : (p : ℤ) ∣ r) (hps : ¬(p : ℤ) ∣ s) :
+    NegFirstCriterion r s ∨ NegTailCriterion r s := by
+  obtain ⟨k, m, hk, hrm, hm⟩ := Int.exists_pow_mul_of_dvd hp hr hpr
+  have hp' := Nat.prime_iff_prime_int.mp hp
+  have hgcd : (m * s).gcd p = 1 := Int.isCoprime_iff_gcd_eq_one.mp
+    (hp'.coprime_iff_not_dvd.mpr fun h ↦ (hp'.dvd_or_dvd h).elim hm hps).symm
+  rcases jacobiSym.eq_one_or_neg_one hgcd with h | h
+  exacts [.inl (.dvd_left p k m hp hp4 hk hrm hm h), .inr (.dvd_left p k m hp hp4 hk hrm hm h)]
+
+/-- (O5) or (T2) at `2`: `4 ∣ r ≠ 0` with `s` odd. -/
+theorem negFirstCriterion_or_negTailCriterion_of_four_dvd (hr : r ≠ 0) (h4 : 4 ∣ r)
+    (hs : Odd s) : NegFirstCriterion r s ∨ NegTailCriterion r s := by
+  obtain ⟨k, m, hk, hrm, hm⟩ := Int.exists_pow_mul_of_dvd Nat.prime_two hr (by push_cast; lia)
+  push_cast at hrm hm
+  have hk2 : 2 ≤ k := by
+    by_contra hk2
+    obtain rfl : k = 1 := by lia
+    lia
+  have := Int.odd_iff.mp hs
+  rcases (by lia [Int.emod_emod_of_dvd (m * s) (by norm_num : (2 : ℤ) ∣ 4),
+    Int.mul_emod m s 2] : m * s % 4 = 1 ∨ m * s % 4 = 3) with h | h
+  exacts [.inl (.dvd_left_two k m hk2 hrm h), .inr (.dvd_left_two k m hk2 hrm h)]
 
 end QuadraticIterates
