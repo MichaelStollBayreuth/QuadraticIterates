@@ -400,15 +400,67 @@ lists of criteria collapse to a single condition.
   squares), so (Z1) and (O3)/(O4) hold. In both cases Theorem~\ref{thm:main} applies.
 \end{proof}
 
-\begin{remark}[The six classes on the interval]
+\begin{corollary}[Automatic classes on the interval]
+  \label{cor:interval-classes}
+  \uses{thm:main, prop:Z, prop:O, prop:T, lem:prime3}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_emod,
+    Int.exists_eq_four_pow_mul_of_isSquare, Int.not_isSquare_of_emod_eight_eq_five}
+  \leanok
+  Let $a = r/s$ with $r, s$ coprime, $s \ge 1$ and $\alpha < a < -1$. Then $\rho_a$ is surjective
+  in each of the following cases:
+  \begin{enumerate}
+    \item $(r, s) \equiv (1, 1)$, $(1, 3)$ or $(3, 2) \pmod 4$;
+    \item $(r, s) \equiv (2, 1) \pmod 4$, and $r \equiv 2 \pmod 8$ or $s \equiv 5 \pmod 8$;
+    \item $(r, s) \equiv (0, 3) \pmod 4$, and $|r|$ is not a square in $\QQ_2$, that is, not of the
+          form $4^j m$ with $m \equiv 1 \pmod 8$, or $r + 2s \equiv \pm 6 \pmod{16}$;
+    \item $(r, s) \equiv (3, 0) \pmod 4$, $r \equiv 3 \pmod 8$ and $s \not\equiv 4 \pmod{32}$.
+  \end{enumerate}
+  \formalnote{The four cases form one disjunction of congruences, with (1) for $(1, 1)$ and
+  $(1, 3)$ stated as $r \equiv 1 \pmod 4$ and $s$ odd, and with $|r| \notin \QQ_2^{\times 2}$
+  stated as $-r \ne 4^j m$ for all $j \ge 0$ and all $m \equiv 1 \pmod 8$.}
+\end{corollary}
+\begin{proof}
+  \leanok
+  \uses{thm:main, prop:Z, prop:O, prop:T, lem:prime3}
+  In each case one of (C1), (C2), (C3) holds with $\eps = 1$; we show that two of (Z), (O), (T)
+  hold, so that Theorem~\ref{thm:main} applies. Here $r < 0$, $r + s < 0$ and, as $\alpha > -2$,
+  $r + 2s > 0$. Recall that (O3) or (O4) holds if $s$ is not a square, and that a nonzero square
+  is $4^j m$ with $m \equiv 1 \pmod 8$; so integers $\equiv 2, 3 \pmod 4$ or $\equiv 5 \pmod 8$
+  are not squares.
+
+  (1) In the classes $(1, 1)$ and $(1, 3)$, $|r| \equiv 3 \pmod 4$ gives (Z1); in the first (O2)
+  holds, in the second $s \equiv 3 \pmod 4$ gives (O3)/(O4). In the class $(3, 2)$,
+  $s \equiv 2 \pmod 4$ gives (O3)/(O4), and $|r + s| \equiv 3 \pmod 4$ is not a square and has a
+  prime divisor $p \equiv 3 \pmod 4$ (Lemma~\ref{lem:prime3}), which gives (T3).
+
+  (2) $|r| \equiv 2 \pmod 4$ gives (Z1). If $r \equiv 2 \pmod 8$, then $|r| \equiv 6 \pmod 8$ has a
+  prime divisor $p \equiv 3 \pmod 4$ (Lemma~\ref{lem:prime3}), and $p \nmid s$ gives (O5) or (T2).
+  If $s \equiv 5 \pmod 8$, then $s$ is not a square: (O3)/(O4).
+
+  (3) $s \equiv 3 \pmod 4$ gives (O3)/(O4). If $|r|$ is not a square in $\QQ_2$, it is not a square:
+  (Z1). If $r + 2s \equiv \pm 6 \pmod{16}$, then $(r + 2s)/2 > 0$ is $\equiv \pm 3 \pmod 8$, and a
+  prime $p \equiv \pm 3 \pmod 8$ divides it (Lemma~\ref{lem:prime3}), hence $r + 2s$: (Z2).
+
+  (4) $|r| \equiv 5 \pmod 8$ gives (Z1). If $s$ is not a square, (O3)/(O4) holds. Otherwise
+  $s = 4^j m$ with $m \equiv 1 \pmod 8$, where $j \ge 1$ as $4 \mid s$ and $j \ne 1$ as
+  $s \not\equiv 4 \pmod{32}$; then $s = 2^{2j} m$ with $2j \ge 4$ and $rm \equiv 3 \pmod 8$,
+  which is (O4).
+\end{proof}
+
+\begin{remark}[The remaining classes]
   \label{rem:interval}
-  Let $\alpha < a < -1$. In the classes $(1,1)$, $(1,3)$, $(3,2)$, the numbers $c_1, c_2$ are
-  $2$-independent and two of (Z), (O$'$), (T$'$) hold automatically: (Z1) and $a \equiv 1 \bmod 4$;
-  (Z1) and $s \equiv 3 \pmod 4$; $s \equiv 2 \pmod 4$ and $|r + s| \equiv 3 \pmod 4$. In the class
-  $(2,1)$, (Z1) holds, and the condition says: $s \ne \sq$, or $\Leg{-r}{p} = -1$ for a prime
-  $p \mid s$, or a prime $p \equiv 3 \pmod 4$ divides $r(r + s)$. In the class $(0,3)$, (O$'$)
-  holds, and the condition says (Z) or (T$'$). In the class $(3,0)$, none of the three holds
-  automatically.
+  Let $\alpha < a < -1$, with $(r, s)$ in one of the classes (C1)--(C3) for $\eps = 1$ but in none
+  of the cases of Corollary~\ref{cor:interval-classes}, and $c_1, c_2$ $2$-independent. In the
+  class $(2,1)$, where now $r \equiv 6$ and $s \equiv 1 \pmod 8$, (Z1) holds, and the condition of
+  Corollary~\ref{cor:interval} says: $s \ne \sq$, or $\Leg{-r}{p} = -1$ for a prime $p \mid s$, or
+  a prime $p \equiv 3 \pmod 4$ divides $r(r + s)$. In the class $(0,3)$, (O$'$) holds, and the
+  condition says (Z) or (T$'$). In the class $(3,0)$ with $r \equiv 3 \pmod 8$, where now
+  $s \equiv 4 \pmod{32}$, (Z) holds, and the condition says (O$'$) or (T$'$); for
+  $r \equiv 7 \pmod 8$, none of the three holds throughout the class. Each of these classes
+  contains parameters for which $\rho_a$ is not surjective, as $c_1$, $c_2$ or $c_1 c_2$ is a
+  square: $a = -10/9$ in the class $(2,1)$; $-4/3$ and $-16/15$, with $s \equiv 3$ and
+  $7 \pmod 8$, in the class $(0,3)$; $-5/4$ and $-49/36$, with $r \equiv 3$ and $7 \pmod 8$, in
+  the class $(3,0)$.
 
   For $\alpha < a < a_*$ and $c_1, c_2$ $2$-independent, two of (Z), (O$'$), (T$'$) hold if and
   only if two of (Z), (O), (T) do: there (O1), (T1) and (T4) do not apply, (O3), (O4) and (O5)
@@ -430,10 +482,15 @@ lists of criteria collapse to a single condition.
   parameters in every interval contained in $\cA$, in $(\alpha, a_*]$ just as outside it (the
   interval differs only on the density-zero set where the criteria are not sharp), and none in
   $(-2, \alpha]$, which carries the proportion $\frac{1}{4|\alpha|} - \frac18 \approx 0.0370$.
-  Altogether the main theorem covers the proportion $\frac{9}{16} - \frac{1}{8|\alpha|} \approx
-  0.4815$ of all $a \in \QQ$; the families of Chapter~\ref{chap:families}, with $s$ a square, have
-  density zero. Numerically, for $\max(|r|, s) \le 400$ the two proportions are $0.0369$ and
-  $0.4796$.
+  On $(\alpha, -1)$, Corollary~\ref{cor:interval-classes} alone, with no condition on squares,
+  covers the proportion $\frac{245}{576} \approx 0.4253$: all of the classes $(1,1)$, $(1,3)$,
+  $(3,2)$, and the proportions $\frac34$, $\frac{11}{12}$ and $\frac{7}{16}$ of the classes
+  $(2,1)$, $(0,3)$ and $(3,0)$. Altogether the main theorem covers the proportion
+  $\frac{9}{16} - \frac{1}{8|\alpha|} \approx 0.4815$ of all $a \in \QQ$; the families of
+  Chapter~\ref{chap:families}, with $s$ a square, have density zero. Numerically, for
+  $\max(|r|, s) \le 400$ the proportions of $(-2, \alpha]$ and of all parameters covered are
+  $0.0369$ and $0.4796$, and for $\max(|r|, s) \le 3000$ that of the parameters in $(\alpha, -1)$
+  covered by Corollary~\ref{cor:interval-classes} is $0.4256$.
 \end{remark}
 
 \section{Odd levels for \texorpdfstring{$a \equiv 1 \bmod 4$}{a = 1 mod 4}}
