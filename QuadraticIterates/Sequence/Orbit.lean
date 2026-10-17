@@ -11,13 +11,15 @@ import Mathlib.Data.ZMod.Units
 import QuadraticIterates.Mathlib.Data.ZMod
 
 /-!
-# Orbits of `x ↦ x² + a` and two-periodicity modulo `(r + s)²`
+# Orbits of `x ↦ x² + a`, two-periodicity modulo `(r + s)²` and three-periodicity modulo `w_3²`
 
 For a parameter `a` in a commutative ring, `x ↦ x² + a` is even, so once `c_{n+1} = -c_n` the
 sequence is constant from `n + 1` on, and once `c_{n+2} = -c_n` it is `2`-periodic from `n + 1` on;
 moreover `c_n + c_{n+2} = (c_n + c_{n+1})(c_n² - c_n + a + 1)`. If `(a + 1)² = 0`, the sequence is
 `1 - t, -t, t - 1, -t, t - 1, …` with `t = a + 1`; modulo `(r + s)²` this applies to `a = r/s` and
-gives the congruences of `w_{2k}` modulo `(r + s)²` and of `w_{2k+1}` modulo `r + s`.
+gives the congruences of `w_{2k}` modulo `(r + s)²` and of `w_{2k+1}` modulo `r + s`. Likewise,
+if `c_3² = 0`, the sequence is `3`-periodic from `n = 2` on; modulo `w_3²` this applies to
+`a = r/s` and gives the congruence of `w_{3k}` modulo `w_3²`.
 
 ## Main statements
 
@@ -26,6 +28,9 @@ gives the congruences of `w_{2k}` modulo `(r + s)²` and of `w_{2k+1}` modulo `r
   fixed points, two-cycles, and the factorization of `c_n + c_{n+2}`.
 * `QuadraticIterates.wSeq_two_mul_modEq`: `w_{2k} ≡ (r + s) s^{2^{2k-1} - 2} (mod (r + s)²)`.
 * `QuadraticIterates.wSeq_two_mul_add_one_modEq`: `w_{2k+1} ≡ s^{2^{2k} - 1} (mod r + s)`.
+* `QuadraticIterates.cSeq_three_mul_of_sq_eq_zero` and its companions: if `c_3² = 0`, the
+  sequence is `3`-periodic from `n = 2` on.
+* `QuadraticIterates.wSeq_three_mul_modEq`: `w_{3k} ≡ w_3 s^{2^{3k-1} - 4} (mod w_3²)`.
 * `QuadraticIterates.cSeq_neg_two`, `QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_neg_one`,
   `QuadraticIterates.cSeq_two_mul_of_sq_eq_neg_one`: the sequences of `a = -2` and of `a` with
   `a² = -1`.
@@ -121,6 +126,34 @@ theorem cSeq_two_mul_of_sq_eq_neg_one (ha : a ^ 2 = -1) {j : ℕ} (hj : 1 ≤ j)
   rw [show 2 * (i + 1) = 2 * i + 1 + 1 by ring, cSeq_succ a (by lia),
     cSeq_two_mul_add_one_of_sq_eq_neg_one ha, neg_sq]
   linear_combination ha
+
+/-- If `c_3² = 0`, the sequence is `3`-periodic from `n = 2` on: `c_4 = c_3² + a = a`, so
+`c_5 = a² + a = c_2`. -/
+theorem cSeq_add_three_eq_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) {m : ℕ} (hm : 2 ≤ m) :
+    cSeq a (m + 3) = cSeq a m :=
+  cSeq_add_eq_of_add_eq (by norm_num) (by
+    rw [show 2 + 3 = 3 + 1 + 1 from rfl, cSeq_succ a (by norm_num), cSeq_succ a (by norm_num), h,
+      zero_add, cSeq_two]) hm
+
+/-- If `c_3² = 0`, then `c_{3k} = c_3` for `k ≥ 1`. -/
+theorem cSeq_three_mul_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) {k : ℕ} (hk : 1 ≤ k) :
+    cSeq a (3 * k) = cSeq a 3 := by
+  induction k, hk using Nat.le_induction with
+  | base => rfl
+  | succ k hk ih => rw [mul_add, mul_one, cSeq_add_three_eq_of_sq_eq_zero h (by lia), ih]
+
+/-- If `c_3² = 0`, then `c_{3k+1} = a` for `k ≥ 1`. -/
+theorem cSeq_three_mul_add_one_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) {k : ℕ} (hk : 1 ≤ k) :
+    cSeq a (3 * k + 1) = a := by
+  rw [cSeq_succ a (by lia), cSeq_three_mul_of_sq_eq_zero h hk, h, zero_add]
+
+/-- If `c_3² = 0`, then `c_{3k+2} = c_2` for all `k`. -/
+theorem cSeq_three_mul_add_two_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) (k : ℕ) :
+    cSeq a (3 * k + 2) = cSeq a 2 := by
+  rcases Nat.eq_zero_or_pos k with rfl | hk
+  · rfl
+  rw [show 3 * k + 2 = 3 * k + 1 + 1 from rfl, cSeq_succ a (by lia),
+    cSeq_three_mul_add_one_of_sq_eq_zero h hk, cSeq_two]
 
 end Orbit
 
@@ -232,6 +265,40 @@ theorem exists_wSeq_two_mul_eq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
     ∃ T, wSeq r s (2 * k) = (r + s) * T ∧ T ≡ s ^ (2 ^ (2 * k - 1) - 2) [ZMOD r + s] := by
   obtain ⟨t, ht⟩ := Int.modEq_iff_dvd.mp (wSeq_two_mul_modEq hrs hk)
   exact ⟨s ^ (2 ^ (2 * k - 1) - 2) - (r + s) * t, by linear_combination -ht,
+    Int.modEq_iff_dvd.mpr ⟨t, by ring⟩⟩
+
+/-- **Three-periodicity modulo `w_3²`**: for `k ≥ 1`,
+`w_{3k} ≡ w_3 s^{2^{3k-1} - 4} (mod w_3²)`. Modulo `w_3²` the term `c̄_3 = r w_3 σ⁴` has square
+zero, so `c̄_{3k} = c̄_3` (`QuadraticIterates.cSeq_three_mul_of_sq_eq_zero`), and the reduction
+`QuadraticIterates.intCast_mul_wSeq` gives `r w_{3k} = s^{2^{3k-1}} c̄_3`. -/
+theorem wSeq_three_mul_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
+    wSeq r s (3 * k) ≡ wSeq r s 3 * s ^ (2 ^ (3 * k - 1) - 4) [ZMOD wSeq r s 3 ^ 2] := by
+  have hs := isUnit_intCast_zmod_natAbs (m := wSeq r s 3 ^ 2)
+    (isCoprime_wSeq_right hrs (n := 3) (by norm_num)).pow_left
+  have hr := isUnit_intCast_zmod_natAbs (m := wSeq r s 3 ^ 2)
+    (isCoprime_wSeq_left hrs (n := 3) (by norm_num)).pow_left
+  set σ := ↑hs.unit⁻¹
+  have hσ : (s : ZMod (wSeq r s 3 ^ 2).natAbs) * σ = 1 := hs.mul_val_inv
+  obtain ⟨ρ, hρ⟩ := hr.exists_right_inv
+  have h0 := ZMod.intCast_self_natAbs (wSeq r s 3 ^ 2)
+  have h3 := intCast_mul_wSeq r hσ (n := 3) (by norm_num)
+  rw [show 2 ^ (3 - 1) = 4 from rfl] at h3
+  push_cast at h0
+  have hred := intCast_mul_wSeq r hσ (n := 3 * k) (by lia)
+  rw [cSeq_three_mul_of_sq_eq_zero (by grobner) hk] at hred
+  have hpow : (s : ZMod (wSeq r s 3 ^ 2).natAbs) ^ 2 ^ (3 * k - 1) =
+      s ^ (2 ^ (3 * k - 1) - 4) * s ^ 4 := by
+    rw [← pow_add, Nat.sub_add_cancel]
+    exact Nat.pow_le_pow_right two_pos (by lia : 2 ≤ 3 * k - 1)
+  refine ZMod.intCast_eq_intCast_iff_modEq.mp ?_
+  push_cast
+  grobner
+
+/-- `w_{3k} = w_3 T` with `T ≡ s^{2^{3k-1} - 4} (mod w_3)`, for `k ≥ 1`. -/
+theorem exists_wSeq_three_mul_eq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
+    ∃ T, wSeq r s (3 * k) = wSeq r s 3 * T ∧ T ≡ s ^ (2 ^ (3 * k - 1) - 4) [ZMOD wSeq r s 3] := by
+  obtain ⟨t, ht⟩ := Int.modEq_iff_dvd.mp (wSeq_three_mul_modEq hrs hk)
+  exact ⟨s ^ (2 ^ (3 * k - 1) - 4) - wSeq r s 3 * t, by linear_combination -ht,
     Int.modEq_iff_dvd.mpr ⟨t, by ring⟩⟩
 
 end StrongCong

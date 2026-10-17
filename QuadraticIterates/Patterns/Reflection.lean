@@ -6,6 +6,7 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.Characters.Pattern
+public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 public import QuadraticIterates.Sequence.WSeq
 
 import QuadraticIterates.Mathlib.Data.ZMod
@@ -25,6 +26,7 @@ on, both give `φ_n`.
 
 ## Main statements
 
+* `QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq`: the values after reflection, for any `ψ`.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`: reflection.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_dvd_uSeq`: period two.
 -/
@@ -56,24 +58,39 @@ private lemma exists_inv_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N =
   exact ⟨σ, hσ, hsum, isUnit_of_mul_isUnit_left (ha ▸ (ZMod.isUnit_intCast_of_not_dvd hN hpr).mul
     (.of_mul_eq_one (s : ZMod N) (by rwa [mul_comm])))⟩
 
+/-- **Reflection values**: let `ψ` be a character modulo a power `N = p^k` (`k ≥ 1`). If
+`N ∣ v_n` and `p ∤ r`, then `χ_ψ(c_m) = ψ(-1) χ_ψ(c_n)` for all `m > n`: modulo `N`,
+`c̄_n + c̄_{n+1} = 0`, so `c̄_m = -c̄_n` is a fixed point. -/
+theorem unitPartChar_cSeq_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N = p ^ k)
+    (hk : k ≠ 0) (ψ : MulChar (ZMod N) ℤ) {n : ℕ} (hn : 1 ≤ n) (hdvd : (N : ℤ) ∣ vSeq r s n)
+    (hpr : ¬(p : ℤ) ∣ r) {m : ℕ} (hm : n < m) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) m) = ψ (-1) * unitPartChar p ψ (cSeq ((r : ℚ) / s) n) := by
+  obtain ⟨σ, hσ, hsum, hu⟩ := exists_inv_of_dvd_vSeq hrs hN hk hn hdvd hpr
+  have hcm := cSeq_eq_of_add_succ_eq_zero hn hsum hm
+  rw [eq_neg_of_add_eq_zero_right hsum] at hcm
+  rw [unitPartChar_cSeq hN hk ψ hσ (by lia) (hcm ▸ hu.neg), hcm,
+    unitPartChar_cSeq hN hk ψ hσ hn hu, neg_eq_neg_one_mul, map_mul]
+
+/-- If `N = p^k ∣ v_n` (`k ≥ 1`) and `p ∤ r`, then `c_n` is a `p`-adic unit times a unit modulo
+`N`, so `χ_ψ(c_n) ≠ 0`. -/
+theorem unitPartChar_cSeq_ne_zero_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N = p ^ k)
+    (hk : k ≠ 0) (ψ : MulChar (ZMod N) ℤ) {n : ℕ} (hn : 1 ≤ n) (hdvd : (N : ℤ) ∣ vSeq r s n)
+    (hpr : ¬(p : ℤ) ∣ r) : unitPartChar p ψ (cSeq ((r : ℚ) / s) n) ≠ 0 := by
+  obtain ⟨σ, hσ, -, hu⟩ := exists_inv_of_dvd_vSeq hrs hN hk hn hdvd hpr
+  rw [unitPartChar_cSeq hN hk ψ hσ hn hu]
+  rcases ψ.apply_eq_one_or_eq_neg_one hu with h | h <;> simp [h]
+
 /-- **Reflection**: let `ψ` be a character modulo a power `N = p^k` (`k ≥ 1`) with `ψ(-1) = -1`.
-If `N ∣ v_n` and `p ∤ r`, then `χ_ψ(c_m) = -χ_ψ(c_n) ≠ 0` for all `m > n`: modulo `N`,
-`c̄_n + c̄_{n+1} = 0`, so `c̄_{n+1}` is a fixed point. With `φ₀` this gives `φ_n`. -/
+If `N ∣ v_n` and `p ∤ r`, then `χ_ψ(c_m) = -χ_ψ(c_n) ≠ 0` for all `m > n`
+(`QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq`). With `φ₀` this gives `φ_n`. -/
 theorem hasCharPattern_mulSingle_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N = p ^ k)
     (hk : k ≠ 0) {ψ : MulChar (ZMod N) ℤ} (hψ : ψ (-1) = -1) {n : ℕ} (hn : 1 ≤ n)
     (hdvd : (N : ℤ) ∣ vSeq r s n) (hpr : ¬(p : ℤ) ∣ r)
     (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) n (-1)) :
-    HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
-  obtain ⟨σ, hσ, hsum, hu⟩ := exists_inv_of_dvd_vSeq hrs hN hk hn hdvd hpr
-  have hval (m : ℕ) (hm : n < m) :
-      unitPartChar p ψ (cSeq ((r : ℚ) / s) m) = -unitPartChar p ψ (cSeq ((r : ℚ) / s) n) := by
-    have hcm := cSeq_eq_of_add_succ_eq_zero hn hsum hm
-    rw [eq_neg_of_add_eq_zero_right hsum] at hcm
-    rw [unitPartChar_cSeq hN hk ψ hσ (by lia) (hcm ▸ hu.neg), hcm,
-      unitPartChar_cSeq hN hk ψ hσ hn hu, neg_eq_neg_one_mul, map_mul, hψ, neg_one_mul]
-  refine hasCharPattern_mulSingle_of_neg_of_forall_lt h₀ ?_ hval
-  rw [unitPartChar_cSeq hN hk ψ hσ hn hu]
-  rcases ψ.apply_eq_one_or_eq_neg_one hu with h | h <;> simp [h]
+    HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) :=
+  hasCharPattern_mulSingle_of_neg_of_forall_lt h₀
+    (unitPartChar_cSeq_ne_zero_of_dvd_vSeq hrs hN hk ψ hn hdvd hpr) fun m hm ↦ by
+      rw [unitPartChar_cSeq_of_dvd_vSeq hrs hN hk ψ hn hdvd hpr hm, hψ, neg_one_mul]
 
 /-- Modulo a power `N = p^k` (`k ≥ 1`) dividing `u_n`, with `p ∤ r + s`: `s` has an inverse `σ`,
 and for the sequence `c̄` of `a = r σ`, `c̄_{n+2} = -c̄_n`, and `c̄_n`, `c̄_{n+1} = c̄_n - 1` are

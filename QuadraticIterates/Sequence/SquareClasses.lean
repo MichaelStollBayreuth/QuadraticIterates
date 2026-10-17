@@ -48,6 +48,16 @@ theorem mulChar_cSeq_of_two_le (χ : MulChar ℚ ℤ) (hs : s ≠ 0) {n : ℕ} (
   rw [cSeq_div_eq r hs (by lia), show m + 2 - 1 = m + 1 by lia, pow_succ, pow_mul]
   exact χ.apply_div_sq _ (pow_ne_zero _ (Int.cast_ne_zero.mpr hs))
 
+/-- If `σ` inverts `s` modulo `N = p^k` (`k ≥ 1`) and `c̄_n` is a unit, then `p` divides neither
+`s` nor `r w_n = s^{2^{n-1}} c̄_n`. -/
+private lemma not_dvd_of_isUnit_cSeq {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k ≠ 0)
+    {σ : ZMod N} (hσ : (s : ZMod N) * σ = 1) {n : ℕ} (hn : 1 ≤ n)
+    (hu : IsUnit (cSeq ((r : ZMod N) * σ) n)) :
+    ¬(p : ℤ) ∣ s ∧ ¬(p : ℤ) ∣ r * wSeq r s n := by
+  have hsu : IsUnit (s : ZMod N) := .of_mul_eq_one σ hσ
+  exact ⟨fun h ↦ ZMod.not_isUnit_intCast_of_dvd hN hk h hsu, fun h ↦ ZMod.not_isUnit_intCast_of_dvd
+    hN hk h (by push_cast; rw [intCast_mul_wSeq r hσ hn]; exact (hsu.pow _).mul hu)⟩
+
 /-- **Local evaluation**: let `ψ` be a character modulo a power `N = p^k` (`k ≥ 1`) of a prime
 `p`, let `σ` invert `s` modulo `N`, and let `c̄` be the sequence of `r σ` in `ZMod N`. If `c̄_n` is
 a unit, then `χ_ψ(c_n) = ψ(c̄_n)` for the character `χ_ψ = Rat.unitPartChar p ψ`: by the
@@ -57,19 +67,27 @@ theorem unitPartChar_cSeq {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k 
     (ψ : MulChar (ZMod N) ℤ) {σ : ZMod N} (hσ : (s : ZMod N) * σ = 1) {n : ℕ} (hn : 1 ≤ n)
     (hu : IsUnit (cSeq ((r : ZMod N) * σ) n)) :
     Rat.unitPartChar p ψ (cSeq ((r : ℚ) / s) n) = ψ (cSeq ((r : ZMod N) * σ) n) := by
-  have hsu : IsUnit (s : ZMod N) := .of_mul_eq_one σ hσ
-  have hps : ¬(p : ℤ) ∣ s := fun h ↦ ZMod.not_isUnit_intCast_of_dvd hN hk h hsu
-  have hred := intCast_mul_wSeq r hσ hn
-  have hpw : ¬(p : ℤ) ∣ r * wSeq r s n := fun h ↦
-    ZMod.not_isUnit_intCast_of_dvd hN hk h (by push_cast; rw [hred]; exact (hsu.pow _).mul hu)
+  obtain ⟨hps, hpw⟩ := not_dvd_of_isUnit_cSeq hN hk hσ hn hu
   have hs : s ≠ 0 := fun h ↦ hps (h ▸ dvd_zero _)
   have hψs : ψ s ^ 2 = 1 := by
-    rcases ψ.apply_eq_one_or_eq_neg_one hsu with h | h <;> simp [h]
+    rcases ψ.apply_eq_one_or_eq_neg_one (IsUnit.of_mul_eq_one σ hσ) with h | h <;> simp [h]
   rw [cSeq_div_eq r hs hn, MulChar.apply_div, ← Int.cast_mul, ← Int.cast_pow,
     Rat.unitPartChar_intCast hN hpw, Rat.unitPartChar_intCast hN
       fun h ↦ hps ((Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow h),
-    Int.cast_mul, hred, Int.cast_pow, map_mul, map_pow, mul_right_comm, ← mul_pow, ← sq,
+    Int.cast_mul, intCast_mul_wSeq r hσ hn, Int.cast_pow, map_mul, map_pow, mul_right_comm,
+    ← mul_pow, ← sq,
     hψs, one_pow, one_mul]
+
+/-- With the notation of `QuadraticIterates.unitPartChar_cSeq`: if `c̄_n` is a unit, then
+`v_p(c_n)` is even, as `r w_n = s^{2^{n-1}} c̄_n` is prime to `p`. -/
+theorem valChar_cSeq_of_isUnit {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k ≠ 0)
+    {σ : ZMod N} (hσ : (s : ZMod N) * σ = 1) {n : ℕ} (hn : 1 ≤ n)
+    (hu : IsUnit (cSeq ((r : ZMod N) * σ) n)) : Rat.valChar p (cSeq ((r : ℚ) / s) n) = 1 := by
+  obtain ⟨hps, hpw⟩ := not_dvd_of_isUnit_cSeq hN hk hσ hn hu
+  have hs : s ≠ 0 := fun h ↦ hps (h ▸ dvd_zero _)
+  rw [cSeq_div_eq r hs hn, MulChar.apply_div, ← Int.cast_mul, ← Int.cast_pow,
+    Rat.valChar_intCast_of_not_dvd hpw, Rat.valChar_intCast_of_not_dvd
+      fun h ↦ hps ((Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow h), mul_one]
 
 /-- `c_1 = -r/s = -rs/s²`. -/
 theorem isSquare_cSeq_one_of_isSquare (h : IsSquare (-(r * s))) :
