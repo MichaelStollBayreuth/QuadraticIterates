@@ -30,4 +30,12 @@ theorem sq_emod_eight_eq_one_of_odd {x : ℤ} (hx : Odd x) : x ^ 2 % 8 = 1 := by
   rcases (by lia [Int.odd_iff.mp hx] : x % 8 = 1 ∨ x % 8 = 3 ∨ x % 8 = 5 ∨ x % 8 = 7) with
     h | h | h | h <;> simp [h]
 
+/-- An integer `≡ 5 (mod 8)` is not a square. -/
+theorem not_isSquare_of_emod_eight_eq_five {x : ℤ} (h : x % 8 = 5) : ¬IsSquare x :=
+  fun ⟨t, ht⟩ ↦ by
+    subst ht
+    rcases (by lia : t % 8 = 0 ∨ t % 8 = 1 ∨ t % 8 = 2 ∨ t % 8 = 3 ∨ t % 8 = 4 ∨ t % 8 = 5 ∨
+      t % 8 = 6 ∨ t % 8 = 7) with h' | h' | h' | h' | h' | h' | h' | h' <;>
+      simp [Int.mul_emod, h'] at h
+
 end Int

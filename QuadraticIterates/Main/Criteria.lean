@@ -11,6 +11,7 @@ public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 
 import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
+import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
@@ -699,5 +700,16 @@ theorem negFirstCriterion_or_negTailCriterion_of_four_dvd (hr : r ≠ 0) (h4 : 4
   rcases (by lia [Int.emod_emod_of_dvd (m * s) (by norm_num : (2 : ℤ) ∣ 4),
     Int.mul_emod m s 2] : m * s % 4 = 1 ∨ m * s % 4 = 3) with h | h
   exacts [.inl (.dvd_left_two k m hk2 hrm h), .inr (.dvd_left_two k m hk2 hrm h)]
+
+/-- (T3) for `r + s ≠ ±□` divisible by `4`, or `> 0` and `≡ 3`, or `< 0` and `≡ 1 (mod 4)`. -/
+theorem negTailCriterion_of_emod_four (h : ¬IsSquare (r + s)) (h' : ¬IsSquare (-(r + s)))
+    (h4 : (r + s) % 4 = 0 ∨ 0 < r + s ∧ (r + s) % 4 = 3 ∨ r + s < 0 ∧ (r + s) % 4 = 1) :
+    NegTailCriterion r s := by
+  refine .not_isSquare_add h h' (h4.imp Int.dvd_of_emod_eq_zero fun h ↦ ?_)
+  rcases h with ⟨h0, h3⟩ | ⟨h0, h1⟩
+  · exact Int.exists_prime_dvd_of_emod_four_eq_three h0 h3
+  · obtain ⟨p, hp, hp4, hpd⟩ := Int.exists_prime_dvd_of_emod_four_eq_three (x := -(r + s))
+      (by lia) (by lia)
+    exact ⟨p, hp, hp4, dvd_neg.mp hpd⟩
 
 end QuadraticIterates

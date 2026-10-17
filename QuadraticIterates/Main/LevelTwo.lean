@@ -59,17 +59,6 @@ private lemma emod_four_of_twoAdicClass_one (hc : TwoAdicClass r s 1) :
       r % 4 = 0 ∧ s % 4 = 3 ∨ r % 4 = 3 ∧ s % 4 = 0 ∨ r % 4 = 3 ∧ s % 4 = 2 := by
   rcases hc with ⟨⟨k, rfl⟩, h⟩ | ⟨⟨k, rfl⟩, h⟩ | ⟨⟨k, rfl⟩, h⟩ <;> rw [Int.ModEq] at h <;> lia
 
-/-- (T3) for `r + s ≠ ±□` divisible by `4`, or `> 0` and `≡ 3`, or `< 0` and `≡ 1 (mod 4)`. -/
-private lemma negTailCriterion_of_emod_four (h : ¬IsSquare (r + s)) (h' : ¬IsSquare (-(r + s)))
-    (h4 : (r + s) % 4 = 0 ∨ 0 < r + s ∧ (r + s) % 4 = 3 ∨ r + s < 0 ∧ (r + s) % 4 = 1) :
-    NegTailCriterion r s := by
-  refine .not_isSquare_add h h' (h4.imp Int.dvd_of_emod_eq_zero fun h ↦ ?_)
-  rcases h with ⟨h0, h3⟩ | ⟨h0, h1⟩
-  · exact Int.exists_prime_dvd_of_emod_four_eq_three h0 h3
-  · obtain ⟨p, hp, hp4, hpd⟩ := Int.exists_prime_dvd_of_emod_four_eq_three (x := -(r + s))
-      (by lia) (by lia)
-    exact ⟨p, hp, hp4, dvd_neg.mp hpd⟩
-
 /-- (Z2) for `r + 2s ≡ ±3 (mod 8)`. -/
 private lemma negAllCriterion_of_emod_eight
     (h : (r + 2 * s) % 8 = 3 ∨ (r + 2 * s) % 8 = 5) : NegAllCriterion r s := by
