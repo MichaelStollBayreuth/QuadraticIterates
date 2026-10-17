@@ -49,7 +49,8 @@ status:
     are maximal if and only if c_1, c_2 are 2-independent, i.e. Ω_2 ≅ [C₂]²
     (QuadraticIterates/Main/LevelTwo.lean); on α < a < -1 shorter lists of criteria suffice,
     and in explicit classes of (r, s) modulo 32 none is needed
-    (QuadraticIterates/Main/Interval.lean). The method is the author's and not yet published. The
+    (QuadraticIterates/Main/Interval.lean); further criteria for the missing pattern come from
+    primes at which the orbit of 0 is short (QuadraticIterates/Main/Further.lean). The method is the author's and not yet published. The
     main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
     Theorems 3.3, strengthened to a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case
     s = 1 of the rational statements and of two rational families extending Li's
@@ -231,6 +232,11 @@ automation:
         2-adic refinement of the classes on the interval α < a < -1 (2026-10-17), prompted by a
         question of the author, was worked out by the agent, checked numerically on all coprime
         pairs with s ≤ 2500, and formalized as a third corollary with a comparator challenge.
+        A search for the missing character on the parameters still uncovered (exact patterns of
+        all characters at a few hundred primes, a hit verified by a linear-recurrence bound) found
+        it in every example and showed which primes supply it; the resulting criteria from the
+        primes of v_2, v_3 and w_3 were written into the blueprint, reviewed by the author, and
+        formalized in Main/Further.lean.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed

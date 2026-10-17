@@ -82,10 +82,11 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 - [`Sequence`](QuadraticIterates/Sequence): the sequence `c_n` for `a = r/s`, its integer
   numerators, signs and orbits modulo `N`;
 - [`Patterns`](QuadraticIterates/Patterns): the values of characters along `c_n`, at the sign, at
-  the primes of `r`, `s`, `r + s`, `r + 2s` and `r² + s²`, and at `2`, with the reflection and
-  period-two mechanisms;
+  the primes of `r`, `s`, `r + s`, `r + 2s`, `r² + s²` and `w_3`, and at `2`, with the reflection
+  and period-two mechanisms;
 - [`Main`](QuadraticIterates/Main): the three lists of criteria, the 2-adic condition, the main
-  theorem, the two families and the integer parameters;
+  theorem, its corollaries, further criteria from the primes of `v_2`, `v_3` and `w_3`, the two
+  families and the integer parameters;
 - [`EvenPoly.lean`](QuadraticIterates/EvenPoly.lean): even polynomials and their iteration
   sequences, of which `c_n` is one;
 - [`QuadraticIterates/Mathlib`](QuadraticIterates/Mathlib): auxiliary declarations missing from
