@@ -27,6 +27,9 @@ for the pattern `Pi.mulSingle n (-1)` (`-1` at `n`, `1` after `n`), `φ₀` for 
 
 * `QuadraticIterates.hasCharPattern_neg_mulSingle_of_neg_of_mulSingle` and its two siblings: any
   two of the patterns `-1`, `Pi.mulSingle k (-1)` and `-Pi.mulSingle k (-1)` give the third.
+* `QuadraticIterates.hasCharPattern_mulSingle_one_of_apply`,
+  `QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_apply`: `φ₁` and `τ` from the values of
+  one character.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt`: `φ₀` and a character that
   changes sign after `n` give `φ_n`.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_alternating`: `φ₀`, a character
@@ -91,6 +94,26 @@ theorem hasCharPattern_neg_of_mulSingle_of_neg_mulSingle
     (h₀ : HasCharPattern v n (Pi.mulSingle k (-1)))
     (h₁ : HasCharPattern v n (-Pi.mulSingle k (-1))) : HasCharPattern v n (-1) := by
   simpa [← Pi.mulSingle_mul] using h₀.mul h₁
+
+/-! ### Patterns from values -/
+
+/-- A character that is `-1` at `v 1` and `1` at all later terms realizes `φ₁` from `1` on. -/
+theorem hasCharPattern_mulSingle_one_of_apply (χ : MulChar M ℤ) (h₁ : χ (v 1) = -1)
+    (h : ∀ n ≥ 2, χ (v n) = 1) :
+    HasCharPattern v 1 (Pi.mulSingle 1 (-1)) :=
+  ⟨χ, fun n hn ↦ by
+    rcases hn.eq_or_lt with rfl | hn
+    · simpa using h₁
+    · rw [h n hn, Pi.mulSingle_eq_of_ne (by lia)]⟩
+
+/-- A character that is `1` at `v 1` and `-1` at all later terms realizes `τ` from `1` on. -/
+theorem hasCharPattern_neg_mulSingle_one_of_apply (χ : MulChar M ℤ) (h₁ : χ (v 1) = 1)
+    (h : ∀ n ≥ 2, χ (v n) = -1) :
+    HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) :=
+  ⟨χ, fun n hn ↦ by
+    rcases hn.eq_or_lt with rfl | hn
+    · simpa using h₁
+    · rw [h n hn, Pi.neg_apply, Pi.mulSingle_eq_of_ne (by lia)]⟩
 
 /-! ### Jumps -/
 

@@ -114,22 +114,6 @@ inductive NegTailCriterion (r s : ℤ) : Prop
 
 /-! ### Auxiliary facts -/
 
-private lemma hasCharPattern_mulSingle_one_of_apply {M : Type*} [CommMonoid M] {v : ℕ → M}
-    (χ : MulChar M ℤ) (h₁ : χ (v 1) = -1) (h : ∀ n ≥ 2, χ (v n) = 1) :
-    HasCharPattern v 1 (Pi.mulSingle 1 (-1)) :=
-  ⟨χ, fun n hn ↦ by
-    rcases hn.eq_or_lt with rfl | hn
-    · simpa using h₁
-    · rw [h n hn, Pi.mulSingle_eq_of_ne (by lia)]⟩
-
-private lemma hasCharPattern_neg_mulSingle_one_of_apply {M : Type*} [CommMonoid M] {v : ℕ → M}
-    (χ : MulChar M ℤ) (h₁ : χ (v 1) = 1) (h : ∀ n ≥ 2, χ (v n) = -1) :
-    HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) :=
-  ⟨χ, fun n hn ↦ by
-    rcases hn.eq_or_lt with rfl | hn
-    · simpa using h₁
-    · rw [h n hn, Pi.neg_apply, Pi.mulSingle_eq_of_ne (by lia)]⟩
-
 private lemma exists_prime_odd_factorization (h : ¬IsSquare r) (h' : ¬IsSquare (-r)) :
     ∃ p, p.Prime ∧ Odd (r.natAbs.factorization p) := by
   rw [Int.isSquare_iff_nonneg_even_factorization] at h h'
@@ -140,7 +124,8 @@ private lemma exists_prime_odd_factorization (h : ¬IsSquare r) (h' : ¬IsSquare
   · obtain ⟨p, hp, hodd⟩ := h' (neg_nonneg.mpr hr)
     exact ⟨p, hp, Nat.not_even_iff_odd.mp (by simpa using hodd)⟩
 
-private lemma exists_prime_dvd_valChar_eq_neg_one {x : ℤ} (h : ¬IsSquare x) (h' : ¬IsSquare (-x)) :
+/-- An integer `x ≠ ±□` has a prime `q` with `v_q(x)` odd, that is, with `val_q(x) = -1`. -/
+theorem exists_prime_dvd_valChar_eq_neg_one {x : ℤ} (h : ¬IsSquare x) (h' : ¬IsSquare (-x)) :
     ∃ q : ℕ, ∃ _ : Fact q.Prime, (q : ℤ) ∣ x ∧ valChar q (x : ℚ) = -1 := by
   obtain ⟨q, hq, hodd⟩ := exists_prime_odd_factorization h h'
   have := Fact.mk hq
