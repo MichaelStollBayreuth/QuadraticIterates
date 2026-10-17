@@ -11,11 +11,13 @@ Section 3 main result (`section3_main`), one challenge per case, the theorems of
 (`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its strengthened form
 `nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in `QuadraticIterates/Main/Integers`),
 the main theorem for rational parameters `a = r/s`
-(`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`), and its two
-corollaries: level two decides outside the interval `(α, a_*]`
+(`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`), and its
+three corollaries: level two decides outside the interval `(α, a_*]`
 (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass` in
-`QuadraticIterates/Main/LevelTwo`), and shorter lists of criteria on the interval `α < a < -1`
-(`nonempty_mulEquiv_of_lt_neg_one_of_criteria` in `QuadraticIterates/Main/Interval`).
+`QuadraticIterates/Main/LevelTwo`), shorter lists of criteria on the interval `α < a < -1`
+(`nonempty_mulEquiv_of_lt_neg_one_of_criteria` in `QuadraticIterates/Main/Interval`), and the
+classes of `(r, s)` in which no criterion is needed there
+(`nonempty_mulEquiv_of_lt_neg_one_of_emod`, in the same file).
 
 This file imports **only Mathlib**: the non-Mathlib definitions the statements refer to
 (`QuadraticIterates.iteratedPoly`, `.GaloisGroup`, `.WreathPower`, and for the main theorem the
@@ -221,5 +223,21 @@ theorem challenge_nonempty_mulEquiv_of_lt_neg_one_of_criteria (r s : ℤ) (hrs :
       ¬IsSquare (-(r / s : ℚ) * ((r / s : ℚ) ^ 2 + r / s)))
     (h : NegAllCriterion r s ∧ NegFirstCriterion' r s ∨ NegAllCriterion r s ∧
       NegTailCriterion' r s ∨ NegFirstCriterion' r s ∧ NegTailCriterion' r s) (n : ℕ) :
+    Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
+  sorry
+
+/-- **Automatic classes on the interval** `α < a < -1` (`nonempty_mulEquiv_of_lt_neg_one_of_emod`):
+let `a = r/s` with `r, s` coprime, `s > 0`, `a < -1` and `a³ + 2a² + 2a + 2 > 0`. If
+`(r, s) ≡ (1, 1)`, `(1, 3)` or `(3, 2) (mod 4)`; or `(r, s) ≡ (2, 1) (mod 4)` with `r ≡ 2` or
+`s ≡ 5 (mod 8)`; or `(r, s) ≡ (0, 3) (mod 4)` with `|r|` not of the form `4^j m`, `m ≡ 1 (mod 8)`
+(not a square in `ℚ₂`), or `r + 2s ≡ ±6 (mod 16)`; or `r ≡ 3 (mod 8)`, `s ≡ 0 (mod 4)` and
+`s ≢ 4 (mod 32)`, then `Ω_n ≅ [C₂]ⁿ` for all `n`. -/
+theorem challenge_nonempty_mulEquiv_of_lt_neg_one_of_emod (r s : ℤ) (hrs : IsCoprime r s)
+    (hs : 0 < s) (hr : r < -s) (hα : 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3)
+    (h : r % 4 = 1 ∧ s % 2 = 1 ∨ r % 4 = 3 ∧ s % 4 = 2 ∨
+      r % 4 = 2 ∧ s % 4 = 1 ∧ (r % 8 = 2 ∨ s % 8 = 5) ∨
+      r % 4 = 0 ∧ s % 4 = 3 ∧ ((∀ j : ℕ, ∀ m : ℤ, -r = 4 ^ j * m → m % 8 ≠ 1) ∨
+        (r + 2 * s) % 16 = 6 ∨ (r + 2 * s) % 16 = 10) ∨
+      r % 8 = 3 ∧ s % 4 = 0 ∧ s % 32 ≠ 4) (n : ℕ) :
     Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
   sorry

@@ -13,7 +13,8 @@ Proofs of the challenge statements of `Challenge.lean`, discharged by the librar
 (`QuadraticIterates.Main.Theorem`) and its corollaries
 `QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`
 (`QuadraticIterates.Main.LevelTwo`) and
-`QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_criteria` (`QuadraticIterates.Main.Interval`),
+`QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_criteria` and
+`QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_emod` (`QuadraticIterates.Main.Interval`),
 whose 2-independence of `c₁, c₂` the challenges spell out by
 `QuadraticIterates.twoIndependent_fin_two_iff`. Importing the library brings in the definitions
 `iteratedPoly`, `GaloisGroup`, `WreathPower`, `NegAllCriterion`, `NegFirstCriterion`,
@@ -83,3 +84,13 @@ theorem challenge_nonempty_mulEquiv_of_lt_neg_one_of_criteria (r s : ℤ) (hrs :
     Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
   nonempty_mulEquiv_of_lt_neg_one_of_criteria hrs hs hr hα hc
     (twoIndependent_fin_two_iff.mpr (by simpa [cSeq_two] using h2)) h n
+
+theorem challenge_nonempty_mulEquiv_of_lt_neg_one_of_emod (r s : ℤ) (hrs : IsCoprime r s)
+    (hs : 0 < s) (hr : r < -s) (hα : 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3)
+    (h : r % 4 = 1 ∧ s % 2 = 1 ∨ r % 4 = 3 ∧ s % 4 = 2 ∨
+      r % 4 = 2 ∧ s % 4 = 1 ∧ (r % 8 = 2 ∨ s % 8 = 5) ∨
+      r % 4 = 0 ∧ s % 4 = 3 ∧ ((∀ j : ℕ, ∀ m : ℤ, -r = 4 ^ j * m → m % 8 ≠ 1) ∨
+        (r + 2 * s) % 16 = 6 ∨ (r + 2 * s) % 16 = 10) ∨
+      r % 8 = 3 ∧ s % 4 = 0 ∧ s % 32 ≠ 4) (n : ℕ) :
+    Nonempty (GaloisGroup (r / s : ℚ) n ≃* WreathPower n) :=
+  nonempty_mulEquiv_of_lt_neg_one_of_emod hrs hs hr hα h n

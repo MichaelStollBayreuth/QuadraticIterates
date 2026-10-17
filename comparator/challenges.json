@@ -9,7 +9,8 @@
                       "challenge_li2020_theorem_3_5",
                       "challenge_nonempty_mulEquiv_of_twoAdicClass_of_criteria",
                       "challenge_forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass",
-                      "challenge_nonempty_mulEquiv_of_lt_neg_one_of_criteria"],
+                      "challenge_nonempty_mulEquiv_of_lt_neg_one_of_criteria",
+                      "challenge_nonempty_mulEquiv_of_lt_neg_one_of_emod"],
     "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
     "enable_nanoda": false
 }
