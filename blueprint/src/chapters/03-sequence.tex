@@ -201,12 +201,37 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
   odd indices, reduce modulo $r + s$ only: $r w_{2k+1} \equiv -s^{2^{2k}}$ and $r \equiv -s$.
 \end{proof}
 
+\begin{lemma}[Three-periodicity modulo $w_3^2$]
+  \label{lem:strongcong3}
+  \uses{lem:reduction, lem:orbit, lem:wseq-res}
+  \lean{QuadraticIterates.cSeq_add_three_eq_of_sq_eq_zero,
+    QuadraticIterates.cSeq_three_mul_of_sq_eq_zero,
+    QuadraticIterates.cSeq_three_mul_add_one_of_sq_eq_zero,
+    QuadraticIterates.cSeq_three_mul_add_two_of_sq_eq_zero, QuadraticIterates.wSeq_three_mul_modEq,
+    QuadraticIterates.exists_wSeq_three_mul_eq}
+  \leanok
+  If $\bar c_3^2 = 0$ for the sequence of a parameter $\bar a$ in a commutative ring, then
+  $\bar c_{n+3} = \bar c_n$ for $n \ge 2$, so $\bar c_{3k} = \bar c_3$, $\bar c_{3k+1} = \bar a$
+  ($k \ge 1$) and $\bar c_{3k+2} = \bar c_2$. Consequently, for $k \ge 1$, $w_{3k} = w_3 T_k$ with
+  $T_k \equiv s^{2^{3k-1} - 4} \pmod{w_3}$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{lem:strongcong}
+  $\bar c_4 = \bar c_3^2 + \bar a = \bar a$ and $\bar c_5 = \bar a^2 + \bar a = \bar c_2$; periodicity
+  propagates along the recursion (Lemma~\ref{lem:orbit}). In $S = \ZZ/w_3^2\ZZ$, where $r$ and $s$
+  are units (Lemma~\ref{lem:wseq-res}), $\bar c_3 = r w_3 \sigma^4$ by Lemma~\ref{lem:reduction},
+  so $\bar c_3^2 = 0$, and $r w_{3k} = s^{2^{3k-1}} \bar c_{3k} = s^{2^{3k-1}} \bar c_3 =
+  s^{2^{3k-1} - 4} r w_3$ in $S$.
+\end{proof}
+
 \section{Evaluating characters on \texorpdfstring{$c_n$}{c_n}}
 
 \begin{lemma}[Square classes of the terms]
   \label{lem:sqclass}
   \uses{lem:reduction, def:qchar}
-  \lean{QuadraticIterates.mulChar_cSeq_one, QuadraticIterates.mulChar_cSeq_of_two_le}
+  \lean{QuadraticIterates.mulChar_cSeq_one, QuadraticIterates.mulChar_cSeq_of_two_le,
+    QuadraticIterates.mulChar_cSeq_one_eq_mul}
   \leanok
   For every quadratic character $\chi$: $\chi(c_1) = \chi(-rs)$ and $\chi(c_n) = \chi(r w_n)$ for
   $n \ge 2$. In particular $\chi(c_2) = \chi(r(r+s))$.
@@ -216,11 +241,13 @@ From now on $a = r/s$ with $r, s \in \ZZ$ coprime and $s \ge 1$.
 \begin{lemma}[Local evaluation]
   \label{lem:localeval}
   \uses{lem:reduction, def:chars}
-  \lean{QuadraticIterates.unitPartChar_cSeq, ZMod.not_isUnit_intCast_of_dvd}
+  \lean{QuadraticIterates.unitPartChar_cSeq, QuadraticIterates.valChar_cSeq_of_isUnit,
+    ZMod.not_isUnit_intCast_of_dvd}
   \leanok
   Let $p$ be a prime not dividing $s$, $N$ a power of $p$, $\psi$ a character modulo $N$ as in
   Definition~\ref{def:chars}, and $(\bar c_n)$ the sequence of $\bar a = r s^{-1}$ in $\ZZ/N\ZZ$.
-  If $n \ge 1$ and $\bar c_n$ is a unit, then $\chi_\psi(c_n) = \psi(\bar c_n)$.
+  If $n \ge 1$ and $\bar c_n$ is a unit, then $\chi_\psi(c_n) = \psi(\bar c_n)$, and
+  $v_p(c_n)$ is even.
   \formalnote{For $N = p^k$ with $k \ge 1$. The proof: $c_n = r w_n / s^{2^{n-1}}$ with
   $p \nmid r w_n$ (as $\bar c_n$ is a unit, Lemma~\ref{lem:reduction}), so
   $\chi_\psi(c_n) = \psi(r w_n)\,\psi(s)^{2^{n-1}} = \psi(s^{2^{n-1}} \bar c_n)\,\psi(s)^{2^{n-1}}

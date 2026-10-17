@@ -369,7 +369,7 @@ lists of criteria collapse to a single condition.
   \lean{QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_criteria,
     QuadraticIterates.NegFirstCriterion', QuadraticIterates.NegTailCriterion',
     QuadraticIterates.negFirstCriterion_of_negFirstCriterion',
-    QuadraticIterates.negTailCriterion_of_negTailCriterion', jacobiSym.sq_one_of_not_dvd,
+    QuadraticIterates.negTailCriterion_of_negTailCriterion',
     Int.exists_sq_eq_pow_mul_of_dvd}
   \leanok
   Let $a = r/s$ with $r, s$ coprime, $s \ge 1$ and $\alpha < a < -1$, assume that one of (C1),
@@ -491,6 +491,124 @@ lists of criteria collapse to a single condition.
   $\max(|r|, s) \le 400$ the proportions of $(-2, \alpha]$ and of all parameters covered are
   $0.0369$ and $0.4796$, and for $\max(|r|, s) \le 3000$ that of the parameters in $(\alpha, -1)$
   covered by Corollary~\ref{cor:interval-classes} is $0.4256$.
+\end{remark}
+
+\section{Further criteria for \texorpdfstring{$\phi_1$ and $\tau$}{phi\_1 and tau}}
+\label{sec:further}
+
+The criteria of this section come from primes at which the orbit of $0$ is short: it reaches a
+fixed point after three or four steps (primes of $v_2$ and $v_3$), or $0$ has period $3$ (primes
+of $w_3$).
+
+\begin{corollary}[Criteria from $v_2$, $v_3$ and $w_3$]
+  \label{cor:further}
+  \uses{lem:reflection, lem:reflection-one, lem:period3, lem:klein, prop:main-abstract}
+  \lean{QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq_two,
+    QuadraticIterates.unitPartChar_mul_unitPartChar_cSeq_of_dvd_vSeq_two,
+    QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq_three,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_wSeq_three}
+  \leanok
+  Call a character $\psi$ \emph{constant from $c_2$ on} if $\psi(c_m) = \psi(c_2) \ne 0$ for all
+  $m \ge 2$. Such a $\psi$ is a $\phi_1$ if $(\psi(c_1), \psi(c_2)) = (-1, 1)$, a $\tau$ if it is
+  $(1, -1)$, a $\phi_0$ if it is $(-1, -1)$, and trivial on all $c_n$ otherwise. For an odd prime
+  $p$ write $x_p = \Leg{-rs}{p}$ and $z_p = \Leg{r(r+s)}{p}$, so that $x_p z_p = \Leg{-s(r+s)}{p}$.
+  \begin{enumerate}
+    \item[(R1)] If a prime $p \equiv 1 \pmod 4$ divides $v_2 = r^3 + 2r^2 s + 2rs^2 + 2s^3$, then
+          $\chi_p$ is constant from $c_2$ on, with values $(x_p, z_p)$.
+    \item[(R2)] If two primes $p, q \equiv 3 \pmod 4$ divide $v_2$, then $\chi_p \chi_q$ is
+          constant from $c_2$ on, with values $(x_p x_q, z_p z_q)$.
+    \item[(R3)] If a prime $p \equiv 1 \pmod 4$ divides $v_3$ and $\Leg{(r + s) w_3}{p} = 1$, then
+          $\chi_p$ is constant from $c_2$ on, with values $(x_p, z_p)$.
+    \item[(P3)] If $w_3 \ne \pm\sq$, a prime $q \equiv 3 \pmod 4$ divides $w_3$, and
+          $\Leg{-s(r+s)}{p} = -1$ for some prime $p \mid w_3$, then $a$ has $\tau$.
+  \end{enumerate}
+  Consequently, if $a \in \cA$ satisfies (C1), (C2) or (C3), and two different ones among
+  $\phi_0$, $\phi_1$, $\tau$ are supplied by these characters and by the criteria of
+  Propositions~\ref{prop:Z}, \ref{prop:O}, \ref{prop:T}, then $\rho_a$ is surjective. For
+  instance, with $\phi_0$ (e.g.\ by (Z1)) it suffices that $\Leg{-s(r+s)}{p} = -1$ in (R1) or
+  (R3), or $\Leg{-s(r+s)}{pq} = -1$ in (R2); with $\phi_1$ (e.g.\ when $s \ne \sq$), that
+  $z_p = -1$, resp.\ $z_p z_q = -1$; and (P3) suffices in both cases.
+  \formalnote{(R1)--(R3) are stated as the values of $\chi_p$, resp.\ $\chi_p \chi_q$, at all $c_m$
+  with $m \ge 2$, as Jacobi symbols, for $\chi_p$ built from the quadratic character modulo $p$; the
+  value $x_p$ at $c_1$ is Lemma~\ref{lem:sqclass}. The final assertion is
+  Lemma~\ref{lem:klein} with Proposition~\ref{prop:main-abstract}.}
+\end{corollary}
+\begin{proof}
+  \leanok
+  \uses{lem:sqclass, lem:wseq-res, lem:strongcong}
+  An odd prime dividing $v_n$ ($n \ge 2$) or $w_3$ is prime to $rs$ (Lemma~\ref{lem:wseq-res}), and
+  by Lemma~\ref{lem:sqclass}, $\chi_p(c_1) = x_p$, $\chi_p(c_2) = z_p$ and
+  $\chi_p(c_3) = \Leg{r w_3}{p}$, so $\chi_p(c_2 c_3) = \Leg{(r+s) w_3}{p}$. (R1) By
+  Lemma~\ref{lem:reflection-one}, $\chi_p(c_m) = \chi_p(c_2)$ for $m \ge 2$. (R2) By
+  Lemma~\ref{lem:reflection}, $\chi_p(c_m) = -\chi_p(c_2)$ and $\chi_q(c_m) = -\chi_q(c_2)$ for
+  $m > 2$, so $\chi_p\chi_q(c_m) = \chi_p\chi_q(c_2)$. (R3) By Lemma~\ref{lem:reflection-one},
+  $\chi_p(c_m) = \chi_p(c_3)$ for $m \ge 3$, and $\chi_p(c_3) = \chi_p(c_2)$. (P3) By
+  Lemma~\ref{lem:period3}, $\chi_\ell(c_\bullet) = (1, y_\ell, u_\ell, \eps_\ell, y_\ell, u_\ell,
+  \eps_\ell, \dots)$ with $y_\ell = \Leg{-s(r+s)}{\ell}$ for every prime $\ell \mid w_3$. Let
+  $\psi = \chi_q$ if $y_q = -1$; otherwise $p \ne q$, and let $\psi = \chi_p$ if
+  $p \equiv 3 \pmod 4$ and $\psi = \chi_p \chi_q$ if $p \equiv 1 \pmod 4$. In each case
+  $\psi(c_\bullet) = (1, -1, u, -1, -1, u, -1, \dots)$ for some $u = \pm 1$. As $|w_3|$ is not a
+  square, $v_\ell(w_3)$ is odd for some $\ell$, and $\val_\ell(c_\bullet) =
+  (1, 1, -1, 1, 1, -1, \dots)$; so $\psi$ or $\psi \val_\ell$ is a $\tau$. Finally, two of
+  $\phi_0$, $\phi_1$, $\tau$ give the third (Lemma~\ref{lem:klein}), and
+  Proposition~\ref{prop:main-abstract} applies.
+\end{proof}
+
+\begin{remark}[Residue classes modulo a single prime]
+  \label{rem:residues}
+  \uses{lem:localeval, cor:further}
+  Let $p$ be an odd prime not dividing $s$ such that $0$ is strictly preperiodic under
+  $x \mapsto x^2 + \bar a$ on $\ZZ/p\ZZ$, $\bar a = r s^{-1}$. Then $p$ divides no $c_n$, and
+  $\chi_p(c_\bullet) = \bigl(\Leg{-\bar a}{p}, \Leg{\bar c_2}{p}, \Leg{\bar c_3}{p}, \dots\bigr)$
+  depends only on $\bar a$ (Lemma~\ref{lem:localeval}). For $p < 80$ it is constant from $c_2$ on
+  and a $\phi_0$, $\phi_1$ or $\tau$ exactly in the following cases, besides $\bar a = -2$ for
+  $p \equiv \pm 3 \pmod 8$ and $\bar a^2 = -1$ (these give $\phi_0$, and are (Z2) and (Z3)):
+  \begin{itemize}
+    \item the orbit of $0$ reaches a fixed point after three steps ($p \mid v_2$, (R1)):
+          $\bar a = 10$ modulo $13$, $4$ and $44$ modulo $53$ ($\tau$); $5$ modulo $17$, $27$
+          modulo $41$, $43$ modulo $73$ ($\phi_1$); $15$ modulo $29$, $3$ modulo $53$, $21$ modulo
+          $61$ ($\phi_0$);
+    \item after four steps ($p \mid v_3$, (R3)): $7$ modulo $13$, $2$ modulo $53$ ($\phi_1$); $63$
+          modulo $73$ ($\phi_0$);
+    \item the orbit of $0$ enters a cycle of length $\ell \ge 2$, so that the pattern is not
+          covered by Corollary~\ref{cor:further}: $52$ modulo $61$ ($\tau$, $\ell = 4$); $3$ modulo
+          $17$, $22$ modulo $41$, $5$ modulo $73$ ($\ell = 2$), $26$ modulo $67$, $29$ modulo $37$
+          ($\ell = 3$), $29$ modulo $59$ ($\ell = 4$), all $\phi_0$.
+  \end{itemize}
+  So, for instance, $\rho_a$ is surjective for every $a \in \cA$ in (C1)--(C3) that has $\phi_0$
+  and satisfies $r \equiv 10 s \pmod{13}$. When $0$ is periodic modulo $p$, the pattern of
+  $\chi_p$ depends on $a$ modulo a higher power of $p$, through the unit part of $c_k$ for the
+  period $k$.
+\end{remark}
+
+\begin{remark}[The parameters left uncovered on the interval]
+  \label{rem:further-data}
+  \uses{cor:further, rem:interval}
+  Let $\alpha < a < a_*$, with $a$ in one of the classes $(2,1)$, $(0,3)$, $(3,0)$, not covered by
+  Theorem~\ref{thm:main}, and $c_1, \dots, c_6$ $2$-independent. We computed the patterns of
+  $\val_p$ and $\chi_p$ along $(c_n)$ exactly for the primes $p < 200$, the primes of $v_2$ and
+  $w_3$, those of $v_3$ below $10^6$, and the primes below $10^5$ at which $0$ has period at most
+  $6$. These patterns are eventually periodic, so a product that agrees with $\phi_0$, $\phi_1$ or
+  $\tau$ up to the largest preperiod plus the sum of the distinct periods agrees for all $n$. In
+  all $242$ examples of the class $(2,1)$ with $s = t^2$, $t \le 101$ (which lack $\phi_1$ and
+  $\tau$), all $457$ of the class $(0,3)$ with $r = -m^2$, $m \le 180$ (which lack $\phi_0$ and
+  $\tau$), and all $299$ of the class $(3,0)$ with $s \le 6000$ (which lack one of them), some
+  product of at most three of these characters supplies the missing pattern, and so $\rho_a$ is
+  surjective; one character suffices in $214$, $408$ and $255$ cases. Corollary~\ref{cor:further}
+  alone, together with the criteria of the main theorem, covers $234$, $435$ and $283$ of them;
+  (P3) alone covers $185$, $345$ and $222$.
+
+  In all three classes, $w_3 > 0$ and $w_3 \equiv 3 \pmod 4$, so (P3) only asks for a prime
+  $p \mid w_3$ with $\Leg{-s(r+s)}{p} = -1$; and $|v_2|$ or $|v_2|/2$ is $\equiv 3 \pmod 4$, which
+  supplies the primes of Proposition~\ref{prop:crit-reflection} at $n = 2$. Since
+  $\bar a = -1$ modulo $r + s$, $w_3 \equiv v_2 \equiv s^3 \pmod{r + s}$, and reciprocity gives
+  $\Leg{-s(r+s)}{w_3} = 1$ (Jacobi symbol) for all these parameters, and
+  $\Leg{-s(r+s)}{v_2'} = 1$ for the odd part $v_2'$ of $v_2$ in the classes $(2,1)$ and $(3,0)$,
+  in agreement with the computations. So no congruence condition on $r$ and $s$ forces a prime as
+  in (P3), or as in (R1) and (R2) when $\phi_0$ is given. In the class $(0,3)$, where $\phi_1$ is
+  given and (R1), (R2) need $z_p = -1$ instead, Corollary~\ref{cor:further} fails for $22$ of the
+  $457$ parameters, with $r \equiv 0$ and with $r \equiv 4 \pmod 8$. The search finds what is
+  there in each case, but does not by itself give new families defined by congruences.
 \end{remark}
 
 \section{Odd levels for \texorpdfstring{$a \equiv 1 \bmod 4$}{a = 1 mod 4}}
