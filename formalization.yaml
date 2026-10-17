@@ -47,7 +47,8 @@ status:
     two of three explicit lists of conditions on r and s hold, then Ω_n ≅ [C₂]ⁿ for all n. Outside
     the interval α < a ≤ a_* ≈ -1.3107 the criterion is sharp: in these 2-adic classes all levels
     are maximal if and only if c_1, c_2 are 2-independent, i.e. Ω_2 ≅ [C₂]²
-    (QuadraticIterates/Main/LevelTwo.lean); on α < a < -1 shorter lists of criteria suffice
+    (QuadraticIterates/Main/LevelTwo.lean); on α < a < -1 shorter lists of criteria suffice,
+    and in explicit classes of (r, s) modulo 32 none is needed
     (QuadraticIterates/Main/Interval.lean). The method is the author's and not yet published. The
     main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
     Theorems 3.3, strengthened to a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case
@@ -92,6 +93,12 @@ status:
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
   - declaration: "QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_criteria"
+    file: "QuadraticIterates/Main/Interval.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_emod"
     file: "QuadraticIterates/Main/Interval.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -220,7 +227,10 @@ automation:
         analysis of the main theorem by the classes of (r, s) mod 4 (2026-10-16), asked for by
         the author and checked numerically in PARI/GP on several hundred thousand parameters
         before any Lean, gave the two corollaries of Main/LevelTwo.lean and Main/Interval.lean,
-        planned in the blueprint, reviewed by the author, then formalized the same way.
+        planned in the blueprint, reviewed by the author, then formalized the same way. A
+        2-adic refinement of the classes on the interval α < a < -1 (2026-10-17), prompted by a
+        question of the author, was worked out by the agent, checked numerically on all coprime
+        pairs with s ≤ 2500, and formalized as a third corollary with a comparator challenge.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
