@@ -105,7 +105,7 @@ are. Each of the following conditions provides one of them.
     \item[(T3)] A prime $p \equiv 3 \pmod 4$ divides $r + s$ with $\Leg{s (r+s)_p}{p} = 1$; or
           $4 \mid r + s$ and $s (r+s)_2 \equiv 1 \pmod 4$; or $r + s \ne \pm\sq$ and $r + s$ is
           divisible by $4$ or by a prime $p \equiv 3 \pmod 4$.
-    \item[(T4)] $a < -1$, $c_3 < 0 < c_4$ (i.e.\ $a_* < a < -1$), and $r + s \ne \pm\sq$.
+    \item[(T4)] $a < -1$, $c_3 < 0 < c_4$ (i.e.\ $\alpha' < a < -1$), and $r + s \ne \pm\sq$.
   \end{enumerate}
   \formalnote{\lname{NegTailCriterion r s}; in (T4) the window $c_3 < 0 < c_4$ is stated as
   $r w_3 < 0 < r w_4$, with $r w_3 = (r^2 + rs)^2 + rs^3$ and $r w_4 = (r w_3)^2 + rs^7$.}
@@ -257,7 +257,7 @@ $|v_n| \equiv 6 \pmod 8$ (Lemma~\ref{lem:prime3}, and Lemma~\ref{lem:wseq-res} f
 
 The classes (C1)--(C3) of Lemma~\ref{lem:twoadic} are, in terms of $(r, s) \bmod 4$: for
 $\eps = -1$, $(3,1)$, $(3,3)$; $(0,1)$, $(2,3)$; $(1,0)$, $(1,2)$; and for $\eps = 1$, $(1,1)$,
-$(1,3)$; $(2,1)$, $(0,3)$; $(3,0)$, $(3,2)$. Outside the interval $(\alpha, a_*]$, the three
+$(1,3)$; $(2,1)$, $(0,3)$; $(3,0)$, $(3,2)$. Outside the interval $(\alpha, \alpha']$, the three
 lists of criteria collapse to a single condition.
 
 \begin{corollary}[Level two decides]
@@ -269,12 +269,12 @@ lists of criteria collapse to a single condition.
     QuadraticIterates.isSquare_cSeq_one_mul_cSeq_two_of_isSquare, Int.sq_emod_eight_eq_one_of_odd}
   \leanok
   Let $a = r/s$ with $r, s$ coprime and $s \ge 1$, and let either $a \le -2$ and $\eps = -1$, or
-  $a > a_*$, $a \ne -1, 0$, and $\eps = 1$, with $a_*$ as in Lemma~\ref{lem:window}. Assume
+  $a > \alpha'$, $a \ne -1, 0$, and $\eps = 1$, with $\alpha'$ as in Lemma~\ref{lem:window}. Assume
   that one of (C1), (C2), (C3) holds. Then $\rho_a$ is surjective if and only if $c_1, c_2$ are
   $2$-independent, that is, $\Om_2 \cong \Ct{2}$, that is, none of $-a$, $a(a+1)$ and
   $-a^2(a+1)$ is a square.
   \formalnote{The condition is \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}, and
-  $a > a_*$ is stated as $-s < r$, or $r < -s$ and $r w_3 < 0 < r w_4$ as in (T4). That this
+  $a > \alpha'$ is stated as $-s < r$, or $r < -s$ and $r w_3 < 0 < r w_4$ as in (T4). That this
   window lies above $\alpha$ is shown with $X = r^2 + rs$ and $Y = X^2 + rs^3$: $Y < -s^4$, hence
   $X < s^2$, and $r(r^3 + 2r^2 s + 2rs^2 + 2s^3) = X s^2 + Y < 0$.}
 \end{corollary}
@@ -285,14 +285,14 @@ lists of criteria collapse to a single condition.
   $c_2 \sim r(r+s)$ and $c_1 c_2 \sim -s(r+s)$, and $r$, $s$, $r + s$ are pairwise coprime. So
   $c_1$ is a square if and only if $r < 0$ and $|r|$, $s$ are squares; $c_2$ if and only if $r$,
   $r + s$ have the same sign and $|r|$, $|r + s|$ are squares; $c_1 c_2$ if and only if $r + s < 0$
-  and $s$, $|r + s|$ are squares. We show that two of (Z), (O), (T) hold; as $a_* > \alpha$,
+  and $s$, $|r + s|$ are squares. We show that two of (Z), (O), (T) hold; as $\alpha' > \alpha$,
   Theorem~\ref{thm:main} then applies. Recall that (Z1) holds if $|r|$ is not a square, (O3) or
   (O4) if $s$ is not a square, and (T3) if $|r + s|$ is not a square and $|r + s| \equiv 0$ or
   $3 \pmod 4$ (Lemma~\ref{lem:prime3}).
 
   \emph{$-1 < a < 0$.} (T1) holds, and $|r|$ or $s$ is not a square: (Z1) or (O3)/(O4).
 
-  \emph{$a_* < a < -1$.} At most one of $|r|$, $s$, $|r + s|$ is a square; the other two give
+  \emph{$\alpha' < a < -1$.} At most one of $|r|$, $s$, $|r + s|$ is a square; the other two give
   two of (Z1), (O3)/(O4) and (T4).
 
   \emph{$a > 0$.} (O1) holds, and $r$ or $r + s$ is not a square. In the classes $(1,3)$,
@@ -317,14 +317,14 @@ lists of criteria collapse to a single condition.
           $|r|$, $s$, $|r + s|$ is a square (a sharper form of Corollary~\ref{cor:li2020-rat});
     \item $a > 0$: in the class $(1,3)$, $a(a+1) \ne \sq$;
     \item $-1 < a < 0$: in the class $(3,0)$, $-a \ne \sq$;
-    \item $a_* < a < -1$: in the class $(2,1)$, $-(a+1) \ne \sq$; in the class $(0,3)$,
+    \item $\alpha' < a < -1$: in the class $(2,1)$, $-(a+1) \ne \sq$; in the class $(0,3)$,
           $a(a+1) \ne \sq$; in the class $(3,0)$, at most one of $|r|$, $s$, $|r + s|$ is a square.
   \end{itemize}
   For $s = 1$ the classes are $a \equiv 1, 2 \pmod 4$ with $a > 0$ and $a \equiv 0, 3 \pmod 4$
   with $a \le -2$, and the corollary contains Corollaries~\ref{cor:stoll1992}
   and~\ref{cor:li2020}: $\rho_a$ is surjective if and only if neither $-a$ nor $-a - 1$ is a
   square. Numerically, for all $469810$ parameters with $|r| \le 2000$, $s \le 400$ in these
-  classes and outside $(\alpha, a_*]$, the hypotheses of Theorem~\ref{thm:main} hold exactly when
+  classes and outside $(\alpha, \alpha']$, the hypotheses of Theorem~\ref{thm:main} hold exactly when
   $c_1, c_2$ are $2$-independent.
 \end{remark}
 
@@ -462,7 +462,7 @@ lists of criteria collapse to a single condition.
   $7 \pmod 8$, in the class $(0,3)$; $-5/4$ and $-49/36$, with $r \equiv 3$ and $7 \pmod 8$, in
   the class $(3,0)$.
 
-  For $\alpha < a < a_*$ and $c_1, c_2$ $2$-independent, two of (Z), (O$'$), (T$'$) hold if and
+  For $\alpha < a < \alpha'$ and $c_1, c_2$ $2$-independent, two of (Z), (O$'$), (T$'$) hold if and
   only if two of (Z), (O), (T) do: there (O1), (T1) and (T4) do not apply, (O3), (O4) and (O5)
   amount to (O$'$), and the parts of (T2) and (T3) at $2$ either do not apply or occur only
   together with (Z1). Numerically, the two agree for all $318538$ such parameters with
@@ -479,7 +479,7 @@ lists of criteria collapse to a single condition.
   $\frac14$ on $[-1, 1]$ and $\frac{1}{4a^2}$ outside it. Theorem~\ref{thm:main} applies whenever
   $a \in \cA$ lies in one of the six classes (C1)--(C3) for $\eps_a$ and neither $|r|$ nor $s$ is a
   square: then (Z1) holds, and (O3) or (O4). So it covers the proportion $\frac12$ of the
-  parameters in every interval contained in $\cA$, in $(\alpha, a_*]$ just as outside it (the
+  parameters in every interval contained in $\cA$, in $(\alpha, \alpha']$ just as outside it (the
   interval differs only on the density-zero set where the criteria are not sharp), and none in
   $(-2, \alpha]$, which carries the proportion $\frac{1}{4|\alpha|} - \frac18 \approx 0.0370$.
   On $(\alpha, -1)$, Corollary~\ref{cor:interval-classes} alone, with no condition on squares,
@@ -584,7 +584,7 @@ of $w_3$).
 \begin{remark}[The parameters left uncovered on the interval]
   \label{rem:further-data}
   \uses{cor:further, rem:interval}
-  Let $\alpha < a < a_*$, with $a$ in one of the classes $(2,1)$, $(0,3)$, $(3,0)$, not covered by
+  Let $\alpha < a < \alpha'$, with $a$ in one of the classes $(2,1)$, $(0,3)$, $(3,0)$, not covered by
   Theorem~\ref{thm:main}, and $c_1, \dots, c_6$ $2$-independent. We computed the patterns of
   $\val_p$ and $\chi_p$ along $(c_n)$ exactly for the primes $p < 200$, the primes of $v_2$ and
   $w_3$, those of $v_3$ below $10^6$, and the primes below $10^5$ at which $0$ has period at most

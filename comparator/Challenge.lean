@@ -12,7 +12,7 @@ Section 3 main result (`section3_main`), one challenge per case, the theorems of
 `nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in `QuadraticIterates/Main/Integers`),
 the main theorem for rational parameters `a = r/s`
 (`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`), and its
-three corollaries: level two decides outside the interval `(α, a_*]`
+three corollaries: level two decides outside the interval `(α, α′]`
 (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass` in
 `QuadraticIterates/Main/LevelTwo`), shorter lists of criteria on the interval `α < a < -1`
 (`nonempty_mulEquiv_of_lt_neg_one_of_criteria` in `QuadraticIterates/Main/Interval`), and the

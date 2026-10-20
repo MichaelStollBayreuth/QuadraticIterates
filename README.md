@@ -36,7 +36,7 @@ characters) are found by short computations modulo a single prime power, and the
   (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`): if `a ≤ −2` or `a³ + 2a² + 2a + 2 > 0`, the
   pair `(r, s)` lies in one of three explicit 2-adic classes, and two of three explicit lists of
   conditions on `r` and `s` hold, then `Ω_n ≅ [C₂]ⁿ` for all `n`. Outside the interval
-  `α < a ≤ a_* ≈ −1.31` this is sharp: in these classes every level is maximal as soon as the
+  `α < a ≤ α′ ≈ −1.31` this is sharp: in these classes every level is maximal as soon as the
   second one is (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), that is, as soon
   as none of `−a`, `a(a + 1)` and `−a²(a + 1)` is a square. On `α < a < −1`, congruences of `r`
   and `s` modulo 32 (and, in one class, `|r|` not being a square in `ℚ₂`) give `Ω_n ≅ [C₂]ⁿ` with

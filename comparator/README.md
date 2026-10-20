@@ -8,7 +8,7 @@ the **theorems of Li** extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5`,
 Li's `a = -(8k+2)(8k+3)`) and the **main theorem for rational parameters**
 (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`, with its `2`-adic classes and three lists of
 criteria reproduced as definitions) with its three corollaries — **level two decides** outside the
-interval `α < a ≤ a_*` (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), shorter
+interval `α < a ≤ α′` (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), shorter
 lists of criteria on the interval `α < a < -1` (`nonempty_mulEquiv_of_lt_neg_one_of_criteria`) and
 the classes of `(r, s)` in which no criterion is needed there
 (`nonempty_mulEquiv_of_lt_neg_one_of_emod`) — independently of the repository's own build and using only the permitted axioms.

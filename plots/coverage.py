@@ -17,8 +17,8 @@ sans-serif font and a compact legend.
   square), so rho_a is not surjective.
 * Grey dots: not covered, and c_1, ..., c_6 are 2-independent.
 
-The script checks, on the plotted box, that outside (alpha, a_*] the hypotheses of the main theorem
-hold exactly when c_1, c_2 are 2-independent
+The script checks, on the plotted box, that outside (alpha, alpha'] the hypotheses of the main
+theorem hold exactly when c_1, c_2 are 2-independent
 (`QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), and that every
 hollow coloured circle has c_1, c_2 2-dependent, so that rho_a is not surjective there; the legends
 say so.
@@ -78,9 +78,9 @@ def bisect(f, lo, hi):
     return lo
 
 
-# alpha: the real root of x^3 + 2x^2 + 2x + 2; a_*: the root of c_4 between alpha and -1
+# alpha: the real root of x^3 + 2x^2 + 2x + 2; alpha': the root of c_4 between alpha and -1
 ALPHA = bisect(lambda x: x ** 3 + 2 * x ** 2 + 2 * x + 2, -2, -1)
-A_STAR = bisect(lambda x: ((x * x + x) ** 2 + x) ** 2 + x, -1.4, -1.25)
+ALPHA_PRIME = bisect(lambda x: ((x * x + x) ** 2 + x) ** 2 + x, -1.4, -1.25)
 
 
 # The hypotheses, as in QuadraticIterates/Main/TwoAdic.lean and QuadraticIterates/Main/Criteria.lean
@@ -245,7 +245,7 @@ def classify(r, s):
         return 'dep' if two_dependent(r, s, LEVELS) else None
     assert level_two_independent(r, s) != two_dependent(r, s, 2), (r, s)
     filled = main_criteria(r, s)
-    if not ALPHA < r / s <= A_STAR:
+    if not ALPHA < r / s <= ALPHA_PRIME:
         assert filled == level_two_independent(r, s), (r, s)
     if not filled:
         assert not level_two_independent(r, s), (r, s)
@@ -324,13 +324,13 @@ def swatch(c):
 
 
 def regions(x1, y1, along):
-    """The two wedges and the five lines a = -2, alpha, a_*, -1, 0 from the origin to the edge
+    """The two wedges and the five lines a = -2, alpha, alpha', -1, 0 from the origin to the edge
     x1 (along = 's') or y1 (along = 'r') of the frame."""
     pt = (lambda a: f"({x1},{a * x1:.3f})") if along == 's' else (lambda a: f"({a * y1:.3f},{y1})")
     out = [rf"\fill[excl] (0,0) -- {pt(-2)} -- {pt(ALPHA)} -- cycle;",
-           rf"\fill[intv] (0,0) -- {pt(ALPHA)} -- {pt(A_STAR)} -- cycle;"]
+           rf"\fill[intv] (0,0) -- {pt(ALPHA)} -- {pt(ALPHA_PRIME)} -- cycle;"]
     out += [rf"\draw[ink!55, line width=0.4pt] (0,0) -- {pt(a)};"
-            for a in (-2, ALPHA, A_STAR, -1, 0)]
+            for a in (-2, ALPHA, ALPHA_PRIME, -1, 0)]
     return out
 
 
@@ -366,7 +366,7 @@ def legend_portrait():
         r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
         r"\multicolumn{2}{@{}l}{\bfseries Regions} \\[0.3ex]",
         row(swatch('excl'), r"$-2 < a \le \alpha$: not covered"),
-        row(swatch('intv'), r"$\alpha < a \le a_*$; outside it, in the classes, $\rho_a$ is "
+        row(swatch('intv'), r"$\alpha < a \le \alpha'$; outside it, in the classes, $\rho_a$ is "
             r"surjective iff $c_1, c_2$ are $2$-independent"),
         r"\end{tabular}",
     ]
@@ -390,7 +390,8 @@ def picture_portrait(marks):
     out.append(rf"\node[left=9mm, rotate=90, anchor=south] at ({x0},{(y0 + y1) / 2}) "
                r"{numerator $r$};")
     labels = [(-2, r"a = -2"), (ALPHA, rf"a = \alpha \approx {ALPHA:.3f}"),
-              (A_STAR, rf"a = a_* \approx {A_STAR:.3f}"), (-1, r"a = -1"), (0, r"a = 0")]
+              (ALPHA_PRIME, rf"a = \alpha' \approx {ALPHA_PRIME:.3f}"), (-1, r"a = -1"),
+              (0, r"a = 0")]
     for a, text in labels:
         out.append(rf"\node[right, ink] at ({x1},{a * x1:.3f}) {{${text}$}};")
     out.append(rf"\node[anchor=north west] at ({x1 + 6.2},{y1}) {{{legend_portrait()}}};")
@@ -416,7 +417,7 @@ def legend_slide():
          (sample(('markD', None)), r"not covered")],
         [r"\bfseries Regions",
          (swatch('excl'), r"$-2 < a \le \alpha$"),
-         (swatch('intv'), r"$\alpha < a \le a_*$")],
+         (swatch('intv'), r"$\alpha < a \le \alpha'$")],
     ]
     height = max(len(g) for g in groups)
     cells = [[("", g[0])] + g[1:] + [("", "")] * (height - len(g)) for g in groups]
@@ -444,7 +445,8 @@ def picture_slide(marks):
     out.append(rf"\node[below=5.5mm] at ({(x0 + x1) / 2},{y0}) {{numerator $r$}};")
     out.append(rf"\node[left=7mm, rotate=90, anchor=south] at ({x0},{(y0 + y1) / 2}) "
                r"{denominator $s$};")
-    labels = [(-2, r"a = -2"), (ALPHA, r"\alpha"), (A_STAR, r"a_*"), (-1, r"-1"), (0, r"0")]
+    labels = [(-2, r"a = -2"), (ALPHA, r"\alpha"), (ALPHA_PRIME, r"\alpha'"), (-1, r"-1"),
+              (0, r"0")]
     for a, text in labels:
         out.append(rf"\node[above, ink] at ({a * y1:.3f},{y1}) {{${text}$}};")
     out.append(rf"\node[anchor=north, font=\footnotesize] at ({(x0 + x1) / 2},{y0}) "
