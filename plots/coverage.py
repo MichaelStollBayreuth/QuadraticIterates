@@ -11,7 +11,7 @@ sans-serif font and a compact legend.
   `QuadraticIterates.NegTailCriterion`), so that
   `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria` gives surjectivity; hollow
   otherwise.
-* Squares: the families a = -j(j+1) (`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one`)
+* Squares: the families a = -l(l+1) (`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one`)
   and a = -(l^2+l+1) (`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one`).
 * Black hollow circles: not covered, and c_1, ..., c_6 are 2-dependent (some product of them is a
   square), so rho_a is not surjective.
@@ -219,7 +219,7 @@ def two_dependent(r, s, levels):
 
 
 def family(r, s):
-    """'A' for a = -j(j+1), 'Li' for a = -(l^2+l+1), with j, l = u/v as in the two theorems."""
+    """'A' for a = -l(l+1), 'Li' for a = -(l^2+l+1), with l = u/v as in the two theorems."""
     v = isqrt(s)
     if v * v != s or v % 2 == 0:
         return None
@@ -352,7 +352,7 @@ def legend_portrait():
         row(trio('markH'), r"$c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective"),
         r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
         r"\multicolumn{2}{@{}l}{\bfseries The two families: squares} \\[0.3ex]",
-        row(sample(('markQ', 'famA')), r"$a = -j(j + 1)$, $j = u/v > 1$, "
+        row(sample(('markQ', 'famA')), r"$a = -\ell(\ell + 1)$, $\ell = u/v > 1$, "
             r"$(u, v) \equiv (2,1), (3,3) \bmod 4$"),
         row(sample(('markQ', 'famLi')), r"$a = -(\ell^2 + \ell + 1) \le -2$, $\ell = u/v$, "
             r"$(u, v) \equiv (1,1), (2,3) \bmod 4$"),
@@ -409,7 +409,7 @@ def legend_slide():
          (sample(('markF', 'ctwo')), r"(C2)\enspace $(0,1), (2,3) \mid (2,1), (0,3)$"),
          (sample(('markF', 'cthree')), r"(C3)\enspace $(1,0), (1,2) \mid (3,0), (3,2)$")],
         [r"\bfseries Families",
-         (sample(('markQ', 'famA')), r"$a = -j(j + 1)$"),
+         (sample(('markQ', 'famA')), r"$a = -\ell(\ell + 1)$"),
          (sample(('markQ', 'famLi')), r"$a = -(\ell^2 + \ell + 1)$")],
         [r"\bfseries Marks",
          (sample(('markF', 'cone'), ('markQ', 'famA'), step=step), r"$\rho_a$ surjective"),
