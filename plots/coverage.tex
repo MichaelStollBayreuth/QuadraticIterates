@@ -1,4 +1,4 @@
-\documentclass[border=4mm]{standalone}
+\documentclass[border=1mm]{standalone}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amsmath}
@@ -14,15 +14,15 @@
 \definecolor{excl}{HTML}{E4E4E4}
 \definecolor{intv}{HTML}{FBF0D4}
 \definecolor{ink}{HTML}{303030}
-\newcommand{\markF}[3]{\fill[#1] (#2,#3) circle[radius=0.85mm];}
-\newcommand{\markH}[3]{\draw[#1, line width=0.6pt, fill=white] (#2,#3) circle[radius=0.62mm];}
+\newcommand{\markF}[3]{\fill[#1] (#2,#3) circle[radius=0.6mm];}
+\newcommand{\markH}[3]{\draw[#1, line width=0.45pt, fill=white] (#2,#3) circle[radius=0.44mm];}
 \tikzset{sq/.style={draw=ink, line width=0.3pt}}
-\newcommand{\markQ}[3]{\filldraw[sq, fill=#1] (#2,#3) +(-0.95mm,-0.95mm) rectangle +(0.95mm,0.95mm);}
-\newcommand{\markD}[2]{\fill[dot] (#1,#2) circle[radius=0.3mm];}
+\newcommand{\markQ}[3]{\filldraw[sq, fill=#1] (#2,#3) +(-0.68mm,-0.68mm) rectangle +(0.68mm,0.68mm);}
+\newcommand{\markD}[2]{\fill[dot] (#1,#2) circle[radius=0.21mm];}
 \newcommand{\mk}[1]{\tikz[baseline=-0.6ex]{#1}}
 \begin{document}
 
-\begin{tikzpicture}[x=0.42cm, y=0.21cm, font=\footnotesize]
+\begin{tikzpicture}[x=2.6mm, y=1.55mm]
 \begin{scope}\clip (0.3,-73.5) rectangle (26.7,21.5);
 \fill[excl] (0,0) -- (26.7,-53.400) -- (26.7,-41.216) -- cycle;
 \fill[intv] (0,0) -- (26.7,-41.216) -- (26.7,-34.996) -- cycle;
@@ -1521,52 +1521,49 @@
 \markD{26}{17}
 \markF{cthree}{26}{19}
 \draw[ink, line width=0.5pt] (0.3,-73.5) rectangle (26.7,21.5);
-\draw[ink] (1,-73.5) -- +(0,-0.8) node[below] {$1$};
-\draw[ink] (5,-73.5) -- +(0,-0.8) node[below] {$5$};
-\draw[ink] (10,-73.5) -- +(0,-0.8) node[below] {$10$};
-\draw[ink] (15,-73.5) -- +(0,-0.8) node[below] {$15$};
-\draw[ink] (20,-73.5) -- +(0,-0.8) node[below] {$20$};
-\draw[ink] (25,-73.5) -- +(0,-0.8) node[below] {$25$};
-\draw[ink] (0.3,-70) -- +(-0.25,0) node[left] {$-70$};
-\draw[ink] (0.3,-60) -- +(-0.25,0) node[left] {$-60$};
-\draw[ink] (0.3,-50) -- +(-0.25,0) node[left] {$-50$};
-\draw[ink] (0.3,-40) -- +(-0.25,0) node[left] {$-40$};
-\draw[ink] (0.3,-30) -- +(-0.25,0) node[left] {$-30$};
-\draw[ink] (0.3,-20) -- +(-0.25,0) node[left] {$-20$};
-\draw[ink] (0.3,-10) -- +(-0.25,0) node[left] {$-10$};
-\draw[ink] (0.3,0) -- +(-0.25,0) node[left] {$0$};
-\draw[ink] (0.3,10) -- +(-0.25,0) node[left] {$10$};
-\draw[ink] (0.3,20) -- +(-0.25,0) node[left] {$20$};
-\node[below=5mm] at (13.5,-73.5) {denominator $s$};
-\node[left=9mm, rotate=90, anchor=south] at (0.3,-26.0) {numerator $r$};
+\draw[ink] (1,-73.5) -- +(0,-1mm) node[below] {$1$};
+\draw[ink] (5,-73.5) -- +(0,-1mm) node[below] {$5$};
+\draw[ink] (10,-73.5) -- +(0,-1mm) node[below] {$10$};
+\draw[ink] (15,-73.5) -- +(0,-1mm) node[below] {$15$};
+\draw[ink] (20,-73.5) -- +(0,-1mm) node[below] {$20$};
+\draw[ink] (25,-73.5) -- +(0,-1mm) node[below] {$25$};
+\draw[ink] (0.3,-70) -- +(-1mm,0) node[left] {$-70$};
+\draw[ink] (0.3,-60) -- +(-1mm,0) node[left] {$-60$};
+\draw[ink] (0.3,-50) -- +(-1mm,0) node[left] {$-50$};
+\draw[ink] (0.3,-40) -- +(-1mm,0) node[left] {$-40$};
+\draw[ink] (0.3,-30) -- +(-1mm,0) node[left] {$-30$};
+\draw[ink] (0.3,-20) -- +(-1mm,0) node[left] {$-20$};
+\draw[ink] (0.3,-10) -- +(-1mm,0) node[left] {$-10$};
+\draw[ink] (0.3,0) -- +(-1mm,0) node[left] {$0$};
+\draw[ink] (0.3,10) -- +(-1mm,0) node[left] {$10$};
+\draw[ink] (0.3,20) -- +(-1mm,0) node[left] {$20$};
+\node[below=5.5mm] at (13.5,-73.5) {denominator $s$};
+\node[left=9.5mm, rotate=90, anchor=south] at (0.3,-26.0) {numerator $r$};
 \node[right, ink] at (26.7,-53.400) {$a = -2$};
-\node[right, ink] at (26.7,-41.216) {$a = \alpha \approx -1.544$};
-\node[right, ink] at (26.7,-34.996) {$a = \alpha' \approx -1.311$};
+\node[right, ink] at (26.7,-41.216) {$a = \alpha$};
+\node[right, ink] at (26.7,-34.996) {$a = \alpha'$};
 \node[right, ink] at (26.7,-26.700) {$a = -1$};
 \node[right, ink] at (26.7,0.000) {$a = 0$};
-\node[anchor=north west] at (32.9,21.5) {\begin{tabular}{@{}c@{\hspace{0.7em}}>{\raggedright\arraybackslash}p{6.2cm}@{}}
-\multicolumn{2}{@{}l}{\large\bfseries Arboreal representations of $x^2 + a$} \\
-\multicolumn{2}{@{}l}{coprime $r, s$ with $s \ge 1$, $a = r/s$} \\[1.5ex]
-\multicolumn{2}{@{}l}{\bfseries Main theorem: circles, by $2$-adic class} \\[0.3ex]
-& $(r, s) \bmod 4$ for $a \le -2$; for $a > \alpha$ \\[0.3ex]
-\mk{\markF{cone}{0.00mm}{0mm}} & (C1): $(3,1)$, $(3,3)$; $(1,1)$, $(1,3)$ \\[0.5ex]
-\mk{\markF{ctwo}{0.00mm}{0mm}} & (C2): $(0,1)$, $(2,3)$; $(2,1)$, $(0,3)$ \\[0.5ex]
-\mk{\markF{cthree}{0.00mm}{0mm}} & (C3): $(1,0)$, $(1,2)$; $(3,0)$, $(3,2)$ \\[0.5ex]
-\mk{\markF{cone}{-2.12mm}{0mm}\markF{ctwo}{0.00mm}{0mm}\markF{cthree}{2.12mm}{0mm}} & two of (Z), (O), (T) hold, so $\rho_a$ is surjective \\[0.5ex]
-\mk{\markH{cone}{-2.12mm}{0mm}\markH{ctwo}{0.00mm}{0mm}\markH{cthree}{2.12mm}{0mm}} & $c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.5ex]
-\multicolumn{2}{@{}l}{} \\[0.5ex]
-\multicolumn{2}{@{}l}{\bfseries The two families: squares} \\[0.3ex]
-\mk{\markQ{famA}{0.00mm}{0mm}} & $a = -\ell(\ell + 1)$, $\ell = u/v > 1$, $(u, v) \equiv (2,1), (3,3) \bmod 4$ \\[0.5ex]
-\mk{\markQ{famLi}{0.00mm}{0mm}} & $a = -(\ell^2 + \ell + 1) \le -2$, $\ell = u/v$, $(u, v) \equiv (1,1), (2,3) \bmod 4$ \\[0.5ex]
-\multicolumn{2}{@{}l}{} \\[0.5ex]
-\multicolumn{2}{@{}l}{\bfseries Not covered} \\[0.3ex]
-\mk{\markH{ink}{0.00mm}{0mm}} & $c_1, \dots, c_6$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.5ex]
-\mk{\markD{0.00mm}{0mm}} & $c_1, \dots, c_6$ are $2$-independent \\[0.5ex]
- & no mark: $\gcd(r, s) > 1$; $a$ appears at its reduced fraction, whose residues mod $4$ may differ \\[0.5ex]
-\multicolumn{2}{@{}l}{} \\[0.5ex]
-\multicolumn{2}{@{}l}{\bfseries Regions} \\[0.3ex]
-\mk{\fill[excl] (-1.4mm,-1.1mm) rectangle (1.4mm,1.1mm);} & $-2 < a \le \alpha$: not covered \\[0.5ex]
-\mk{\fill[intv] (-1.4mm,-1.1mm) rectangle (1.4mm,1.1mm);} & $\alpha < a \le \alpha'$; outside it, in the classes, $\rho_a$ is surjective iff $c_1, c_2$ are $2$-independent \\[0.5ex]
+\node[anchor=north west, inner sep=0pt, xshift=15.5mm] at (26.7,21.5) {\begin{tabular}{@{}c@{\hspace{0.6em}}>{\raggedright\arraybackslash}p{5.35cm}@{}}
+\multicolumn{2}{@{}l}{coprime $r, s$ with $s \ge 1$, $a = r/s$} \\[0.3ex]
+\noalign{\vskip 1.4ex}\multicolumn{2}{@{}l}{\bfseries Main theorem: circles} \\[0.3ex]
+& $(r, s) \bmod 4$ for $a \le -2$; for $a > \alpha$ \\[0.4ex]
+\mk{\markF{cone}{0.00mm}{0mm}} & (C1): $(3,1)$, $(3,3)$; $(1,1)$, $(1,3)$ \\[0.4ex]
+\mk{\markF{ctwo}{0.00mm}{0mm}} & (C2): $(0,1)$, $(2,3)$; $(2,1)$, $(0,3)$ \\[0.4ex]
+\mk{\markF{cthree}{0.00mm}{0mm}} & (C3): $(1,0)$, $(1,2)$; $(3,0)$, $(3,2)$ \\[0.4ex]
+\mk{\markF{cone}{-1.50mm}{0mm}\markF{ctwo}{0.00mm}{0mm}\markF{cthree}{1.50mm}{0mm}} & two of (Z), (O), (T) hold, so $\rho_a$ is surjective \\[0.4ex]
+\mk{\markH{cone}{-1.50mm}{0mm}\markH{ctwo}{0.00mm}{0mm}\markH{cthree}{1.50mm}{0mm}} & $c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.4ex]
+\noalign{\vskip 1.4ex}\multicolumn{2}{@{}l}{\bfseries The two families: squares} \\[0.3ex]
+\mk{\markQ{famA}{0.00mm}{0mm}} & $a = -\ell(\ell + 1) \le -2$, $\ell = j/k$, $(j, k) \equiv (2,1), (3,3) \bmod 4$ \\[0.4ex]
+\mk{\markQ{famLi}{0.00mm}{0mm}} & $a = -(\ell^2 + \ell + 1) \le -2$, $\ell = j/k$, $(j, k) \equiv (1,1), (2,3) \bmod 4$ \\[0.4ex]
+\noalign{\vskip 1.4ex}\multicolumn{2}{@{}l}{\bfseries Not covered} \\[0.3ex]
+\mk{\markH{ink}{0.00mm}{0mm}} & $c_1, \dots, c_6$ are $2$-dependent, so $\rho_a$ is not surjective \\[0.4ex]
+\mk{\markD{0.00mm}{0mm}} & $c_1, \dots, c_6$ are $2$-independent \\[0.4ex]
+ & no mark: $\gcd(r, s) > 1$; $a$ appears at its reduced fraction, whose residues mod $4$ may differ \\[0.4ex]
+\noalign{\vskip 1.4ex}\multicolumn{2}{@{}l}{\bfseries Regions} \\[0.3ex]
+& $\alpha \approx -1.544$, $\alpha' \approx -1.311$ \\[0.4ex]
+\mk{\fill[excl] (-1.4mm,-1.1mm) rectangle (1.4mm,1.1mm);} & $-2 < a \le \alpha$: not covered \\[0.4ex]
+\mk{\fill[intv] (-1.4mm,-1.1mm) rectangle (1.4mm,1.1mm);} & $\alpha < a \le \alpha'$; outside it, in the classes, $\rho_a$ is surjective iff $c_1, c_2$ are $2$-independent \\[0.4ex]
 \end{tabular}};
 \end{tikzpicture}
 \end{document}

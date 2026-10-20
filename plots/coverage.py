@@ -2,8 +2,9 @@
 """Draw the parameters a = r/s covered by the main theorem and by the two families.
 
 One mark per coprime pair (r, s), in two layouts: coverage.pdf has the denominator s across and the
-numerator r up, with a full legend; coverage-slide.pdf, for a 16:9 slide, has r across and s up, a
-sans-serif font and a compact legend.
+numerator r up, with a full legend, drawn at its final size for a page with text width 16 cm (so
+that its text keeps its nominal size); coverage-slide.pdf, for a 16:9 slide, has r across and s up,
+a sans-serif font and a compact legend.
 
 * Circles: a lies in the region and in one of the 2-adic classes (C1)-(C3) of the main theorem
   (`QuadraticIterates.TwoAdicClass`), coloured by the class. Filled when two of the lists (Z), (O),
@@ -259,7 +260,7 @@ FAMILY_COLOR = {'A': 'famA', 'Li': 'famLi'}
 
 # Radii in mm of filled circles (f), hollow circles (h) and dots (d), half the side of a square (q),
 # and the line width in pt of hollow circles (lw)
-PORTRAIT = dict(f=0.85, h=0.62, q=0.95, d=0.3, lw=0.6)
+PORTRAIT = dict(f=0.6, h=0.44, q=0.68, d=0.21, lw=0.45)
 SLIDE = dict(f=0.64, h=0.47, q=0.72, d=0.22, lw=0.5)
 
 PREAMBLE = r"""\documentclass[border=@border@mm]{standalone}
@@ -336,35 +337,36 @@ def regions(x1, y1, along):
 
 def legend_portrait():
     """The legend of the portrait picture, a tabular to the right of the plot."""
+    def head(text, skip=True):
+        space = r"\noalign{\vskip 1.4ex}" if skip else ""
+        return rf"{space}\multicolumn{{2}}{{@{{}}l}}{{\bfseries {text}}} \\[0.3ex]"
+
     def row(marker, text):
-        return rf"{marker} & {text} \\[0.5ex]"
+        return rf"{marker} & {text} \\[0.4ex]"
     trio = lambda m: sample((m, 'cone'), (m, 'ctwo'), (m, 'cthree'), step=2.5 * PORTRAIT['f'])
     lines = [
-        r"\begin{tabular}{@{}c@{\hspace{0.7em}}>{\raggedright\arraybackslash}p{6.2cm}@{}}",
-        r"\multicolumn{2}{@{}l}{\large\bfseries Arboreal representations of $x^2 + a$} \\",
-        r"\multicolumn{2}{@{}l}{coprime $r, s$ with $s \ge 1$, $a = r/s$} \\[1.5ex]",
-        r"\multicolumn{2}{@{}l}{\bfseries Main theorem: circles, by $2$-adic class} \\[0.3ex]",
-        r"& $(r, s) \bmod 4$ for $a \le -2$; for $a > \alpha$ \\[0.3ex]",
+        r"\begin{tabular}{@{}c@{\hspace{0.6em}}>{\raggedright\arraybackslash}p{5.35cm}@{}}",
+        r"\multicolumn{2}{@{}l}{coprime $r, s$ with $s \ge 1$, $a = r/s$} \\[0.3ex]",
+        head(r"Main theorem: circles"),
+        r"& $(r, s) \bmod 4$ for $a \le -2$; for $a > \alpha$ \\[0.4ex]",
         row(sample(('markF', 'cone')), r"(C1): $(3,1)$, $(3,3)$; $(1,1)$, $(1,3)$"),
         row(sample(('markF', 'ctwo')), r"(C2): $(0,1)$, $(2,3)$; $(2,1)$, $(0,3)$"),
         row(sample(('markF', 'cthree')), r"(C3): $(1,0)$, $(1,2)$; $(3,0)$, $(3,2)$"),
         row(trio('markF'), r"two of (Z), (O), (T) hold, so $\rho_a$ is surjective"),
         row(trio('markH'), r"$c_1, c_2$ are $2$-dependent, so $\rho_a$ is not surjective"),
-        r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
-        r"\multicolumn{2}{@{}l}{\bfseries The two families: squares} \\[0.3ex]",
-        row(sample(('markQ', 'famA')), r"$a = -\ell(\ell + 1)$, $\ell = u/v > 1$, "
-            r"$(u, v) \equiv (2,1), (3,3) \bmod 4$"),
-        row(sample(('markQ', 'famLi')), r"$a = -(\ell^2 + \ell + 1) \le -2$, $\ell = u/v$, "
-            r"$(u, v) \equiv (1,1), (2,3) \bmod 4$"),
-        r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
-        r"\multicolumn{2}{@{}l}{\bfseries Not covered} \\[0.3ex]",
+        head(r"The two families: squares"),
+        row(sample(('markQ', 'famA')), r"$a = -\ell(\ell + 1) \le -2$, $\ell = j/k$, "
+            r"$(j, k) \equiv (2,1), (3,3) \bmod 4$"),
+        row(sample(('markQ', 'famLi')), r"$a = -(\ell^2 + \ell + 1) \le -2$, $\ell = j/k$, "
+            r"$(j, k) \equiv (1,1), (2,3) \bmod 4$"),
+        head(r"Not covered"),
         row(sample(('markH', 'ink')),
             r"$c_1, \dots, c_6$ are $2$-dependent, so $\rho_a$ is not surjective"),
         row(sample(('markD', None)), r"$c_1, \dots, c_6$ are $2$-independent"),
         row("", r"no mark: $\gcd(r, s) > 1$; $a$ appears at its reduced fraction, "
             r"whose residues mod $4$ may differ"),
-        r"\multicolumn{2}{@{}l}{} \\[0.5ex]",
-        r"\multicolumn{2}{@{}l}{\bfseries Regions} \\[0.3ex]",
+        head(r"Regions"),
+        rf"& $\alpha \approx {ALPHA:.3f}$, $\alpha' \approx {ALPHA_PRIME:.3f}$ \\[0.4ex]",
         row(swatch('excl'), r"$-2 < a \le \alpha$: not covered"),
         row(swatch('intv'), r"$\alpha < a \le \alpha'$; outside it, in the classes, $\rho_a$ is "
             r"surjective iff $c_1, c_2$ are $2$-independent"),
@@ -374,27 +376,28 @@ def legend_portrait():
 
 
 def picture_portrait(marks):
-    """The denominator s across, the numerator r up, with a full legend on the right."""
+    """The denominator s across, the numerator r up, with a full legend on the right, at its final
+    size: the width is that of a text block of 16 cm."""
     x0, x1, y0, y1 = 0.3, S_MAX + 0.7, R_MIN - 1.5, R_MAX + 1.5
-    out = [preamble(False, PORTRAIT, 4),
-           r"\begin{tikzpicture}[x=0.42cm, y=0.21cm, font=\footnotesize]",
+    out = [preamble(False, PORTRAIT, 1),
+           r"\begin{tikzpicture}[x=2.6mm, y=1.55mm]",
            rf"\begin{{scope}}\clip ({x0},{y0}) rectangle ({x1},{y1});",
            *regions(x1, y1, 's'), r"\end{scope}"]
     out += [mark_tex(m, s, r) for r, s, m in marks]
     out.append(rf"\draw[ink, line width=0.5pt] ({x0},{y0}) rectangle ({x1},{y1});")
     for s in (1, 5, 10, 15, 20, 25):
-        out.append(rf"\draw[ink] ({s},{y0}) -- +(0,-0.8) node[below] {{${s}$}};")
+        out.append(rf"\draw[ink] ({s},{y0}) -- +(0,-1mm) node[below] {{${s}$}};")
     for r in range(-70, R_MAX + 1, 10):
-        out.append(rf"\draw[ink] ({x0},{r}) -- +(-0.25,0) node[left] {{${r}$}};")
-    out.append(rf"\node[below=5mm] at ({(x0 + x1) / 2},{y0}) {{denominator $s$}};")
-    out.append(rf"\node[left=9mm, rotate=90, anchor=south] at ({x0},{(y0 + y1) / 2}) "
+        out.append(rf"\draw[ink] ({x0},{r}) -- +(-1mm,0) node[left] {{${r}$}};")
+    out.append(rf"\node[below=5.5mm] at ({(x0 + x1) / 2},{y0}) {{denominator $s$}};")
+    out.append(rf"\node[left=9.5mm, rotate=90, anchor=south] at ({x0},{(y0 + y1) / 2}) "
                r"{numerator $r$};")
-    labels = [(-2, r"a = -2"), (ALPHA, rf"a = \alpha \approx {ALPHA:.3f}"),
-              (ALPHA_PRIME, rf"a = \alpha' \approx {ALPHA_PRIME:.3f}"), (-1, r"a = -1"),
-              (0, r"a = 0")]
+    labels = [(-2, r"a = -2"), (ALPHA, r"a = \alpha"), (ALPHA_PRIME, r"a = \alpha'"),
+              (-1, r"a = -1"), (0, r"a = 0")]
     for a, text in labels:
         out.append(rf"\node[right, ink] at ({x1},{a * x1:.3f}) {{${text}$}};")
-    out.append(rf"\node[anchor=north west] at ({x1 + 6.2},{y1}) {{{legend_portrait()}}};")
+    out.append(rf"\node[anchor=north west, inner sep=0pt, xshift=15.5mm] at ({x1},{y1}) "
+               rf"{{{legend_portrait()}}};")
     out += [r"\end{tikzpicture}", r"\end{document}"]
     return "\n".join(out) + "\n"
 
@@ -470,7 +473,7 @@ def render(name, tex, dpi):
 def main():
     marks = [(r, s, classify(r, s)) for s in range(1, S_MAX + 1)
              for r in range(R_MIN, R_MAX + 1) if gcd(r, s) == 1]
-    render("coverage", picture_portrait(marks), 200)
+    render("coverage", picture_portrait(marks), 300)
     render("coverage-slide", picture_slide(marks), 300)
 
 
