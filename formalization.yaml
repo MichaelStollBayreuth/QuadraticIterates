@@ -45,12 +45,16 @@ status:
     a criterion for rational parameters a = r/s built on it (QuadraticIterates/Main/): if
     a ≤ -2 or a³ + 2a² + 2a + 2 > 0, the pair (r, s) lies in one of three 2-adic classes, and
     two of three explicit lists of conditions on r and s hold, then Ω_n ≅ [C₂]ⁿ for all n. Outside
-    the interval α < a ≤ a_* ≈ -1.3107 the criterion is sharp: in these 2-adic classes all levels
+    the interval α < a ≤ α′ ≈ -1.3107 the criterion is sharp: in these 2-adic classes all levels
     are maximal if and only if c_1, c_2 are 2-independent, i.e. Ω_2 ≅ [C₂]²
     (QuadraticIterates/Main/LevelTwo.lean); on α < a < -1 shorter lists of criteria suffice,
     and in explicit classes of (r, s) modulo 32 none is needed
     (QuadraticIterates/Main/Interval.lean); further criteria for the missing pattern come from
-    primes at which the orbit of 0 is short (QuadraticIterates/Main/Further.lean). The method is the author's and not yet published. The
+    primes at which the orbit of 0 is short (QuadraticIterates/Main/Further.lean). The rigid
+    divisibility of (c_n) and the three possible shapes of n ↦ v_p(c_n) are formalized as well
+    (QuadraticIterates/Sequence/Orbit.lean and Valuation.lean). The method is the author's; a
+    preprint on it is in paper/arboreal-surjective.pdf, and the blueprint follows its sections and
+    numbering. The
     main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
     Theorems 3.3, strengthened to a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case
     s = 1 of the rational statements and of two rational families extending Li's
@@ -236,7 +240,13 @@ automation:
         all characters at a few hundred primes, a hit verified by a linear-recurrence bound) found
         it in every example and showed which primes supply it; the resulting criteria from the
         primes of v_2, v_3 and w_3 were written into the blueprint, reviewed by the author, and
-        formalized in Main/Further.lean.
+        formalized in Main/Further.lean. When the author had written a paper on the method
+        (2026-10-21), the agent reorganized the blueprint to follow its sections and numbering,
+        with the supporting statements lettered per chapter and the proof of the 1992 criterion
+        and the further results in appendices, and formalized the paper's statements that had
+        no single declaration yet (rigid divisibility of (c_n), the shapes of its p-adic
+        valuations, its vanishing terms, and two criteria combining characters), each through
+        the scratch sandbox and the verification chain.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
@@ -284,7 +294,7 @@ alignment:
       lean: ""
       module: ""
       status: "not formalized"
-      note: "the b_n route is not formalized on this branch"
+      note: "the b_n route is not formalized on this branch; the shape of the valuations v_p(c_n) behind b) is padicValRat_cSeq_trichotomy (QuadraticIterates.Sequence.Valuation)"
     - source: "Lemma 1.2"
       lean: "irreducible_iteratedPoly_of_not_isSquare_cSeq"
       module: "QuadraticIterates.Galois.Irreducibility"

@@ -42,8 +42,8 @@ characters) are found by short computations modulo a single prime power, and the
   and `s` modulo 32 (and, in one class, `|r|` not being a square in `ℚ₂`) give `Ω_n ≅ [C₂]ⁿ` with
   no further condition, for the proportion 245/576 ≈ 0.43 of the parameters there
   (`nonempty_mulEquiv_of_lt_neg_one_of_emod`);
-- **two families** of rational parameters, `a = −j(j + 1)` and `a = −(ℓ² + ℓ + 1)` with `j`, `ℓ`
-  in certain classes of fractions, outside the reach of the criterion;
+- **two families** of rational parameters, `a = −ℓ(ℓ + 1)` and `a = −(ℓ² + ℓ + 1)` with `ℓ` in
+  certain classes of fractions, outside the reach of the criterion;
 - the **results for integer `a`**, as the case `s = 1`: the main result of Section 3 of the
   paper (`a > 0` with `a ≡ 1` or `2 mod 4`, or `a < 0` with `a ≡ 0 mod 4` and `−a` not a square),
   and the theorems of H.-C. Li
@@ -80,7 +80,7 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 - [`Characters`](QuadraticIterates/Characters): patterns of characters along a sequence, and the
   criterion in terms of characters (`tfae_forall_nonempty_mulEquiv`);
 - [`Sequence`](QuadraticIterates/Sequence): the sequence `c_n` for `a = r/s`, its integer
-  numerators, signs and orbits modulo `N`;
+  numerators, signs and orbits modulo `N`, its rigid divisibility and its `p`-adic valuations;
 - [`Patterns`](QuadraticIterates/Patterns): the values of characters along `c_n`, at the sign, at
   the primes of `r`, `s`, `r + s`, `r + 2s`, `r² + s²` and `w_3`, and at `2`, with the reflection
   and period-two mechanisms;
@@ -107,11 +107,17 @@ conditions.
 
 [`blueprint/`](blueprint) contains a [leanblueprint](https://github.com/PatrickMassot/leanblueprint)
 blueprint that develops the mathematics of this branch, with statements and proofs, and links each
-item to the declarations that formalize it: chapter 1 the Galois-theoretic criterion, chapter 2
-quadratic characters, chapter 3 the sequence `c_n`, chapter 4 the patterns of characters along it,
-chapter 5 the lists of criteria and the main theorem, chapter 6 the two families, chapter 7 the
-integer parameters, and chapter 8 the auxiliary theory. Every definition and theorem is
-formalized, so the dependency graph is entirely green.
+item to the declarations that formalize it. Its chapters 1–7 are the sections of the paper
+M. Stoll, *When do all iterates of x² + a have maximal Galois group?* (preprint,
+[`paper/arboreal-surjective.pdf`](paper/arboreal-surjective.pdf)), with the paper's numbering of
+the statements: the introduction with the criterion of the 1992 paper, quadratic characters, sign
+information, the characters `φ_n` for `n ≥ 2`, the Klein four-group of characters with the three
+lists of criteria, the main result with its integer corollary, and the two quadratic families.
+Each chapter opens with the supporting statements that the formalization needs beyond the
+paper's, numbered with letters. Appendix A proves the criterion of the 1992 paper, appendix B
+collects further formalized results (further criteria, refinements of the main theorem), and
+appendix C the auxiliary theory. Every definition and theorem is formalized, so the dependency
+graph is entirely green.
 
 To build it, install [leanblueprint](https://github.com/PatrickMassot/leanblueprint) and a TeX
 distribution, then run in the root directory of this repository
