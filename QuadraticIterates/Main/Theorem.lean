@@ -10,7 +10,6 @@ public import QuadraticIterates.Main.TwoAdic
 
 import QuadraticIterates.Characters.Criterion
 import QuadraticIterates.Galois.Criterion
-import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 import QuadraticIterates.Patterns.Dyadic
@@ -34,8 +33,6 @@ criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriteri
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern`: the main theorem,
   abstract form.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`: the main theorem.
-* `QuadraticIterates.forall_nonempty_mulEquiv_iff_of_le_neg_two`: Li's theorem of 2020 for
-  rational parameters `a ≤ -2`.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_uSeq`: period two with `val₂` for
   `a ≡ 1 mod 4`.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_odd`: for `a ≡ 1 mod 4`, `φ₀` gives `φ_n` at
@@ -116,42 +113,6 @@ theorem nonempty_mulEquiv_of_twoAdicClass_of_criteria (hrs : IsCoprime r s) (hs 
   rcases h with ⟨h₀, h₁⟩ | ⟨h₀, h₁⟩ | ⟨h₀, h₁⟩
   exacts [hZ h₀, hZ h₀, hasCharPattern_neg_of_mulSingle_of_neg_mulSingle (hO h₀) (hT h₁), hO h₁,
     hasCharPattern_mulSingle_of_neg_of_neg_mulSingle (hZ h₀) (hT h₁), hO h₀]
-
-/-- For `a = r/s ≤ -2` with `r ≡ 3` and `s ≡ 1 (mod 4)`, `φ₀` and `-(a + 1) ≠ □` give `φ₁`: by
-(O3) if `s ≠ □`, and by (T3) and `φ₀ τ = φ₁` if `s = □`. -/
-private lemma hasCharPattern_mulSingle_one_of_le_neg_two (hrs : IsCoprime r s) (hs : 0 < s)
-    (ha : r ≤ -2 * s) (hs4 : s % 4 = 1) (hr4 : r % 4 = 3)
-    (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) (h : ¬IsSquare (-((r : ℚ) / s + 1))) :
-    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
-  by_cases hsq : IsSquare s
-  · obtain ⟨u, hu⟩ := hsq
-    refine hasCharPattern_mulSingle_of_neg_of_neg_mulSingle h₀
-      (hasCharPattern_neg_mulSingle_one_of_negTailCriterion hrs hs
-        (.not_isSquare_add (fun ⟨t, ht⟩ ↦ by lia [mul_self_nonneg t]) (fun ⟨t, ht⟩ ↦ h
-          ⟨t / u, ?_⟩) (.inl (by lia))))
-    rw [div_mul_div_comm, ← Int.cast_mul, ← Int.cast_mul, ← ht, ← hu]
-    push_cast
-    field
-  · obtain ⟨p, k, m, hp, hk, hsm, hm⟩ := Int.exists_prime_pow_mul_of_not_isSquare hs.le hsq
-    have hps : (p : ℤ) ∣ s := hsm ▸ (dvd_pow_self _ hk.pos.ne').mul_right m
-    exact hasCharPattern_mulSingle_one_of_negFirstCriterion hrs hs
-      (.dvd_right p k m hp (by rintro rfl; lia) hk.pos hsm hm (.inl hk))
-
-/-- **Li 2020 for rational parameters**: for `a = r/s ≤ -2` with `r ≡ 3` and `s ≡ 1 (mod 4)` and
-`φ₀` (for instance `|r| ≠ □`), the arboreal representation of `X² + a` is surjective if and only
-if `-(a + 1)` is not a square; if it is, `c₁ c₂ = a² · (-(a + 1))` is a square. -/
-theorem forall_nonempty_mulEquiv_iff_of_le_neg_two (hrs : IsCoprime r s) (hs : 0 < s)
-    (ha : r ≤ -2 * s) (hs4 : s % 4 = 1) (hr4 : r % 4 = 3)
-    (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) :
-    (∀ n, Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n)) ↔
-      ¬IsSquare (-((r : ℚ) / s + 1)) := by
-  refine ⟨fun h ⟨t, ht⟩ ↦ (nonempty_mulEquiv_iff_twoIndependent _ 2).mp (h 2) Finset.univ
-    Finset.univ_nonempty ⟨(r : ℚ) / s * t, ?_⟩, fun h ↦
-    nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern hrs hs (.inl ⟨ha, rfl⟩)
-      (.inl ⟨Int.odd_iff.mpr (by lia), by rw [Int.ModEq]; lia⟩) h₀
-      (hasCharPattern_mulSingle_one_of_le_neg_two hrs hs ha hs4 hr4 h₀ h)⟩
-  simp [Fin.prod_univ_two, cSeq_two]
-  linear_combination ((r : ℚ) / s) ^ 2 * ht
 
 /-- **Period two with `val₂`** for `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`): a prime
 `p ≡ 3 (mod 4)` dividing `u_n` and not `r + s` gives `φ_n` from `φ₀`. -/

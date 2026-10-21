@@ -225,7 +225,7 @@ lists of criteria collapse to the single condition of Theorem~\ref{thm:main}(1).
 
 \begin{corollary}[Li 2020 for rational parameters]
   \label{cor:li2020-rat}
-  \uses{thm:main, prop:O, prop:T, lem:klein, prop:tfae}
+  \uses{thm:main}
   \lean{QuadraticIterates.forall_nonempty_mulEquiv_iff_of_le_neg_two}
   \leanok
   Let $a \le -2$ with $s \equiv 1 \bmod 4$ and $r \equiv 3 \bmod 4$, and suppose that~$a$
@@ -234,11 +234,11 @@ lists of criteria collapse to the single condition of Theorem~\ref{thm:main}(1).
 \end{corollary}
 \begin{proof}
   \leanok
-  If $-(a + 1)$ is a square, so is $c_1 c_2 = -a \cdot a(a + 1)$, and~$\rho_a$ is not surjective
-  (Proposition~\ref{prop:tfae}). Otherwise: (C1) holds, as $r + 2s \equiv 1 = -\eps \bmod 4$. If~$s$
-  is not a square, (O3) gives~$\phi_1$. If~$s$ is a square, then $4 \mid r + s = s(a + 1) < 0$ and
-  $-(r + s) = s \cdot (-(a+1))$ is not a square, so (T3) gives~$\tau$, and~$\phi_1$ follows by
-  Lemma~\ref{lem:klein}. Apply Theorem~\ref{thm:main}(2)(f).
+  \uses{lem:level2}
+  (C1) holds, as $r + 2s \equiv 1 = -\eps \bmod 4$, and $a \le -2$; so by
+  Theorem~\ref{thm:main}(1), $\rho_a$ is surjective if and only if none of~$-rs$, $r(r + s)$ and
+  $-s(r + s)$ is a square. As~$a$ has~$\phi_0$, $c_1 \sim -rs$ and $c_2 \sim r(r + s)$ are not
+  squares (Lemma~\ref{lem:level2}), and $-s(r + s) = s^2 \cdot (-(a + 1))$.
 \end{proof}
 
 \begin{remark}[When the condition is automatic]

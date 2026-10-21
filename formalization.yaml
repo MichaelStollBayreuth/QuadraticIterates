@@ -97,6 +97,12 @@ status:
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
+  - declaration: "QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass"
+    file: "QuadraticIterates/Main/LevelTwo.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
   - declaration: "QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_criteria"
     file: "QuadraticIterates/Main/Interval.lean"
     sorry_count: 0
@@ -110,7 +116,7 @@ status:
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
   - declaration: "QuadraticIterates.forall_nonempty_mulEquiv_iff_of_le_neg_two"
-    file: "QuadraticIterates/Main/Theorem.lean"
+    file: "QuadraticIterates/Main/LevelTwo.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: ""

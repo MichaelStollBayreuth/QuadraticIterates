@@ -8,6 +8,7 @@ module
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 public import QuadraticIterates.Sequence.WSeq
 
+import QuadraticIterates.Mathlib.Algebra.Ring.Parity
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 
@@ -90,35 +91,31 @@ theorem valChar_cSeq_of_isUnit {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk
       fun h ↦ hps ((Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow h), mul_one]
 
 /-- `c_1 = -r/s = -rs/s²`. -/
-theorem isSquare_cSeq_one_of_isSquare (h : IsSquare (-(r * s))) :
-    IsSquare (cSeq ((r : ℚ) / s) 1) := by
-  obtain ⟨t, ht⟩ := h
-  rcases eq_or_ne (s : ℚ) 0 with hs | hs
-  · simp [hs]
-  refine ⟨t / s, ?_⟩
-  rw [cSeq_one, div_mul_div_comm, ← Int.cast_mul, ← ht]
+theorem isSquare_cSeq_one_iff (hs : s ≠ 0) :
+    IsSquare (cSeq ((r : ℚ) / s) 1) ↔ IsSquare (-(r * s)) := by
+  rw [← Rat.isSquare_intCast_iff, ← isSquare_mul_sq_iff₀ (Int.cast_ne_zero.mpr hs : (s : ℚ) ≠ 0)]
+  congr! 1
+  rw [cSeq_one]
   push_cast
   field
 
 /-- `c_2 = r(r + s)/s²`. -/
-theorem isSquare_cSeq_two_of_isSquare (h : IsSquare (r * (r + s))) :
-    IsSquare (cSeq ((r : ℚ) / s) 2) := by
-  obtain ⟨t, ht⟩ := h
-  rcases eq_or_ne (s : ℚ) 0 with hs | hs
-  · simp [hs, cSeq_two]
-  refine ⟨t / s, ?_⟩
-  rw [cSeq_two, div_mul_div_comm, ← Int.cast_mul, ← ht]
+theorem isSquare_cSeq_two_iff (hs : s ≠ 0) :
+    IsSquare (cSeq ((r : ℚ) / s) 2) ↔ IsSquare (r * (r + s)) := by
+  rw [← Rat.isSquare_intCast_iff, ← isSquare_mul_sq_iff₀ (Int.cast_ne_zero.mpr hs : (s : ℚ) ≠ 0)]
+  congr! 1
+  rw [cSeq_two]
   push_cast
   field
 
-/-- `c_1 c_2 = (r/s²)² · (-s(r + s))`. -/
-theorem isSquare_cSeq_one_mul_cSeq_two_of_isSquare (h : IsSquare (-(s * (r + s)))) :
-    IsSquare (cSeq ((r : ℚ) / s) 1 * cSeq ((r : ℚ) / s) 2) := by
-  obtain ⟨t, ht⟩ := h
-  rcases eq_or_ne (s : ℚ) 0 with hs | hs
-  · simp [hs]
-  refine ⟨r * t / s ^ 2, ?_⟩
-  rw [cSeq_one, cSeq_two, div_mul_div_comm, mul_mul_mul_comm, ← Int.cast_mul t, ← ht]
+/-- `c_1 c_2 = -r²(r + s)/s³ = (r/s²)² · (-s(r + s))`. -/
+theorem isSquare_cSeq_one_mul_cSeq_two_iff (hr : r ≠ 0) (hs : s ≠ 0) :
+    IsSquare (cSeq ((r : ℚ) / s) 1 * cSeq ((r : ℚ) / s) 2) ↔ IsSquare (-(s * (r + s))) := by
+  have hr' : (r : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hr
+  have hs' : (s : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hs
+  rw [← Rat.isSquare_intCast_iff, ← isSquare_mul_sq_iff₀ (div_ne_zero (pow_ne_zero 2 hs') hr')]
+  congr! 1
+  rw [cSeq_one, cSeq_two]
   push_cast
   field
 

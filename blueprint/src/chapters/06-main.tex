@@ -9,19 +9,19 @@ The second level in terms of~$r$ and~$s$, and the integer squares modulo powers 
 \begin{lemma}[Two-independence at level two]
   \label{lem:level2}
   \uses{def:twoindep, def:cseq}
-  \lean{QuadraticIterates.twoIndependent_fin_two_iff,
-    QuadraticIterates.isSquare_cSeq_one_of_isSquare,
-    QuadraticIterates.isSquare_cSeq_two_of_isSquare,
-    QuadraticIterates.isSquare_cSeq_one_mul_cSeq_two_of_isSquare, QuadraticIterates.not_isSquare_of_twoIndependent}
+  \lean{QuadraticIterates.twoIndependent_fin_two_iff, QuadraticIterates.isSquare_cSeq_one_iff,
+    QuadraticIterates.isSquare_cSeq_two_iff, QuadraticIterates.isSquare_cSeq_one_mul_cSeq_two_iff,
+    QuadraticIterates.twoIndependent_fin_two_cSeq_iff, isSquare_mul_sq_iff₀}
   \leanok
   Modulo squares, $c_1 \sim -rs$, $c_2 \sim r(r+s)$ and $c_1 c_2 \sim -s(r+s)$; so
   $(c_1, c_2)$ is~$2$-independent if and only if none of~$-rs$, $r(r+s)$ and $-s(r+s)$ is a
   square. As~$r$, $s$ and~$r + s$ are coprime in pairs, $c_1$ is a square if and only if $r < 0$
   and~$|r|$, $s$ are squares; $c_2$ if and only if~$r$ and~$r + s$ have the same sign and~$|r|$,
   $|r + s|$ are squares; $c_1 c_2$ if and only if $r + s < 0$ and~$s$, $|r + s|$ are squares.
-  \formalnote{The two-independence of $(c_1, c_2)$ is
-  \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}; the formalization uses the direction
-  from it to the three non-squares (\lname{not\_isSquare\_of\_twoIndependent}).}
+  \formalnote{The first statement is \lname{twoIndependent\_fin\_two\_cSeq\_iff}, where the
+  two-independence of $(c_1, c_2)$ is \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}; it
+  holds for all $a = r/s$, as for $r = 0$ or $s = 0$ both sides fail. The last statement, on the
+  squares among pairwise coprime integers, is used inside the proofs.}
 \end{lemma}
 \begin{proof}
   \leanok
@@ -56,6 +56,8 @@ result.
   \uses{lem:twoadic, prop:tfae, lem:klein, prop:Z, prop:O, prop:T, lem:level2, lem:squares2,
     lem:prime3, lem:window, prop:criterion}
   \lean{QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass,
+    QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass,
+    QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_not_isSquare,
     QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_emod,
     QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria,
     QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern}
@@ -84,9 +86,11 @@ result.
             \item[(f)] $a$ has~$\phi_0$ and~$\phi_1$.
           \end{enumerate}
   \end{enumerate}
-  \formalnote{Four theorems. Part (1), the equivalence of (i) and (ii), is
-  \lname{forall\_nonempty\_mulEquiv\_iff\_twoIndependent\_of\_twoAdicClass}, with (iii) in
-  Lemma~\ref{lem:level2}; there $a > \alpha'$ is stated as $-s < r$,
+  \formalnote{Six theorems. In part (1), the equivalence of (i) and (ii) is
+  \lname{forall\_nonempty\_mulEquiv\_iff\_twoIndependent\_of\_twoAdicClass}, that of (i) and (iii)
+  is \lname{forall\_nonempty\_mulEquiv\_iff\_not\_isSquare\_of\_twoAdicClass}, and
+  \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_not\_isSquare} is ``(iii)~$\Rightarrow$~(i)''
+  for each level; there $a > \alpha'$ is stated as $-s < r$,
   or $r < -s$ and $r w_3 < 0 < r w_4$ as in (T4), and the exclusion of $a = -1, 0$ is not
   needed. (2)(a)--(d) is \lname{nonempty\_mulEquiv\_of\_lt\_neg\_one\_of\_emod}, for all
   $a \in (\alpha, -1)$, as one disjunction of congruences, each of which implies one of

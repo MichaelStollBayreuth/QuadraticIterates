@@ -27,6 +27,7 @@ public import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.FieldDivision
 public import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
 public import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
+public import QuadraticIterates.Mathlib.Algebra.Ring.Parity
 public import QuadraticIterates.Mathlib.Algebra.QuadraticDiscriminant
 public import QuadraticIterates.Mathlib.Data.Fintype.Basic
 public import QuadraticIterates.Mathlib.Data.Multiset

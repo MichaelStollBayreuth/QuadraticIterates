@@ -8,6 +8,7 @@ module
 public import QuadraticIterates.Main.Families
 
 import QuadraticIterates.Galois.Criterion
+import QuadraticIterates.Main.LevelTwo
 import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.RingTheory.Multiplicity

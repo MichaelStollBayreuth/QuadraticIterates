@@ -5,13 +5,16 @@ Authors: Michael Stoll
 -/
 module
 
+public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.Galois.TwoIndependent
 public import QuadraticIterates.Main.TwoAdic
 
 import QuadraticIterates.Galois.Criterion
 import QuadraticIterates.Main.Theorem
 import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
+import QuadraticIterates.Mathlib.Algebra.Ring.Parity
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
+import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 import QuadraticIterates.Sequence.SquareClasses
 
 /-!
@@ -28,8 +31,13 @@ is surjective if and only if `Ω₂ ≅ [C₂]²`.
 
 ## Main statements
 
-* `QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`: level two
+* `QuadraticIterates.twoIndependent_fin_two_cSeq_iff`: `c₁, c₂` are 2-independent if and only if
+  none of `-rs`, `r(r + s)`, `-s(r + s)` is a square.
+* `QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass` and
+  `QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass`: level two
   decides.
+* `QuadraticIterates.forall_nonempty_mulEquiv_iff_of_le_neg_two`: Li's theorem of 2020 for
+  rational parameters.
 -/
 
 @[expose] public section
@@ -38,14 +46,19 @@ namespace QuadraticIterates
 
 variable {r s : ℤ}
 
-/-- If `c₁, c₂` are 2-independent, none of `-rs`, `r(r + s)` and `-s(r + s)`, the square classes
-of `c₁`, `c₂` and `c₁ c₂`, is a square. -/
-theorem not_isSquare_of_twoIndependent
-    (h : TwoIndependent fun i : Fin 2 ↦ cSeq ((r : ℚ) / s) ((i : ℕ) + 1)) :
-    ¬IsSquare (-(r * s)) ∧ ¬IsSquare (r * (r + s)) ∧ ¬IsSquare (-(s * (r + s))) := by
-  obtain ⟨h₁, h₂, h₁₂⟩ := twoIndependent_fin_two_iff.mp h
-  exact ⟨fun h ↦ h₁ (isSquare_cSeq_one_of_isSquare h), fun h ↦ h₂ (isSquare_cSeq_two_of_isSquare h),
-    fun h ↦ h₁₂ (isSquare_cSeq_one_mul_cSeq_two_of_isSquare h)⟩
+/-- **Level two in terms of `r` and `s`**: `c₁, c₂` are 2-independent if and only if none of
+`-rs`, `r(r + s)` and `-s(r + s)`, the square classes of `c₁`, `c₂` and `c₁ c₂`, is a square. For
+`r = 0` or `s = 0` both sides fail, as `c₁ = 0`. -/
+theorem twoIndependent_fin_two_cSeq_iff :
+    (TwoIndependent fun i : Fin 2 ↦ cSeq ((r : ℚ) / s) ((i : ℕ) + 1)) ↔
+      ¬IsSquare (-(r * s)) ∧ ¬IsSquare (r * (r + s)) ∧ ¬IsSquare (-(s * (r + s))) := by
+  rcases eq_or_ne r 0 with rfl | hr
+  · simp [twoIndependent_fin_two_iff]
+  rcases eq_or_ne s 0 with rfl | hs
+  · simp [twoIndependent_fin_two_iff]
+  rw [twoIndependent_fin_two_iff]
+  exact and_congr (isSquare_cSeq_one_iff hs).not <| and_congr (isSquare_cSeq_two_iff hs).not
+    (isSquare_cSeq_one_mul_cSeq_two_iff hr hs).not
 
 /-- The classes of `(r, s) mod 4` of `TwoAdicClass r s (-1)`. -/
 private lemma emod_four_of_twoAdicClass_neg_one (hc : TwoAdicClass r s (-1)) :
@@ -181,6 +194,38 @@ private lemma cubic_pos_of_window (hs : 0 < s) (hr : r < -s)
     nlinarith [pow_pos hs 2, mul_nonneg (sq_nonneg s) (sq_nonneg (r + s))]
   nlinarith [pow_pos hs 2]
 
+/-- For `a = r/s` in a `2`-adic class with `a ≤ -2`, or `a > -1`, or `a < -1` in the window
+`c₃ < 0 < c₄`, if none of `-rs`, `r(r + s)`, `-s(r + s)` is a square, then `Ω_n ≅ [C₂]ⁿ`: the
+non-squares among `|r|`, `s`, `|r + s|` give two of the lists of criteria of
+`QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`. -/
+theorem nonempty_mulEquiv_of_twoAdicClass_of_not_isSquare (hrs : IsCoprime r s) (hs : 0 < s)
+    {ε : ℤ}
+    (hε : r ≤ -2 * s ∧ ε = -1 ∨ (-s < r ∨ r < -s ∧ (r ^ 2 + r * s) ^ 2 + r * s ^ 3 < 0 ∧
+      0 < ((r ^ 2 + r * s) ^ 2 + r * s ^ 3) ^ 2 + r * s ^ 7) ∧ ε = 1)
+    (hc : TwoAdicClass r s ε) (h₁ : ¬IsSquare (-(r * s))) (h₂ : ¬IsSquare (r * (r + s)))
+    (h₁₂ : ¬IsSquare (-(s * (r + s)))) (n : ℕ) :
+    Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) := by
+  rcases hε with ⟨ha, rfl⟩ | ⟨ha, rfl⟩
+  · exact nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs (.inl ⟨ha, rfl⟩) hc
+      (criteria_of_le_neg_two hs ha hc h₁ h₂ h₁₂) n
+  refine nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs (.inr ⟨?_, rfl⟩) hc
+    (criteria_of_twoAdicClass_one hrs hs ha hc h₁ h₂ h₁₂) n
+  rcases ha with ha | ⟨hr, h₃, h₄⟩
+  exacts [cubic_pos_of_neg_lt hs ha, cubic_pos_of_window hs hr h₃ h₄]
+
+/-- **Level two decides**, in terms of `r` and `s`: for `a = r/s` in a `2`-adic class with
+`a ≤ -2`, or `a > -1`, or `a < -1` in the window `c₃ < 0 < c₄`, the arboreal representation of
+`X² + a` is surjective if and only if none of `-rs`, `r(r + s)`, `-s(r + s)` is a square. -/
+theorem forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass (hrs : IsCoprime r s)
+    (hs : 0 < s) {ε : ℤ}
+    (hε : r ≤ -2 * s ∧ ε = -1 ∨ (-s < r ∨ r < -s ∧ (r ^ 2 + r * s) ^ 2 + r * s ^ 3 < 0 ∧
+      0 < ((r ^ 2 + r * s) ^ 2 + r * s ^ 3) ^ 2 + r * s ^ 7) ∧ ε = 1)
+    (hc : TwoAdicClass r s ε) :
+    (∀ n, Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n)) ↔
+      ¬IsSquare (-(r * s)) ∧ ¬IsSquare (r * (r + s)) ∧ ¬IsSquare (-(s * (r + s))) :=
+  ⟨fun h ↦ twoIndependent_fin_two_cSeq_iff.mp ((nonempty_mulEquiv_iff_twoIndependent _ 2).mp (h 2)),
+    fun ⟨h₁, h₂, h₁₂⟩ ↦ nonempty_mulEquiv_of_twoAdicClass_of_not_isSquare hrs hs hε hc h₁ h₂ h₁₂⟩
+
 /-- **Level two decides**: for `a = r/s` in a `2`-adic class with `a ≤ -2`, or `a > -1`, or
 `a < -1` in the window `c₃ < 0 < c₄`, the arboreal representation of `X² + a` is surjective if and
 only if `c₁, c₂` are 2-independent, that is, `Ω₂ ≅ [C₂]²`. -/
@@ -190,15 +235,30 @@ theorem forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass (hrs : IsCop
       0 < ((r ^ 2 + r * s) ^ 2 + r * s ^ 3) ^ 2 + r * s ^ 7) ∧ ε = 1)
     (hc : TwoAdicClass r s ε) :
     (∀ n, Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n)) ↔
-      TwoIndependent fun i : Fin 2 ↦ cSeq ((r : ℚ) / s) ((i : ℕ) + 1) := by
-  refine ⟨fun h ↦ (nonempty_mulEquiv_iff_twoIndependent _ 2).mp (h 2), fun h n ↦ ?_⟩
-  obtain ⟨h₁, h₂, h₁₂⟩ := not_isSquare_of_twoIndependent h
-  rcases hε with ⟨ha, rfl⟩ | ⟨ha, rfl⟩
-  · exact nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs (.inl ⟨ha, rfl⟩) hc
-      (criteria_of_le_neg_two hs ha hc h₁ h₂ h₁₂) n
-  refine nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs (.inr ⟨?_, rfl⟩) hc
-    (criteria_of_twoAdicClass_one hrs hs ha hc h₁ h₂ h₁₂) n
-  rcases ha with ha | ⟨hr, h₃, h₄⟩
-  exacts [cubic_pos_of_neg_lt hs ha, cubic_pos_of_window hs hr h₃ h₄]
+      TwoIndependent fun i : Fin 2 ↦ cSeq ((r : ℚ) / s) ((i : ℕ) + 1) :=
+  (forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass hrs hs hε hc).trans
+    twoIndependent_fin_two_cSeq_iff.symm
+
+/-- **Li 2020 for rational parameters**: for `a = r/s ≤ -2` with `r ≡ 3` and `s ≡ 1 (mod 4)` and
+`φ₀` (for instance `|r| ≠ □`), the arboreal representation of `X² + a` is surjective if and only
+if `-(a + 1)` is not a square. The class is (C1), and `φ₀` makes `c₁ ∼ -rs` and `c₂ ∼ r(r + s)`
+non-squares, which leaves `-s(r + s) = s² · (-(a + 1))` in
+`QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass`. -/
+theorem forall_nonempty_mulEquiv_iff_of_le_neg_two (hrs : IsCoprime r s) (hs : 0 < s)
+    (ha : r ≤ -2 * s) (hs4 : s % 4 = 1) (hr4 : r % 4 = 3)
+    (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) :
+    (∀ n, Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n)) ↔
+      ¬IsSquare (-((r : ℚ) / s + 1)) := by
+  obtain ⟨χ, hχ⟩ := h₀
+  have hsq (n : ℕ) (hn : 1 ≤ n) : ¬IsSquare (cSeq ((r : ℚ) / s) n) :=
+    fun h ↦ χ.apply_ne_neg_one_of_isSquare h (hχ n hn)
+  rw [forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass hrs hs (.inl ⟨ha, rfl⟩)
+      (.inl ⟨Int.odd_iff.mpr (by lia), by rw [Int.ModEq]; lia⟩), ← isSquare_cSeq_one_iff hs.ne',
+    ← isSquare_cSeq_two_iff hs.ne', and_iff_right (hsq 1 le_rfl),
+    and_iff_right (hsq 2 one_le_two), ← Rat.isSquare_intCast_iff,
+    ← isSquare_mul_sq_iff₀ (a := -((r : ℚ) / s + 1)) (Int.cast_ne_zero.mpr hs.ne')]
+  congr! 2
+  push_cast
+  field
 
 end QuadraticIterates

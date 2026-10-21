@@ -146,7 +146,7 @@ theorem nonempty_mulEquiv_of_lt_neg_one_of_criteria (hrs : IsCoprime r s) (hs : 
     (h : NegAllCriterion r s ∧ NegFirstCriterion' r s ∨ NegAllCriterion r s ∧
       NegTailCriterion' r s ∨ NegFirstCriterion' r s ∧ NegTailCriterion' r s) (n : ℕ) :
     Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) := by
-  obtain ⟨-, h₂, h₁₂⟩ := not_isSquare_of_twoIndependent h2
+  obtain ⟨-, h₂, h₁₂⟩ := twoIndependent_fin_two_cSeq_iff.mp h2
   refine nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs (.inr ⟨hα, rfl⟩) hc ?_ n
   by_cases hsq : IsSquare (-(r + s))
   · exact .inl ⟨.not_isSquare (fun h ↦ (by lia : r < 0).not_ge h.nonneg)
