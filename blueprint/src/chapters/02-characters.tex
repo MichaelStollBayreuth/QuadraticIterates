@@ -5,7 +5,7 @@
 \supporting
 
 This section introduces quadratic characters and the patterns they realize along a sequence,
-and proves the criterion for $2$-independence that the patterns give.
+and proves the criterion for~$2$-independence that the patterns give.
 
 \begin{definition}[Quadratic characters]
   \label{def:qchar}
@@ -13,15 +13,15 @@ and proves the criterion for $2$-independence that the patterns give.
     MulChar.apply_ne_neg_one_of_isSquare, MulChar.apply_inv, MulChar.apply_div, MulChar.apply_sq,
     MulChar.apply_mul_sq, MulChar.apply_div_sq}
   \leanok
-  A \emph{quadratic character} of $\QQ$ is a homomorphism $\chi \colon \QQ^\times \to \{\pm 1\}$,
-  extended to $\QQ$ by $\chi(0) = 0$. Equivalently, a multiplicative map $\chi \colon \QQ \to \ZZ$
-  with $\chi(1) = 1$ and $\chi(0) = 0$; its values on $\QQ^\times$ are units of $\ZZ$, i.e.\
+  A \emph{quadratic character} of~$\QQ$ is a homomorphism $\chi \colon \QQ^\times \to \{\pm 1\}$,
+  extended to~$\QQ$ by $\chi(0) = 0$. Equivalently, a multiplicative map $\chi \colon \QQ \to \ZZ$
+  with $\chi(1) = 1$ and $\chi(0) = 0$; its values on~$\QQ^\times$ are units of~$\ZZ$, i.e.\
   $\pm 1$. Quadratic characters form a group under pointwise multiplication, and
-  $\chi(x y^2) = \chi(x)$ for $y \ne 0$; in particular $\chi(x) \ne -1$ when $x$ is a square, and
+  $\chi(x y^2) = \chi(x)$ for $y \ne 0$; in particular $\chi(x) \ne -1$ when~$x$ is a square, and
   $\chi(1/x) = \chi(x)$.
   \formalnote{Mathlib's \lname{MulChar ℚ ℤ}, a \lname{CommGroup}, which
   \lname{MulChar.equivToUnitHom} identifies with \lname{ℚˣ →* ℤˣ}, i.e.\ with the characters of
-  $\QQ^\times/\QQ^{\times 2}$. The general lemmas are stated for a character with values in $\ZZ$
+  $\QQ^\times/\QQ^{\times 2}$. The general lemmas are stated for a character with values in~$\ZZ$
   of a commutative monoid (\lname{MulChar.apply\_eq\_one\_or\_eq\_neg\_one} at units, so every
   such character is quadratic) or of a commutative group with zero (\lname{MulChar.apply\_inv},
   \lname{MulChar.apply\_div}, \lname{MulChar.apply\_mul\_sq}, \lname{MulChar.apply\_div\_sq}).
@@ -36,16 +36,16 @@ and proves the criterion for $2$-independence that the patterns give.
     QuadraticIterates.HasCharPattern.mono, QuadraticIterates.HasCharPattern.congr}
   \leanok
   Let $(v_m)_{m \ge 1}$ be a sequence of rational numbers, $n \ge 1$ and
-  $\varepsilon \colon \ZZ_{\ge n} \to \{\pm 1\}$. The \emph{pattern $\varepsilon$ is realized
-  from $n$} if some quadratic character $\chi$ satisfies $\chi(v_m) = \varepsilon_m$ for all
-  $m \ge n$. Patterns realized from $n$ are closed under pointwise products (multiply the
-  characters), contain the constant pattern $1$ if all $v_m$ are nonzero (the trivial
-  character), and a pattern realized from $n$ is realized from every $n' \ge n$. We write
+  $\varepsilon \colon \ZZ_{\ge n} \to \{\pm 1\}$. The \emph{pattern~$\varepsilon$ is realized
+  from~$n$} if some quadratic character~$\chi$ satisfies $\chi(v_m) = \varepsilon_m$ for all
+  $m \ge n$. Patterns realized from~$n$ are closed under pointwise products (multiply the
+  characters), contain the constant pattern~$1$ if all~$v_m$ are nonzero (the trivial
+  character), and a pattern realized from~$n$ is realized from every $n' \ge n$. We write
   patterns as strings of signs: $\chi(v_\bullet) = ({+}{-}{-}\cdots)$.
   \formalnote{\lname{HasCharPattern (v : ℕ → M) (n : ℕ) (ε : ℕ → ℤ) : Prop :=
-  ∃ χ : MulChar M ℤ, ∀ m ≥ n, χ (v m) = ε m}, for a sequence in a commutative monoid $M$, with
-  \lname{HasCharPattern.congr} for patterns agreeing from $n$ on. Values of $\varepsilon$ before
-  $n$ are irrelevant. The constant pattern $1$ is not needed.}
+  ∃ χ : MulChar M ℤ, ∀ m ≥ n, χ (v m) = ε m}, for a sequence in a commutative monoid~$M$, with
+  \lname{HasCharPattern.congr} for patterns agreeing from~$n$ on. Values of~$\varepsilon$
+  before~$n$ are irrelevant. The constant pattern~$1$ is not needed.}
 \end{definition}
 
 \begin{lemma}[Characters from linear forms]
@@ -53,11 +53,11 @@ and proves the criterion for $2$-independence that the patterns give.
   \uses{def:qchar, def:twoindep}
   \lean{QuadraticIterates.mulCharOfDual, QuadraticIterates.mulCharOfDual_apply}
   \leanok
-  Let $f \colon \QQ^\times/\QQ^{\times 2} \to \FF_2$ be $\FF_2$-linear. Then
-  $x \mapsto (-1)^{f([x])}$ on $\QQ^\times$, $0 \mapsto 0$, is a quadratic character.
-  If $V$ is a subspace of $\QQ^\times/\QQ^{\times 2}$ and $[x] \notin V$, there is such an $f$
+  Let $f \colon \QQ^\times/\QQ^{\times 2} \to \FF_2$ be~$\FF_2$-linear. Then
+  $x \mapsto (-1)^{f([x])}$ on~$\QQ^\times$, $0 \mapsto 0$, is a quadratic character.
+  If~$V$ is a subspace of $\QQ^\times/\QQ^{\times 2}$ and $[x] \notin V$, there is such an~$f$
   with $f([x]) = 1$ and $f(V) = 0$.
-  \formalnote{For any field $K$ in place of $\QQ$, with \lname{SquareClasses K} and
+  \formalnote{For any field~$K$ in place of~$\QQ$, with \lname{SquareClasses K} and
   \lname{sqClass}: \lname{mulCharOfDual (f : Module.Dual (ZMod 2) (SquareClasses K)) :
   MulChar K ℤ}; the separation is Mathlib's
   \lname{Submodule.exists\_dual\_map\_eq\_bot\_of\_notMem} (every module over a field is free).}
@@ -75,14 +75,14 @@ and proves the criterion for $2$-independence that the patterns give.
   \uses{def:pattern, def:twoindep}
   \lean{QuadraticIterates.twoIndependent_of_forall_hasCharPattern}
   \leanok
-  Let $(v_m)_{m \ge 1}$ be a sequence of rational numbers such that for every $n \ge 1$ the pattern
-  $-1$ at $n$, $+1$ after $n$ is realized from $n$. Then $(v_m)_{m \ge 1}$ is $2$-independent.
-  \formalnote{For a sequence in any commutative monoid, with conclusion
+  Let $(v_m)_{m \ge 1}$ be a sequence of rational numbers such that for every $n \ge 1$ the
+  pattern~$-1$ at~$n$, $+1$ after~$n$ is realized from~$n$. Then $(v_m)_{m \ge 1}$
+  is~$2$-independent. \formalnote{For a sequence in any commutative monoid, with conclusion
   \lname{TwoIndependent (fun m : ℕ ↦ v (m + 1))}.}
 \end{proposition}
 \begin{proof}
   \leanok
-  Let $S \subseteq \ZZ_{\ge 1}$ be finite and nonempty, $n = \min S$, and $\phi_n$ a character
+  Let $S \subseteq \ZZ_{\ge 1}$ be finite and nonempty, $n = \min S$, and~$\phi_n$ a character
   realizing the pattern. Then $\phi_n(\prod_{k \in S} v_k) = \phi_n(v_n) \prod_{k \in S, k > n}
   \phi_n(v_k) = -1$, so the product is not a square (Definition~\ref{def:qchar}).
 \end{proof}
@@ -92,19 +92,19 @@ and proves the criterion for $2$-independence that the patterns give.
   \uses{lem:dual, def:pattern}
   \lean{QuadraticIterates.hasCharPattern_of_twoIndependent}
   \leanok
-  If $(v_m)_{m \ge 1}$ is $2$-independent, then for every $n \ge 1$ the pattern $-1$ at $n$,
-  $+1$ after $n$ is realized from $n$.
+  If $(v_m)_{m \ge 1}$ is~$2$-independent, then for every $n \ge 1$ the pattern~$-1$ at~$n$,
+  $+1$ after~$n$ is realized from~$n$.
   \formalnote{For a sequence in a field. The classes of $v_1, v_2, \dots$ are linearly
   independent (\lname{twoIndependent\_iff\_linearIndependent} holds for families indexed by any
-  type), and \lname{LinearIndependent.notMem\_span\_image} shows that $[v_n]$ does not lie in the
-  span of the $[v_m]$ with $m > n$.}
+  type), and \lname{LinearIndependent.notMem\_span\_image} shows that~$[v_n]$ does not lie in the
+  span of the~$[v_m]$ with $m > n$.}
 \end{proposition}
 \begin{proof}
   \leanok
   \uses{lem:dual, def:twoindep}
-  All $v_m$ are nonzero. If $[v_n]$ lay in the span of the $[v_m]$, $m > n$, then $v_n$ times a
-  finite product of later terms would be a square, contradicting $2$-independence. So
-  Lemma~\ref{lem:dual} gives $f$ with $f([v_n]) = 1$ and $f([v_m]) = 0$ for $m > n$, and the
+  All~$v_m$ are nonzero. If~$[v_n]$ lay in the span of the~$[v_m]$, $m > n$, then~$v_n$ times a
+  finite product of later terms would be a square, contradicting~$2$-independence. So
+  Lemma~\ref{lem:dual} gives~$f$ with $f([v_n]) = 1$ and $f([v_m]) = 0$ for $m > n$, and the
   character $(-1)^f$ realizes the pattern.
 \end{proof}
 
@@ -116,10 +116,10 @@ and proves the criterion for $2$-independence that the patterns give.
     QuadraticIterates.hasCharPattern_neg_of_mulSingle_of_neg_mulSingle}
   \leanok
   The patterns $({-}{-}{-}\cdots)$, $({-}{+}{+}\cdots)$ and $({+}{-}{-}\cdots)$ are, with the
-  constant pattern $1$, a Klein four-group under pointwise multiplication: if two of them are
-  realized from $1$ along a sequence, so is the third.
+  constant pattern~$1$, a Klein four-group under pointwise multiplication: if two of them are
+  realized from~$1$ along a sequence, so is the third.
   \formalnote{Three one-line consequences of \lname{HasCharPattern.mul}, stated for
-  \lname{Pi.mulSingle k (-1)} with any $k$ and from any $n$.}
+  \lname{Pi.mulSingle k (-1)} with any~$k$ and from any~$n$.}
 \end{lemma}
 \begin{proof}
   \leanok
@@ -129,10 +129,10 @@ and proves the criterion for $2$-independence that the patterns give.
 \section{Characters and the criterion}
 \paperitems
 
-We now show how to obtain surjectivity of $\rho_a$ without considering the Möbius-inverted
-sequence $(b_n)$. This works for rational $a$ with certain properties, and the results of
-\cite{paper, li2020, li2021} follow as the special cases of integral $a$. To show that
-$(c_n)_{n \ge 1}$ is $2$-independent, we use group homomorphisms $\QQ^\times \to \{\pm 1\}$.
+We now show how to obtain surjectivity of~$\rho_a$ without considering the Möbius-inverted
+sequence~$(b_n)$. This works for rational~$a$ with certain properties, and the results
+of~\cite{paper, li2020, li2021} follow as the special cases of integral~$a$. To show that
+$(c_n)_{n \ge 1}$ is~$2$-independent, we use group homomorphisms $\QQ^\times \to \{\pm 1\}$.
 
 \begin{definition}[The characters used]
   \label{def:chars}
@@ -144,29 +144,29 @@ $(c_n)_{n \ge 1}$ is $2$-independent, we use group homomorphisms $\QQ^\times \to
     Rat.valChar_intCast_of_not_dvd, Rat.valChar_neg_one, Rat.valChar_natCast_self,
     Rat.unitPartChar_neg_one}
   \leanok
-  We use the following homomorphisms $\QQ^\times \to \{\pm 1\}$. For a prime $p$ and
-  $z \in \QQ^\times$, let $z_p$ denote an integer whose image in $\ZZ/p\ZZ$ (in $\ZZ/8\ZZ$ when
+  We use the following homomorphisms $\QQ^\times \to \{\pm 1\}$. For a prime~$p$ and
+  $z \in \QQ^\times$, let~$z_p$ denote an integer whose image in~$\ZZ/p\ZZ$ (in~$\ZZ/8\ZZ$ when
   $p = 2$) is that of $p^{-v_p(z)} z$.
   \begin{enumerate}
     \item $\sgn$ is the sign map;
-    \item $\val_p \colon z \mapsto (-1)^{v_p(z)}$, for a prime $p$;
-    \item $\chi_p \colon z \mapsto \Leg{z_p}{p}$, for an odd prime $p$: the Legendre symbol on the
+    \item $\val_p \colon z \mapsto (-1)^{v_p(z)}$, for a prime~$p$;
+    \item $\chi_p \colon z \mapsto \Leg{z_p}{p}$, for an odd prime~$p$: the Legendre symbol on the
           prime-to-$p$ part;
     \item $\chi_4 \colon z \mapsto (-1)^{(z_2 - 1)/2}$ and $\chi_8 \colon z \mapsto
-          (-1)^{(z_2^2 - 1)/8}$, induced by the Dirichlet characters modulo $4$ and $8$ on the odd
+          (-1)^{(z_2^2 - 1)/8}$, induced by the Dirichlet characters modulo~$4$ and~$8$ on the odd
           part.
   \end{enumerate}
-  The class of $z$ modulo squares is determined by $\sgn(z)$ and all $\val_p(z)$; the characters
-  induced by Dirichlet characters are nevertheless useful. We call $\val_p$, $\chi_p$ (resp.\
-  $\val_2$, $\chi_4$, $\chi_8$) and their products the \emph{characters at $p$}.
+  The class of~$z$ modulo squares is determined by~$\sgn(z)$ and all $\val_p(z)$; the characters
+  induced by Dirichlet characters are nevertheless useful. We call~$\val_p$, $\chi_p$ (resp.\
+  $\val_2$, $\chi_4$, $\chi_8$) and their products the \emph{characters at~$p$}.
   \formalnote{In the mirror file \lname{QuadraticIterates/Mathlib/NumberTheory/MulChar/Rat.lean}.
-  The last two items are instances of one construction: for a power $N$ of $p$ and a character
-  $\psi$ of $(\ZZ/N\ZZ)^\times$ with values $\pm 1$, $\chi_\psi(z) = \psi(u \bmod N)$, where
-  $u = p^{-v_p(z)} z$, whose numerator and denominator are prime to $p$, so that $u \bmod N$ is a
-  unit of $\ZZ/N\ZZ$; then $\chi_\psi(p) = 1$
-  and $\chi_\psi(m/k) = \psi(m)\psi(k)$ for integers $m$, $k$ prime to $p$. All three kinds are
-  extensions $x \mapsto g(\mathrm{num}\,x)\, g(\mathrm{den}\,x)$ of multiplicative functions $g$
-  on $\ZZ$ that are $\pm 1$ at nonzero integers (\lname{Rat.mulCharOfInt}): \lname{Rat.signChar},
+  The last two items are instances of one construction: for a power~$N$ of~$p$ and a
+  character~$\psi$ of $(\ZZ/N\ZZ)^\times$ with values~$\pm 1$, $\chi_\psi(z) = \psi(u \bmod N)$,
+  where $u = p^{-v_p(z)} z$, whose numerator and denominator are prime to~$p$, so that~$u \bmod N$
+  is a unit of~$\ZZ/N\ZZ$; then $\chi_\psi(p) = 1$
+  and $\chi_\psi(m/k) = \psi(m)\psi(k)$ for integers~$m$, $k$ prime to~$p$. All three kinds are
+  extensions $x \mapsto g(\mathrm{num}\,x)\, g(\mathrm{den}\,x)$ of multiplicative functions~$g$
+  on~$\ZZ$ that are~$\pm 1$ at nonzero integers (\lname{Rat.mulCharOfInt}): \lname{Rat.signChar},
   \lname{Rat.valChar p} and \lname{Rat.unitPartChar p ψ}, the last one defined for any
   \lname{ψ : MulChar (ZMod N) ℤ}, through $\psi(\operatorname{sign}(m) \cdot |m|/p^{v_p(m)})$, with
   value lemmas for $N = p^k$: \lname{Rat.unitPartChar\_intCast} ($p \nmid m$) and
@@ -182,10 +182,10 @@ $a \in \QQ \setminus \{-1, 0\}$.
   \label{def:phin}
   \uses{def:pattern, def:cseq}
   \leanok
-  Let $a \in \QQ \setminus \{-1, 0\}$ and $n \ge 1$. We say that \emph{$a$ has $\phi_n$} if there
+  Let $a \in \QQ \setminus \{-1, 0\}$ and $n \ge 1$. We say that \emph{$a$ has~$\phi_n$} if there
   is a character $\phi_n \colon \QQ^\times \to \{\pm 1\}$ such that $\phi_n(c_n) = -1$ and
-  $\phi_n(c_m) = 1$ for all $m > n$, that is, if the pattern $-1$ at $n$, $+1$ after $n$ is
-  realized from $n$ along $(c_m)$.
+  $\phi_n(c_m) = 1$ for all $m > n$, that is, if the pattern~$-1$ at~$n$, $+1$ after~$n$ is
+  realized from~$n$ along~$(c_m)$.
   \formalnote{The pattern is \lname{Pi.mulSingle n (-1)}; statements are written with
   \lname{HasCharPattern (cSeq a) n (Pi.mulSingle n (-1))} directly, for any $a \in \QQ$.}
 \end{definition}
@@ -196,68 +196,68 @@ $a \in \QQ \setminus \{-1, 0\}$.
   \lean{QuadraticIterates.tfae_forall_nonempty_mulEquiv,
     QuadraticIterates.forall_nonempty_mulEquiv_of_forall_hasCharPattern}
   \leanok
-  Let $a \in \QQ \setminus \{-1, 0\}$. Then $\rho_a$ is surjective if and only if $a$ has
-  $\phi_n$ for all $n \ge 1$.
-  \formalnote{For any $a \in \QQ$, as the equivalence of $\Om_n \cong \Ct{n}$ for all $n$,
-  the $2$-independence of $(c_n)_{n \ge 1}$, and $\phi_n$ for all $n \ge 1$.}
+  Let $a \in \QQ \setminus \{-1, 0\}$. Then~$\rho_a$ is surjective if and only if~$a$
+  has~$\phi_n$ for all $n \ge 1$.
+  \formalnote{For any $a \in \QQ$, as the equivalence of $\Om_n \cong \Ct{n}$ for all~$n$,
+  the~$2$-independence of $(c_n)_{n \ge 1}$, and~$\phi_n$ for all $n \ge 1$.}
 \end{proposition}
 \begin{proof}
   \leanok
   \uses{prop:criterion, prop:crit, prop:crit-converse}
-  By Proposition~\ref{prop:criterion}, $\rho_a$ is surjective if and only if $(c_n)_{n \ge 1}$ is
-  $2$-independent. If $a$ has $\phi_n$ for all $n$, the family is $2$-independent by
-  Proposition~\ref{prop:crit}: for a finite nonempty $S$ with $n = \min S$,
-  $\phi_n(\prod_{k \in S} c_k) = -1$. Conversely, $2$-independence means that the class of $c_n$ in
+  By Proposition~\ref{prop:criterion}, $\rho_a$ is surjective if and only if $(c_n)_{n \ge 1}$
+  is~$2$-independent. If~$a$ has~$\phi_n$ for all~$n$, the family is~$2$-independent by
+  Proposition~\ref{prop:crit}: for a finite nonempty~$S$ with $n = \min S$,
+  $\phi_n(\prod_{k \in S} c_k) = -1$. Conversely, $2$-independence means that the class of~$c_n$ in
   $\QQ^\times/\QQ^{\times 2}$ does not lie in the span $V_{>n}$ of the classes of the later terms,
-  and a character separating it from $V_{>n}$ is a $\phi_n$ (Proposition~\ref{prop:crit-converse}).
+  and a character separating it from $V_{>n}$ is a~$\phi_n$ (Proposition~\ref{prop:crit-converse}).
 \end{proof}
 
 \begin{remark}[Primitive prime divisors]
   \label{rem:ppd}
-  Alternatively, say that \emph{$a$ has $\phi'_n$} if some character $\phi'_n$ satisfies
-  $\phi'_n(c_m) = 1$ for $1 \le m < n$ and $\phi'_n(c_n) = -1$. Then $(c_n)_{n \ge 1}$ is
-  $2$-independent if $a$ has $\phi'_n$ for all $n \ge 1$ (consider $\max S$ instead of
-  $\min S$). For example, $a \in \ZZ \setminus \{-1, 0\}$ has $\phi'_n$ if $c_n$ has a primitive
-  prime divisor $p$ (one dividing no $c_m$ with $1 \le m < n$) with $v_p(c_n)$ odd; then
+  Alternatively, say that \emph{$a$ has~$\phi'_n$} if some character~$\phi'_n$ satisfies
+  $\phi'_n(c_m) = 1$ for $1 \le m < n$ and $\phi'_n(c_n) = -1$. Then $(c_n)_{n \ge 1}$
+  is~$2$-independent if~$a$ has~$\phi'_n$ for all $n \ge 1$ (consider~$\max S$ instead
+  of~$\min S$). For example, $a \in \ZZ \setminus \{-1, 0\}$ has~$\phi'_n$ if~$c_n$ has a primitive
+  prime divisor~$p$ (one dividing no~$c_m$ with $1 \le m < n$) with $v_p(c_n)$ odd; then
   $\phi'_n = \val_p$ will do. For integral $a \notin \{-2, -1, 0\}$, $c_n$ has a primitive prime
-  divisor whenever $n \ge 2$ \cite{rice, doerksen-haensch}, and more generally so has $c_n$ for
+  divisor whenever $n \ge 2$ \cite{rice, doerksen-haensch}, and more generally so has~$c_n$ for
   rational $a = r/s \notin [-2, -1]$, except for $n = 2$ when $r + s = 1$ \cite{krieger}; but it
   is rather hard to control the parity of $v_p(c_n)$. For $a = 3$: $c_1 = -3$,
-  $c_2 = 3 \cdot 2^2$, $c_3 = 3 \cdot 7^2$, so the primitive prime divisors $2$ of $c_2$ and $7$
-  of $c_3$ occur with even valuation, and $c_2 c_3 = 42^2$ is a square, so $(c_n)$ is
-  $2$-dependent. In contrast, it turns out that one can show that $a$ has $\phi_n$ for all
-  $n \ge 1$, at least for certain $a$.
+  $c_2 = 3 \cdot 2^2$, $c_3 = 3 \cdot 7^2$, so the primitive prime divisors~$2$ of~$c_2$ and~$7$
+  of~$c_3$ occur with even valuation, and $c_2 c_3 = 42^2$ is a square, so~$(c_n)$
+  is~$2$-dependent. In contrast, it turns out that one can show that~$a$ has~$\phi_n$ for all
+  $n \ge 1$, at least for certain~$a$.
 \end{remark}
 
-To construct the characters $\phi_n$, two further kinds of characters are useful.
+To construct the characters~$\phi_n$, two further kinds of characters are useful.
 
-\begin{definition}[$\phi_0$ and $\tau$]
+\begin{definition}[$\phi_0$ and~$\tau$]
   \label{def:phi0tau}
   \uses{def:pattern, def:cseq}
   \leanok
   Let $a \in \QQ \setminus \{-1, 0\}$.
   \begin{enumerate}
-    \item We say that \emph{$a$ has $\phi_0$} if there is a character
+    \item We say that \emph{$a$ has~$\phi_0$} if there is a character
           $\phi_0 \colon \QQ^\times \to \{\pm 1\}$ such that $\phi_0(c_n) = -1$ for all $n \ge 1$.
-    \item We say that \emph{$a$ has $\tau$} (``tail'') if there is a character
+    \item We say that \emph{$a$ has~$\tau$} (``tail'') if there is a character
           $\tau \colon \QQ^\times \to \{\pm 1\}$ such that $\tau(c_1) = 1$ and $\tau(c_m) = -1$ for
           all $m \ge 2$.
   \end{enumerate}
   \formalnote{The patterns are the constant \lname{-1} and \lname{-Pi.mulSingle 1 (-1)}, realized
-  from $1$; there are no further definitions.}
+  from~$1$; there are no further definitions.}
 \end{definition}
 
-When $a$ has two of $\phi_0$, $\phi_1$ and $\tau$, it has the third: the product of the two
+When~$a$ has two of~$\phi_0$, $\phi_1$ and~$\tau$, it has the third: the product of the two
 characters will do (Lemma~\ref{lem:klein}). Similarly:
 
-\begin{lemma}[A jump after $n$]
+\begin{lemma}[A jump after~$n$]
   \label{lem:jump}
   \uses{def:phin, def:phi0tau}
   \lean{QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt}
   \leanok
-  Let $a \in \QQ \setminus \{-1, 0\}$ and $n \ge 1$. If $a$ has $\phi_0$ and there is a character
+  Let $a \in \QQ \setminus \{-1, 0\}$ and $n \ge 1$. If~$a$ has~$\phi_0$ and there is a character
   $\psi \colon \QQ^\times \to \{\pm 1\}$ such that $\psi(c_{n+m}) = -\psi(c_n)$ for all $m \ge 1$,
-  then $a$ has $\phi_n$.
+  then~$a$ has~$\phi_n$.
   \formalnote{For any $a \in \QQ$, with the additional hypothesis $\psi(c_n) \ne 0$ (automatic
   for $a \notin \{-1, 0\}$, by Remark~\ref{rem:nonzero}), and for any sequence in a commutative
   monoid.}
@@ -265,55 +265,55 @@ characters will do (Lemma~\ref{lem:klein}). Similarly:
 \begin{proof}
   \leanok
   We can take $\phi_n = \psi$ or $\phi_n = \phi_0 \psi$, depending on whether $\psi(c_n) = -1$
-  or $1$.
+  or~$1$.
 \end{proof}
 
-Here is a slightly more involved way of obtaining $\phi_n$.
+Here is a slightly more involved way of obtaining~$\phi_n$.
 
 \begin{lemma}[A period-two jump]
   \label{lem:jump2}
   \uses{def:phin, def:phi0tau}
   \lean{QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_alternating}
   \leanok
-  Let $n \ge 1$. Assume that $a \in \QQ \setminus \{-1, 0\}$ has $\phi_0$, that some character
-  $\psi$ satisfies $\psi(c_{m+1}) = -\psi(c_m)$ for all $m \ge n$, and that some character $\chi$
-  satisfies $\chi(c_n) = x$, $\chi(c_{n+2k}) = -x$ for $k \ge 1$ and $\chi(c_{n+2k+1}) = y$ for
-  $k \ge 0$, with $x, y \in \{\pm 1\}$. Then $a$ has $\phi_n$.
-  \formalnote{With $\psi(c_n) \ne 0$ as an additional hypothesis, and the pattern of $\chi$
+  Let $n \ge 1$. Assume that $a \in \QQ \setminus \{-1, 0\}$ has~$\phi_0$, that some
+  character~$\psi$ satisfies $\psi(c_{m+1}) = -\psi(c_m)$ for all $m \ge n$, and that some
+  character~$\chi$ satisfies $\chi(c_n) = x$, $\chi(c_{n+2k}) = -x$ for $k \ge 1$ and
+  $\chi(c_{n+2k+1}) = y$ for $k \ge 0$, with $x, y \in \{\pm 1\}$. Then~$a$ has~$\phi_n$.
+  \formalnote{With $\psi(c_n) \ne 0$ as an additional hypothesis, and the pattern of~$\chi$
   stated as $\chi(c_{n+2}) = -\chi(c_n) \ne 0$, $\chi(c_{n+1}) \ne 0$, and
   $\chi(c_{m+2}) = \chi(c_m)$ for $m > n$.}
 \end{lemma}
 \begin{proof}
   \leanok
   \uses{lem:jump}
-  If $y = -x$, then $\chi$ is $x$ at $c_n$ and $-x$ at all later terms. If $y = x$, then the
-  character $\chi \psi$ has the same property with $x \psi(c_n)$ in place of $x$. In both cases
+  If $y = -x$, then~$\chi$ is~$x$ at~$c_n$ and~$-x$ at all later terms. If $y = x$, then the
+  character~$\chi \psi$ has the same property with $x \psi(c_n)$ in place of~$x$. In both cases
   Lemma~\ref{lem:jump} applies.
 \end{proof}
 
 We obtain the following criterion.
 
-\begin{corollary}[The criterion with $\phi_0$, $\phi_1$, $\tau$]
+\begin{corollary}[The criterion with~$\phi_0$, $\phi_1$, $\tau$]
   \label{cor:crit-phi}
   \uses{prop:tfae, lem:jump, lem:klein}
   \lean{QuadraticIterates.forall_nonempty_mulEquiv_of_forall_exists_mulChar}
   \leanok
   Let $a \in \QQ \setminus \{-1, 0\}$. If
   \begin{enumerate}
-    \item[(i)] $a$ has two of $\phi_0$, $\phi_1$ and $\tau$, and
+    \item[(i)] $a$ has two of~$\phi_0$, $\phi_1$ and~$\tau$, and
     \item[(ii)] for all $n \ge 2$, there exists a character $\psi \colon \QQ^\times \to \{\pm 1\}$
           such that $\psi(c_{n+m}) = -\psi(c_n)$ for all $m \ge 1$,
   \end{enumerate}
-  then $\rho_a$ is surjective.
-  \formalnote{For any $a \in \QQ$, with (i) as $\phi_0$ and $\phi_1$ (the other pairs give them
+  then~$\rho_a$ is surjective.
+  \formalnote{For any $a \in \QQ$, with (i) as~$\phi_0$ and~$\phi_1$ (the other pairs give them
   by Lemma~\ref{lem:klein}) and $\psi(c_n) \ne 0$ in (ii).}
 \end{corollary}
 \begin{proof}
   \leanok
-  By Lemma~\ref{lem:klein}, $a$ has $\phi_0$ and $\phi_1$, and Lemma~\ref{lem:jump} gives $\phi_n$
+  By Lemma~\ref{lem:klein}, $a$ has~$\phi_0$ and~$\phi_1$, and Lemma~\ref{lem:jump} gives~$\phi_n$
   for $n \ge 2$; apply Proposition~\ref{prop:tfae}.
 \end{proof}
 
 The second condition leads to the ``half'' of the rational numbers mentioned in the
-introduction (Lemma~\ref{lem:twoadic}). Chapter~\ref{chap:klein} gives sufficient conditions for
-$\phi_0$, $\phi_1$ and $\tau$; combining these gives the main result (Theorem~\ref{thm:main}).
+introduction (Lemma~\ref{lem:twoadic}). Chapter~\ref{chap:klein} gives sufficient conditions
+for~$\phi_0$, $\phi_1$ and~$\tau$; combining these gives the main result (Theorem~\ref{thm:main}).

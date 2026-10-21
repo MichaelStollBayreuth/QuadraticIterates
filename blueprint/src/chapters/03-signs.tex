@@ -1,7 +1,7 @@
 \chapter{Sign information}
 \label{chap:signs}
 
-We record information on the sign of $c_n$ and of $c_{n+1} + c_n$.
+We record information on the sign of~$c_n$ and of $c_{n+1} + c_n$.
 
 \begin{lemma}[Signs]
   \label{lem:signs}
@@ -18,7 +18,7 @@ We record information on the sign of $c_n$ and of $c_{n+1} + c_n$.
           $a$ has $\tau = \sgn$.
     \item If $a \le -2$, then $c_n \ge -a > 0$ for all $n \ge 1$.
   \end{enumerate}
-  \formalnote{The signs in a linearly ordered commutative ring, the patterns of $\sgn$ for any
+  \formalnote{The signs in a linearly ordered commutative ring, the patterns of~$\sgn$ for any
   $a \in \QQ$; (2) follows from \lname{cSeq\_le\_sq\_add}.}
 \end{lemma}
 \begin{proof}
@@ -28,10 +28,10 @@ We record information on the sign of $c_n$ and of $c_{n+1} + c_n$.
   (3) $c_1 = -a > 0$; if $c_n \ge -a$, then $c_{n+1} = c_n^2 + a \ge a^2 + a \ge -a$.
 \end{proof}
 
-\begin{definition}[The number $\alpha$]
+\begin{definition}[The number~$\alpha$]
   \label{def:alpha}
   \leanok
-  We write $\alpha$ for the unique real root of $x^3 + 2x^2 + 2x + 2$; note that
+  We write~$\alpha$ for the unique real root of $x^3 + 2x^2 + 2x + 2$; note that
   $\alpha \approx -1.543689$ and that $a > \alpha$ is equivalent to $a^3 + 2a^2 + 2a + 2 > 0$.
   \formalnote{No definition: the statements use the inequality $a^3 + 2a^2 + 2a + 2 > 0$, for
   $a = r/s$ in the form $r^3 + 2r^2 s + 2rs^2 + 2s^3 > 0$.}
@@ -48,27 +48,27 @@ We record information on the sign of $c_n$ and of $c_{n+1} + c_n$.
 \begin{proof}
   \leanok
   For $-2 \le a \le 0$, $c_3 \le c_2$ (as $c_3 - c_2 = a^3(a + 2)$), so the interval
-  $[a, a^2 + a]$ is stable under $f$: as $f$ is convex from below, it takes its maximum on an
-  interval at an endpoint, here $c_2$. So $a \le c_n \le c_2$ for $n \ge 2$. The conditions
+  $[a, a^2 + a]$ is stable under~$f$: as~$f$ is convex from below, it takes its maximum on an
+  interval at an endpoint, here~$c_2$. So $a \le c_n \le c_2$ for $n \ge 2$. The conditions
   $a^3 + 2a^2 + 2a + 2 > 0$ and $a < 0$ give $c_2^2 + c_2 + a < 0$. If $c_n \ge -1/2$, then
   $c_{n+1} + c_n = c_n^2 + c_n + a \le c_2^2 + c_2 + a < 0$; otherwise
   $c_{n+1} + c_n \le a^2 + a + a = a(a + 2) < 0$.
 \end{proof}
 
 For $a = \alpha$, $c_3 + c_2 = 0$, so the condition in the lemma is sharp. There is another
-interval where the sign of $c_n$ can be controlled in a useful way.
+interval where the sign of~$c_n$ can be controlled in a useful way.
 
-\begin{definition}[The number $\alpha'$]
+\begin{definition}[The number~$\alpha'$]
   \label{def:alphaprime}
   \leanok
-  We write $\alpha'$ for the larger real root of $x^6 + 3x^5 + 3x^4 + 3x^3 + 2x^2 + 1$. We have
+  We write~$\alpha'$ for the larger real root of $x^6 + 3x^5 + 3x^4 + 3x^3 + 2x^2 + 1$. We have
   $\alpha' \approx -1.310703$, and $\alpha' < a < -1$ is equivalent to $c_3 < 0 < c_4$. ($c_4$
-  is $a(a + 1)$ times the polynomial evaluated at $a$.)
+  is $a(a + 1)$ times the polynomial evaluated at~$a$.)
   \formalnote{No definition: the statements use $a < -1$, $c_3 < 0$ and $0 < c_4$, for $a = r/s$
   in the form $r < -s$ and $r w_3 < 0 < r w_4$.}
 \end{definition}
 
-\begin{lemma}[A sign window below $-1$]
+\begin{lemma}[A sign window below~$-1$]
   \label{lem:window}
   \uses{def:cseq, def:alphaprime}
   \lean{QuadraticIterates.cSeq_mem_Icc_of_even, QuadraticIterates.cSeq_mem_Icc_of_odd,
@@ -83,11 +83,11 @@ interval where the sign of $c_n$ can be controlled in a useful way.
   \leanok
   \uses{lem:signs}
   $c_4 = c_3^2 + a > 0$ gives $c_3^2 > -a > 1$, so $c_3 < -1$; and $c_2 = a(a+1) > 0$. On
-  $B_1 = [a, c_3] \subset (-\infty, 0)$ the map $f$ is decreasing, so $f(B_1) = [c_4, c_2]$, using
+  $B_1 = [a, c_3] \subset (-\infty, 0)$ the map~$f$ is decreasing, so $f(B_1) = [c_4, c_2]$, using
   $f(a) = c_2$; on $B_2 = [c_4, c_2] \subset (0, \infty)$ it is increasing, so
   $f(B_2) = [c_5, c_3] \subseteq B_1$, as $c_5 \ge a$. Also $c_2 \in B_2$ (as $c_3 \in [a, 0)$
-  gives $c_4 \le a^2 + a$) and $c_3 \in B_1$; induction on $k$.
+  gives $c_4 \le a^2 + a$) and $c_3 \in B_1$; induction on~$k$.
 \end{proof}
 
-So under the assumption of the lemma, $\sgn$ can serve as the character $\psi$ in
+So under the assumption of the lemma, $\sgn$ can serve as the character~$\psi$ in
 Lemma~\ref{lem:jump2} when $n \ge 2$.

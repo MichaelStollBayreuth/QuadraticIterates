@@ -1,8 +1,8 @@
 \chapter{Auxiliary theory}
 \label{chap:auxiliary}
 
-The Galois-theoretic part rests on general facts about multiquadratic extensions, invariants of
-$2$-groups, wreath products and even polynomials. They are formalized in Mathlib generality under
+The Galois-theoretic part rests on general facts about multiquadratic extensions, invariants
+of~$2$-groups, wreath products and even polynomials. They are formalized in Mathlib generality under
 \texttt{QuadraticIterates/Mathlib/}, except for the iteration sequences of even polynomials
 (\texttt{QuadraticIterates/EvenPoly.lean}).
 
@@ -16,11 +16,11 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
     QuadraticIterates.gammaSeq_one, QuadraticIterates.gammaSeq_succ,
     QuadraticIterates.map_gammaSeq, QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq}
   \leanok
-  A polynomial $g$ is \emph{even} if $g \in R[X^2]$. Its iteration sequence with sign
-  $\varepsilon$ is $\gamma_1 = \varepsilon g(0)$, $\gamma_{n+1} = g(\gamma_n)$ for $n \ge 1$; it
-  commutes with ring homomorphisms, and if $\gamma_{n_0 + 2} = \gamma_{n_0}$ for some $n_0 \ge 1$, it
-  is $2$-periodic from $n_0$ on.
-  \formalnote{The sequence $c$ is the case $g = X^2 + a$, $\varepsilon = -1$.}
+  A polynomial~$g$ is \emph{even} if $g \in R[X^2]$. Its iteration sequence with
+  sign~$\varepsilon$ is $\gamma_1 = \varepsilon g(0)$, $\gamma_{n+1} = g(\gamma_n)$ for $n \ge 1$;
+  it commutes with ring homomorphisms, and if $\gamma_{n_0 + 2} = \gamma_{n_0}$ for some $n_0 \ge
+  1$, it is~$2$-periodic from~$n_0$ on.
+  \formalnote{The sequence~$c$ is the case $g = X^2 + a$, $\varepsilon = -1$.}
 \end{definition}
 
 \section{Multiquadratic extensions}
@@ -36,17 +36,17 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
     IntermediateField.finrank_adjoin_sqrt_eq, finrank_multiquadraticRelations_le,
     finrank_multiquadraticRelations_insert}
   \leanok
-  Let $F$ be a field of characteristic $\ne 2$ and $(x_i)_{i \in s}$ a finite family of square
+  Let~$F$ be a field of characteristic $\ne 2$ and $(x_i)_{i \in s}$ a finite family of square
   roots of elements $r_i \in F^*$ inside an extension. Then
   $[F(x_i : i \in s) : F] = 2^{\#s - \dim_{\FF_2} R(s)}$, where $R(s) \subseteq \FF_2^{s}$ is the
-  space of \emph{relations}: the $\varepsilon$ with $\prod_{i : \varepsilon_i = 1} r_i$ a square in
-  $F$. (The family need not be injective: a repeated root counts once in $\#s$ and once in
-  $R(s)$.) In particular $[F(x_i) : F] \le 2^{\#s}$, with equality iff there are no relations; and
-  adjoining one further square root either doubles the degree or leaves it unchanged.
+  space of \emph{relations}: the~$\varepsilon$ with $\prod_{i : \varepsilon_i = 1} r_i$ a square
+  in~$F$. (The family need not be injective: a repeated root counts once in~$\#s$ and once
+  in~$R(s)$.) In particular $[F(x_i) : F] \le 2^{\#s}$, with equality iff there are no relations;
+  and adjoining one further square root either doubles the degree or leaves it unchanged.
 \end{lemma}
 \begin{proof}
   \leanok
-  Induction on $\#s$, the step being the descent Lemma~\ref{lem:descent}: the degree doubles
+  Induction on~$\#s$, the step being the descent Lemma~\ref{lem:descent}: the degree doubles
   exactly when the new radicand is not a square in the field generated so far.
 \end{proof}
 
@@ -55,15 +55,15 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
   \uses{def:twoindep}
   \lean{IntermediateField.exists_mem_adjoin_sq_eq_algebraMap_iff,
     IntermediateField.exists_mem_adjoin_sq_eq_algebraMap_of_isSquare_mul_prod,
-    IntermediateField.exists_mem_adjoin_simple_sq_eq_algebraMap_iff, IntermediateField.isSquare_algebraMap_iff,
+    IntermediateField.exists_mem_adjoin_simple_sq_eq_algebraMap_iff,
+    IntermediateField.isSquare_algebraMap_iff,
     IntermediateField.not_isSquare_algebraMap_of_sqrt_notMem,
     IntermediateField.isSquare_algebraMap_bot_iff, IntermediateField.mem_adjoin_sqrt_iff,
-    sqClass_mul, sqClass_prod, sqClass_prod_zpow, sqClass_eq_zero_iff, sqClass_pow,
-    sqClass_mul_sq, sqClass_div_sq, ZModModule.zsmul_eq_natAbs_nsmul,
-    isSquare_prod_iff_sum_sqClass_eq_zero}
+    sqClass_mul, sqClass_prod, sqClass_prod_zpow, sqClass_eq_zero_iff, sqClass_pow, sqClass_mul_sq,
+    sqClass_div_sq, ZModModule.zsmul_eq_natAbs_nsmul, isSquare_prod_iff_sum_sqClass_eq_zero}
   \leanok
-  An element of $F^*$ is a square in a multiquadratic extension $F(\sqrt{c_y} : y \in s)$ if and
-  only if it becomes a square in $F$ after multiplication by a subproduct of the $c_y$.
+  An element of~$F^*$ is a square in a multiquadratic extension $F(\sqrt{c_y} : y \in s)$ if and
+  only if it becomes a square in~$F$ after multiplication by a subproduct of the~$c_y$.
 \end{lemma}
 \begin{proof}
   \leanok
@@ -80,11 +80,11 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
     exists_mem_multiquadraticRelations_insert_iff, multiquadraticRelations_insert_inf_ker_proj,
     indicator_mem_multiquadraticRelations_iff}
   \leanok
-  For a family $(r_i)_{i \in \iota}$ of nonzero elements of $F$, the relation space
+  For a family $(r_i)_{i \in \iota}$ of nonzero elements of~$F$, the relation space
   $R \subseteq \FF_2^{\iota}$ of the full family is the space of relations of
-  Lemma~\ref{lem:multiquadratic} for $s = \iota$; it vanishes iff the classes of the $r_i$ in
-  $F^*/F^{*2}$ are linearly independent, and $\dim R \le \#\iota$. The all-ones vector lies in
-  $R$ if and only if $\prod_i r_i$ is a square in $F$.
+  Lemma~\ref{lem:multiquadratic} for $s = \iota$; it vanishes iff the classes of the~$r_i$ in
+  $F^*/F^{*2}$ are linearly independent, and $\dim R \le \#\iota$. The all-ones vector lies
+  in~$R$ if and only if~$\prod_i r_i$ is a square in~$F$.
 \end{lemma}
 \begin{proof}
   \uses{def:twoindep, lem:descent}
@@ -92,48 +92,48 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
   Unfolding the definition of the relation space.
 \end{proof}
 
-\begin{lemma}[Invariants of a $p$-group]
+\begin{lemma}[Invariants of a~$p$-group]
   \label{lem:invariant}
   \uses{lem:relations}
-  \lean{IsPGroup.exists_ne_zero_mem_fixedPoints_of_smul_mem, IsPGroup.one_mem_of_comp_smul_mem_of_ne_bot,
-    comp_smul_mem_rootRelations, one_mem_rootRelations_of_ne_bot}
+  \lean{IsPGroup.exists_ne_zero_mem_fixedPoints_of_smul_mem,
+    IsPGroup.one_mem_of_comp_smul_mem_of_ne_bot, comp_smul_mem_rootRelations, one_mem_rootRelations_of_ne_bot}
   \leanok
-  Let a $p$-group $G$ act on an $\FF_p$-vector space $M$, and let $V \subseteq M$ be a finite
-  nonzero $G$-stable subspace. Then $V^G \ne 0$. If moreover $M = \FF_p^{\iota}$ and $G$ acts by
-  permuting the coordinates \emph{transitively}, then the all-ones vector lies in $V$.
+  Let a~$p$-group~$G$ act on an~$\FF_p$-vector space~$M$, and let $V \subseteq M$ be a finite
+  nonzero~$G$-stable subspace. Then $V^G \ne 0$. If moreover $M = \FF_p^{\iota}$ and~$G$ acts by
+  permuting the coordinates \emph{transitively}, then the all-ones vector lies in~$V$.
   (We use this with $p = 2$.)
 \end{lemma}
 \begin{proof}
   \leanok
-  For the first statement, $\#V$ is a power of $p$, and $\#V \equiv \#V^G \bmod p$ by Mathlib's
+  For the first statement, $\#V$ is a power of~$p$, and $\#V \equiv \#V^G \bmod p$ by Mathlib's
   \lname{IsPGroup.card\_modEq\_card\_fixedPoints}; since $0 \in V^G$, this gives $\#V^G > 1$
   (Mathlib's \lname{IsPGroup.exists\_fixed\_point\_of\_prime\_dvd\_card\_of\_fixed\_point}).
-  For the second, a nonzero invariant vector has constant coordinates along the orbits of $G$ on
-  $\iota$, and there is only one orbit; scaling makes the constant equal to $1$.
+  For the second, a nonzero invariant vector has constant coordinates along the orbits of~$G$
+  on~$\iota$, and there is only one orbit; scaling makes the constant equal to~$1$.
 \end{proof}
 
 \section{Wreath products}
 
-\begin{lemma}[Sylow $2$-subgroups of symmetric groups]
+\begin{lemma}[Sylow~$2$-subgroups of symmetric groups]
   \label{lem:sylowwreath}
   \lean{Sylow.mulEquivIteratedWreathProduct, IteratedWreathProduct.card,
     IsPGroup.exists_injective_monoidHom_iteratedWreathProduct,
     MonoidHom.nonempty_mulEquiv_iff_card_eq}
   \leanok
-  A Sylow $2$-subgroup of the symmetric group on $2^n$ letters is isomorphic to $\Ct{n}$, which
-  has order $2^{2^n - 1}$; hence a $2$-group of permutations of at most $2^n$ points embeds into
-  $\Ct{n}$. Moreover, an injective homomorphism between finite groups of equal order is an
+  A Sylow~$2$-subgroup of the symmetric group on~$2^n$ letters is isomorphic to~$\Ct{n}$, which
+  has order $2^{2^n - 1}$; hence a~$2$-group of permutations of at most~$2^n$ points embeds
+  into~$\Ct{n}$. Moreover, an injective homomorphism between finite groups of equal order is an
   isomorphism, which is how ``$\Om_n \cong \Ct{n}$'' is obtained from an embedding plus a degree
   count.
 \end{lemma}
 \begin{proof}
   \leanok
   The first statement is in Mathlib (\texttt{Sylow.mulEquivIteratedWreathProduct}); the second
-  follows by extending the action to $2^n$ points and passing to a Sylow subgroup, and the last
+  follows by extending the action to~$2^n$ points and passing to a Sylow subgroup, and the last
   one is elementary.
 \end{proof}
 
-\begin{lemma}[The abelian quotient of $\Ct{n}$]
+\begin{lemma}[The abelian quotient of~$\Ct{n}$]
   \label{lem:wreathab}
   \lean{IteratedWreathProduct.card_monoidHom_multiplicative_zmod_two,
     IteratedWreathProduct.card_monoidHom, RegularWreathProduct.card_monoidHom,
@@ -144,44 +144,44 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
     IntermediateField.finrank_adjoin_le_card_monoidHom,
     IntermediateField.mem_adjoin_of_sq_eq_algebraMap_of_card_le}
   \leanok
-  $\#\Hom(\Ct{n}, C_2) = 2^n$; equivalently, the largest elementary abelian $2$-quotient of
-  $\Ct{n}$ is $C_2^n$. A field extension generated by square roots of base-field elements is
-  Galois with elementary abelian group of exponent $2$, so its degree equals the number of
-  homomorphisms of its Galois group to $C_2$; inside a finite Galois extension $E/L$ such a
+  $\#\Hom(\Ct{n}, C_2) = 2^n$; equivalently, the largest elementary abelian~$2$-quotient
+  of~$\Ct{n}$ is~$C_2^n$. A field extension generated by square roots of base-field elements is
+  Galois with elementary abelian group of exponent~$2$, so its degree equals the number of
+  homomorphisms of its Galois group to~$C_2$; inside a finite Galois extension~$E/L$ such a
   subfield therefore has degree at most $\#\Hom(\Gal(E/L), C_2)$, and one of that maximal degree
-  contains every square root of an element of $L$ lying in $E$.
+  contains every square root of an element of~$L$ lying in~$E$.
 \end{lemma}
 \begin{proof}
   \leanok
-  For a regular wreath product $D \wr Q$ and an abelian group $A$, a homomorphism $D \wr Q \to A$
-  is the same as a pair of homomorphisms $D \to A$ and $Q \to A$ (on the base group $D^Q$ it
-  takes the same values on all coordinates, since these are conjugate under $Q$), giving
-  $\#\Hom(D \wr Q, A) = \#\Hom(D, A) \cdot \#\Hom(Q, A)$; induction on $n$ then gives
+  For a regular wreath product~$D \wr Q$ and an abelian group~$A$, a homomorphism $D \wr Q \to A$
+  is the same as a pair of homomorphisms $D \to A$ and $Q \to A$ (on the base group~$D^Q$ it
+  takes the same values on all coordinates, since these are conjugate under~$Q$), giving
+  $\#\Hom(D \wr Q, A) = \#\Hom(D, A) \cdot \#\Hom(Q, A)$; induction on~$n$ then gives
   $\#\Hom(\Ct{n}, C_2) = \#\Hom(C_2, C_2)^n = 2^n$. The statement about elementary abelian
-  groups is the identity $\#G = \#\Hom(G, C_p)$ for a finite $\FF_p$-vector space $G$, i.e.\
+  groups is the identity $\#G = \#\Hom(G, C_p)$ for a finite~$\FF_p$-vector space~$G$, i.e.\
   $\dim G^{\vee} = \dim G$ (for $p = 2$, commutativity follows from the exponent).
 \end{proof}
 
 \section{Even polynomials}
 
-\begin{lemma}[Even polynomials are polynomials in $X^2$]
+\begin{lemma}[Even polynomials are polynomials in~$X^2$]
   \label{lem:evenpoly}
-  \lean{Polynomial.exists_eq_comp_X_sq_add_C_of_comp_neg_X_eq, Polynomial.eq_expand_two_contract_of_comp_neg_X_eq,
-    Polynomial.expand_two_comp_neg_X, Polynomial.X_sq_add_C_comp_neg_X,
-    Polynomial.comp_neg_X_eq_or_eq_neg_of_associated, Polynomial.natDegree_comp_neg_X,
-    Polynomial.expand_contract_of_forall_coeff_eq_zero,
+  \lean{Polynomial.exists_eq_comp_X_sq_add_C_of_comp_neg_X_eq,
+    Polynomial.eq_expand_two_contract_of_comp_neg_X_eq, Polynomial.expand_two_comp_neg_X,
+    Polynomial.X_sq_add_C_comp_neg_X, Polynomial.comp_neg_X_eq_or_eq_neg_of_associated,
+    Polynomial.natDegree_comp_neg_X, Polynomial.expand_contract_of_forall_coeff_eq_zero,
     Polynomial.coeff_eq_zero_of_comp_neg_X_eq_of_not_two_dvd, Polynomial.comp_dvd_comp_iff}
   \leanok
   Over a domain of characteristic $\ne 2$, a polynomial fixed by $X \mapsto -X$ is a polynomial
-  in $X^2$, hence in $X^2 + c$ for any $c$. A polynomial merely \emph{associated} to its
+  in~$X^2$, hence in~$X^2 + c$ for any~$c$. A polynomial merely \emph{associated} to its
   reflection satisfies $p(-X) = p$ or $p(-X) = -p$. Over a field, $p \circ r \dvd q \circ r$
-  implies $p \dvd q$ for every nonconstant $r$.
+  implies~$p \dvd q$ for every nonconstant~$r$.
 \end{lemma}
 \begin{proof}
   \leanok
-  The odd coefficients vanish because $2 \ne 0$; for the second statement, the unit relating $p$
-  to $p(-X)$ is a constant squaring to $1$. For the last statement, the remainder of $q$ modulo
-  $p$, composed with $r$, is divisible by $p \circ r$ but has smaller degree, so it vanishes.
+  The odd coefficients vanish because $2 \ne 0$; for the second statement, the unit relating~$p$
+  to $p(-X)$ is a constant squaring to~$1$. For the last statement, the remainder of~$q$
+  modulo~$p$, composed with~$r$, is divisible by~$p \circ r$ but has smaller degree, so it vanishes.
 \end{proof}
 
 \begin{lemma}[Pairing the irreducible factors]
@@ -189,10 +189,10 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
   \lean{Multiset.exists_add_map_of_involutive, normalizedFactors_map_mulEquiv_eq,
     normalize_map_normalize, exists_normalizedFactors_eq_add_map}
   \leanok
-  A fixed-point-free involution of a multiset splits it as $N + \tau(N)$. Consequently, if
-  $\sigma$ is an involutive automorphism of a UFD and $p$ is a reducible element with
-  $\sigma(p) \sim p$ whose $\sigma$-invariant divisors (up to associates) are all trivial, then
-  the normalized factors of $p$ pair up under $\mathrm{normalize} \circ \sigma$. For
+  A fixed-point-free involution of a multiset splits it as $N + \tau(N)$. Consequently,
+  if~$\sigma$ is an involutive automorphism of a UFD and~$p$ is a reducible element with
+  $\sigma(p) \sim p$ whose~$\sigma$-invariant divisors (up to associates) are all trivial, then
+  the normalized factors of~$p$ pair up under $\mathrm{normalize} \circ \sigma$. For
   $\sigma = (X \mapsto -X)$ on the polynomial ring over a field, this yields the factorization
   $\pm p = g \cdot g(-X)$ of an even polynomial without nontrivial even divisors.
 \end{lemma}
@@ -200,6 +200,6 @@ $2$-groups, wreath products and even polynomials. They are formalized in Mathlib
   \leanok
   Induction on the multiset, removing an orbit $\{q, \tau q\}$ at a time; that
   $\mathrm{normalize} \circ \sigma$ preserves the multiset of normalized factors is
-  functoriality of factorization under $\sigma$, and it has no fixed point there because a fixed
-  normalized factor would be a nontrivial $\sigma$-invariant divisor.
+  functoriality of factorization under~$\sigma$, and it has no fixed point there because a fixed
+  normalized factor would be a nontrivial~$\sigma$-invariant divisor.
 \end{proof}

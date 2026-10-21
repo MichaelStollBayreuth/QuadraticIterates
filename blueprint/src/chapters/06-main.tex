@@ -4,21 +4,21 @@
 \section{Preliminaries}
 \supporting
 
-The second level in terms of $r$ and $s$, and the integer squares modulo powers of $2$.
+The second level in terms of~$r$ and~$s$, and the integer squares modulo powers of~$2$.
 
 \begin{lemma}[Two-independence at level two]
   \label{lem:level2}
   \uses{def:twoindep, def:cseq}
   \lean{QuadraticIterates.twoIndependent_fin_two_iff,
-    QuadraticIterates.isSquare_cSeq_one_of_isSquare, QuadraticIterates.isSquare_cSeq_two_of_isSquare,
-    QuadraticIterates.isSquare_cSeq_one_mul_cSeq_two_of_isSquare,
-    QuadraticIterates.not_isSquare_of_twoIndependent}
+    QuadraticIterates.isSquare_cSeq_one_of_isSquare,
+    QuadraticIterates.isSquare_cSeq_two_of_isSquare,
+    QuadraticIterates.isSquare_cSeq_one_mul_cSeq_two_of_isSquare, QuadraticIterates.not_isSquare_of_twoIndependent}
   \leanok
   Modulo squares, $c_1 \sim -rs$, $c_2 \sim r(r+s)$ and $c_1 c_2 \sim -s(r+s)$; so
-  $(c_1, c_2)$ is $2$-independent if and only if none of $-rs$, $r(r+s)$ and $-s(r+s)$ is a
-  square. As $r$, $s$ and $r + s$ are coprime in pairs, $c_1$ is a square if and only if $r < 0$
-  and $|r|$, $s$ are squares; $c_2$ if and only if $r$ and $r + s$ have the same sign and $|r|$,
-  $|r + s|$ are squares; $c_1 c_2$ if and only if $r + s < 0$ and $s$, $|r + s|$ are squares.
+  $(c_1, c_2)$ is~$2$-independent if and only if none of~$-rs$, $r(r+s)$ and $-s(r+s)$ is a
+  square. As~$r$, $s$ and~$r + s$ are coprime in pairs, $c_1$ is a square if and only if $r < 0$
+  and~$|r|$, $s$ are squares; $c_2$ if and only if~$r$ and~$r + s$ have the same sign and~$|r|$,
+  $|r + s|$ are squares; $c_1 c_2$ if and only if $r + s < 0$ and~$s$, $|r + s|$ are squares.
   \formalnote{The two-independence of $(c_1, c_2)$ is
   \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}; the formalization uses the direction
   from it to the three non-squares (\lname{not\_isSquare\_of\_twoIndependent}).}
@@ -26,22 +26,22 @@ The second level in terms of $r$ and $s$, and the integer squares modulo powers 
 \begin{proof}
   \leanok
   $c_1 = -a = -rs/s^2$, $c_2 = a(a+1) = r(r+s)/s^2$ and $c_1 c_2 = -s(r+s) \cdot r^2/s^4$; and a
-  family of two numbers is $2$-independent if and only if neither of them nor their product is a
+  family of two numbers is~$2$-independent if and only if neither of them nor their product is a
   square. A product of pairwise coprime integers is a square if and only if their absolute
   values are squares and the product is positive.
 \end{proof}
 
-\begin{lemma}[Integer squares modulo powers of $2$]
+\begin{lemma}[Integer squares modulo powers of~$2$]
   \label{lem:squares2}
   \lean{Int.sq_emod_eight_eq_one_of_odd, Int.exists_eq_four_pow_mul_of_isSquare,
     Int.not_isSquare_of_emod_eight_eq_five}
   \leanok
-  An odd square is $\equiv 1 \pmod 8$, a nonzero square is $4^j m$ with $m \equiv 1 \pmod 8$, and
-  no integer $\equiv 5 \pmod 8$ is a square.
+  An odd square is $\equiv 1 \bmod 8$, a nonzero square is~$4^j m$ with $m \equiv 1 \bmod 8$, and
+  no integer $\equiv 5 \bmod 8$ is a square.
 \end{lemma}
 \begin{proof}
   \leanok
-  $(2k + 1)^2 = 4k(k + 1) + 1$, and $k(k + 1)$ is even; a nonzero square is $4^j$ times an odd
+  $(2k + 1)^2 = 4k(k + 1) + 1$, and $k(k + 1)$ is even; a nonzero square is~$4^j$ times an odd
   square.
 \end{proof}
 
@@ -67,21 +67,21 @@ result.
           are equivalent.
           \begin{enumerate}
             \item[(i)] $\rho_a$ is surjective;
-            \item[(ii)] $(c_1, c_2)$ is $2$-independent;
-            \item[(iii)] none of $-rs$, $r(r+s)$, $-s(r+s)$ is a square.
+            \item[(ii)] $(c_1, c_2)$ is~$2$-independent;
+            \item[(iii)] none of~$-rs$, $r(r+s)$, $-s(r+s)$ is a square.
           \end{enumerate}
-    \item If $\alpha < a < \alpha'$ (so $\eps_a = 1$), then $\rho_a$ is surjective in each of the
+    \item If $\alpha < a < \alpha'$ (so $\eps_a = 1$), then~$\rho_a$ is surjective in each of the
           following cases.
           \begin{enumerate}
             \item[(a)] $(r, s) \equiv (1, 1)$, $(1, 3)$ or $(3, 2) \bmod 4$.
             \item[(b)] $(r, s) \equiv (2, 1) \bmod 4$ and ($r \equiv 2 \bmod 8$ or
                   $s \equiv 5 \bmod 8$).
-            \item[(c)] $(r, s) \equiv (0, 3) \bmod 4$ and ($|r|$ is not a square in $\QQ_2$ or
+            \item[(c)] $(r, s) \equiv (0, 3) \bmod 4$ and ($|r|$ is not a square in~$\QQ_2$ or
                   $r + 2s \equiv \pm 6 \bmod 16$).
             \item[(d)] $(r, s) \equiv (3, 0) \bmod 4$, $r \equiv 3 \bmod 8$ and
                   $s \not\equiv 4 \bmod 32$.
             \item[(e)] $a$ satisfies at least two of (Z), (O) and (T).
-            \item[(f)] $a$ has $\phi_0$ and $\phi_1$.
+            \item[(f)] $a$ has~$\phi_0$ and~$\phi_1$.
           \end{enumerate}
   \end{enumerate}
   \formalnote{Four theorems. Part (1), the equivalence of (i) and (ii), is
@@ -90,9 +90,9 @@ result.
   or $r < -s$ and $r w_3 < 0 < r w_4$ as in (T4), and the exclusion of $a = -1, 0$ is not
   needed. (2)(a)--(d) is \lname{nonempty\_mulEquiv\_of\_lt\_neg\_one\_of\_emod}, for all
   $a \in (\alpha, -1)$, as one disjunction of congruences, each of which implies one of
-  (C1)--(C3), with $(1, 1)$ and $(1, 3)$ stated as $r \equiv 1 \pmod 4$ and $s$ odd, and
+  (C1)--(C3), with $(1, 1)$ and $(1, 3)$ stated as $r \equiv 1 \bmod 4$ and~$s$ odd, and
   $|r| \notin \QQ_2^{\times 2}$ stated as $-r \ne 4^j m$ for all $j \ge 0$ and all
-  $m \equiv 1 \pmod 8$. (2)(e) is \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_criteria} and
+  $m \equiv 1 \bmod 8$. (2)(e) is \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_criteria} and
   (2)(f) is \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_hasCharPattern}, both for all
   $a \in \cA$, with the definitions \lname{NegAllCriterion}, \lname{NegFirstCriterion},
   \lname{NegTailCriterion} and \lname{TwoAdicClass}, which use Mathlib's notions only.}
@@ -101,83 +101,83 @@ result.
   \leanok
   The equivalence of (ii) and (iii) is Lemma~\ref{lem:level2}, and (i) implies (ii) by
   Proposition~\ref{prop:criterion}. So it suffices to show in all cases that the given
-  conditions imply that $\rho_a$ is surjective. By Lemma~\ref{lem:twoadic} and
-  Proposition~\ref{prop:tfae}, it suffices that $a$ has $\phi_0$ and $\phi_1$, which follows from
-  two of $\phi_0$, $\phi_1$ and $\tau$ (Lemma~\ref{lem:klein}). This deals with (2)(f) and, by
+  conditions imply that~$\rho_a$ is surjective. By Lemma~\ref{lem:twoadic} and
+  Proposition~\ref{prop:tfae}, it suffices that~$a$ has~$\phi_0$ and~$\phi_1$, which follows from
+  two of~$\phi_0$, $\phi_1$ and~$\tau$ (Lemma~\ref{lem:klein}). This deals with (2)(f) and, by
   Propositions~\ref{prop:Z}, \ref{prop:O} and~\ref{prop:T}, with (2)(e); in the other cases we
-  show that (2)(e) holds. Recall that (Z1) holds if $|r|$ is not a square, (O3) or (O4) if $s$ is
-  not a square, and (T3) if $|r + s|$ is not a square and $|r + s| \equiv 0$ or $3 \pmod 4$
-  (Lemma~\ref{lem:prime3}). Also $r$, $s$ and $r + s$ are coprime in pairs. In terms of
+  show that (2)(e) holds. Recall that (Z1) holds if~$|r|$ is not a square, (O3) or (O4) if~$s$ is
+  not a square, and (T3) if $|r + s|$ is not a square and $|r + s| \equiv 0$ or~$3 \bmod 4$
+  (Lemma~\ref{lem:prime3}). Also~$r$, $s$ and~$r + s$ are coprime in pairs. In terms of
   $(r, s) \bmod 4$, the classes (C1)--(C3) are, for $\eps = -1$: $(3,1)$, $(3,3)$; $(0,1)$,
   $(2,3)$; $(1,0)$, $(1,2)$; and for $\eps = 1$: $(1,1)$, $(1,3)$; $(2,1)$, $(0,3)$; $(3,0)$,
   $(3,2)$.
 
-  (1) Assume (iii); by Lemma~\ref{lem:level2}, at most one of $|r|$, $s$, $|r + s|$ is a
+  (1) Assume (iii); by Lemma~\ref{lem:level2}, at most one of~$|r|$, $s$, $|r + s|$ is a
   square when $r < 0$.
   \begin{itemize}
-    \item $a > 0$. (O1) holds, and $r$ and $r + s$ are positive and not both squares. In the
-          classes $(1,3)$, $(2,1)$, $(0,3)$ and $(3,0)$, $r + s \equiv 0$ or $3 \pmod 4$, so this
-          gives (Z1) or (T3). In the class $(3,2)$, $r \equiv 3 \pmod 4$ is not a square: (Z1).
-          In the class $(1,1)$, (Z1) holds unless $r = m^2$; then $r \equiv 1 \pmod 8$ and
-          $r + 2s \equiv 3 \pmod 8$, so (Z2) holds (Lemma~\ref{lem:prime3}).
-    \item $-1 < a < 0$. (T1) holds, and $|r|$ or $s$ is not a square, giving (Z1) or
+    \item $a > 0$. (O1) holds, and~$r$ and~$r + s$ are positive and not both squares. In the
+          classes $(1,3)$, $(2,1)$, $(0,3)$ and $(3,0)$, $r + s \equiv 0$ or~$3 \bmod 4$, so this
+          gives (Z1) or (T3). In the class $(3,2)$, $r \equiv 3 \bmod 4$ is not a square: (Z1).
+          In the class $(1,1)$, (Z1) holds unless $r = m^2$; then $r \equiv 1 \bmod 8$ and
+          $r + 2s \equiv 3 \bmod 8$, so (Z2) holds (Lemma~\ref{lem:prime3}).
+    \item $-1 < a < 0$. (T1) holds, and~$|r|$ or~$s$ is not a square, giving (Z1) or
           (O3)/(O4).
-    \item $\alpha' < a < -1$. At most one of $|r|$, $s$ and $|r + s|$ is a square; the other two
+    \item $\alpha' < a < -1$. At most one of~$|r|$, $s$ and $|r + s|$ is a square; the other two
           give two of (Z1), (O3)/(O4) and (T4).
-    \item $a \le -2$. At most one of $|r|$, $s$ and $|r + s|$ is a square. In all classes except
+    \item $a \le -2$. At most one of~$|r|$, $s$ and $|r + s|$ is a square. In all classes except
           $(3,3)$ and $(1,2)$ we obtain at least two of (Z1), (O3)/(O4) and (T3). In the class
           $(3,3)$, (O2) holds, and (Z1) unless $r = -m^2$; then $r \equiv 7$ and
-          $r + 2s \equiv 5 \pmod 8$, and (Z2) holds. In the class $(1,2)$, $|r| \equiv 3$ and
-          $s \equiv 2 \pmod 4$ are not squares: (Z1) and (O4).
+          $r + 2s \equiv 5 \bmod 8$, and (Z2) holds. In the class $(1,2)$, $|r| \equiv 3$ and
+          $s \equiv 2 \bmod 4$ are not squares: (Z1) and (O4).
   \end{itemize}
   As $\alpha' > \alpha$ (shown with $X = r^2 + rs$ and $Y = X^2 + rs^3$: in the window,
   $Y < -s^4$, hence $X < s^2$, and $r(r^3 + 2r^2 s + 2rs^2 + 2s^3) = X s^2 + Y < 0$), $a \in \cA$.
 
   (2) In each of the cases (a)--(d), two of (Z), (O) and (T) hold. Here $r < 0$, $r + s < 0$ and,
-  as $\alpha > -2$, $r + 2s > 0$; integers $\equiv 2, 3 \pmod 4$ or $\equiv 5 \pmod 8$ are not
+  as $\alpha > -2$, $r + 2s > 0$; integers $\equiv 2, 3 \bmod 4$ or $\equiv 5 \bmod 8$ are not
   squares (Lemma~\ref{lem:squares2}).
   \begin{enumerate}
-    \item[(a)] $(1,1)$: (Z1), as $|r| \equiv 3 \pmod 4$, and (O2). $(1,3)$: (Z1) and (O3)/(O4), as
-          $s \equiv 3 \pmod 4$. $(3,2)$: (O4), as $s \equiv 2 \pmod 4$, and (T3), as
-          $|r + s| \equiv 3 \pmod 4$ is not a square and has a prime divisor
-          $p \equiv 3 \pmod 4$.
-    \item[(b)] $v_2(r) = 1$ gives (Z1). If $s \equiv 5 \pmod 8$, then $s$ is not a square, and
-          (O3)/(O4) holds. If $r \equiv 2 \pmod 8$, then $|r| \equiv 6 \pmod 8$ has a prime
-          divisor $p \equiv 3 \pmod 4$, which gives (O5) or (T2).
-    \item[(c)] $s \equiv 3 \pmod 4$ gives (O3)/(O4). If $|r| \notin \QQ_2^{\times 2}$, then $|r|$
-          is not a square: (Z1). If $r + 2s \equiv \pm 6 \pmod{16}$, then $(r + 2s)/2 > 0$ is
-          $\equiv \pm 3 \pmod 8$ and has a prime divisor $p \equiv \pm 3 \pmod 8$: (Z2).
-    \item[(d)] $|r| \equiv 5 \pmod 8$ gives (Z1). Here $v_2(s) \ge 2$. If $s$ is not a square,
-          (O3)/(O4) holds. Otherwise $s = 4^j m$ with $m \equiv 1 \pmod 8$, where $j \ge 2$ as
-          $s \not\equiv 4 \pmod{32}$; then $v_2(s) = 2j \ge 4$ is even and
-          $r m \equiv 3 \pmod 8$, which is (O4). \qedhere
+    \item[(a)] $(1,1)$: (Z1), as $|r| \equiv 3 \bmod 4$, and (O2). $(1,3)$: (Z1) and (O3)/(O4), as
+          $s \equiv 3 \bmod 4$. $(3,2)$: (O4), as $s \equiv 2 \bmod 4$, and (T3), as
+          $|r + s| \equiv 3 \bmod 4$ is not a square and has a prime divisor
+          $p \equiv 3 \bmod 4$.
+    \item[(b)] $v_2(r) = 1$ gives (Z1). If $s \equiv 5 \bmod 8$, then~$s$ is not a square, and
+          (O3)/(O4) holds. If $r \equiv 2 \bmod 8$, then $|r| \equiv 6 \bmod 8$ has a prime
+          divisor $p \equiv 3 \bmod 4$, which gives (O5) or (T2).
+    \item[(c)] $s \equiv 3 \bmod 4$ gives (O3)/(O4). If $|r| \notin \QQ_2^{\times 2}$, then~$|r|$
+          is not a square: (Z1). If $r + 2s \equiv \pm 6 \bmod 16$, then $(r + 2s)/2 > 0$ is
+          $\equiv \pm 3 \bmod 8$ and has a prime divisor $p \equiv \pm 3 \bmod 8$: (Z2).
+    \item[(d)] $|r| \equiv 5 \bmod 8$ gives (Z1). Here $v_2(s) \ge 2$. If~$s$ is not a square,
+          (O3)/(O4) holds. Otherwise $s = 4^j m$ with $m \equiv 1 \bmod 8$, where $j \ge 2$ as
+          $s \not\equiv 4 \bmod 32$; then $v_2(s) = 2j \ge 4$ is even and
+          $r m \equiv 3 \bmod 8$, which is (O4). \qedhere
   \end{enumerate}
 \end{proof}
 
-Since $\phi_0$ is available when $|r|$ is not a square and $\phi_1$ when $s$ is not a square
-(from $\val_p$ with a prime dividing $r$, resp.\ $s$, with odd multiplicity), case (2)(f) holds
+Since~$\phi_0$ is available when~$|r|$ is not a square and~$\phi_1$ when~$s$ is not a square
+(from~$\val_p$ with a prime dividing~$r$, resp.\ $s$, with odd multiplicity), case (2)(f) holds
 outside a subset of relative density zero within the set of $a \in \QQ$ with
 $\alpha < a < \alpha'$ that satisfy one of (C1)--(C3). Even where (Z), (O) and (T) do not
-suffice to show that $a$ has $\phi_0$ and $\phi_1$, suitable characters can be searched for among
-the $\chi_p$ for various $p$ and their products. In all cases checked, either $(c_1, c_2)$ is
-$2$-dependent, or such characters can be found (Remark~\ref{rem:further-data}). Some further
+suffice to show that~$a$ has~$\phi_0$ and~$\phi_1$, suitable characters can be searched for among
+the~$\chi_p$ for various~$p$ and their products. In all cases checked, either $(c_1, c_2)$
+is~$2$-dependent, or such characters can be found (Remark~\ref{rem:further-data}). Some further
 sufficient conditions apply in certain subfamilies (Corollary~\ref{cor:further}). These
 observations suggest the following strengthening of Theorem~\ref{thm:main}.
 
 \begin{conjecture}
-  Let $a \in \cA$ satisfy one of (C1)--(C3). Then $\rho_a$ is surjective as soon as $\rho_a^2$
+  Let $a \in \cA$ satisfy one of (C1)--(C3). Then~$\rho_a$ is surjective as soon as~$\rho_a^2$
   is.
 \end{conjecture}
 
-Figure~\ref{fig:coverage} shows which rational numbers $a$, represented as pairs $(s, r)$ in the
-plane, have $\rho_a$ surjective and are covered by Theorem~\ref{thm:main} (full circles) or by
-Theorem~\ref{thm:families} (full squares). The hollow circles mark cases where $\rho_a$ is not
-surjective: the colored ones fall under Theorem~\ref{thm:main}, the black ones are numbers $a$
-for which the first six $c_n$ are $2$-dependent. Gray dots represent values that are
+Figure~\ref{fig:coverage} shows which rational numbers~$a$, represented as pairs $(s, r)$ in the
+plane, have~$\rho_a$ surjective and are covered by Theorem~\ref{thm:main} (full circles) or by
+Theorem~\ref{thm:families} (full squares). The hollow circles mark cases where~$\rho_a$ is not
+surjective: the colored ones fall under Theorem~\ref{thm:main}, the black ones are numbers~$a$
+for which the first six~$c_n$ are~$2$-dependent. Gray dots represent values that are
 unresolved. The shaded gray wedge is the interval $(-2, \alpha)$, which the results do not
 cover; the light yellow wedge is the interval $(\alpha, \alpha')$, where the congruence
 conditions (C1)--(C3) are not always (known to be) sufficient for the implication
-``$(c_1, c_2)$ $2$-independent $\Rightarrow$ $\rho_a$ surjective''.
+``$(c_1, c_2)$ $2$-independent~$\Rightarrow$ $\rho_a$ surjective''.
 
 \begin{figure}[htb]
   \centering
@@ -186,7 +186,7 @@ conditions (C1)--(C3) are not always (known to be) sufficient for the implicatio
   \label{fig:coverage}
 \end{figure}
 
-We deduce the main results of \cite{paper} and \cite{li2020}.
+We deduce the main results of~\cite{paper} and~\cite{li2020}.
 
 \begin{corollary}[Integer parameters]
   \label{cor:integer}
@@ -197,18 +197,18 @@ We deduce the main results of \cite{paper} and \cite{li2020}.
     QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_zero,
     QuadraticIterates.li2020_theorem_3_5}
   \leanok
-  Let $a$ be an integer such that one of the following holds.
+  Let~$a$ be an integer such that one of the following holds.
   \begin{enumerate}
-    \item $a > 0$ and $a \equiv 1$ or $2 \bmod 4$.
-    \item $a < 0$, $a \equiv 0 \bmod 4$ and $-a$ is not a square.
-    \item $a < 0$, $a \equiv 3 \bmod 4$ and neither of $-a$ and $-a - 1$ is a square.
+    \item $a > 0$ and $a \equiv 1$ or~$2 \bmod 4$.
+    \item $a < 0$, $a \equiv 0 \bmod 4$ and~$-a$ is not a square.
+    \item $a < 0$, $a \equiv 3 \bmod 4$ and neither of~$-a$ and~$-a - 1$ is a square.
   \end{enumerate}
-  Then $\rho_a$ is surjective.
-  \formalnote{(1) and (2) are the main result of Section~3 of \cite{paper}:
+  Then~$\rho_a$ is surjective.
+  \formalnote{(1) and (2) are the main result of Section~3 of~\cite{paper}:
   \lname{section3\_main}, combining the three case lemmas in the form of the comparator challenges
   \lname{challenge\_section3\_main\_pos\_emod\_four\_eq\_one} etc. (3) is the direction
-  ``$\Leftarrow$'' of \cite{li2020}, Theorem~3.5, which \lname{li2020\_theorem\_3\_5} states as an
-  equivalence for $a < 0$, $a \equiv 3 \pmod 4$ and $-a$ not a square; it is derived from
+  ``$\Leftarrow$'' of~\cite{li2020}, Theorem~3.5, which \lname{li2020\_theorem\_3\_5} states as an
+  equivalence for $a < 0$, $a \equiv 3 \bmod 4$ and~$-a$ not a square; it is derived from
   Corollary~\ref{cor:li2020-rat}. These theorem names are the anchors of the comparator
   challenges.}
 \end{corollary}
@@ -217,14 +217,14 @@ We deduce the main results of \cite{paper} and \cite{li2020}.
   In all cases $(r, s) = (a, 1)$ satisfies one of (C1)--(C3), and $a \in \cA$, more precisely
   $a \le -2$ or $0 < a$, since $a = -1$ is excluded by ``$-a$ is not a square''. So
   Theorem~\ref{thm:main}(1) applies. In all cases $c_2 = a(a + 1)$ is a product of coprime
-  nonzero integers differing by $1$, hence not a square. In the first case $c_1 = -a$ and
+  nonzero integers differing by~$1$, hence not a square. In the first case $c_1 = -a$ and
   $c_2/c_1 = -(a + 1)$ are negative, hence non-squares. In the second case $-(a + 1) \equiv 3
-  \pmod 4$ is not a square; the other conditions in the last two cases are assumed explicitly.
+  \bmod 4$ is not a square; the other conditions in the last two cases are assumed explicitly.
 
-  The formalization argues directly: for (1), with $\eps = 1$, (O1) holds; $a \equiv 1 \pmod 4$
-  gives (C1), as $a + 2 \equiv 3 \pmod 4$, and (Z1) unless $a$ is a square, in which case
-  $a + 2 \equiv 3 \pmod 8$ has a prime divisor $\equiv \pm 3 \pmod 8$ (Lemma~\ref{lem:prime3}),
-  so (Z2) holds; $a \equiv 2 \pmod 4$ gives (C2) and (Z1). For (2), $a \le -4$, $\eps = -1$,
-  (Z1), (O5) or (T2) as $4 \mid r$, and (C2). For (3), $a \le -5$, $s = 1$, $r \equiv 3 \pmod 4$,
-  and (Z1) gives $\phi_0$, so Corollary~\ref{cor:li2020-rat} applies.
+  The formalization argues directly: for (1), with $\eps = 1$, (O1) holds; $a \equiv 1 \bmod 4$
+  gives (C1), as $a + 2 \equiv 3 \bmod 4$, and (Z1) unless~$a$ is a square, in which case
+  $a + 2 \equiv 3 \bmod 8$ has a prime divisor $\equiv \pm 3 \bmod 8$ (Lemma~\ref{lem:prime3}),
+  so (Z2) holds; $a \equiv 2 \bmod 4$ gives (C2) and (Z1). For (2), $a \le -4$, $\eps = -1$,
+  (Z1), (O5) or (T2) as $4 \mid r$, and (C2). For (3), $a \le -5$, $s = 1$, $r \equiv 3 \bmod 4$,
+  and (Z1) gives~$\phi_0$, so Corollary~\ref{cor:li2020-rat} applies.
 \end{proof}
