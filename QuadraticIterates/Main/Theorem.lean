@@ -29,6 +29,8 @@ criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriteri
 ## Main statements
 
 * `QuadraticIterates.forall_nonempty_mulEquiv_of_forall_dvd_vSeq`: reflection at every level.
+* `QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass`: in the `2`-adic classes,
+  `φ₀` gives `φ_n` for every `n ≥ 2`.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern`: the main theorem,
   abstract form.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`: the main theorem.
@@ -66,19 +68,35 @@ theorem forall_nonempty_mulEquiv_of_forall_dvd_vSeq (hrs : IsCoprime r s)
   · exact hasCharPattern_mulSingle_of_dvd_vSeq (p := 2) hrs (N := 4) rfl two_ne_zero
       (show ZMod.χ₄ (-1) = -1 by decide) (by lia) (mod_cast h4) (mod_cast hr) (h₀.mono (by lia))
 
+/-- For `a = r/s ∈ 𝒜` with sign `ε` in one of the `2`-adic classes (C1)–(C3), `φ₀` gives `φ_n`
+for every `n ≥ 2`: a prime `p ≡ 3 (mod 4)` divides `v_n`
+(`QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass`), and `χ_p` reflects at `c_n`
+(`QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`). -/
+theorem hasCharPattern_mulSingle_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s) {ε : ℤ}
+    (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
+    (hc : TwoAdicClass r s ε) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ}
+    (hn : 2 ≤ n) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
+  have hr0 : r ≠ 0 := by
+    rintro rfl
+    exact h₀.ne_zero le_rfl (by simp) (by simp)
+  obtain ⟨p, hp, hp4, hpv, hpr⟩ := exists_prime_dvd_vSeq_of_twoAdicClass hrs hs hr0 hε hc hn
+  have := Fact.mk hp
+  exact hasCharPattern_mulSingle_of_dvd_vSeq hrs (pow_one p).symm one_ne_zero
+    (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) (by lia) (by simpa using hpv) hpr
+    (h₀.mono (by lia))
+
 /-- **The main theorem, abstract form**: for `a = r/s ∈ 𝒜` with sign `ε` in one of the `2`-adic
-classes (C1)–(C3), `φ₀` and `φ₁` give `Ω_n ≅ [C₂]ⁿ` for all `n`. -/
+classes (C1)–(C3), `φ₀` and `φ₁` give `Ω_n ≅ [C₂]ⁿ` for all `n`
+(`QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass` for `n ≥ 2`). -/
 theorem nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern (hrs : IsCoprime r s) (hs : 0 < s)
     {ε : ℤ}
     (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
     (hc : TwoAdicClass r s ε) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1))
     (h₁ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1))) (n : ℕ) :
     Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) := by
-  have hr0 : r ≠ 0 := by
-    rintro rfl
-    exact h₀.ne_zero le_rfl (by simp) (by simp)
-  exact forall_nonempty_mulEquiv_of_forall_dvd_vSeq hrs h₀ h₁
-    (fun n hn ↦ .inl (exists_prime_dvd_vSeq_of_twoAdicClass hrs hs hr0 hε hc hn)) n
+  refine forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ ?_) n
+  rcases hn.eq_or_lt with rfl | hn
+  exacts [h₁, hasCharPattern_mulSingle_of_twoAdicClass hrs hs hε hc h₀ hn]
 
 /-- **The main theorem** for rational parameters: let `a = r/s` with `r, s` coprime, `s > 0`, and
 either `a ≤ -2` and `ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and `ε = 1`. If `(r, s, ε)` is in one of

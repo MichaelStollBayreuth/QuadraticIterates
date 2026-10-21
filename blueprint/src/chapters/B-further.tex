@@ -1,0 +1,410 @@
+\chapter{Further results}
+\label{chap:further}
+
+Formalized results beyond those of the paper: the further criteria mentioned at the end of
+Section~5 of the paper, refinements of the main theorem and numerical remarks on it, and the
+even levels for $a \equiv 1 \bmod 4$. As before, $a = r/s$ with $r$, $s$ coprime and $s \ge 1$.
+
+\section{Further criteria for \texorpdfstring{$\phi_1$ and $\tau$}{phi\_1 and tau}}
+\label{sec:further}
+
+The criteria of this section come from primes at which the orbit of $0$ is short: it reaches a
+fixed point after three or four steps (primes of $v_2$ and $v_3$), or $0$ has period $3$ (primes
+of $w_3$).
+
+\begin{lemma}[Three-periodicity modulo $w_3^2$]
+  \label{lem:strongcong3}
+  \uses{lem:rigid, lem:wseq-mul}
+  \lean{QuadraticIterates.cSeq_three_mul_add_one_of_sq_eq_zero,
+    QuadraticIterates.cSeq_three_mul_add_two_of_sq_eq_zero,
+    QuadraticIterates.exists_wSeq_three_mul_eq}
+  \leanok
+  If $\bar c_3^2 = 0$ for the sequence of a parameter $\bar a$ in a commutative ring, then
+  $\bar c_{3k} = \bar c_3$, $\bar c_{3k+1} = \bar a$ ($k \ge 1$) and $\bar c_{3k+2} = \bar c_2$.
+  Consequently, for $k \ge 1$, $w_{3k} = w_3 T_k$ with $T_k \equiv s^{2^{3k-1} - 4} \pmod{w_3}$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The case $m = 3$ of Lemmas~\ref{lem:rigid} and~\ref{lem:wseq-mul}: $\bar c_4 = \bar c_3^2 +
+  \bar a = \bar a$ and $\bar c_5 = \bar a^2 + \bar a = \bar c_2$, so the sequence is $3$-periodic
+  from $n = 2$ on.
+\end{proof}
+
+\begin{lemma}[Reflection for $p \equiv 1 \pmod 4$]
+  \label{lem:reflection-one}
+  \uses{lem:reflection}
+  \lean{ZMod.quadraticChar_neg_one_of_mod_four_eq_one}
+  \leanok
+  Let $n \ge 1$ and let $p \equiv 1 \pmod 4$ be a prime with $p \mid v_n$ and $p \nmid r$ (automatic
+  for $n \ge 2$). Then $\chi_p(c_m) = \chi_p(c_n) \ne 0$ for all $m \ge n$.
+  \formalnote{The case $\psi(-1) = 1$ of \lname{unitPartChar\_cSeq\_of\_dvd\_vSeq} (Lemma~\ref{lem:reflection}),
+  which gives $\chi_\psi(c_m) = \psi(-1)\chi_\psi(c_n)$ for $m > n$ and any character $\psi$
+  modulo a power $N = p^k \mid v_n$, $k \ge 1$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  As in the proof of Lemma~\ref{lem:reflection}, $\bar c_m = -\bar c_n$ is a unit in $\ZZ/p\ZZ$ for
+  $m > n$; now $\Leg{-1}{p} = 1$.
+\end{proof}
+
+\begin{lemma}[Period three]
+  \label{lem:period3}
+  \uses{lem:strongcong3, lem:localeval, lem:wseq-res, lem:sqclass, def:chars}
+  \lean{QuadraticIterates.unitPartChar_cSeq_one_of_dvd_wSeq_three,
+    QuadraticIterates.unitPartChar_cSeq_three_mul_add_one_of_dvd_wSeq_three,
+    QuadraticIterates.unitPartChar_cSeq_three_mul_add_two_of_dvd_wSeq_three,
+    QuadraticIterates.unitPartChar_cSeq_three_mul_of_dvd_wSeq_three,
+    QuadraticIterates.valChar_cSeq_three_mul_of_dvd_wSeq_three,
+    QuadraticIterates.valChar_cSeq_three_mul_add_one_of_dvd_wSeq_three,
+    QuadraticIterates.valChar_cSeq_three_mul_add_two_of_dvd_wSeq_three}
+  \leanok
+  Let $p$ be a prime dividing $w_3 = r(r + s)^2 + s^3$, and $e = v_p(w_3)$. Then $p \nmid rs(r+s)$,
+  $v_p(c_n) = e$ for $3 \mid n$ and $v_p(c_n) = 0$ otherwise, and
+  \[ \chi_p(c_\bullet) = (1, z, u, \eps, z, u, \eps, \dots), \qquad
+     z = \Leg{-s(r + s)}{p}, \quad \eps = \Leg{-1}{p}, \quad u = \chi_p(c_3). \]
+  So $\val_p(c_\bullet) = (1, 1, (-1)^e, 1, 1, (-1)^e, \dots)$.
+  \formalnote{The characters $\chi_\psi$ for $\psi$ modulo any power $N = p^k \mid w_3$, $k \ge 1$,
+  with values $1$, $\psi(-1)$, $\psi(-s(r+s))$ and $\chi_\psi(c_3)$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  $w_3$ is odd and prime to $r$ and $s$ (Lemma~\ref{lem:wseq-res}), and $w_3 \equiv s^3
+  \pmod{r + s}$, so $p \nmid 2rs(r+s)$. In $\ZZ/p\ZZ$, $\bar c_3 = 0$ (Lemma~\ref{lem:reduction}), so
+  $\bar c_{3k+1} = \bar a$, $\bar c_{3k+2} = \bar c_2 = \bar a(\bar a + 1)$ and $\bar c_{3k} = 0$
+  for $k \ge 1$, where $\bar a$ and $\bar c_2$ are units. From $\bar c_2^2 + \bar a = 0$: $-\bar a$
+  is a square, and $\bar a(\bar a + 1)^2 = -1$, so $\bar c_2 = -(\bar a + 1)^{-1}$. With
+  Lemma~\ref{lem:localeval}: $\chi_p(c_1) = \Leg{-\bar a}{p} = 1$, $\chi_p(c_{3k+1}) =
+  \Leg{\bar a}{p} = \eps$ and $\chi_p(c_{3k+2}) = \Leg{-(\bar a + 1)}{p} = \Leg{-s(r+s)}{p}$, as
+  $\bar a + 1 = (r + s) s^{-1}$. For the multiples of $3$, Lemma~\ref{lem:strongcong3} gives
+  $w_{3k} = w_3 T_k$ with $T_k$ congruent modulo $w_3$ to an even power of $s$, so $p \nmid T_k$,
+  $v_p(c_{3k}) = v_p(r w_3 T_k) = e$ and $\chi_p(c_{3k}) = \chi_p(r w_3) = \chi_p(c_3)$
+  (Lemma~\ref{lem:sqclass}). (Equivalently: $F = f \circ f \circ f$ is even, so
+  $c_{3k+3} = F(c_{3k}) \equiv F(0) = c_3$ modulo $c_{3k}^2$.)
+\end{proof}
+
+\begin{corollary}[Criteria from $v_2$, $v_3$ and $w_3$]
+  \label{cor:further}
+  \uses{lem:reflection, lem:reflection-one, lem:period3, lem:klein, thm:main}
+  \lean{QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq_two,
+    QuadraticIterates.unitPartChar_mul_unitPartChar_cSeq_of_dvd_vSeq_two,
+    QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq_three,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_wSeq_three}
+  \leanok
+  Call a character $\psi$ \emph{constant from $c_2$ on} if $\psi(c_m) = \psi(c_2) \ne 0$ for all
+  $m \ge 2$. Such a $\psi$ is a $\phi_1$ if $(\psi(c_1), \psi(c_2)) = (-1, 1)$, a $\tau$ if it is
+  $(1, -1)$, a $\phi_0$ if it is $(-1, -1)$, and trivial on all $c_n$ otherwise. For an odd prime
+  $p$ write $x_p = \Leg{-rs}{p}$ and $z_p = \Leg{r(r+s)}{p}$, so that $x_p z_p = \Leg{-s(r+s)}{p}$.
+  \begin{enumerate}
+    \item[(R1)] If a prime $p \equiv 1 \pmod 4$ divides $v_2 = r^3 + 2r^2 s + 2rs^2 + 2s^3$, then
+          $\chi_p$ is constant from $c_2$ on, with values $(x_p, z_p)$.
+    \item[(R2)] If two primes $p, q \equiv 3 \pmod 4$ divide $v_2$, then $\chi_p \chi_q$ is
+          constant from $c_2$ on, with values $(x_p x_q, z_p z_q)$.
+    \item[(R3)] If a prime $p \equiv 1 \pmod 4$ divides $v_3$ and $\Leg{(r + s) w_3}{p} = 1$, then
+          $\chi_p$ is constant from $c_2$ on, with values $(x_p, z_p)$.
+    \item[(P3)] If $w_3 \ne \pm\sq$, a prime $q \equiv 3 \pmod 4$ divides $w_3$, and
+          $\Leg{-s(r+s)}{p} = -1$ for some prime $p \mid w_3$, then $a$ has $\tau$.
+  \end{enumerate}
+  Consequently, if $a \in \cA$ satisfies (C1), (C2) or (C3), and two different ones among
+  $\phi_0$, $\phi_1$, $\tau$ are supplied by these characters and by the criteria of
+  Propositions~\ref{prop:Z}, \ref{prop:O}, \ref{prop:T}, then $\rho_a$ is surjective. For
+  instance, with $\phi_0$ (e.g.\ by (Z1)) it suffices that $\Leg{-s(r+s)}{p} = -1$ in (R1) or
+  (R3), or $\Leg{-s(r+s)}{pq} = -1$ in (R2); with $\phi_1$ (e.g.\ when $s \ne \sq$), that
+  $z_p = -1$, resp.\ $z_p z_q = -1$; and (P3) suffices in both cases.
+  \formalnote{(R1)--(R3) are stated as the values of $\chi_p$, resp.\ $\chi_p \chi_q$, at all $c_m$
+  with $m \ge 2$, as Jacobi symbols, for $\chi_p$ built from the quadratic character modulo $p$; the
+  value $x_p$ at $c_1$ is Lemma~\ref{lem:sqclass}. The final assertion is
+  Lemma~\ref{lem:klein} with Theorem~\ref{thm:main}(2)(f), which the formalization proves for
+  all $a \in \cA$.}
+\end{corollary}
+\begin{proof}
+  \leanok
+  \uses{lem:sqclass, lem:wseq-res, lem:strongcong}
+  An odd prime dividing $v_n$ ($n \ge 2$) or $w_3$ is prime to $rs$ (Lemma~\ref{lem:wseq-res}), and
+  by Lemma~\ref{lem:sqclass}, $\chi_p(c_1) = x_p$, $\chi_p(c_2) = z_p$ and
+  $\chi_p(c_3) = \Leg{r w_3}{p}$, so $\chi_p(c_2 c_3) = \Leg{(r+s) w_3}{p}$. (R1) By
+  Lemma~\ref{lem:reflection-one}, $\chi_p(c_m) = \chi_p(c_2)$ for $m \ge 2$. (R2) By
+  Lemma~\ref{lem:reflection}, $\chi_p(c_m) = -\chi_p(c_2)$ and $\chi_q(c_m) = -\chi_q(c_2)$ for
+  $m > 2$, so $\chi_p\chi_q(c_m) = \chi_p\chi_q(c_2)$. (R3) By Lemma~\ref{lem:reflection-one},
+  $\chi_p(c_m) = \chi_p(c_3)$ for $m \ge 3$, and $\chi_p(c_3) = \chi_p(c_2)$. (P3) By
+  Lemma~\ref{lem:period3}, $\chi_\ell(c_\bullet) = (1, y_\ell, u_\ell, \eps_\ell, y_\ell, u_\ell,
+  \eps_\ell, \dots)$ with $y_\ell = \Leg{-s(r+s)}{\ell}$ for every prime $\ell \mid w_3$. Let
+  $\psi = \chi_q$ if $y_q = -1$; otherwise $p \ne q$, and let $\psi = \chi_p$ if
+  $p \equiv 3 \pmod 4$ and $\psi = \chi_p \chi_q$ if $p \equiv 1 \pmod 4$. In each case
+  $\psi(c_\bullet) = (1, -1, u, -1, -1, u, -1, \dots)$ for some $u = \pm 1$. As $|w_3|$ is not a
+  square, $v_\ell(w_3)$ is odd for some $\ell$, and $\val_\ell(c_\bullet) =
+  (1, 1, -1, 1, 1, -1, \dots)$; so $\psi$ or $\psi \val_\ell$ is a $\tau$. Finally, two of
+  $\phi_0$, $\phi_1$, $\tau$ give the third (Lemma~\ref{lem:klein}), and
+  Theorem~\ref{thm:main}(2)(f) applies.
+\end{proof}
+
+\begin{remark}[Residue classes modulo a single prime]
+  \label{rem:residues}
+  \uses{lem:localeval, cor:further}
+  Let $p$ be an odd prime not dividing $s$ such that $0$ is strictly preperiodic under
+  $x \mapsto x^2 + \bar a$ on $\ZZ/p\ZZ$, $\bar a = r s^{-1}$. Then $p$ divides no $c_n$, and
+  $\chi_p(c_\bullet) = \bigl(\Leg{-\bar a}{p}, \Leg{\bar c_2}{p}, \Leg{\bar c_3}{p}, \dots\bigr)$
+  depends only on $\bar a$ (Lemma~\ref{lem:localeval}). For $p < 80$ it is constant from $c_2$ on
+  and a $\phi_0$, $\phi_1$ or $\tau$ exactly in the following cases, besides $\bar a = -2$ for
+  $p \equiv \pm 3 \pmod 8$ and $\bar a^2 = -1$ (these give $\phi_0$, and are (Z2) and (Z3)):
+  \begin{itemize}
+    \item the orbit of $0$ reaches a fixed point after three steps ($p \mid v_2$, (R1)):
+          $\bar a = 10$ modulo $13$, $4$ and $44$ modulo $53$ ($\tau$); $5$ modulo $17$, $27$
+          modulo $41$, $43$ modulo $73$ ($\phi_1$); $15$ modulo $29$, $3$ modulo $53$, $21$ modulo
+          $61$ ($\phi_0$);
+    \item after four steps ($p \mid v_3$, (R3)): $7$ modulo $13$, $2$ modulo $53$ ($\phi_1$); $63$
+          modulo $73$ ($\phi_0$);
+    \item the orbit of $0$ enters a cycle of length $\ell \ge 2$, so that the pattern is not
+          covered by Corollary~\ref{cor:further}: $52$ modulo $61$ ($\tau$, $\ell = 4$); $3$ modulo
+          $17$, $22$ modulo $41$, $5$ modulo $73$ ($\ell = 2$), $26$ modulo $67$, $29$ modulo $37$
+          ($\ell = 3$), $29$ modulo $59$ ($\ell = 4$), all $\phi_0$.
+  \end{itemize}
+  So, for instance, $\rho_a$ is surjective for every $a \in \cA$ in (C1)--(C3) that has $\phi_0$
+  and satisfies $r \equiv 10 s \pmod{13}$. When $0$ is periodic modulo $p$, the pattern of
+  $\chi_p$ depends on $a$ modulo a higher power of $p$, through the unit part of $c_k$ for the
+  period $k$.
+\end{remark}
+
+\begin{remark}[The parameters left uncovered on the interval]
+  \label{rem:further-data}
+  \uses{cor:further, rem:interval}
+  Let $\alpha < a < \alpha'$, with $a$ in one of the classes $(2,1)$, $(0,3)$, $(3,0)$, not covered by
+  Theorem~\ref{thm:main}, and $c_1, \dots, c_6$ $2$-independent. We computed the patterns of
+  $\val_p$ and $\chi_p$ along $(c_n)$ exactly for the primes $p < 200$, the primes of $v_2$ and
+  $w_3$, those of $v_3$ below $10^6$, and the primes below $10^5$ at which $0$ has period at most
+  $6$. These patterns are eventually periodic, so a product that agrees with $\phi_0$, $\phi_1$ or
+  $\tau$ up to the largest preperiod plus the sum of the distinct periods agrees for all $n$. In
+  all $242$ examples of the class $(2,1)$ with $s = t^2$, $t \le 101$ (which lack $\phi_1$ and
+  $\tau$), all $457$ of the class $(0,3)$ with $r = -m^2$, $m \le 180$ (which lack $\phi_0$ and
+  $\tau$), and all $299$ of the class $(3,0)$ with $s \le 6000$ (which lack one of them), some
+  product of at most three of these characters supplies the missing pattern, and so $\rho_a$ is
+  surjective; one character suffices in $214$, $408$ and $255$ cases. Corollary~\ref{cor:further}
+  alone, together with the criteria of the main theorem, covers $234$, $435$ and $283$ of them;
+  (P3) alone covers $185$, $345$ and $222$.
+
+  In all three classes, $w_3 > 0$ and $w_3 \equiv 3 \pmod 4$, so (P3) only asks for a prime
+  $p \mid w_3$ with $\Leg{-s(r+s)}{p} = -1$; and $|v_2|$ or $|v_2|/2$ is $\equiv 3 \pmod 4$, which
+  supplies the primes of Proposition~\ref{prop:crit-reflection} at $n = 2$. Since
+  $\bar a = -1$ modulo $r + s$, $w_3 \equiv v_2 \equiv s^3 \pmod{r + s}$, and reciprocity gives
+  $\Leg{-s(r+s)}{w_3} = 1$ (Jacobi symbol) for all these parameters, and
+  $\Leg{-s(r+s)}{v_2'} = 1$ for the odd part $v_2'$ of $v_2$ in the classes $(2,1)$ and $(3,0)$,
+  in agreement with the computations. So no congruence condition on $r$ and $s$ forces a prime as
+  in (P3), or as in (R1) and (R2) when $\phi_0$ is given. In the class $(0,3)$, where $\phi_1$ is
+  given and (R1), (R2) need $z_p = -1$ instead, Corollary~\ref{cor:further} fails for $22$ of the
+  $457$ parameters, with $r \equiv 0$ and with $r \equiv 4 \pmod 8$. The search finds what is
+  there in each case, but does not by itself give new families defined by congruences.
+\end{remark}
+
+\begin{remark}[Criteria for $\phi_2$]
+  \label{rem:phi2}
+  Two further criteria are recorded without formalization, as no theorem uses them.
+  (a) If $a \equiv 1 \bmod 4$, then $\chi_8(c_\bullet) = (x, w, -x, -w, -x, -w, \dots)$ with
+  $x = \chi_8(a)$ and $w = \chi_8(c_2)$, since $2$-adically $c_{2k} \equiv 2 \bmod 4$, hence
+  $c_{2k+1} \equiv a + 4 \bmod 32$, and $c_{2k} \equiv c_2 + 8 \bmod 16$ for $k \ge 2$. So $a$ has
+  $\phi_2$ if $a \equiv 5 \bmod 8$ ($\chi_8$ or $\chi_8 \val_2$), and also if $a \equiv 1 \bmod 8$
+  and $a$ has $\phi_0$ ($\phi_0 \chi_8$ or $\phi_0 \chi_8 \val_2$).
+  (b) If $s$ is even and neither $r(r + s)$ nor $-(r + s)s$ is a square in $\QQ_2$, then some
+  character at $2$ is $1$ on $c_1$ and $-1$ on $c_2$, and $a$ has $\phi_2$
+  (Lemma~\ref{lem:pat-s}(2); $c_2 \sim r(r+s)$, $c_1 c_2 \sim -(r+s)s$).
+\end{remark}
+
+
+\section{Refinements of the main theorem}
+
+The classes (C1)--(C3) of Lemma~\ref{lem:twoadic} are, in terms of $(r, s) \bmod 4$: for
+$\eps = -1$, $(3,1)$, $(3,3)$; $(0,1)$, $(2,3)$; $(1,0)$, $(1,2)$; and for $\eps = 1$, $(1,1)$,
+$(1,3)$; $(2,1)$, $(0,3)$; $(3,0)$, $(3,2)$. Outside the interval $(\alpha, \alpha']$, the three
+lists of criteria collapse to the single condition of Theorem~\ref{thm:main}(1).
+
+\begin{remark}[Numerical evidence]
+  In the box $|r| \le 250$, $1 \le s \le 50$, Theorem~\ref{thm:main} covers $7399$ parameters, and
+  none of them has a square product among $c_1, \dots, c_6$. Each item of the three lists was
+  checked to produce the claimed pattern on $c_1, \dots, c_8$ for all $5518$ parameters with
+  $|r| \le 150$, $s \le 30$.
+\end{remark}
+
+\begin{corollary}[Li 2020 for rational parameters]
+  \label{cor:li2020-rat}
+  \uses{thm:main, prop:O, prop:T, lem:klein, prop:tfae}
+  \lean{QuadraticIterates.forall_nonempty_mulEquiv_iff_of_le_neg_two}
+  \leanok
+  Let $a \le -2$ with $s \equiv 1 \pmod 4$ and $r \equiv 3 \pmod 4$, and suppose that $a$ has
+  $\phi_0$ (e.g.\ $|r|$ is not a square). Then $\rho_a$ is surjective if and only if $-(a + 1)$
+  is not a square.
+\end{corollary}
+\begin{proof}
+  \leanok
+  If $-(a + 1)$ is a square, so is $c_1 c_2 = -a \cdot a(a + 1)$, and $\rho_a$ is not surjective
+  (Proposition~\ref{prop:tfae}). Otherwise: (C1) holds, as $r + 2s \equiv 1 = -\eps \pmod 4$. If $s$ is
+  not a square, (O3) gives $\phi_1$. If $s$ is a square, then $4 \mid r + s = s(a + 1) < 0$ and
+  $-(r + s) = s \cdot (-(a+1))$ is not a square, so (T3) gives $\tau$, and $\phi_1$ follows by
+  Lemma~\ref{lem:klein}. Apply Theorem~\ref{thm:main}(2)(f).
+\end{proof}
+
+\begin{remark}[When the condition is automatic]
+  \label{rem:level2-classes}
+  By the residues of $|r|$, $s$ and $|r + s|$ modulo $4$, the condition of
+  Theorem~\ref{thm:main}(1) holds automatically, and $\rho_a$ is surjective, except in the
+  following cases, where it says:
+  \begin{itemize}
+    \item $a \le -2$: in the class $(0,1)$, $-a \ne \sq$; in the class $(3,1)$, at most one of
+          $|r|$, $s$, $|r + s|$ is a square (a sharper form of Corollary~\ref{cor:li2020-rat});
+    \item $a > 0$: in the class $(1,3)$, $a(a+1) \ne \sq$;
+    \item $-1 < a < 0$: in the class $(3,0)$, $-a \ne \sq$;
+    \item $\alpha' < a < -1$: in the class $(2,1)$, $-(a+1) \ne \sq$; in the class $(0,3)$,
+          $a(a+1) \ne \sq$; in the class $(3,0)$, at most one of $|r|$, $s$, $|r + s|$ is a square.
+  \end{itemize}
+  For $s = 1$ the classes are $a \equiv 1, 2 \pmod 4$ with $a > 0$ and $a \equiv 0, 3 \pmod 4$
+  with $a \le -2$, and Theorem~\ref{thm:main}(1) contains Corollary~\ref{cor:integer} and the converse of its
+  part~(3): $\rho_a$ is surjective if and only if neither $-a$ nor $-a - 1$ is a
+  square. Numerically, for all $469810$ parameters with $|r| \le 2000$, $s \le 400$ in these
+  classes and outside $(\alpha, \alpha']$, the hypotheses of Theorem~\ref{thm:main} hold exactly when
+  $c_1, c_2$ are $2$-independent.
+\end{remark}
+
+\begin{remark}[Square products among $c_1, \dots, c_{10}$]
+  \label{rem:square-products}
+  As polynomials in $a$, $c_1 = -b_1$ and $c_n = \prod_{d \mid n} b_d$ for $n \ge 2$, where
+  $b_1 = a$, $b_2 = a + 1$, $b_3 = a^3 + 2a^2 + a + 1$, $b_4 = a^6 + 3a^5 + 3a^4 + 3a^3 + 2a^2 + 1$,
+  and in general the roots of $b_d$ are the $a$ for which $0$ is periodic of exact period $d$. For
+  $d \le 10$ the $b_d$ are irreducible, of degrees $1, 1, 3, 6, 15, 27, 63, 120, 252, 495$. For a
+  nonempty $S \subseteq \{1, \dots, 10\}$ let $D$ be the set of $d$ that divide an odd number of
+  elements of $S$, and $\eps_S = -1$ if $1 \in S$, $\eps_S = 1$ otherwise. For $a \ne -1, 0$, the
+  product $\prod_{n \in S} c_n$ is a square if and only if $\eps_S \prod_{d \in D} b_d(a)$ is, so
+  these $a$ are the abscissae of the rational points on $y^2 = \eps_S \prod_{d \in D} b_d(a)$. As
+  $\max D = \max S$, this curve has genus $0$ exactly for $S \subseteq \{1, 2\}$, and genus $1$
+  exactly for $S = \{3\}$, $\{1, 3\}$, $\{2, 3\}$. A search with \texttt{ratpoints}
+  \cite{ratpoints}, its degree bound raised to $1024$, for the points with $a = r/s$,
+  $\max(|r|, s) \le 10^5$, on the $1020$ curves of positive genus finds some with
+  $a \notin \{-2, -1, 0\}$ in three cases only. The nonempty lists are:
+  \begin{itemize}
+    \item $S = \{1\}$: $a = -t^2$; $S = \{2\}$: $a = 1/(t^2 - 1)$; $S = \{1, 2\}$: $a = -1 - t^2$,
+          with $t \in \QQ$;
+    \item $S = \{1, 3\}$, $y^2 = -b_3(a)$, the elliptic curve 368d1 of rank $1$: $a = -17/4$,
+          $-586/81$, $-81185/44944$;
+    \item $S = \{2, 3\}$, $y^2 = (a + 1)\,b_3(a)$, the elliptic curve 92b1 of rank $1$: $a = 3$,
+          $-2/3$, $-4/5$, $6/19$, $-20/11$, $-55/56$, $-38/159$, $-616/255$, $-1007/223$,
+          $-2856/5665$, $-23638/26239$, $26265/23464$;
+    \item $S = \{2, 4\}$, $y^2 = b_4(a)$, of genus $2$, whose Jacobian has rank $3$ (by
+          $2$-descent), so that Chabauty's method does not apply: $a = 2/3$, $-6/7$.
+  \end{itemize}
+  For $S = \{3\}$, $y^2 = a\,b_3(a)$ is the elliptic curve 92a1 of rank $0$, and $c_3$ is a square
+  only for $a = 0$. So for $a \notin \{-2, -1, 0\}$ with $\max(|r|, s) \le 10^5$, the numbers
+  $c_1, \dots, c_{10}$ are $2$-dependent if and only if one of $-a$, $a(a + 1)$, $-(a + 1)$ is a
+  square or $a$ is one of the $17$ values listed; for all other such $a$,
+  $\Om_{10} \cong \Ct{10}$ (Proposition~\ref{prop:criterion}).
+\end{remark}
+
+\begin{corollary}[The interval]
+  \label{cor:interval}
+  \uses{thm:main, prop:Z, prop:O, prop:T}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_criteria,
+    QuadraticIterates.NegFirstCriterion', QuadraticIterates.NegTailCriterion',
+    QuadraticIterates.negFirstCriterion_of_negFirstCriterion',
+    QuadraticIterates.negTailCriterion_of_negTailCriterion',
+    Int.exists_sq_eq_pow_mul_of_dvd}
+  \leanok
+  Let $a = r/s$ with $r, s$ coprime, $s \ge 1$ and $\alpha < a < -1$, assume that one of (C1),
+  (C2), (C3) holds with $\eps = 1$, and that $c_1, c_2$ are $2$-independent. Consider the
+  conditions
+  \begin{enumerate}
+    \item[(O$'$)] $a \equiv 1 \bmod 4$; or $s \ne \sq$; or $\Leg{-r}{p} = -1$ for an odd prime
+          $p \mid s$; or $16 \mid s$ and $r \equiv 3 \pmod 8$; or a prime $p \equiv 3 \pmod 4$
+          divides $r$ with $\Leg{r_p s}{p} = 1$;
+    \item[(T$'$)] a prime $p \equiv 3 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = -1$; or a prime
+          $p \equiv 3 \pmod 4$ divides $r + s$.
+  \end{enumerate}
+  If two of (Z), (O$'$), (T$'$) hold, where (Z) is one of (Z1)--(Z4) of
+  Proposition~\ref{prop:Z}, then $\rho_a$ is surjective.
+  \formalnote{(O$'$) and (T$'$) are the inductive propositions \lname{NegFirstCriterion'} and
+  \lname{NegTailCriterion'}; the two implications of the proof are
+  \lname{negFirstCriterion\_of\_negFirstCriterion'} and
+  \lname{negTailCriterion\_of\_negTailCriterion'}, the latter for $|r + s| \ne \sq$.}
+\end{corollary}
+\begin{proof}
+  \leanok
+  \uses{thm:main, prop:Z, prop:O, prop:T}
+  (O$'$) implies (O): (O2); (O3) or (O4) if $s \ne \sq$; if $s$ is a square, then so is $s_p$,
+  and $\Leg{-r s_p}{p} = \Leg{-r}{p}$ gives (O3), and $16 \mid s = 2^k s_2$ forces $k \ge 4$ even
+  and $s_2 \equiv 1 \pmod 8$, so $r s_2 \equiv 3 \pmod 8$ gives (O4); and (O5). (T$'$) implies
+  (T) when $|r + s|$ is not a square: (T2), and (T3), as $r + s < 0$. If $|r + s|$ is a square,
+  then neither $|r|$ nor $s$ is ($c_2 \sim |r|\,|r + s|$ and $c_1 c_2 \sim s\,|r + s|$ are not
+  squares), so (Z1) and (O3)/(O4) hold. In both cases Theorem~\ref{thm:main} applies.
+\end{proof}
+
+\begin{remark}[The remaining classes]
+  \label{rem:interval}
+  Let $\alpha < a < -1$, with $(r, s)$ in one of the classes (C1)--(C3) for $\eps = 1$ but in none
+  of the cases (2)(a)--(d) of Theorem~\ref{thm:main}, and $c_1, c_2$ $2$-independent. In the
+  class $(2,1)$, where now $r \equiv 6$ and $s \equiv 1 \pmod 8$, (Z1) holds, and the condition of
+  Corollary~\ref{cor:interval} says: $s \ne \sq$, or $\Leg{-r}{p} = -1$ for a prime $p \mid s$, or
+  a prime $p \equiv 3 \pmod 4$ divides $r(r + s)$. In the class $(0,3)$, (O$'$) holds, and the
+  condition says (Z) or (T$'$). In the class $(3,0)$ with $r \equiv 3 \pmod 8$, where now
+  $s \equiv 4 \pmod{32}$, (Z) holds, and the condition says (O$'$) or (T$'$); for
+  $r \equiv 7 \pmod 8$, none of the three holds throughout the class. Each of these classes
+  contains parameters for which $\rho_a$ is not surjective, as $c_1$, $c_2$ or $c_1 c_2$ is a
+  square: $a = -10/9$ in the class $(2,1)$; $-4/3$ and $-16/15$, with $s \equiv 3$ and
+  $7 \pmod 8$, in the class $(0,3)$; $-5/4$ and $-49/36$, with $r \equiv 3$ and $7 \pmod 8$, in
+  the class $(3,0)$.
+
+  For $\alpha < a < \alpha'$ and $c_1, c_2$ $2$-independent, two of (Z), (O$'$), (T$'$) hold if and
+  only if two of (Z), (O), (T) do: there (O1), (T1) and (T4) do not apply, (O3), (O4) and (O5)
+  amount to (O$'$), and the parts of (T2) and (T3) at $2$ either do not apply or occur only
+  together with (Z1). Numerically, the two agree for all $318538$ such parameters with
+  $s \le 3000$. Unlike outside the interval, the criteria are not sharp here: for $s \le 2500$,
+  $127$ parameters in the classes $(2,1)$, $(0,3)$, $(3,0)$ fail them although
+  $c_1, \dots, c_6$ are $2$-independent, for instance $a = -634/441$, $-225/164$ and $-1296/887$.
+\end{remark}
+
+\begin{remark}[Density]
+  \label{rem:density}
+  Order the parameters $a = r/s$ by the height $\max(|r|, s)$. Asymptotically, the coprime pairs
+  $(r, s)$ are equidistributed among the $12$ residue classes modulo $4$ in which $r$ or $s$ is
+  odd, those with $|r|$ or $s$ a square have density zero, and $a$ is distributed with density
+  $\frac14$ on $[-1, 1]$ and $\frac{1}{4a^2}$ outside it. Theorem~\ref{thm:main} applies whenever
+  $a \in \cA$ lies in one of the six classes (C1)--(C3) for $\eps_a$ and neither $|r|$ nor $s$ is a
+  square: then (Z1) holds, and (O3) or (O4). So it covers the proportion $\frac12$ of the
+  parameters in every interval contained in $\cA$, in $(\alpha, \alpha']$ just as outside it (the
+  interval differs only on the density-zero set where the criteria are not sharp), and none in
+  $(-2, \alpha]$, which carries the proportion $\frac{1}{4|\alpha|} - \frac18 \approx 0.0370$.
+  On $(\alpha, -1)$, the cases (2)(a)--(d) of Theorem~\ref{thm:main} alone (which the
+  formalization proves on all of $(\alpha, -1)$), with no condition on squares, cover the proportion $\frac{245}{576} \approx 0.4253$: all of the classes $(1,1)$, $(1,3)$,
+  $(3,2)$, and the proportions $\frac34$, $\frac{11}{12}$ and $\frac{7}{16}$ of the classes
+  $(2,1)$, $(0,3)$ and $(3,0)$. Altogether the main theorem covers the proportion
+  $\frac{9}{16} - \frac{1}{8|\alpha|} \approx 0.4815$ of all $a \in \QQ$; the families of
+  Chapter~\ref{chap:families}, with $s$ a square, have density zero. Numerically, for
+  $\max(|r|, s) \le 400$ the proportions of $(-2, \alpha]$ and of all parameters covered are
+  $0.0369$ and $0.4796$, and for $\max(|r|, s) \le 3000$ that of the parameters in $(\alpha, -1)$
+  covered by these cases is $0.4256$.
+\end{remark}
+
+
+\section{The even levels for \texorpdfstring{$a \equiv 1 \bmod 4$}{a = 1 mod 4}}
+
+\begin{remark}
+  The four ingredients that alternate on a tail and can serve in Lemma~\ref{lem:period2} are:
+  $\val_q$ for $v_q(r + s)$ odd, from $n = 1$ (Lemma~\ref{lem:pat-rs}(1); for
+  $a \equiv 1 \bmod 4$ this includes $q = 2$); $\chi_p$ of Lemma~\ref{lem:pat-r2s2} when its two
+  values differ, from $n = 1$; the sign in the window of Lemma~\ref{lem:window}, from $n = 2$;
+  and $\chi$ of Lemma~\ref{lem:pat-rs}(2) when $y = 1$, from $n = 2$. Only the first one is used, in Lemma~\ref{lem:odd} and
+  Theorem~\ref{thm:families}.
+\end{remark}
+
+\begin{remark}[The even levels]
+  \label{rem:even}
+  For $a \le -2$, $a \equiv 1 \bmod 4$ and $s \equiv 1 \pmod 4$ (for $s \equiv 3 \pmod 4$ the
+  main theorem applies), one has $\phi_0$ (when given), $\phi_1$ (O2), $\phi_2$
+  (Remark~\ref{rem:phi2}) and $\phi_n$ for odd $n$, but no argument of this kind reaches the
+  even $n \ge 4$: $|v_n| \equiv 1 \pmod 4$, and $u_n$ is $4$ times an odd number whose part prime
+  to $r + s$ is $\equiv 1 \pmod 4$ (checked for all integers $-1203 \le a \le -3$,
+  $a \equiv 1 \pmod 4$, and $n = 4, 6, 8$, in every class modulo $64$). This is the counterpart of
+  the barrier $n_0 \in \{4, 8, 16, \dots\}$ of the approach via $b_n$. The families of
+  Chapter~\ref{chap:families} get past it because $x^2 + x + a$ or $x^2 - x + a + 1$ splits.
+\end{remark}
+
+\begin{remark}[The two families]
+  For $k = 1$, Theorem~\ref{thm:families} gives the two cases of Corollary~\ref{cor:li2021}. A
+  scan of all classes of $(j, k)$ modulo $4$ (resp.\ $8$) shows that the other classes either
+  fall under the main theorem or admit no certificate of this kind at some level. Examples
+  outside the main theorem: $a = -66/25$ ($\ell = 6/5$ in the first family), $a = -70/9$
+  ($\ell = 7/3$), $a = -151/25$ ($\ell = 9/5$ in the second family), $a = -19/9$ ($\ell = 2/3$).
+\end{remark}

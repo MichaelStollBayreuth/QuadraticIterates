@@ -52,4 +52,5 @@ public import QuadraticIterates.Patterns.Sign
 public import QuadraticIterates.Sequence.Orbit
 public import QuadraticIterates.Sequence.Signs
 public import QuadraticIterates.Sequence.SquareClasses
+public import QuadraticIterates.Sequence.Valuation
 public import QuadraticIterates.Sequence.WSeq

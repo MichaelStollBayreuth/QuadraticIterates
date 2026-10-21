@@ -1,41 +1,83 @@
 \chapter*{About this blueprint}
+\addcontentsline{toc}{chapter}{About this blueprint}
 
-This blueprint develops a criterion for the surjectivity of the arboreal Galois representation
-attached to $x^2 + a$, $a \in \QQ$, which works directly with the orbit $(c_n)$ of $0$ and with
-quadratic characters of $\QQ^\times$, and links each statement to its formalization in Lean~4.
-The known results of \cite{paper, li2020, li2021} for integer parameters are derived from the
-general statements for rational parameters (Chapter~\ref{chap:integers}).
+This blueprint accompanies the paper \cite{arboreal}, which gives simpler proofs of the main
+results of \cite{paper, li2020, li2021} on the surjectivity of the arboreal Galois representation
+attached to $x^2 + a$, working directly with the orbit $(c_n)$ of $0$ and with quadratic
+characters of $\QQ^\times$ instead of the Möbius quotients $b_n$, and extends them to rational
+parameters $a$. It links each statement of the paper to its formalization in Lean~4.
 
-\emph{Status.} Every definition and theorem is formalized. The aim is not to reproduce the
-proofs of \cite{paper, li2020, li2021}, which go through the Möbius quotients $b_n$ of the $c_n$,
-but to give different, simpler proofs of their main results and to extend them to further cases
-and to rational parameters. Lean names are given in \lname{typewriter} inside the statement or a
-\emph{Formalization} remark; Section~\ref{sec:formalization} describes the formalization.
+\emph{Organization.} Chapters~\ref{chap:intro}--\ref{chap:families} are the sections of the
+paper, in the same order, and each of their statements carries the number it has in the paper.
+The statements that the formalization needs beyond those of the paper come first in a chapter,
+in a section \emph{Preliminaries}, and are numbered with letters (Lemma~5.A, \dots), so that the
+paper's numbering is unaffected. Appendix~\ref{chap:criterion} proves
+Proposition~\ref{prop:criterion}, which the paper quotes from \cite{paper}.
+Appendix~\ref{chap:further} collects further formalized results, among them the further criteria
+mentioned at the end of Section~5 of the paper. Appendix~\ref{chap:auxiliary} contains the
+general theory on which the Galois-theoretic part rests.
+
+\emph{Status.} Every definition, lemma, proposition, theorem and corollary is formalized; the
+question, the conjecture and the remarks are not statements of the formalization. Lean names are
+given in \lname{typewriter} inside the statement or a \emph{Formalization} remark; the section
+below describes the formalization.
 
 \emph{Standing notation.} $a \in \QQ$, $f = X^2 + a$, $f_0 = X$ and $f_{n+1} = f_n^2 + a$ are
-the iterates of $f$, $K_n \subseteq \Qbar$ is the splitting field of $f_n$ over $\QQ$, and
-$\Om_n = \Gal(K_n/\QQ)$. $\Ct{n}$ denotes the $n$-fold iterated wreath product of $C_2$ with
-itself. From Chapter~\ref{chap:sequence} on, $a = r/s$ with coprime integers $r$, $s$ and
-$s \ge 1$.
+the iterates of $f$ (written $f^{\circ n}$ in the paper), $K_n \subseteq \Qbar$ is the splitting
+field of $f_n$ over $\QQ$, and $\Om_n = \Gal(K_n/\QQ)$. $\Ct{n}$ denotes the $n$-fold iterated
+wreath product of $C_2$ with itself. From Chapter~\ref{chap:phin} on, $a = r/s$ with coprime
+integers $r$, $s$ and $s \ge 1$.
 
-\input{chapters/00-intro}
-\input{chapters/01-galois}
+\section*{The formalization}
+
+\emph{Shared material.} The Galois-theoretic part --- the iterates, their splitting fields and
+Galois groups, Odoni's embedding $\Om_n \hookrightarrow \Ct{n}$, the degree criterion and the
+irreducibility lemma (the preliminaries of Chapter~\ref{chap:intro} and
+Appendix~\ref{chap:criterion}), with the general theory of multiquadratic extensions, wreath
+products and even polynomials it rests on (Appendix~\ref{chap:auxiliary}) --- is shared with the
+formalization of \cite{paper} along its own route, which also covers the order-theoretic facts
+about $(c_n)$ for $-2 \le a \le 0$ (Lemma~\ref{lem:sumsign}); none of it involves Möbius
+inversion.
+
+\emph{Devices.} Quadratic characters are Mathlib's \lname{MulChar ℚ ℤ} (a commutative group;
+the value at $0$ is $0$, so $\chi(c_n) = -1$ carries $c_n \ne 0$ with it), and the characters
+induced by Dirichlet characters come from Mathlib's \lname{quadraticChar (ZMod p)},
+\lname{ZMod.χ₄} and \lname{ZMod.χ₈} through one construction (Definition~\ref{def:chars}).
+The integer sequence $w_n$ (Definition~\ref{def:wseq}) carries the arithmetic of
+$c_n = r w_n/s^{2^{n-1}}$; for a modulus $N$ prime to $s$, the identity
+$r w_n = s^{2^{n-1}} \bar c_n$ in $\ZZ/N\ZZ$, with $(\bar c_n)$ the sequence of the parameter
+$\bar a = r/s \bmod N$ (Lemma~\ref{lem:reduction}), turns every local argument into a
+computation with the sequence $(\bar c_n)$ in $\ZZ/N\ZZ$.
+
+\emph{Layout.} The Galois-theoretic part is formalized in the directory \texttt{Galois} of
+\texttt{QuadraticIterates/}, the characters of Chapter~\ref{chap:characters} in
+\texttt{Characters}, the sequences $(c_n)$ and $(w_n)$ with their signs, orbits and valuations in
+\texttt{Sequence}, the values of the characters along $(c_n)$ in \texttt{Patterns}, and the
+results of Chapters~\ref{chap:klein}--\ref{chap:families} and Appendix~\ref{chap:further} in
+\texttt{Main}; Appendix~\ref{chap:auxiliary} is formalized in \texttt{EvenPoly.lean} and the
+mirror files under \texttt{Mathlib/}. The repository's comparator challenges state the main
+result of Section~3 of \cite{paper} (one challenge per case), the theorems of
+\cite{li2020, li2021} (Theorem~3.3 of \cite{li2021} in the stronger form of
+Corollary~\ref{cor:li2021}), and the parts (1), (2)(a)--(d) and (2)(e) of
+Theorem~\ref{thm:main} together with Corollary~\ref{cor:interval}; the challenges reproduce the
+definitions of the $2$-adic classes and of the lists of conditions.
+
+\input{chapters/01-introduction}
 \input{chapters/02-characters}
-\input{chapters/03-sequence}
-\input{chapters/04-patterns}
-\input{chapters/05-main}
-\input{chapters/06-families}
-\input{chapters/07-integers}
+\input{chapters/03-signs}
+\input{chapters/04-phin}
+\input{chapters/05-klein}
+\input{chapters/06-main}
+\input{chapters/07-families}
 \appendix
-\input{chapters/08-auxiliary}
+\input{chapters/A-criterion}
+\input{chapters/B-further}
+\input{chapters/C-auxiliary}
 
 \begin{thebibliography}{99}
-  \bibitem{cremona}
-    J.~E.~Cremona, \emph{On the Galois groups of the iterates of $x^2 + 1$}.
-    Mathematika \textbf{36}, 259--261 (1989).
   \bibitem{doerksen-haensch}
     K.~Doerksen and A.~Haensch, \emph{Primitive prime divisors in zero orbits of polynomials}.
-    Integers \textbf{12}, A7 (2012).
+    Integers \textbf{12}, 465--472 (2012).
   \bibitem{jones}
     R.~Jones, \emph{Galois representations from pre-image trees: an arboreal survey}.
     Publ.\ Math.\ Besan\c{c}on Alg\`ebre Th\'eorie Nr.\ \textbf{2013}, 107--136 (2013).
@@ -50,6 +92,9 @@ $s \ge 1$.
     H.-C.~Li, \emph{On Stoll's criterion for the maximality of quadratic arboreal Galois
     representations}. Arch.\ Math.\ \textbf{117}, 133--140 (2021).
     \href{https://doi.org/10.1007/s00013-021-01609-w}{DOI: 10.1007/s00013-021-01609-w}.
+  \bibitem{odoni1985}
+    R.~W.~K.~Odoni, \emph{The Galois theory of iterates and composites of polynomials}.
+    Proc.\ London Math.\ Soc.\ (3) \textbf{51}, 385--414 (1985).
   \bibitem{odoni}
     R.~W.~K.~Odoni, \emph{Realising wreath products of cyclic groups as Galois groups}.
     Mathematika \textbf{35}, 101--113 (1988).
@@ -64,4 +109,8 @@ $s \ge 1$.
     M.~Stoll, \emph{ratpoints}, a program to find rational points on hyperelliptic curves.
     Version 3.1.1 (2026).
     \href{https://github.com/MichaelStollBayreuth/ratpoints}{github.com/MichaelStollBayreuth/ratpoints}.
+  \bibitem{arboreal}
+    M.~Stoll, \emph{When do all iterates of $x^2 + a$ have maximal Galois group?} Preprint (2026),
+    in this repository:
+    \href{https://github.com/MichaelStollBayreuth/QuadraticIterates/blob/simplified/paper/arboreal-surjective.pdf}{paper/arboreal-surjective.pdf}.
 \end{thebibliography}

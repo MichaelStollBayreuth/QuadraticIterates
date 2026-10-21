@@ -1,0 +1,173 @@
+\chapter{Two quadratic families}
+\label{chap:families}
+
+The main work in the proof of Theorem~\ref{thm:main} is, in a sense, to show that $a$ has
+$\phi_n$ for all $n \ge 2$. The vehicle for this is a prime $p \equiv 3 \pmod 4$ such that
+modulo $p$ the sequence $(c_n)$ becomes stationary at index $n + 1$. Such a prime exists when
+$|v_n| \equiv 3 \pmod 4$ or $|v_n| \equiv 6 \pmod 8$. (The character induced by the Jacobi symbol
+$\Leg{\cdot}{|v_n|}$ or $\Leg{\cdot}{|v_n/2|}$ would state this in a more ``constructive'' way,
+without relying on a factorization.) This is the reason for the conditions (C1)--(C3): they
+provide the required congruences, and in all other cases the congruences fail. It is also why
+the result covers only a set of relative density $1/2$ in $\QQ \setminus (-2, \alpha)$.
+
+In some cases one can get a bit further: when $|v_n|$ (or $u_n$, defined below), even though
+congruent to $2 \bmod 8$, systematically factors as a product of two positive numbers one of
+which can be shown to be $\equiv 3 \pmod 4$ or $\equiv 6 \pmod 8$. Theorem~\ref{thm:families}
+exploits this idea, which is due to Li \cite{li2021}, who obtained essentially the special case
+of integral $a$.
+
+We begin with additional criteria that provide $\phi_n$ in certain cases. For $n \ge 1$ let
+\[ u_n = r^2 w_n^2 - r w_n s^{2^{n-1}} + (r + s) s^{2^n - 1} \]
+(Definition~\ref{def:wseq}); then $c_{n+1} - c_n + 1 = u_n/s^{2^n}$ in lowest terms, and in
+particular $u_n$ and $s$ are coprime (Lemmas~\ref{lem:reduction} and~\ref{lem:wseq-res}). Since
+\[ c_{n+2} + c_n = (c_{n+1} + c_n)(c_{n+1} - c_n + 1) \]
+(Lemma~\ref{lem:orbit}(3)), modulo a prime dividing $u_n$ we have $c_{n+2} \equiv -c_n$, and then
+$c_{n+2k} \equiv -c_n$ for all $k \ge 1$ by induction.
+
+\begin{lemma}[Period two]
+  \label{lem:period2}
+  \uses{lem:reduction, lem:orbit, lem:localeval, lem:wseq-res, lem:jump2}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_dvd_uSeq,
+    QuadraticIterates.cSeq_sq_sub_cSeq_add_eq_zero_of_uSeq}
+  \leanok
+  Let $n \ge 1$ and let $p \equiv 3 \pmod 4$ be a prime with $p \mid u_n$ and $p \nmid r + s$.
+  Then the values of $\chi_p$ on $(c_m)_{m \ge n}$ are $(x, y, -x, y, -x, \dots)$, with
+  $x = \chi_p(c_n)$, $y = \chi_p(c_{n+1}) \in \{\pm 1\}$. Consequently, if $a$ has $\phi_0$
+  and some character alternates from $n$ on, then $a$ has $\phi_n$.
+  \formalnote{For a character $\psi$ modulo any power $N = p^k$, $k \ge 1$, with $\psi(-1) = -1$,
+  $N \mid u_n$ and $p \nmid r + s$; the statement gives $\phi_n$ from $\phi_0$ and an alternating
+  character directly (Lemma~\ref{lem:jump2}).}
+\end{lemma}
+\begin{proof}
+  \leanok
+  $u_n$ is prime to $s$, so $\bar c_{n+2} = -\bar c_n$ in $\ZZ/p\ZZ$ by the considerations above,
+  and $(\bar c_m)_{m \ge n} = (\bar c_n, \bar c_{n+1}, -\bar c_n, \bar c_{n+1}, \dots)$
+  (Lemma~\ref{lem:orbit}(2)). These entries are units: $\bar c_n = 0$ would give $p \mid r w_n$,
+  so $p \mid r + s$, and $\bar c_{n+1} = 0$ would give $\bar c_n = 1$ and then $\bar a = -1$, so
+  again $p \mid r + s$. Finally, $\chi_p(-1) = -1$ (Lemma~\ref{lem:localeval}), and
+  Lemma~\ref{lem:jump2} gives the consequence.
+\end{proof}
+
+\begin{lemma}[Odd levels]
+  \label{lem:odd}
+  \uses{lem:period2, lem:pat-dyadic, lem:jump2, lem:reduction, lem:signs, lem:window, lem:prime3,
+    lem:pat-rs}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_odd,
+    QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_uSeq,
+    QuadraticIterates.exists_prime_dvd_uSeq_of_odd, QuadraticIterates.uSeq_emod_eight_of_odd,
+    QuadraticIterates.uSeq_two_mul_add_one_modEq, QuadraticIterates.uSeq_pos,
+    QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_le_neg_two,
+    QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt,
+    QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_odd}
+  \leanok
+  Let $a \equiv 1 \bmod 4$ with $a \le -2$. If $a$ has $\phi_0$, then $a$ has $\phi_n$ for every
+  odd $n \ge 3$.
+  \formalnote{More generally for $a \equiv 1 \bmod 4$ with $a \le -2$, or $a > -1$, or $a < -1$ and
+  $c_3 < 0 < c_4$; the condition $a \equiv 1 \bmod 4$ is stated as $s$ odd and
+  $r \equiv s \pmod 4$. \lname{hasCharPattern\_mulSingle\_of\_prime\_dvd\_uSeq} is
+  Lemma~\ref{lem:period2} with the alternating character $\val_2$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  Let $n \ge 3$ be odd. In $\ZZ/8\ZZ$, $\bar c_n = 5$ for $\bar a = 1$ and $\bar c_n = 1$ for
+  $\bar a = 5$, and $s^{2^n} \equiv 1$, so $u_n \equiv \bar c_n^2 - \bar c_n + \bar a + 1 \equiv 6
+  \pmod 8$ (Lemma~\ref{lem:reduction}). Also $u_n > 0$: $u_n / s^{2^n} = c_n^2 - c_n + a + 1$,
+  which is positive for $a \le -2$, as $c_n \ge -a \ge 2$ (Lemma~\ref{lem:signs}) gives
+  $c_n(c_n - 1) + a + 1 \ge (a + 1)^2$ (and also for $a > 0$, for $-1 < a < 0$, as $c_n < 0$, and in
+  the window, as $c_n \le c_3 < -1$, Lemma~\ref{lem:window}). So a prime $p \equiv 3 \pmod 4$
+  divides $u_n$ (Lemma~\ref{lem:prime3}). It does not divide $r + s$: otherwise, in $\ZZ/p\ZZ$,
+  $\bar a = -1$ and $(\bar c_m)_{m \ge 1} = (1, 0, -1, 0, -1, \dots)$, so
+  $\bar c_n^2 - \bar c_n + \bar a + 1 = 2 \ne 0$. Lemma~\ref{lem:period2}, with the alternating
+  character $\val_2$ (Lemma~\ref{lem:pat-dyadic}), gives $\phi_n$.
+\end{proof}
+
+\begin{theorem}[Two quadratic families]
+  \label{thm:families}
+  \uses{prop:crit-reflection, lem:reflection, lem:period2, lem:odd, lem:jump2, prop:Z, prop:O,
+    prop:T, lem:klein, lem:pat-dyadic, lem:strongcong, lem:prime3, prop:tfae}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one,
+    QuadraticIterates.exists_prime_dvd_vSeq_neg_mul_add, QuadraticIterates.neg_vSeq_neg_mul_add_eq,
+    QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one,
+    QuadraticIterates.exists_prime_dvd_uSeq_neg_sq_add_add, QuadraticIterates.uSeq_eq_mul_of_add_eq}
+  \leanok
+  Let $\ell = j/k$ with coprime positive integers $j$ and $k$.
+  \begin{enumerate}
+    \item If $(j, k) \equiv (2, 1)$ or $(3, 3) \bmod 4$ and $a = -\ell(\ell + 1)$ with
+          $a \le -2$, then $\rho_a$ is surjective.
+    \item If $(j, k) \equiv (1, 1)$ or $(2, 3) \bmod 4$ and $a = -(\ell^2 + \ell + 1)$ with
+          $a \le -2$, then $\rho_a$ is surjective.
+  \end{enumerate}
+  \formalnote{Two theorems, with $j, k \in \ZZ$ as parameters (named $u$, $v$ there) and the
+  parameter written as $-(u/v)(u/v + 1)$, resp.\ $-((u/v)^2 + u/v + 1)$. In (1), $a \le -2$ is
+  stated as $k < j$ (in these classes $\ell \ne 1$), in (2) as $k^2 \le j(j + k)$.}
+\end{theorem}
+\begin{proof}
+  \leanok
+  \uses{lem:wseq-res, lem:signs, def:wseq, lem:reduction}
+  It suffices that $a$ satisfies two of (Z), (O) and (T) and has $\phi_n$ for all $n \ge 2$
+  (Lemma~\ref{lem:klein}, Proposition~\ref{prop:tfae}).
+
+  (1) Here $r = -j(j + k)$, $s = k^2$, $a < -2$, $\eps_a = -1$, and $v_2(r) = 1$, so (Z1) holds.
+  A prime $p \equiv 3 \pmod 4$ divides $r$ (one of the positive integers $j + k$ and $j$ is
+  $\equiv 3 \pmod 4$), so (O5) or (T2) holds. We use that $a$ has $\phi_n$ (given $\phi_0$) when
+  $|v_n|$ is divisible by a prime $p \equiv 3 \pmod 4$ (Lemma~\ref{lem:reflection},
+  Proposition~\ref{prop:crit-reflection}). Let $n \ge 2$, $W = -w_n$ and $V = k^{2^n - 1}$. Then
+  \[ -v_n = F_1 F_2 \qquad \text{with} \qquad F_1 = (j + k) W - V \quad \text{and} \quad
+     F_2 = j W + V \]
+  (expand, with $s = k^2$). Since $c_n \ge -a$ (Lemma~\ref{lem:signs}) and
+  $c_n = r w_n / k^{2^n}$, $W \ge k^{2^n - 2}$, so $F_1 \ge j k^{2^n - 2} > 0$ and $F_2 > 0$. We
+  have $s \equiv 1 \pmod 8$, so $w_{m+1} \equiv r w_m^2 + 1$, and as $r \equiv 2 \pmod 4$ and
+  $w_m$ is odd, $w_m \equiv r + 1 \pmod 8$ for $m \ge 2$; thus $W \equiv j(j + k) - 1$ and
+  $V \equiv k \pmod 8$. This gives $F_1 \equiv 6 \pmod 8$ when $(j, k) \equiv (2, 1) \bmod 4$
+  and $F_2 \equiv 6 \pmod 8$ when $(j, k) \equiv (3, 3) \bmod 4$. In both cases a prime
+  $p \equiv 3 \pmod 4$ divides $|v_n| = F_1 F_2$ (Lemma~\ref{lem:prime3}).
+
+  (2) Here $r = -(j^2 + jk + k^2)$, $s = k^2$, $r + s = -j(j + k)$, and $a \equiv 1 \bmod 4$, so
+  (O2) holds. $|r| \equiv 3 \pmod 4$ is not a square, so (Z1) holds. Lemma~\ref{lem:odd} gives
+  $\phi_n$ for odd $n \ge 3$, and $\val_2$ alternates on $c_n$ from $n = 1$
+  (Lemma~\ref{lem:pat-dyadic}). Let $n \ge 2$ be even and $V = k^{2^n - 1}$. Then
+  $u_n = G_n H_n$ with
+  \[ G_n = r w_n - (j + k) V = k^{2^n}(c_n - \ell - 1) \quad \text{and} \quad
+     H_n = r w_n + j V = k^{2^n}(c_n + \ell), \]
+  both positive as $c_n \ge -a = \ell^2 + \ell + 1$. By Lemma~\ref{lem:strongcong},
+  $w_n = (r + s) T$ with $T \equiv s^{2^{n-1} - 2} \pmod{r + s}$, so $j$ and $j + k$ divide $w_n$.
+  Set $K = H_n / j = -r(j + k) T + V$ when $(j, k) \equiv (1, 1) \bmod 4$, and
+  $K = G_n / (j + k) = -r j T - V$ when $(j, k) \equiv (2, 3) \bmod 4$; in both cases the divisor
+  is odd and $K > 0$. Then:
+  \begin{itemize}
+    \item $K \equiv 3 \pmod 4$. In $\ZZ/4\ZZ$, $\bar a = 1$, so $\bar c_n = 2$ for even $n$, and
+          $r w_n = s^{2^{n-1}} \bar c_n = 2$ (Lemma~\ref{lem:reduction}); also $V \equiv k \pmod 4$.
+          In the first case $jK = H_n \equiv 2 + jk$, so $K \equiv 2 + k \equiv 3$; in the second
+          $(j + k)K = G_n \equiv 2 - (j + k)k$, so $K \equiv 2 - k \equiv 3 \pmod 4$.
+    \item $K$ is prime to $r + s$. $K$ is odd. Let $q$ be an odd prime dividing
+          $r + s = -j(j + k)$; then $q \nmid k$, $r \equiv -k^2$ and
+          $r T \equiv -k^{2^n - 2} \pmod q$. In the first case $K \equiv (j + k)k^{2^n - 2} + V$,
+          which is $2V$ if $q \mid j$ and $V$ if $q \mid j + k$; in the second case
+          $K \equiv j k^{2^n - 2} - V$, which is $-V$ if $q \mid j$ and $-2V$ if $q \mid j + k$.
+          The claim follows, as $q$ does not divide $2V$.
+  \end{itemize}
+  So a prime $p \equiv 3 \pmod 4$ divides $K$, hence $u_n$, and $p \nmid r + s$
+  (Lemma~\ref{lem:prime3}). Lemma~\ref{lem:period2} with $\val_2$ and $\phi_0$ gives $\phi_n$.
+\end{proof}
+
+Theorem~\ref{thm:families} generalizes the results of \cite{li2021}. The first case in the
+corollary below improves on \cite{li2021}, Theorem~3.3 (which covers even $m$); the second case
+is \cite{li2021}, Theorem~3.9.
+
+\begin{corollary}[Li's families]
+  \label{cor:li2021}
+  \uses{thm:families}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul, QuadraticIterates.li2021_theorem_3_3,
+    QuadraticIterates.li2021_theorem_3_9}
+  \leanok
+  If $m \in \ZZ_{\ge 0}$ and $a = -(4m + 2)(4m + 3)$ or $a = -((4m + 1)(4m + 2) + 1)$, then
+  $\rho_a$ is surjective.
+  \formalnote{\lname{nonempty\_mulEquiv\_of\_eq\_neg\_mul} for the first family, with its case
+  $m$ even \lname{li2021\_theorem\_3\_3}, and \lname{li2021\_theorem\_3\_9} for the second: the
+  statements of the comparator challenges.}
+\end{corollary}
+\begin{proof}
+  \leanok
+  Apply Theorem~\ref{thm:families} with $k = 1$: $j = 4m + 2$ in the class $(2, 1)$, resp.\
+  $j = 4m + 1$ in the class $(1, 1)$, where $a \le -3$.
+\end{proof}

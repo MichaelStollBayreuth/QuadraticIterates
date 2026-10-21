@@ -1,16 +1,26 @@
 % Macros and settings used by both the pdf and the web version.
 
-% Theorem-like environments (numbered within chapters). These are the environments that
-% appear in the dependency graph.
+% Theorem-like environments, numbered within chapters. The nodes of the dependency graph are those
+% listed in the `thms` option of web.tex; remarks, the question and the conjecture are not nodes.
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{facts}[theorem]{Facts}
+\newtheorem{conjecture}[theorem]{Conjecture}
 
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
+\newtheorem{question}[theorem]{Question}
+
+% Chapters 1--7 are the sections of the paper, and their statements carry the paper's numbers.
+% The supporting statements of a chapter, which the paper does not state, come first, in a
+% section opened by \supporting, and are numbered with letters (Lemma 5.A, ...); \paperitems
+% then restarts the arabic numbering.
+\newcommand{\supporting}{\renewcommand{\thetheorem}{\thechapter.\Alph{theorem}}}
+\newcommand{\paperitems}{%
+  \setcounter{theorem}{0}\renewcommand{\thetheorem}{\thechapter.\arabic{theorem}}}
 
 % Notation of the paper.
 \newcommand{\QQ}{\mathbb{Q}}

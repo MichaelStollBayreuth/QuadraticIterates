@@ -1,0 +1,348 @@
+\chapter{The Klein four-group of characters}
+\label{chap:klein}
+
+\section{Preliminaries}
+\supporting
+
+The patterns of the characters at a prime along $(c_n)$. For a prime $p$ and an integer
+$m \ne 0$, $m_p$ is the prime-to-$p$ part of $m$, and ``$m \ne \pm\sq$'' means that $|m|$ is not
+a square.
+
+\begin{lemma}[Square classes of the terms]
+  \label{lem:sqclass}
+  \uses{lem:reduction, def:qchar}
+  \lean{QuadraticIterates.mulChar_cSeq_one, QuadraticIterates.mulChar_cSeq_of_two_le,
+    QuadraticIterates.mulChar_cSeq_one_eq_mul}
+  \leanok
+  For every quadratic character $\chi$: $\chi(c_1) = \chi(-rs)$ and $\chi(c_n) = \chi(r w_n)$ for
+  $n \ge 2$. In particular $\chi(c_2) = \chi(r(r+s))$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  $c_n = r w_n / s^{2^{n-1}}$ (Lemma~\ref{lem:reduction}), whose denominator is a square for
+  $n \ge 2$, and $c_1 = -rs/s^2$; a character takes the same value at $x$ and at $x y^2$.
+\end{proof}
+
+\begin{lemma}[Two-periodicity modulo $(r + s)^2$]
+  \label{lem:strongcong}
+  \uses{lem:reduction, lem:wseq-mul}
+  \lean{QuadraticIterates.wSeq_two_mul_modEq, QuadraticIterates.wSeq_two_mul_add_one_modEq,
+    QuadraticIterates.exists_wSeq_two_mul_eq, QuadraticIterates.mul_wSeq_two_mul_add_one_modEq,
+    QuadraticIterates.cSeq_two_mul_of_sq_eq_zero,
+    QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_zero}
+  \leanok
+  For $k \ge 1$: $w_{2k} = (r + s)\, T_k$ with $T_k \equiv s^{2^{2k-1} - 2} \pmod{r + s}$, and
+  $w_{2k+1} \equiv s^{2^{2k} - 1} \pmod{r + s}$.
+  \formalnote{The first part is the case $m = 2$ of Lemma~\ref{lem:wseq-mul}, as $w_2 = r + s$,
+  stated as $w_{2k} \equiv (r + s) s^{2^{2k-1} - 2} \pmod{(r + s)^2}$. The second uses the
+  general fact that $\bar c_{2k} = -t$ and $\bar c_{2k+1} = t - 1$ for $k \ge 1$ in a ring with
+  $t^2 = 0$, $t = \bar a + 1$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  Modulo $r + s$, $s$ is a unit and $\bar a = -1$, so $(\bar c_n) = (1, 0, -1, 0, -1, \dots)$, and
+  Lemma~\ref{lem:reduction} gives $r w_{2k+1} \equiv -s^{2^{2k}}$, where $r \equiv -s$. The first
+  part is Lemma~\ref{lem:wseq-mul} with $m = 2$.
+\end{proof}
+
+\begin{lemma}[Primes of $r$]
+  \label{lem:pat-r}
+  \uses{lem:sqclass, lem:wseq-res, def:chars, lem:vp}
+  \lean{QuadraticIterates.valChar_cSeq_of_dvd_left,
+    QuadraticIterates.unitPartChar_cSeq_of_dvd_left}
+  \leanok
+  Let $p$ be a prime dividing $r$.
+  \begin{enumerate}
+    \item $v_p(c_n) = v_p(r)$ for all $n \ge 1$; if $v_p(r)$ is odd, $\val_p$ is a $\phi_0$.
+    \item If $p$ is odd and $x = \Leg{r_p s}{p}$, then
+          $\chi_p(c_\bullet) = (\Leg{-1}{p} x, x, x, \dots)$.
+    \item If $4 \mid r$ and $x = \chi_4(r_2 s)$, then $\chi_4(c_\bullet) = (-x, x, x, \dots)$.
+    \item If $8 \mid r$, then $\chi_8(c_n) = \chi_8(r_2 s)$ for all $n \ge 1$.
+  \end{enumerate}
+  \formalnote{(1) is \lname{padicValRat\_cSeq\_of\_dvd\_left} (Lemma~\ref{lem:vp}), and its
+  parity \lname{valChar\_cSeq\_of\_dvd\_left}. (2)--(4) are one statement,
+  \lname{unitPartChar\_cSeq\_of\_dvd\_left}: for a power $N = p^k \mid r$, $k \ge 1$, and $\psi$
+  modulo $N$, $\chi_\psi(c_n) = \psi(s)\chi_\psi(r)$ for $n \ge 2$; at $n = 1$,
+  $\chi(c_1) = \chi(-1)\chi(r)\chi(s)$ for every character $\chi$
+  (\lname{mulChar\_cSeq\_one\_eq\_mul}).}
+\end{lemma}
+\begin{proof}
+  \leanok
+  By Lemma~\ref{lem:sqclass}, $\chi(c_n) = \chi(r)\chi(w_n)$ for $n \ge 2$ and
+  $\chi(c_1) = \chi(-1)\chi(r)\chi(s)$. As $w_n \equiv s^{2^{n-1}-1} \pmod r$ with an odd
+  exponent, $\chi_\psi(w_n) = \psi(s)$ for $\psi$ modulo a divisor $N$ of $r$; and
+  $\chi_\psi(r) = \psi(r_p)$. For (1), $v_p(w_n) = v_p(s) = 0$.
+\end{proof}
+
+\begin{lemma}[Primes of $s$]
+  \label{lem:pat-s}
+  \uses{lem:sqclass, lem:wseq-res, def:chars}
+  \lean{QuadraticIterates.valChar_cSeq_of_dvd_right,
+    QuadraticIterates.unitPartChar_cSeq_of_dvd_right,
+    QuadraticIterates.unitPartChar_two_cSeq_of_even}
+  \leanok
+  \begin{enumerate}
+    \item Let $p$ be an odd prime dividing $s$. Then $\val_p(c_n) = \chi_p(c_n) = 1$ for $n \ge 2$,
+          while $\val_p(c_1) = (-1)^{v_p(s)}$ and $\chi_p(c_1) = \Leg{-r s_p}{p}$.
+    \item Let $s$ be even. Then $\val_2(c_n) = \chi_4(c_n) = \chi_8(c_n) = 1$ for $n \ge 3$, and
+          $\val_2(c_2) = 1$.
+  \end{enumerate}
+  In particular, $c_n$ is a square in $\QQ_p$ for $n \ge 2$, resp.\ in $\QQ_2$ for $n \ge 3$.
+  \formalnote{(1) for $\psi$ modulo any power $N \mid s$ of $p$, $k \ge 1$; (2) for $\psi$
+  modulo a power of $2$ dividing $8$. The values at $c_1$ are those of
+  \lname{mulChar\_cSeq\_one\_eq\_mul}.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  For $n \ge 2$, $v_p(c_n) = -2^{n-1} v_p(s)$ is even. (1) $w_n \equiv r^{2^{n-1}-1} \pmod p$, so
+  $r w_n \equiv r^{2^{n-1}}$ is a nonzero square modulo $p$. (2) $w_n \equiv r \pmod 8$ for
+  $n \ge 3$ (Lemma~\ref{lem:wseq-res}), so $r w_n \equiv r^2 \equiv 1 \pmod 8$.
+\end{proof}
+
+\begin{lemma}[Primes of $r + s$]
+  \label{lem:pat-rs}
+  \uses{lem:sqclass, lem:strongcong, def:chars}
+  \lean{QuadraticIterates.valChar_cSeq_two_mul_add_one_of_dvd_add,
+    QuadraticIterates.valChar_cSeq_two_mul_of_dvd_add,
+    QuadraticIterates.unitPartChar_cSeq_one_of_dvd_add,
+    QuadraticIterates.unitPartChar_cSeq_two_mul_add_one_of_dvd_add,
+    QuadraticIterates.unitPartChar_cSeq_two_mul_of_dvd_add}
+  \leanok
+  \begin{enumerate}
+    \item Let $q$ be a prime dividing $r + s$. Then $v_q(c_n) = 0$ for odd $n$ and
+          $v_q(c_n) = v_q(r + s)$ for even $n$; so if $v_q(r + s)$ is odd,
+          $\val_q(c_\bullet) = ({+}{-}{+}{-}\cdots)$.
+    \item Let $p \equiv 3 \pmod 4$ be a prime dividing $r + s$, and $\chi = \chi_p$, or let
+          $4 \mid r + s$, $p = 2$ and $\chi = \chi_4$. Then
+          \[ \chi(c_\bullet) = (1, y, -1, y, -1, y, \dots), \qquad
+             y = \chi(c_2) = -\chi(s\,(r + s)_p). \]
+  \end{enumerate}
+  \formalnote{(2) is stated for $\psi$ modulo any power $N = p^k \mid r + s$, $k \ge 1$:
+  $\chi_\psi(c_1) = 1$, $\chi_\psi(c_{2j+1}) = \psi(-1)$ and
+  $\chi_\psi(c_{2j}) = \psi(-1)\psi(s)\chi_\psi(r + s)$ for $j \ge 1$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  By Lemma~\ref{lem:strongcong}, $w_{2k} = (r + s) T_k$ with $T_k \equiv s^{2^{2k-1} - 2}$ and
+  $w_{2k+1} \equiv s^{2^{2k} - 1} \pmod{r + s}$ for $k \ge 1$, and $q \nmid rs$. This gives (1),
+  as $v_q(c_n) = v_q(w_n)$ and $s$ is prime to $q$. For (2): $\chi(c_1) = \chi(-rs) = 1$ because
+  $-rs \equiv s^2 \pmod{r + s}$. For odd $n \ge 3$, $\chi(c_n) = \chi(r w_n)$ and
+  $r w_n \equiv -s \cdot s^{2^{n-1} - 1} = -s^{2^{n-1}} \pmod{r + s}$, so $\chi(c_n) = \psi(-1) = -1$.
+  For even $n = 2k$, $\chi(c_n) = \chi(r (r + s))\psi(T_k) = \chi(r(r+s)) = \chi(c_2)$, the exponent
+  $2^{2k-1} - 2$ being even. Finally $\chi(r) = \psi(-s)$ and $\chi(r + s) = \psi((r + s)_p)$.
+\end{proof}
+
+\begin{lemma}[Primes of $r + 2s$]
+  \label{lem:pat-r2s}
+  \uses{lem:localeval, lem:rigid}
+  \lean{QuadraticIterates.unitPartChar_cSeq_of_dvd_add_two_mul, QuadraticIterates.cSeq_neg_two}
+  \leanok
+  Let $p$ be an odd prime dividing $r + 2s$. Then $\chi_p(c_n) = \Leg{2}{p}$ for all $n \ge 1$.
+  \formalnote{For $\psi$ modulo any power $N = p^k \mid r + 2s$, $k \ge 1$:
+  $\chi_\psi(c_n) = \psi(2)$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  $p \nmid s$, and $\bar a = -2$ in $\ZZ/p\ZZ$, so $\bar c_1 = 2$ is a fixed point of
+  $x \mapsto x^2 - 2$ (so the sequence is constant, Lemma~\ref{lem:rigid}); apply
+  Lemma~\ref{lem:localeval}.
+\end{proof}
+
+\begin{lemma}[Primes of $r^2 + s^2$]
+  \label{lem:pat-r2s2}
+  \uses{lem:localeval, lem:rigid}
+  \lean{QuadraticIterates.unitPartChar_cSeq_two_mul_add_one_of_dvd_sq_add_sq,
+    QuadraticIterates.unitPartChar_cSeq_two_mul_of_dvd_sq_add_sq,
+    QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_neg_one,
+    QuadraticIterates.cSeq_two_mul_of_sq_eq_neg_one}
+  \leanok
+  Let $p$ be an odd prime dividing $r^2 + s^2$. Then $\chi_p(c_n) = \Leg{-rs}{p}$ for odd $n$ and
+  $\chi_p(c_n) = \Leg{(r - s)s}{p}$ for even $n$.
+  \formalnote{For $\psi$ modulo any power $N = p^k \mid r^2 + s^2$, $k \ge 1$, with values
+  $\psi(-rs)$ and $\psi((r - s)s)$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  $p \nmid rs$ and $\bar a^2 = -1$ in $\ZZ/p\ZZ$. Since
+  $\bar c_3 - \bar c_1 = \bar a(\bar a + 2)(\bar a^2 + 1) = 0$, the sequence has period $2$ from
+  $n = 1$ on, periodicity propagating along the recursion (Lemma~\ref{lem:rigid});
+  $\bar c_1 = -\bar a$ and $\bar c_2 = \bar a^2 + \bar a =
+  \bar a - 1$ are units ($\bar a = 1$ would give $2 = 0$). Lemma~\ref{lem:localeval} gives
+  $\chi_p(c_1) = \Leg{-r s^{-1}}{p} = \Leg{-rs}{p}$ and $\chi_p(c_2) = \Leg{(r-s)s}{p}$.
+\end{proof}
+
+\begin{remark}
+  As $\bar a$ has order $4$ in $(\ZZ/p\ZZ)^\times$, $p \equiv 1 \pmod 4$, and
+  $\Leg{-rs}{p} = \Leg{\bar a}{p} = -1$ if and only if $p \equiv 5 \pmod 8$.
+\end{remark}
+
+We write $a \equiv m \bmod N$ when $N$ divides the numerator of $a - m$; for $a \equiv 1 \bmod 4$
+this means that $s$ is odd and $r \equiv s \pmod 4$.
+
+\begin{lemma}[$a \equiv 1 \bmod 4$]
+  \label{lem:pat-dyadic}
+  \uses{lem:localeval, lem:pat-rs, def:phin}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_one_of_modEq_four,
+    QuadraticIterates.valChar_two_cSeq_succ_of_modEq_four,
+    QuadraticIterates.unitPartChar_two_χ₄_cSeq_one_of_modEq_four,
+    QuadraticIterates.unitPartChar_two_χ₄_cSeq_two_mul_add_one_of_modEq_four,
+    QuadraticIterates.unitPartChar_two_χ₄_cSeq_two_mul_of_modEq_four,
+    QuadraticIterates.intCast_mul_wSeq_zmod_eight, QuadraticIterates.cSeq_two_mul_zmod_eight,
+    QuadraticIterates.cSeq_two_mul_add_one_zmod_eight}
+  \leanok
+  Let $a \equiv 1 \bmod 4$. Then $\val_2(c_\bullet) = ({+}{-}{+}{-}\cdots)$, and $\chi_4$ (if
+  $a \equiv 1 \bmod 8$) or $\chi_4 \val_2$ (if $a \equiv 5 \bmod 8$) has pattern
+  $({-}{+}{+}\cdots)$: $a$ has $\phi_1$.
+  \formalnote{$a \equiv 1 \bmod 4$ is stated as $s$ odd and $r \equiv s \pmod 4$. Modulo $8$,
+  $\bar a = rs \in \{1, 5\}$, the even terms are $\bar a + 1$ and the odd terms from $n = 3$ on
+  are $\bar a + 4$ (computations by \lname{decide}); in all, $\chi_4(c_\bullet) = (-1, w, 1, w, 1,
+  \dots)$ with $w = \chi_8(rs)$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{lem:reduction}
+  $r + s \equiv 2 \pmod 4$, so the statement on $\val_2$ is Lemma~\ref{lem:pat-rs}(1) with $q = 2$.
+  In $\ZZ/8\ZZ$, $\bar a \in \{1, 5\}$ and $(\bar c_n)$ is $(-1, 2, 5, 2, 5, \dots)$ for
+  $\bar a = 1$ and $(3, 6, 1, 6, 1, \dots)$ for $\bar a = 5$. For $n \ge 2$,
+  $s^{2^{n-1}} \equiv 1 \pmod 8$, so $r w_n \equiv \bar c_n \pmod 8$ (Lemma~\ref{lem:reduction}); for
+  even $n$ the odd part $r w_n / 2$ is $\equiv 1$ resp.\ $3 \pmod 4$. And
+  $c_1 \sim -rs \equiv -\bar a \pmod 8$. So $\chi_4(c_\bullet) = ({-}{+}{+}{+}\cdots)$ for
+  $\bar a = 1$ and $({-}{-}{+}{-}{+}\cdots)$ for $\bar a = 5$, and $\val_2$ turns the latter into
+  $({-}{+}{+}\cdots)$.
+\end{proof}
+
+\section{Criteria for \texorpdfstring{$\phi_0$, $\phi_1$ and $\tau$}{phi\_0, phi\_1 and tau}}
+\paperitems
+
+Lemma~\ref{lem:twoadic} tells us that for half of the rational $a \in \cA$, $\rho_a$ is
+surjective \emph{if} we can also produce $\phi_0$ and $\phi_1$. This is equivalent to $a$ having
+two of $\phi_0$, $\phi_1$ and $\tau$: if $\phi_0$ and $\phi_1$ are such characters, then
+$\{1, \phi_0, \phi_1, \phi_0\phi_1\}$ is a Klein four-group inside the character group of
+$\QQ^\times/\QQ^{\times 2}$, and $\phi_0\phi_1$ is a $\tau$ (Lemma~\ref{lem:klein}). We now collect
+sufficient conditions for each of them.
+
+\begin{proposition}[Criteria for $\phi_0$]
+  \label{prop:Z}
+  \uses{def:phi0tau, lem:pat-r, lem:pat-r2s, lem:pat-r2s2}
+  \lean{QuadraticIterates.NegAllCriterion,
+    QuadraticIterates.hasCharPattern_neg_one_of_negAllCriterion,
+    QuadraticIterates.hasCharPattern_neg_one_of_not_isSquare,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_add_two_mul,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_sq_add_sq,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_left,
+    QuadraticIterates.hasCharPattern_neg_one_of_dvd_left_two}
+  \leanok
+  $a$ has $\phi_0$ if one of the following holds.
+  \begin{enumerate}
+    \item[(Z1)] $|r|$ is not a square.
+    \item[(Z2)] A prime $p \equiv \pm 3 \pmod 8$ divides $r + 2s$.
+    \item[(Z3)] An odd prime $p$ divides $r^2 + s^2$, and $\Leg{-rs}{p} = \Leg{(r - s)s}{p} = -1$.
+    \item[(Z4)] A prime $p \equiv 1 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = -1$; or $8 \mid r$
+          and $r_2 s \equiv \pm 3 \pmod 8$.
+  \end{enumerate}
+  \formalnote{An inductive proposition \lname{NegAllCriterion r s} with one constructor per item
+  (two for (Z4)), stated with Mathlib's notions only: Legendre symbols as \lname{jacobiSym} and
+  $p$-parts as $r = p^k m$ with $p \nmid m$.}
+\end{proposition}
+\begin{proof}
+  \leanok
+  (Z1) $v_p(c_n) = v_p(r)$ for all $n$, so $\val_p$ for a prime with $v_p(r)$ odd is a suitable
+  character (Lemma~\ref{lem:pat-r}(1)). (Z2) $c_n \equiv 2 \pmod p$ for all $n$, so we can take
+  $\chi_p$ (Lemma~\ref{lem:pat-r2s}). (Z3) The sequence $(c_n)_{n \ge 1}$ reduces modulo $p$ to
+  $(-a, a - 1, -a, a - 1, \dots)$, so we can take $\chi_p$ (Lemma~\ref{lem:pat-r2s2}). (Z4)
+  $\chi_p(c_1) = \Leg{-1}{p}\Leg{r_p s}{p}$ and $\chi_p(c_n) = \Leg{r_p s}{p}$ for $n \ge 2$, and
+  similarly for $\chi_8$ in the second case (Lemma~\ref{lem:pat-r}(2), (4)); so we can take
+  $\chi_p$, resp.\ $\chi_8$.
+\end{proof}
+
+\begin{proposition}[Criteria for $\phi_1$]
+  \label{prop:O}
+  \uses{lem:signs, lem:pat-dyadic, lem:pat-s, lem:pat-r}
+  \lean{QuadraticIterates.NegFirstCriterion,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_negFirstCriterion,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_of_odd,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_two,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_four,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_eight,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_left,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_left_four}
+  \leanok
+  $a$ has $\phi_1$ if one of the following holds.
+  \begin{enumerate}
+    \item[(O1)] $a > 0$.
+    \item[(O2)] $a \equiv 1 \bmod 4$, i.e.\ $s$ is odd and $r \equiv s \pmod 4$.
+    \item[(O3)] An odd prime $p$ divides $s$ with $v_p(s)$ odd or $\Leg{-r s_p}{p} = -1$.
+    \item[(O4)] $v_2(s)$ is odd, or $v_2(s) = 2$ and $r s_2 \equiv 1 \pmod 4$, or $v_2(s) \ge 4$ is
+          even and $r s_2 \not\equiv -1 \pmod 8$.
+    \item[(O5)] A prime $p \equiv 3 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = 1$; or $4 \mid r$
+          and $r_2 s \equiv 1 \pmod 4$.
+  \end{enumerate}
+  In particular, $a$ has $\phi_1$ if $s$ is not a square ((O3) or (O4)).
+  \formalnote{\lname{NegFirstCriterion r s}. In (O4), $\chi_4$ works whenever $4 \mid s$ and
+  $r s_2 \equiv 1 \pmod 4$, and $\chi_8$ whenever $8 \mid s$ and $r s_2 \equiv \pm 3 \pmod 8$.}
+\end{proposition}
+\begin{proof}
+  \leanok
+  \uses{lem:sqclass}
+  (O1) The sign (Lemma~\ref{lem:signs}). (O2) $\chi_4$ or $\chi_4 \val_2$, by a consideration
+  modulo $8$; note $\val_2(c_n) = (-1)^{n-1}$ (Lemma~\ref{lem:pat-dyadic}). (O3) In the first
+  case $\val_p$; in the second $\chi_p$, as $r w_n \equiv r^{2^{n-1}} \pmod p$
+  (Lemma~\ref{lem:pat-s}(1)). (O4) By Lemma~\ref{lem:pat-s}(2) the characters at $2$ are trivial
+  on $c_n$, $n \ge 3$, so it suffices to find one with value $-1$ at $c_1$ and $1$ at $c_2$; here
+  $c_1 \sim -rs$, $c_2 \sim r(r+s)$ (Lemma~\ref{lem:sqclass}), $r$ odd. If $v_2(s)$ is odd,
+  $\val_2$ works. If $v_2(s) = 2$, then $r + s \equiv r + 4 \pmod 8$, so
+  $\chi_4(c_2) = \chi_4(r^2) = 1$, and $\chi_4(c_1) = \chi_4(-r s_2) = -1$. If $v_2(s) \ge 4$, then
+  $r(r + s) \equiv 1 \pmod 8$, so every character at $2$ is $1$ at $c_2$, and as $-r s_2$ is a
+  $2$-adic unit $\not\equiv 1 \pmod 8$ one of $\chi_4$, $\chi_8$, $\chi_4\chi_8$ is $-1$ at $c_1$.
+  (O5) $\chi_p$, resp.\ $\chi_4$ (Lemma~\ref{lem:pat-r}(2), (3)); compare the proof of (Z4).
+\end{proof}
+
+\begin{proposition}[Criteria for $\tau$]
+  \label{prop:T}
+  \uses{lem:signs, lem:window, lem:pat-r, lem:pat-rs}
+  \lean{QuadraticIterates.NegTailCriterion,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_negTailCriterion,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_neg_lt,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_left,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_left_four,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add_of_valChar,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add_prime,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_add_four,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_not_isSquare_add,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_window,
+    QuadraticIterates.mul_wSeq_three, QuadraticIterates.mul_wSeq_four}
+  \leanok
+  $a$ has $\tau$ if one of the following holds.
+  \begin{enumerate}
+    \item[(T1)] $-1 < a < 0$.
+    \item[(T2)] A prime $p \equiv 3 \pmod 4$ divides $r$ with $\Leg{r_p s}{p} = -1$; or $4 \mid r$
+          and $r_2 s \equiv 3 \pmod 4$.
+    \item[(T3)] A prime $p \equiv 3 \pmod 4$ divides $r + s$ with $\Leg{s (r+s)_p}{p} = 1$; or
+          $4 \mid r + s$ and $s (r+s)_2 \equiv 1 \pmod 4$; or $|r + s|$ is not a square and
+          divisible by $4$ or by a prime $p \equiv 3 \pmod 4$.
+    \item[(T4)] $\alpha' < a < -1$ (that is, $c_3 < 0 < c_4$), and $|r + s|$ is not a square.
+  \end{enumerate}
+  \formalnote{\lname{NegTailCriterion r s}; in (T4) the window is stated as $r < -s$ and
+  $r w_3 < 0 < r w_4$, with $r w_3 = (r^2 + rs)^2 + rs^3$ and $r w_4 = (r w_3)^2 + rs^7$.}
+\end{proposition}
+\begin{proof}
+  \leanok
+  \uses{lem:pat-rs}
+  (T1) The sign (Lemma~\ref{lem:signs}). (T2) $\chi_p$ resp.\ $\chi_4$
+  (Lemma~\ref{lem:pat-r}(2), (3)). (T3) Let $\chi = \chi_p$, resp.\ $\chi_4$. Here $a \equiv -1
+  \pmod p$, so modulo $p$, $(c_n)_{n \ge 1}$ reduces to $(1, 0, -1, 0, -1, \dots)$, and
+  $(c_{2n})_p \equiv (c_2)_p \pmod p$, as $c_{2k} \equiv c_2 \bmod c_2^2$ (Lemma~\ref{lem:pat-rs}).
+  So $\chi$ is constant on $(c_{2n})$; take $\chi$ when $\chi(c_2) = -1$ and $\chi \val_q$ for a
+  prime $q$ with $v_q(r + s)$ odd otherwise. (T4) $\sgn \cdot \val_q$ with $v_q(r + s)$ odd:
+  $({+}{+}{-}{+}{-}\cdots) \cdot ({+}{-}{+}{-}\cdots) = ({+}{-}{-}{-}\cdots)$
+  (Lemmas~\ref{lem:window} and~\ref{lem:pat-rs}(1)).
+\end{proof}
+
+We say that ``$a$ satisfies (Z)'', ``$a$ satisfies (O)'' and ``$a$ satisfies (T)'' when $a$
+satisfies one of the conditions (Z1)--(Z4), one of (O1)--(O5), and one of (T1)--(T4),
+respectively.
+
+One can extend these criteria to cover some further cases; see
+Section~\ref{sec:further} of Appendix~\ref{chap:further}.

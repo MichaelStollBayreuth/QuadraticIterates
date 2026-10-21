@@ -34,6 +34,8 @@ parameters `a ∈ ℚ` whose arboreal Galois representation is surjective.
 * `QuadraticIterates.hasCharPattern_of_twoIndependent`: the converse, in a field.
 * `QuadraticIterates.tfae_forall_nonempty_mulEquiv`: for `a ∈ ℚ`, `Ω_n ≅ [C₂]ⁿ` for all `n` iff
   `(c_n)_{n ≥ 1}` is 2-independent iff `a` has `φ_n` for every `n ≥ 1`.
+* `QuadraticIterates.forall_nonempty_mulEquiv_of_forall_exists_mulChar`: `φ₀`, `φ₁` and, for
+  every `n ≥ 2`, a character that changes sign after `c_n` give `Ω_n ≅ [C₂]ⁿ` for all `n`.
 -/
 
 @[expose] public section
@@ -121,5 +123,18 @@ theorem forall_nonempty_mulEquiv_of_forall_hasCharPattern {a : ℚ}
     (h : ∀ n ≥ 1, HasCharPattern (cSeq a) n (Pi.mulSingle n (-1))) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) :=
   (forall_nonempty_mulEquiv_iff_twoIndependent a).mpr (twoIndependent_of_forall_hasCharPattern h) n
+
+/-- If `a ∈ ℚ` has `φ₀` and `φ₁`, and for every `n ≥ 2` some character `ψ` with `ψ(c_n) ≠ 0` takes
+the value `-ψ(c_n)` at all later terms, then `Ω_n ≅ [C₂]ⁿ` for all `n`: `ψ` or `φ₀ ψ` is a `φ_n`
+(`QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt`). -/
+theorem forall_nonempty_mulEquiv_of_forall_exists_mulChar {a : ℚ}
+    (h₀ : HasCharPattern (cSeq a) 1 (-1)) (h₁ : HasCharPattern (cSeq a) 1 (Pi.mulSingle 1 (-1)))
+    (h : ∀ n ≥ 2, ∃ ψ : MulChar ℚ ℤ, ψ (cSeq a n) ≠ 0 ∧ ∀ m > n, ψ (cSeq a m) = -ψ (cSeq a n))
+    (n : ℕ) : Nonempty (GaloisGroup a n ≃* WreathPower n) := by
+  refine forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ ?_) n
+  rcases hn.eq_or_lt with rfl | hn
+  · exact h₁
+  obtain ⟨ψ, hψ, hψn⟩ := h n hn
+  exact hasCharPattern_mulSingle_of_neg_of_forall_lt (h₀.mono (by lia)) hψ hψn
 
 end QuadraticIterates

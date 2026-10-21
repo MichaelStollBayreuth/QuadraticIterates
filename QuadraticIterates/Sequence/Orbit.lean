@@ -11,26 +11,31 @@ import Mathlib.Data.ZMod.Units
 import QuadraticIterates.Mathlib.Data.ZMod
 
 /-!
-# Orbits of `x ↦ x² + a`, two-periodicity modulo `(r + s)²` and three-periodicity modulo `w_3²`
+# Orbits of `x ↦ x² + a`, rigid divisibility, and periodicity modulo `w_m²`
 
 For a parameter `a` in a commutative ring, `x ↦ x² + a` is even, so once `c_{n+1} = -c_n` the
 sequence is constant from `n + 1` on, and once `c_{n+2} = -c_n` it is `2`-periodic from `n + 1` on;
-moreover `c_n + c_{n+2} = (c_n + c_{n+1})(c_n² - c_n + a + 1)`. If `(a + 1)² = 0`, the sequence is
-`1 - t, -t, t - 1, -t, t - 1, …` with `t = a + 1`; modulo `(r + s)²` this applies to `a = r/s` and
-gives the congruences of `w_{2k}` modulo `(r + s)²` and of `w_{2k+1}` modulo `r + s`. Likewise,
-if `c_3² = 0`, the sequence is `3`-periodic from `n = 2` on; modulo `w_3²` this applies to
-`a = r/s` and gives the congruence of `w_{3k}` modulo `w_3²`.
+moreover `c_n + c_{n+2} = (c_n + c_{n+1})(c_n² - c_n + a + 1)`. If `c_m² = 0`, the sequence is
+`m`-periodic from `n = 2` on, so `c_{mk} = c_m`; in a quotient ring this is the rigid divisibility
+`c_{mk} ≡ c_m (mod c_m²)`. Modulo `w_m²` it applies to `a = r/s` and gives the congruence of
+`w_{mk}` modulo `w_m²`. If `(a + 1)² = 0`, the sequence is `1 - t, -t, t - 1, -t, t - 1, …` with
+`t = a + 1`; modulo `(r + s)²` this applies to `a = r/s` and gives the congruence of `w_{2k+1}`
+modulo `r + s`.
 
 ## Main statements
 
 * `QuadraticIterates.cSeq_eq_of_add_succ_eq_zero`,
   `QuadraticIterates.cSeq_add_two_eq_of_add_two_eq_neg`, `QuadraticIterates.cSeq_add_cSeq_add_two`:
   fixed points, two-cycles, and the factorization of `c_n + c_{n+2}`.
-* `QuadraticIterates.wSeq_two_mul_modEq`: `w_{2k} ≡ (r + s) s^{2^{2k-1} - 2} (mod (r + s)²)`.
+* `QuadraticIterates.cSeq_add_eq_of_sq_eq_zero`, `QuadraticIterates.cSeq_mul_of_sq_eq_zero`: if
+  `c_m² = 0`, the sequence is `m`-periodic from `n = 2` on and `c_{mk} = c_m`.
+* `QuadraticIterates.cSeq_eq_zero_iff_dvd`: if `m` is the first index with `c_m = 0` and `a ≠ 0`,
+  then `c_n = 0 ↔ m ∣ n`.
+* `QuadraticIterates.cSeq_sq_dvd_cSeq_mul_sub`, `QuadraticIterates.sq_dvd_cSeq_sub`: rigid
+  divisibility, `c_{mk} ≡ c_m (mod c_m²)` for `m ≥ 2` and `c_k ≡ a (mod c_1²)`.
+* `QuadraticIterates.wSeq_mul_modEq`: `w_{mk} ≡ w_m s^{2^{mk-1} - 2^{m-1}} (mod w_m²)`, with the
+  case `QuadraticIterates.wSeq_two_mul_modEq`, `w_{2k} ≡ (r + s) s^{2^{2k-1} - 2} (mod (r + s)²)`.
 * `QuadraticIterates.wSeq_two_mul_add_one_modEq`: `w_{2k+1} ≡ s^{2^{2k} - 1} (mod r + s)`.
-* `QuadraticIterates.cSeq_three_mul_of_sq_eq_zero` and its companions: if `c_3² = 0`, the
-  sequence is `3`-periodic from `n = 2` on.
-* `QuadraticIterates.wSeq_three_mul_modEq`: `w_{3k} ≡ w_3 s^{2^{3k-1} - 4} (mod w_3²)`.
 * `QuadraticIterates.cSeq_neg_two`, `QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_neg_one`,
   `QuadraticIterates.cSeq_two_mul_of_sq_eq_neg_one`: the sequences of `a = -2` and of `a` with
   `a² = -1`.
@@ -127,25 +132,79 @@ theorem cSeq_two_mul_of_sq_eq_neg_one (ha : a ^ 2 = -1) {j : ℕ} (hj : 1 ≤ j)
     cSeq_two_mul_add_one_of_sq_eq_neg_one ha, neg_sq]
   linear_combination ha
 
-/-- If `c_3² = 0`, the sequence is `3`-periodic from `n = 2` on: `c_4 = c_3² + a = a`, so
-`c_5 = a² + a = c_2`. -/
-theorem cSeq_add_three_eq_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) {m : ℕ} (hm : 2 ≤ m) :
-    cSeq a (m + 3) = cSeq a m :=
+/-- If `c_m² = 0` (`m ≥ 1`), the sequence is `m`-periodic from `n = 2` on: `c_{m+1} = c_m² + a = a`,
+so `c_{m+2} = a² + a = c_2`. -/
+theorem cSeq_add_eq_of_sq_eq_zero {m : ℕ} (hm : 1 ≤ m) (h : cSeq a m ^ 2 = 0) {n : ℕ}
+    (hn : 2 ≤ n) : cSeq a (n + m) = cSeq a n :=
   cSeq_add_eq_of_add_eq (by norm_num) (by
-    rw [show 2 + 3 = 3 + 1 + 1 from rfl, cSeq_succ a (by norm_num), cSeq_succ a (by norm_num), h,
-      zero_add, cSeq_two]) hm
+    rw [show 2 + m = m + 1 + 1 by lia, cSeq_succ a (by lia), cSeq_succ a hm, h, zero_add,
+      cSeq_two]) hn
 
-/-- If `c_3² = 0`, then `c_{3k} = c_3` for `k ≥ 1`. -/
-theorem cSeq_three_mul_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) {k : ℕ} (hk : 1 ≤ k) :
-    cSeq a (3 * k) = cSeq a 3 := by
-  induction k, hk using Nat.le_induction with
-  | base => rfl
-  | succ k hk ih => rw [mul_add, mul_one, cSeq_add_three_eq_of_sq_eq_zero h (by lia), ih]
+theorem cSeq_add_mul_eq_of_sq_eq_zero {m : ℕ} (hm : 1 ≤ m) (h : cSeq a m ^ 2 = 0) {n : ℕ}
+    (hn : 2 ≤ n) (k : ℕ) : cSeq a (n + m * k) = cSeq a n := by
+  induction k with
+  | zero => rfl
+  | succ k ih => rw [mul_add, mul_one, ← add_assoc, cSeq_add_eq_of_sq_eq_zero hm h (by lia), ih]
+
+/-- If `c_m² = 0` for some `m ≥ 2`, then `c_{mk} = c_m` for `k ≥ 1`. -/
+theorem cSeq_mul_of_sq_eq_zero {m : ℕ} (hm : 2 ≤ m) (h : cSeq a m ^ 2 = 0) {k : ℕ} (hk : 1 ≤ k) :
+    cSeq a (m * k) = cSeq a m := by
+  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by lia⟩
+  rw [mul_add, mul_one, add_comm, cSeq_add_mul_eq_of_sq_eq_zero (by lia) h hm]
+
+/-- If `a² = 0`, then `c_k = a` for `k ≥ 2`: the sequence is `1`-periodic from `n = 2` on, and
+`c_2 = a² + a`. -/
+theorem cSeq_eq_self_of_sq_eq_zero (h : a ^ 2 = 0) {k : ℕ} (hk : 2 ≤ k) : cSeq a k = a := by
+  obtain ⟨j, rfl⟩ : ∃ j, k = 2 + j := ⟨k - 2, by lia⟩
+  rw [← one_mul j, cSeq_add_mul_eq_of_sq_eq_zero le_rfl (by rwa [cSeq_one, neg_sq]) le_rfl,
+    cSeq_two, h, zero_add]
+
+/-- If `m ≥ 1` is the first index with `c_m = 0`, and `a ≠ 0`, then `c_n = 0 ↔ m ∣ n` for `n ≥ 1`:
+the sequence is `m`-periodic from `n = 2` on, with `c_{m+1} = c_m² + a = a`. -/
+theorem cSeq_eq_zero_iff_dvd {m : ℕ} (hm : 1 ≤ m) (h : cSeq a m = 0) (ha : a ≠ 0)
+    (hmin : ∀ j, 1 ≤ j → j < m → cSeq a j ≠ 0) {n : ℕ} (hn : 1 ≤ n) : cSeq a n = 0 ↔ m ∣ n := by
+  have hc : cSeq a m ^ 2 = 0 := by rw [h, zero_pow two_ne_zero]
+  have hm2 : 2 ≤ m := by
+    by_contra! h'
+    exact ha (neg_eq_zero.mp (by rwa [show m = 1 by lia, cSeq_one] at h))
+  refine ⟨fun h' ↦ ?_, fun ⟨k, hk⟩ ↦ ?_⟩
+  · by_contra hmn
+    have hn' := Nat.mod_add_div n m
+    rcases Nat.eq_zero_or_pos (n / m) with hq | hq
+    · exact hmin n hn (by rw [hq] at hn'; lia [Nat.mod_lt n (by lia : 0 < m)]) h'
+    rcases (by lia [show n % m ≠ 0 from fun h ↦ hmn (Nat.dvd_of_mod_eq_zero h)] :
+      n % m = 1 ∨ 2 ≤ n % m) with h1 | h2
+    · rw [show n = m + 1 + m * (n / m - 1) by lia [Nat.mul_sub_one m (n / m),
+        Nat.le_mul_of_pos_right m hq], cSeq_add_mul_eq_of_sq_eq_zero hm hc (by lia),
+        cSeq_succ _ hm, hc, zero_add] at h'
+      exact ha h'
+    · rw [← hn', cSeq_add_mul_eq_of_sq_eq_zero hm hc h2] at h'
+      exact hmin _ (by lia) (Nat.mod_lt n (by lia)) h'
+  · rw [hk, cSeq_mul_of_sq_eq_zero hm2 hc (Nat.pos_of_ne_zero (by rintro rfl; simp_all)), h]
+
+variable (a) in
+/-- **Rigid divisibility**: `c_{mk} ≡ c_m (mod c_m²)` for `m ≥ 2` and `k ≥ 1`. In the quotient by
+`c_m²` the image of `c_m` has square zero (`QuadraticIterates.cSeq_mul_of_sq_eq_zero`). -/
+theorem cSeq_sq_dvd_cSeq_mul_sub {m k : ℕ} (hm : 2 ≤ m) (hk : 1 ≤ k) :
+    cSeq a m ^ 2 ∣ cSeq a (m * k) - cSeq a m := by
+  rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq, map_cSeq, map_cSeq]
+  refine cSeq_mul_of_sq_eq_zero hm ?_ hk
+  rw [← map_cSeq, ← map_pow, Ideal.Quotient.eq_zero_iff_mem]
+  exact Ideal.mem_span_singleton_self _
+
+variable (a) in
+/-- **Rigid divisibility** at `m = 1`, where the sign of `c_1 = -a` is changed:
+`c_k ≡ a (mod c_1²)` for `k ≥ 2`. -/
+theorem sq_dvd_cSeq_sub {k : ℕ} (hk : 2 ≤ k) : a ^ 2 ∣ cSeq a k - a := by
+  rw [← Ideal.mem_span_singleton, ← Ideal.Quotient.eq, map_cSeq]
+  refine cSeq_eq_self_of_sq_eq_zero ?_ hk
+  rw [← map_pow, Ideal.Quotient.eq_zero_iff_mem]
+  exact Ideal.mem_span_singleton_self _
 
 /-- If `c_3² = 0`, then `c_{3k+1} = a` for `k ≥ 1`. -/
 theorem cSeq_three_mul_add_one_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) {k : ℕ} (hk : 1 ≤ k) :
     cSeq a (3 * k + 1) = a := by
-  rw [cSeq_succ a (by lia), cSeq_three_mul_of_sq_eq_zero h hk, h, zero_add]
+  rw [cSeq_succ a (by lia), cSeq_mul_of_sq_eq_zero (by norm_num) h hk, h, zero_add]
 
 /-- If `c_3² = 0`, then `c_{3k+2} = c_2` for all `k`. -/
 theorem cSeq_three_mul_add_two_of_sq_eq_zero (h : cSeq a 3 ^ 2 = 0) (k : ℕ) :
@@ -190,30 +249,46 @@ private lemma isUnit_intCast_zmod_natAbs {m x : ℤ} (h : IsCoprime m x) :
     IsUnit (x : ZMod m.natAbs) :=
   (ZMod.coe_int_isUnit_iff_isCoprime x _).mpr (by rwa [Int.natCast_natAbs, IsCoprime.abs_left_iff])
 
+/-- **`m`-periodicity modulo `w_m²`**: for `m ≥ 2` and `k ≥ 1`,
+`w_{mk} ≡ w_m s^{2^{mk-1} - 2^{m-1}} (mod w_m²)`. Modulo `w_m²` the term `c̄_m = r w_m σ^{2^{m-1}}`
+has square zero, so `c̄_{mk} = c̄_m` (`QuadraticIterates.cSeq_mul_of_sq_eq_zero`), and the
+reduction `QuadraticIterates.intCast_mul_wSeq` gives `r w_{mk} = s^{2^{mk-1}} c̄_m`. -/
+theorem wSeq_mul_modEq (hrs : IsCoprime r s) {m k : ℕ} (hm : 2 ≤ m) (hk : 1 ≤ k) :
+    wSeq r s (m * k) ≡ wSeq r s m * s ^ (2 ^ (m * k - 1) - 2 ^ (m - 1)) [ZMOD wSeq r s m ^ 2] := by
+  have hs := isUnit_intCast_zmod_natAbs (m := wSeq r s m ^ 2)
+    (isCoprime_wSeq_right hrs (by lia)).pow_left
+  have hr := isUnit_intCast_zmod_natAbs (m := wSeq r s m ^ 2)
+    (isCoprime_wSeq_left hrs (by lia)).pow_left
+  obtain ⟨σ, hσ⟩ := hs.exists_right_inv
+  obtain ⟨ρ, hρ⟩ := hr.exists_right_inv
+  have h0 : (wSeq r s m : ZMod (wSeq r s m ^ 2).natAbs) ^ 2 = 0 :=
+    mod_cast ZMod.intCast_self_natAbs _
+  have hσE : (s : ZMod (wSeq r s m ^ 2).natAbs) ^ 2 ^ (m - 1) * σ ^ 2 ^ (m - 1) = 1 := by
+    rw [← mul_pow, hσ, one_pow]
+  have hcm := intCast_mul_wSeq r hσ (n := m) (by lia)
+  have hc : cSeq ((r : ZMod (wSeq r s m ^ 2).natAbs) * σ) m ^ 2 = 0 := by grobner
+  have hred := intCast_mul_wSeq r hσ (n := m * k) (Nat.mul_pos (by lia) hk)
+  rw [cSeq_mul_of_sq_eq_zero hm hc hk] at hred
+  have hpow : (s : ZMod (wSeq r s m ^ 2).natAbs) ^ 2 ^ (m * k - 1) =
+      s ^ (2 ^ (m * k - 1) - 2 ^ (m - 1)) * s ^ 2 ^ (m - 1) := by
+    rw [← pow_add, Nat.sub_add_cancel (Nat.pow_le_pow_right two_pos
+      (Nat.sub_le_sub_right (Nat.le_mul_of_pos_right m hk) 1))]
+  exact ZMod.intCast_eq_intCast_iff_modEq.mp (by push_cast; grobner)
+
+/-- `w_{mk} = w_m T` with `T ≡ s^{2^{mk-1} - 2^{m-1}} (mod w_m)`, for `m ≥ 2` and `k ≥ 1`. -/
+theorem exists_wSeq_mul_eq (hrs : IsCoprime r s) {m k : ℕ} (hm : 2 ≤ m) (hk : 1 ≤ k) :
+    ∃ T, wSeq r s (m * k) = wSeq r s m * T ∧
+      T ≡ s ^ (2 ^ (m * k - 1) - 2 ^ (m - 1)) [ZMOD wSeq r s m] := by
+  obtain ⟨t, ht⟩ := Int.modEq_iff_dvd.mp (wSeq_mul_modEq hrs hm hk)
+  exact ⟨s ^ (2 ^ (m * k - 1) - 2 ^ (m - 1)) - wSeq r s m * t, by linear_combination -ht,
+    Int.modEq_iff_dvd.mpr ⟨t, by ring⟩⟩
+
 /-- **Two-periodicity modulo `(r + s)²`**: for `k ≥ 1`,
-`w_{2k} ≡ (r + s) s^{2^{2k-1} - 2} (mod (r + s)²)`. Modulo `(r + s)²` the parameter
-`a = r/s` satisfies `(a + 1)² = 0`, so `c̄_{2k} = -(a + 1)`
-(`QuadraticIterates.cSeq_two_mul_of_sq_eq_zero`), and the reduction
-`QuadraticIterates.intCast_mul_wSeq` gives `r w_{2k} = -s^{2^{2k-1} - 1} (r + s)`. -/
+`w_{2k} ≡ (r + s) s^{2^{2k-1} - 2} (mod (r + s)²)`, the case `m = 2` of
+`QuadraticIterates.wSeq_mul_modEq`, as `w_2 = r + s`. -/
 theorem wSeq_two_mul_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
     wSeq r s (2 * k) ≡ (r + s) * s ^ (2 ^ (2 * k - 1) - 2) [ZMOD (r + s) ^ 2] := by
-  have hs := isUnit_intCast_zmod_natAbs (m := (r + s) ^ 2)
-    (by simpa using (hrs.add_mul_left_left 1).pow_left)
-  have hr := isUnit_intCast_zmod_natAbs (m := (r + s) ^ 2)
-    (by simpa [add_comm] using (hrs.symm.add_mul_left_left 1).pow_left)
-  set σ := ↑hs.unit⁻¹
-  have hσ : (s : ZMod ((r + s) ^ 2).natAbs) * σ = 1 := hs.mul_val_inv
-  obtain ⟨ρ, hρ⟩ := hr.exists_right_inv
-  have h0 := ZMod.intCast_self_natAbs ((r + s) ^ 2)
-  have hred := intCast_mul_wSeq r hσ (n := 2 * k) (by lia)
-  rw [cSeq_two_mul_of_sq_eq_zero (by push_cast at h0; grobner) hk] at hred
-  have hpow : (s : ZMod ((r + s) ^ 2).natAbs) ^ 2 ^ (2 * k - 1) =
-      s ^ (2 ^ (2 * k - 1) - 2) * s ^ 2 := by
-    rw [← pow_add, Nat.sub_add_cancel]
-    exact Nat.le_self_pow (by lia) 2
-  refine ZMod.intCast_eq_intCast_iff_modEq.mp ?_
-  push_cast at h0 ⊢
-  grobner
+  simpa using wSeq_mul_modEq hrs le_rfl hk
 
 /-- For `k ≥ 1`, `w_{2k+1} ≡ s^{2^{2k} - 1} (mod r + s)`: modulo `r + s`, `a = -1` and
 `c̄_{2k+1} = -1`. -/
@@ -267,39 +342,10 @@ theorem exists_wSeq_two_mul_eq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
   exact ⟨s ^ (2 ^ (2 * k - 1) - 2) - (r + s) * t, by linear_combination -ht,
     Int.modEq_iff_dvd.mpr ⟨t, by ring⟩⟩
 
-/-- **Three-periodicity modulo `w_3²`**: for `k ≥ 1`,
-`w_{3k} ≡ w_3 s^{2^{3k-1} - 4} (mod w_3²)`. Modulo `w_3²` the term `c̄_3 = r w_3 σ⁴` has square
-zero, so `c̄_{3k} = c̄_3` (`QuadraticIterates.cSeq_three_mul_of_sq_eq_zero`), and the reduction
-`QuadraticIterates.intCast_mul_wSeq` gives `r w_{3k} = s^{2^{3k-1}} c̄_3`. -/
-theorem wSeq_three_mul_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
-    wSeq r s (3 * k) ≡ wSeq r s 3 * s ^ (2 ^ (3 * k - 1) - 4) [ZMOD wSeq r s 3 ^ 2] := by
-  have hs := isUnit_intCast_zmod_natAbs (m := wSeq r s 3 ^ 2)
-    (isCoprime_wSeq_right hrs (n := 3) (by norm_num)).pow_left
-  have hr := isUnit_intCast_zmod_natAbs (m := wSeq r s 3 ^ 2)
-    (isCoprime_wSeq_left hrs (n := 3) (by norm_num)).pow_left
-  set σ := ↑hs.unit⁻¹
-  have hσ : (s : ZMod (wSeq r s 3 ^ 2).natAbs) * σ = 1 := hs.mul_val_inv
-  obtain ⟨ρ, hρ⟩ := hr.exists_right_inv
-  have h0 := ZMod.intCast_self_natAbs (wSeq r s 3 ^ 2)
-  have h3 := intCast_mul_wSeq r hσ (n := 3) (by norm_num)
-  rw [show 2 ^ (3 - 1) = 4 from rfl] at h3
-  push_cast at h0
-  have hred := intCast_mul_wSeq r hσ (n := 3 * k) (by lia)
-  rw [cSeq_three_mul_of_sq_eq_zero (by grobner) hk] at hred
-  have hpow : (s : ZMod (wSeq r s 3 ^ 2).natAbs) ^ 2 ^ (3 * k - 1) =
-      s ^ (2 ^ (3 * k - 1) - 4) * s ^ 4 := by
-    rw [← pow_add, Nat.sub_add_cancel]
-    exact Nat.pow_le_pow_right two_pos (by lia : 2 ≤ 3 * k - 1)
-  refine ZMod.intCast_eq_intCast_iff_modEq.mp ?_
-  push_cast
-  grobner
-
 /-- `w_{3k} = w_3 T` with `T ≡ s^{2^{3k-1} - 4} (mod w_3)`, for `k ≥ 1`. -/
 theorem exists_wSeq_three_mul_eq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
     ∃ T, wSeq r s (3 * k) = wSeq r s 3 * T ∧ T ≡ s ^ (2 ^ (3 * k - 1) - 4) [ZMOD wSeq r s 3] := by
-  obtain ⟨t, ht⟩ := Int.modEq_iff_dvd.mp (wSeq_three_mul_modEq hrs hk)
-  exact ⟨s ^ (2 ^ (3 * k - 1) - 4) - wSeq r s 3 * t, by linear_combination -ht,
-    Int.modEq_iff_dvd.mpr ⟨t, by ring⟩⟩
+  simpa using exists_wSeq_mul_eq hrs (m := 3) (by norm_num) hk
 
 end StrongCong
 
