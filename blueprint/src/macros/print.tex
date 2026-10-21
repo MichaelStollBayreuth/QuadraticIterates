@@ -10,6 +10,11 @@
 % The coverage plot of the main results (plots/coverage.py), drawn at the paper's text width.
 \newcommand{\coverageplot}{\includegraphics[width=\linewidth]{../../plots/coverage.pdf}}
 
+% Items of a list are labelled (1), (2), ..., upright as in the paper, also when the label is
+% given to \item, as in (C1). The web version does the same in templates/enumerate.jinja2s.
+\setlist[enumerate,1]{label=(\arabic*)}
+\setlist[enumerate]{font=\upshape}
+
 \newcommand{\lean}[1]{}
 \newcommand{\discussion}[1]{}
 \newcommand{\leanok}{}

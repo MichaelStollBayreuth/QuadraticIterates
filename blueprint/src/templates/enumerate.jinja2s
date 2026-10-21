@@ -1,0 +1,6 @@
+name: enumerate
+<ol class="enumerate">
+{% for item in obj %}
+  <li><span class="item_label">{% if item.attributes.term %}{{ item.attributes.term }}{% else %}({{ loop.index }}){% endif %}</span>{{ item }}</li>
+{% endfor %}
+</ol>
