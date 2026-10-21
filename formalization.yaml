@@ -56,9 +56,10 @@ status:
     preprint on it is in paper/arboreal-surjective.pdf, and the blueprint follows its sections and
     numbering. The
     main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
-    Theorems 3.3, strengthened to a = -(4k+2)(4k+3), and 3.9 of 2021) are derived as the case
-    s = 1 of the rational statements and of two rational families extending Li's
-    (QuadraticIterates/Main/Integers.lean and Families.lean). The theorems R⁺ and R⁻ for rational
+    Theorems 3.3, strengthened to a = -l(l+1) for every positive l = 2 mod 4, and 3.9 of 2021)
+    are derived as in the preprint: from the level-two criterion at s = 1, as c_2 = a(a+1) is
+    never a square (QuadraticIterates/Main/Integers.lean), and from two rational families
+    extending Li's at denominator 1 (Families.lean). The theorems R⁺ and R⁻ for rational
     parameters of the author's earlier notes are rederived from the main theorem
     (QuadraticIterates/Main/SquarefreeCertificates.lean, a consistency check outside the
     blueprint). Not formalized on this branch:
@@ -66,7 +67,7 @@ status:
     and Lemmas 1.1, 2.1, 2.2), Corollary 1.3, the lemmas of Li's papers about b_n, and the
     index-2 statement of Li 2020. Supporting theory (multiquadratic extensions, iterated wreath
     products, even polynomials, ℤ-valued characters on ℚ*, prime factors in residue classes) is
-    developed in Mathlib generality in 26 files under QuadraticIterates/Mathlib/ as upstreaming
+    developed in Mathlib generality in 28 files under QuadraticIterates/Mathlib/ as upstreaming
     candidates. A LaTeX blueprint with a dependency graph and the generated API documentation
     are published at https://michaelstollbayreuth.github.io/QuadraticIterates/ .
   sorry_count: 0
@@ -264,7 +265,12 @@ automation:
         and the further results in appendices, and formalized the paper's statements that had
         no single declaration yet (rigid divisibility of (c_n), the shapes of its p-adic
         valuations, its vanishing terms, and two criteria combining characters), each through
-        the scratch sandbox and the verification chain.
+        the scratch sandbox and the verification chain. On the author's review it then derived
+        the paper's corollaries as the paper does (Corollary 6.3 from Theorem 6.1(1) in a new
+        form with the three non-squares, Corollary 7.4 as the case k = 1 of Theorem 7.3, and the
+        rational form of Li's 2020 theorem from Theorem 6.1(1)), and renamed the declarations
+        named after the older papers by their statements, with the comparator challenges
+        following.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed

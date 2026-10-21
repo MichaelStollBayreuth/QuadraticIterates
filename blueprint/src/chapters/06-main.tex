@@ -18,9 +18,9 @@ The second level in terms of~$r$ and~$s$, and the integer squares modulo powers 
   square. As~$r$, $s$ and~$r + s$ are coprime in pairs, $c_1$ is a square if and only if $r < 0$
   and~$|r|$, $s$ are squares; $c_2$ if and only if~$r$ and~$r + s$ have the same sign and~$|r|$,
   $|r + s|$ are squares; $c_1 c_2$ if and only if $r + s < 0$ and~$s$, $|r + s|$ are squares.
-  \formalnote{The first statement is \lname{twoIndependent\_fin\_two\_cSeq\_iff}, where the
-  two-independence of $(c_1, c_2)$ is \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}; it
-  holds for all $a = r/s$, as for $r = 0$ or $s = 0$ both sides fail. The last statement, on the
+  \formalnote{\lname{twoIndependent\_fin\_two\_cSeq\_iff} states the first claim for all
+  $a = r/s$ (for $r = 0$ or $s = 0$ both sides fail), with the two-independence of $(c_1, c_2)$
+  written as \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}. The last statement, on the
   squares among pairwise coprime integers, is used inside the proofs.}
 \end{lemma}
 \begin{proof}
@@ -86,11 +86,11 @@ result.
             \item[(f)] $a$ has~$\phi_0$ and~$\phi_1$.
           \end{enumerate}
   \end{enumerate}
-  \formalnote{Six theorems. In part (1), the equivalence of (i) and (ii) is
-  \lname{forall\_nonempty\_mulEquiv\_iff\_twoIndependent\_of\_twoAdicClass}, that of (i) and (iii)
-  is \lname{forall\_nonempty\_mulEquiv\_iff\_not\_isSquare\_of\_twoAdicClass}, and
-  \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_not\_isSquare} is ``(iii)~$\Rightarrow$~(i)''
-  for each level; there $a > \alpha'$ is stated as $-s < r$,
+  \formalnote{Six theorems. In part (1),
+  \lname{forall\_nonempty\_mulEquiv\_iff\_twoIndependent\_of\_twoAdicClass} is the equivalence of
+  (i) and (ii), \lname{forall\_nonempty\_mulEquiv\_iff\_not\_isSquare\_of\_twoAdicClass} that of
+  (i) and (iii), and \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_not\_isSquare} is
+  ``(iii)~$\Rightarrow$~(i)'' for each level; there $a > \alpha'$ is stated as $-s < r$,
   or $r < -s$ and $r w_3 < 0 < r w_4$ as in (T4), and the exclusion of $a = -1, 0$ is not
   needed. (2)(a)--(d) is \lname{nonempty\_mulEquiv\_of\_lt\_neg\_one\_of\_emod}, for all
   $a \in (\alpha, -1)$, as one disjunction of congruences, each of which implies one of
