@@ -157,14 +157,16 @@ is~\cite{li2021}, Theorem~3.9.
 \begin{corollary}[Li's families]
   \label{cor:li2021}
   \uses{thm:families}
-  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul, QuadraticIterates.li2021_theorem_3_3,
-    QuadraticIterates.li2021_theorem_3_9}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two,
+    QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one}
   \leanok
   If $m \in \ZZ_{\ge 0}$ and $a = -(4m + 2)(4m + 3)$ or $a = -((4m + 1)(4m + 2) + 1)$,
   then~$\rho_a$ is surjective.
-  \formalnote{\lname{nonempty\_mulEquiv\_of\_eq\_neg\_mul} for the first family, with its
-  case~$m$ even \lname{li2021\_theorem\_3\_3}, and \lname{li2021\_theorem\_3\_9} for the second: the
-  statements of the comparator challenges.}
+  \formalnote{Stated, as Theorem~\ref{thm:families} with $k = 1$, for $a = -\ell(\ell + 1)$
+  with $\ell \equiv 2 \bmod 4$ (\lname{nonempty\_mulEquiv\_of\_eq\_neg\_mul\_add\_one\_of\_emod\_four\_eq\_two})
+  and $a = -(\ell^2 + \ell + 1)$ with $\ell \equiv 1 \bmod 4$
+  (\lname{nonempty\_mulEquiv\_of\_eq\_neg\_sq\_add\_add\_one\_of\_emod\_four\_eq\_one}), for a positive
+  integer~$\ell$, that is, $\ell = 4m + 2$ resp.\ $\ell = 4m + 1$.}
 \end{corollary}
 \begin{proof}
   \leanok

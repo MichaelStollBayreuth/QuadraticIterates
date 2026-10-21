@@ -9,9 +9,11 @@ Proofs of the challenge statements of `Challenge.lean`, discharged by the librar
 `QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_one`,
 `QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_two`,
 `QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_zero`,
-`QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`,
-`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`, `QuadraticIterates.li2021_theorem_3_9`
-(`QuadraticIterates.Main.Integers`) and the main theorem for rational parameters
+`QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`
+(`QuadraticIterates.Main.Integers`),
+`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two`,
+`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one`
+(`QuadraticIterates.Main.Families`) and the main theorem for rational parameters
 `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`
 (`QuadraticIterates.Main.Theorem`) and its corollaries
 `QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`
@@ -43,14 +45,15 @@ theorem challenge_nonempty_mulEquiv_of_neg_of_emod_four_eq_zero (a : ℤ) (ha : 
     Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   nonempty_mulEquiv_of_neg_of_emod_four_eq_zero ha ha4 hsq n
 
-theorem challenge_nonempty_mulEquiv_of_eq_neg_mul (k : ℕ) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup ((-((4 * k + 2) * (4 * k + 3)) : ℤ) : ℚ) n ≃* WreathPower n) :=
-  nonempty_mulEquiv_of_eq_neg_mul rfl
+theorem challenge_nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two (ℓ : ℤ) (hℓ : 0 < ℓ)
+    (hℓ4 : ℓ % 4 = 2) (n : ℕ) :
+    Nonempty (GaloisGroup (-((ℓ : ℚ) * (ℓ + 1))) n ≃* WreathPower n) :=
+  nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two hℓ hℓ4 n
 
-theorem challenge_li2021_theorem_3_9 (k : ℕ) :
-    ∀ n ≥ 1,
-      Nonempty (GaloisGroup ((-((4 * k + 1) * (4 * k + 2) + 1) : ℤ) : ℚ) n ≃* WreathPower n) :=
-  li2021_theorem_3_9 rfl
+theorem challenge_nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one (ℓ : ℤ)
+    (hℓ : 0 < ℓ) (hℓ4 : ℓ % 4 = 1) (n : ℕ) :
+    Nonempty (GaloisGroup (-((ℓ : ℚ) ^ 2 + ℓ + 1)) n ≃* WreathPower n) :=
+  nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one hℓ hℓ4 n
 
 theorem challenge_forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three (a : ℤ) (ha : a < 0)
     (ha4 : a % 4 = 3) (hsq : ¬IsSquare (-a)) :

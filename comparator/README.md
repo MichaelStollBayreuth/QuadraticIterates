@@ -6,10 +6,11 @@ repository proves the **results for integer parameters**, which contain the main
 Section 3 of M. Stoll, Arch. Math. 59 (1992) (one challenge per case:
 `nonempty_mulEquiv_of_pos_of_emod_four_eq_one`, `nonempty_mulEquiv_of_pos_of_emod_four_eq_two`,
 `nonempty_mulEquiv_of_neg_of_emod_four_eq_zero`) and the **theorems of Li** extending it (Theorem
-3.5 of 2020 as `forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`, `li2021_theorem_3_9`,
-and Theorem 3.3 of 2021 in its strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, for
-`a = -(4k+2)(4k+3)` rather than Li's `a = -(8k+2)(8k+3)`), the **main theorem for rational
-parameters**
+3.5 of 2020 as `forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`; Theorems 3.3 and 3.9
+of 2021 in the strengthened forms `nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two`,
+for `a = -ℓ(ℓ + 1)` with any positive `ℓ ≡ 2 mod 4` rather than Li's `ℓ = 8k + 2`, and
+`nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one`), the **main theorem for
+rational parameters**
 (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`, with its `2`-adic classes and three lists of
 criteria reproduced as definitions) with its three corollaries — **level two decides** outside the
 interval `α < a ≤ α′` (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), shorter

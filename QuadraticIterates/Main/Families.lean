@@ -28,8 +28,16 @@ For two families of rational parameters the `2`-adic condition of the main theor
   `a = -j(j + 1)` with `j = u/v > 1` and `(u, v) ≡ (2, 1)` or `(3, 3) (mod 4)`.
 * `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one`: Li's Theorem 3.9 for rational
   parameters, `a = -(ℓ² + ℓ + 1) ≤ -2` with `ℓ = u/v` and `(u, v) ≡ (1, 1)` or `(2, 3) (mod 4)`.
+* `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two` and
+  `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one`: the integer
+  parameters of the two families, which contain Theorems 3.3 and 3.9 of [Li 2021].
 * `QuadraticIterates.neg_vSeq_neg_mul_add_eq`, `QuadraticIterates.uSeq_eq_mul_of_add_eq`: the
   factorizations of `v_n` resp. `u_n`.
+
+## References
+
+* [H.-C. Li, *On Stoll's criterion for the maximality of quadratic arboreal Galois
+  representations*, Arch. Math. 117 (2021), 133-140]
 -/
 
 @[expose] public section
@@ -370,5 +378,25 @@ theorem nonempty_mulEquiv_of_eq_neg_sq_add_add_one (huv : IsCoprime u v) (hu : 0
     exact_mod_cast (by linear_combination h2 : -(u ^ 2 + u * v + v ^ 2) ≤ -2 * v ^ 2)
 
 end Li
+
+/-- For `a = -ℓ(ℓ + 1)` with a positive integer `ℓ ≡ 2 mod 4`, `Ω_n ≅ [C₂]ⁿ` for all `n`: the
+case `v = 1` of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one`. For `ℓ = 8k + 2` this
+is Theorem 3.3 of [Li 2021]. -/
+theorem nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two {ℓ : ℤ} (hℓ : 0 < ℓ)
+    (hℓ4 : ℓ % 4 = 2) (n : ℕ) :
+    Nonempty (GaloisGroup (-((ℓ : ℚ) * (ℓ + 1))) n ≃* WreathPower n) := by
+  have h := nonempty_mulEquiv_of_eq_neg_mul_add_one isCoprime_one_right one_pos (by lia)
+    (.inl ⟨hℓ4, rfl⟩) n
+  rwa [Int.cast_one, div_one] at h
+
+/-- For `a = -(ℓ² + ℓ + 1)` with a positive integer `ℓ ≡ 1 mod 4`, `Ω_n ≅ [C₂]ⁿ` for all `n`: the
+case `v = 1` of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one`. For `ℓ = 4k + 1`
+this is Theorem 3.9 of [Li 2021]. -/
+theorem nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one {ℓ : ℤ} (hℓ : 0 < ℓ)
+    (hℓ4 : ℓ % 4 = 1) (n : ℕ) :
+    Nonempty (GaloisGroup (-((ℓ : ℚ) ^ 2 + ℓ + 1)) n ≃* WreathPower n) := by
+  have h := nonempty_mulEquiv_of_eq_neg_sq_add_add_one isCoprime_one_right hℓ one_pos
+    (by rw [one_pow]; exact one_le_mul_of_one_le_of_one_le hℓ (by lia)) (.inl ⟨hℓ4, rfl⟩) n
+  rwa [Int.cast_one, div_one] at h
 
 end QuadraticIterates

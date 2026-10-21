@@ -5,7 +5,7 @@ Authors: Michael Stoll
 -/
 module
 
-public import QuadraticIterates.Main.Families
+public import QuadraticIterates.Galois.Iterates
 
 import QuadraticIterates.Main.LevelTwo
 import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
@@ -19,9 +19,7 @@ criterion `QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdi
 the arboreal representation of `X² + a` is surjective if and only if neither `-a` nor `-a - 1` is a
 square. The classes are `a ≡ 1, 2 mod 4` with `a > 0` and `a ≡ 0, 3 mod 4` with `a ≤ -2`; in the
 first three, `-a - 1` is negative or `≡ 3 mod 4`. This contains the main result of Section 3 of
-[Stoll 1992] and Theorem 3.5 of [Li 2020]. Theorems 3.3 and 3.9 of [Li 2021] are the case `s = 1`
-of the two families of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one` and
-`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one`.
+[Stoll 1992] and Theorem 3.5 of [Li 2020].
 
 ## Main statements
 
@@ -31,15 +29,11 @@ of the two families of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_on
   `QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_three`: the four classes.
 * `QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`: Theorem 3.5 of
   [Li 2020], the last class with its converse.
-* `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul` (Theorem A) and
-  `QuadraticIterates.li2021_theorem_3_3`, its case of even `k`.
-* `QuadraticIterates.li2021_theorem_3_9`.
 
 ## References
 
 * [M. Stoll, *Galois groups over ℚ of some iterated polynomials*, Arch. Math. 59 (1992)]
 * [H.-C. Li, Arch. Math. 114 (2020), 265-269]
-* [H.-C. Li, Arch. Math. 117 (2021), 133-140]
 -/
 
 @[expose] public section
@@ -101,30 +95,5 @@ theorem nonempty_mulEquiv_of_neg_of_emod_four_eq_three (ha : a < 0) (ha4 : a % 4
     (h₁ : ¬IsSquare (-a)) (h₂ : ¬IsSquare (-a - 1)) (n : ℕ) :
     Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   (forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three ha ha4 h₁).mpr h₂ n
-
-/-- For `a = -(4k+2)(4k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`: the case `j = 4k + 2` of
-`QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one`. Theorem 3.3 of [Li 2021]
-(`QuadraticIterates.li2021_theorem_3_3`) is the case of even `k`. -/
-theorem nonempty_mulEquiv_of_eq_neg_mul {k : ℕ} (ha : a = -((4 * k + 2) * (4 * k + 3))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) := fun n _ ↦ by
-  rw [show (a : ℚ) = -(((4 * k + 2 : ℤ) : ℚ) / ((1 : ℤ) : ℚ) *
-      (((4 * k + 2 : ℤ) : ℚ) / ((1 : ℤ) : ℚ) + 1)) by rw [ha]; push_cast; ring]
-  exact nonempty_mulEquiv_of_eq_neg_mul_add_one isCoprime_one_right one_pos (by lia)
-    (.inl ⟨by lia, rfl⟩) n
-
-/-- Theorem 3.3 of [Li 2021]: for `a = -(8k+2)(8k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`; the case of
-even `k` of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul`. -/
-theorem li2021_theorem_3_3 {k : ℕ} (ha : a = -((8 * k + 2) * (8 * k + 3))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
-  nonempty_mulEquiv_of_eq_neg_mul (k := 2 * k) (by rw [ha]; push_cast; ring)
-
-/-- Theorem 3.9 of [Li 2021]: for `a = -((4k+1)(4k+2)+1)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`; the
-case `ℓ = 4k + 1` of `QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one`. -/
-theorem li2021_theorem_3_9 {k : ℕ} (ha : a = -((4 * k + 1) * (4 * k + 2) + 1)) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) := fun n _ ↦ by
-  rw [show (a : ℚ) = -((((4 * k + 1 : ℤ) : ℚ) / ((1 : ℤ) : ℚ)) ^ 2 +
-      ((4 * k + 1 : ℤ) : ℚ) / ((1 : ℤ) : ℚ) + 1) by rw [ha]; push_cast; ring]
-  exact nonempty_mulEquiv_of_eq_neg_sq_add_add_one isCoprime_one_right (by lia) one_pos
-    (by lia [sq_nonneg (k : ℤ)]) (.inl ⟨by lia, rfl⟩) n
 
 end QuadraticIterates

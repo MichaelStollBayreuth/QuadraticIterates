@@ -8,10 +8,12 @@ public import Mathlib
 Self-contained restatements, with `sorry` proofs, of the main results for verification with
 [leanprover/comparator](https://github.com/leanprover/comparator): the results for integer
 parameters, which contain the main result of Section 3 of M. Stoll, Arch. Math. 59 (1992) (three
-challenges, one per case) and the theorems of Li extending it (Theorem 3.5 of 2020 as
-`forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`, Theorem 3.9 of 2021 as
-`li2021_theorem_3_9`, and Theorem 3.3 of 2021 in the strengthened form
-`nonempty_mulEquiv_of_eq_neg_mul`; all in `QuadraticIterates/Main/Integers`),
+challenges, one per case) and Theorem 3.5 of H.-C. Li, Arch. Math. 114 (2020)
+(`forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`; all in
+`QuadraticIterates/Main/Integers`), the integer parameters of the two families of
+`QuadraticIterates/Main/Families`, which contain Theorems 3.3 and 3.9 of H.-C. Li, Arch. Math. 117
+(2021) (`nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two` and
+`nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one`),
 the main theorem for rational parameters `a = r/s`
 (`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`), and its
 three corollaries: level two decides outside the interval `(α, α′]`
@@ -166,17 +168,22 @@ theorem challenge_nonempty_mulEquiv_of_neg_of_emod_four_eq_zero (a : ℤ) (ha : 
     Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   sorry
 
-/-- For `a = -(4k+2)(4k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` (`nonempty_mulEquiv_of_eq_neg_mul`);
-Theorem 3.3 of H.-C. Li, Arch. Math. 117 (2021), is the case of even `k`, `a = -(8k+2)(8k+3)`. -/
-theorem challenge_nonempty_mulEquiv_of_eq_neg_mul (k : ℕ) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup ((-((4 * k + 2) * (4 * k + 3)) : ℤ) : ℚ) n ≃* WreathPower n) :=
+/-- Integer parameters of the first family
+(`nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two`): for `a = -ℓ(ℓ + 1)` with a
+positive integer `ℓ ≡ 2 mod 4`, `Ω_n ≅ [C₂]ⁿ` for all `n`. Theorem 3.3 of H.-C. Li, Arch. Math.
+117 (2021), is the case `ℓ = 8k + 2`. -/
+theorem challenge_nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two (ℓ : ℤ) (hℓ : 0 < ℓ)
+    (hℓ4 : ℓ % 4 = 2) (n : ℕ) :
+    Nonempty (GaloisGroup (-((ℓ : ℚ) * (ℓ + 1))) n ≃* WreathPower n) :=
   sorry
 
-/-- Theorem 3.9 of H.-C. Li, Arch. Math. 117 (2021) (`li2021_theorem_3_9`): for
-`a = -((4k+1)(4k+2)+1)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_li2021_theorem_3_9 (k : ℕ) :
-    ∀ n ≥ 1,
-      Nonempty (GaloisGroup ((-((4 * k + 1) * (4 * k + 2) + 1) : ℤ) : ℚ) n ≃* WreathPower n) :=
+/-- Integer parameters of the second family
+(`nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one`): for `a = -(ℓ² + ℓ + 1)` with a
+positive integer `ℓ ≡ 1 mod 4`, `Ω_n ≅ [C₂]ⁿ` for all `n`. Theorem 3.9 of H.-C. Li, Arch. Math.
+117 (2021), is this statement with `ℓ = 4k + 1`. -/
+theorem challenge_nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one (ℓ : ℤ)
+    (hℓ : 0 < ℓ) (hℓ4 : ℓ % 4 = 1) (n : ℕ) :
+    Nonempty (GaloisGroup (-((ℓ : ℚ) ^ 2 + ℓ + 1)) n ≃* WreathPower n) :=
   sorry
 
 /-- Integer parameters (`forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`): for `a < 0`
