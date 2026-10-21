@@ -96,7 +96,8 @@ and proves the criterion for $2$-independence that the patterns give.
   $+1$ after $n$ is realized from $n$.
   \formalnote{For a sequence in a field. The classes of $v_1, v_2, \dots$ are linearly
   independent (\lname{twoIndependent\_iff\_linearIndependent} holds for families indexed by any
-  type), and \lname{LinearIndependent.notMem\_span\_image} gives $[v_n] \notin V$.}
+  type), and \lname{LinearIndependent.notMem\_span\_image} shows that $[v_n]$ does not lie in the
+  span of the $[v_m]$ with $m > n$.}
 \end{proposition}
 \begin{proof}
   \leanok
@@ -160,8 +161,9 @@ $(c_n)_{n \ge 1}$ is $2$-independent, we use group homomorphisms $\QQ^\times \to
   $\val_2$, $\chi_4$, $\chi_8$) and their products the \emph{characters at $p$}.
   \formalnote{In the mirror file \lname{QuadraticIterates/Mathlib/NumberTheory/MulChar/Rat.lean}.
   The last two items are instances of one construction: for a power $N$ of $p$ and a character
-  $\psi$ of $(\ZZ/N\ZZ)^\times$ with values $\pm 1$, $\chi_\psi(z) = \psi(z_p \bmod N)$, with
-  $z_p$ reduced modulo $N$ as a fraction with denominator prime to $p$; then $\chi_\psi(p) = 1$
+  $\psi$ of $(\ZZ/N\ZZ)^\times$ with values $\pm 1$, $\chi_\psi(z) = \psi(u \bmod N)$, where
+  $u = p^{-v_p(z)} z$, whose numerator and denominator are prime to $p$, so that $u \bmod N$ is a
+  unit of $\ZZ/N\ZZ$; then $\chi_\psi(p) = 1$
   and $\chi_\psi(m/k) = \psi(m)\psi(k)$ for integers $m$, $k$ prime to $p$. All three kinds are
   extensions $x \mapsto g(\mathrm{num}\,x)\, g(\mathrm{den}\,x)$ of multiplicative functions $g$
   on $\ZZ$ that are $\pm 1$ at nonzero integers (\lname{Rat.mulCharOfInt}): \lname{Rat.signChar},
