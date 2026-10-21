@@ -133,11 +133,29 @@ status:
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: ""
     literature_dependencies: []
-  - declaration: "QuadraticIterates.section3_main"
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_one"
     file: "QuadraticIterates/Main/Integers.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_two"
+    file: "QuadraticIterates/Main/Integers.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_zero"
+    file: "QuadraticIterates/Main/Integers.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_three"
+    file: "QuadraticIterates/Main/Integers.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
     literature_dependencies: []
   - declaration: "QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul"
     file: "QuadraticIterates/Main/Integers.lean"
@@ -157,7 +175,7 @@ status:
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
-  - declaration: "QuadraticIterates.li2020_theorem_3_5"
+  - declaration: "QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three"
     file: "QuadraticIterates/Main/Integers.lean"
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -344,10 +362,10 @@ alignment:
       status: "not formalized"
       note: "the b_n route is not formalized on this branch"
     - source: "Section 3, main result"
-      lean: "section3_main"
+      lean: "nonempty_mulEquiv_of_pos_of_emod_four_eq_one, nonempty_mulEquiv_of_pos_of_emod_four_eq_two, nonempty_mulEquiv_of_neg_of_emod_four_eq_zero"
       module: "QuadraticIterates.Main.Integers"
       status: "proved"
-      note: "the case s = 1 of the rational main theorem nonempty_mulEquiv_of_twoAdicClass_of_criteria"
+      note: "one theorem per case, for all n (the paper has n >= 1); the case s = 1 of the level-two criterion forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass"
     - source: "Li 2021, Lemmas 2.1, 2.2, 3.1, 3.4-3.6, Corollary 2.4, Proposition 2.5"
       lean: ""
       module: ""
@@ -383,10 +401,10 @@ alignment:
       status: "proved"
       note: "derived from the rational main theorem, as for R⁺"
     - source: "Li 2020, Theorem 3.5"
-      lean: "li2020_theorem_3_5"
+      lean: "forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three"
       module: "QuadraticIterates.Main.Integers"
       status: "proved"
-      note: "the case s = 1 of forall_nonempty_mulEquiv_iff_of_le_neg_two; the index-2 statement in the exceptional case is not formalized"
+      note: "for all n (the paper has n >= 1); the case s = 1 of the level-two criterion forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass; the index-2 statement in the exceptional case is not formalized"
 
 # acknowledgements
 acknowledgements: ""

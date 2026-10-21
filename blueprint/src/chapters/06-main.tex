@@ -194,12 +194,13 @@ We deduce the main results of~\cite{paper} and~\cite{li2020}.
 
 \begin{corollary}[Integer parameters]
   \label{cor:integer}
-  \uses{thm:main, prop:Z, prop:O, prop:T, lem:prime3, cor:li2020-rat}
-  \lean{QuadraticIterates.section3_main,
-    QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_one,
+  \uses{thm:main}
+  \lean{QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_one,
     QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_two,
     QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_zero,
-    QuadraticIterates.li2020_theorem_3_5}
+    QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_three,
+    QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three,
+    Int.not_isSquare_mul_add_one}
   \leanok
   Let~$a$ be an integer such that one of the following holds.
   \begin{enumerate}
@@ -208,13 +209,17 @@ We deduce the main results of~\cite{paper} and~\cite{li2020}.
     \item $a < 0$, $a \equiv 3 \bmod 4$ and neither of~$-a$ and~$-a - 1$ is a square.
   \end{enumerate}
   Then~$\rho_a$ is surjective.
-  \formalnote{(1) and (2) are the main result of Section~3 of~\cite{paper}:
-  \lname{section3\_main}, combining the three case lemmas in the form of the comparator challenges
-  \lname{challenge\_section3\_main\_pos\_emod\_four\_eq\_one} etc. (3) is the direction
-  ``$\Leftarrow$'' of~\cite{li2020}, Theorem~3.5, which \lname{li2020\_theorem\_3\_5} states as an
-  equivalence for $a < 0$, $a \equiv 3 \bmod 4$ and~$-a$ not a square; it is derived from
-  Corollary~\ref{cor:li2020-rat}. These theorem names are the anchors of the comparator
-  challenges.}
+  \formalnote{One theorem per class modulo~$4$:
+  \lname{nonempty\_mulEquiv\_of\_pos\_of\_emod\_four\_eq\_one} and
+  \lname{nonempty\_mulEquiv\_of\_pos\_of\_emod\_four\_eq\_two} for (1),
+  \lname{nonempty\_mulEquiv\_of\_neg\_of\_emod\_four\_eq\_zero} for (2) and
+  \lname{nonempty\_mulEquiv\_of\_neg\_of\_emod\_four\_eq\_three} for (3); (1) and (2) are the main
+  result of Section~3 of~\cite{paper}. For $a < 0$, $a \equiv 3 \bmod 4$ and~$-a$ not a square,
+  \lname{forall\_nonempty\_mulEquiv\_iff\_of\_neg\_of\_emod\_four\_eq\_three} adds the converse of
+  (3); the equivalence is~\cite{li2020}, Theorem~3.5:~$\rho_a$ is surjective if and only if
+  $-a - 1$ is not a square. The proofs are the one below, with Theorem~\ref{thm:main}(1) in the form
+  ``(i)~$\Leftrightarrow$~(iii)'', \lname{Int.not\_isSquare\_mul\_add\_one} for~$c_2$ and
+  \lname{Int.not\_isSquare\_of\_two\_le\_emod\_four} for $-(a + 1) \equiv 3 \bmod 4$.}
 \end{corollary}
 \begin{proof}
   \leanok
@@ -224,11 +229,4 @@ We deduce the main results of~\cite{paper} and~\cite{li2020}.
   nonzero integers differing by~$1$, hence not a square. In the first case $c_1 = -a$ and
   $c_2/c_1 = -(a + 1)$ are negative, hence non-squares. In the second case $-(a + 1) \equiv 3
   \bmod 4$ is not a square; the other conditions in the last two cases are assumed explicitly.
-
-  The formalization argues directly: for (1), with $\eps = 1$, (O1) holds; $a \equiv 1 \bmod 4$
-  gives (C1), as $a + 2 \equiv 3 \bmod 4$, and (Z1) unless~$a$ is a square, in which case
-  $a + 2 \equiv 3 \bmod 8$ has a prime divisor $\equiv \pm 3 \bmod 8$ (Lemma~\ref{lem:prime3}),
-  so (Z2) holds; $a \equiv 2 \bmod 4$ gives (C2) and (Z1). For (2), $a \le -4$, $\eps = -1$,
-  (Z1), (O5) or (T2) as $4 \mid r$, and (C2). For (3), $a \le -5$, $s = 1$, $r \equiv 3 \bmod 4$,
-  and (Z1) gives~$\phi_0$, so Corollary~\ref{cor:li2020-rat} applies.
 \end{proof}

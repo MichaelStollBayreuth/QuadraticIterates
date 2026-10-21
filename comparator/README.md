@@ -2,10 +2,14 @@
 
 This directory lets [Comparator](https://github.com/leanprover/comparator) — "a trustworthy judge
 for Lean proofs", built into Lake as `lake comparator` since Lean v4.35.0 — certify that this
-repository proves the paper's **Section 3 main result** (`section3_main`, one challenge per case),
-the **theorems of Li** extending it (`li2021_theorem_3_9`, `li2020_theorem_3_5`, and Theorem 3.3 of
-2021 in its strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, for `a = -(4k+2)(4k+3)` rather than
-Li's `a = -(8k+2)(8k+3)`) and the **main theorem for rational parameters**
+repository proves the **results for integer parameters**, which contain the main result of
+Section 3 of M. Stoll, Arch. Math. 59 (1992) (one challenge per case:
+`nonempty_mulEquiv_of_pos_of_emod_four_eq_one`, `nonempty_mulEquiv_of_pos_of_emod_four_eq_two`,
+`nonempty_mulEquiv_of_neg_of_emod_four_eq_zero`) and the **theorems of Li** extending it (Theorem
+3.5 of 2020 as `forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`, `li2021_theorem_3_9`,
+and Theorem 3.3 of 2021 in its strengthened form `nonempty_mulEquiv_of_eq_neg_mul`, for
+`a = -(4k+2)(4k+3)` rather than Li's `a = -(8k+2)(8k+3)`), the **main theorem for rational
+parameters**
 (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`, with its `2`-adic classes and three lists of
 criteria reproduced as definitions) with its three corollaries — **level two decides** outside the
 interval `α < a ≤ α′` (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), shorter

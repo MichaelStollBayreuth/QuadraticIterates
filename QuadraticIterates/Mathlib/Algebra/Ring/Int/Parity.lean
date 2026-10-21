@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.Ring.Int.Parity
 
 /-!
-# Squares modulo `4` and `8`
+# Integer squares: residues modulo `4` and `8`, products of consecutive integers
 
 Auxiliary material for the formalization of the surjectivity of arboreal Galois representations of
 `X² + a`; upstreaming candidates for Mathlib.
@@ -37,5 +37,14 @@ theorem not_isSquare_of_emod_eight_eq_five {x : ℤ} (h : x % 8 = 5) : ¬IsSquar
     rcases (by lia : t % 8 = 0 ∨ t % 8 = 1 ∨ t % 8 = 2 ∨ t % 8 = 3 ∨ t % 8 = 4 ∨ t % 8 = 5 ∨
       t % 8 = 6 ∨ t % 8 = 7) with h' | h' | h' | h' | h' | h' | h' | h' <;>
       simp [Int.mul_emod, h'] at h
+
+/-- `a (a + 1)` is a square only for `a = 0, -1`: from `a (a + 1) = t²`,
+`(2a + 1 - 2t)(2a + 1 + 2t) = 1`, so both factors are `±1` and `t = 0`. -/
+theorem not_isSquare_mul_add_one {a : ℤ} (h₀ : a ≠ 0) (h₁ : a ≠ -1) : ¬IsSquare (a * (a + 1)) :=
+  fun ⟨t, ht⟩ ↦ by
+    have h : (2 * a + 1 - 2 * t).natAbs * (2 * a + 1 + 2 * t).natAbs = 1 := by
+      rw [← natAbs_mul, show (2 * a + 1 - 2 * t) * (2 * a + 1 + 2 * t) = 1 by grobner]
+      rfl
+    lia [Nat.eq_one_of_mul_eq_one_right h, Nat.eq_one_of_mul_eq_one_left h]
 
 end Int

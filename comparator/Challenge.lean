@@ -6,10 +6,12 @@ public import Mathlib
 # Comparator challenge statements
 
 Self-contained restatements, with `sorry` proofs, of the main results for verification with
-[leanprover/comparator](https://github.com/leanprover/comparator): the three cases of the paper's
-Section 3 main result (`section3_main`), one challenge per case, the theorems of Li extending it
-(`li2021_theorem_3_9`, `li2020_theorem_3_5` and, in its strengthened form
-`nonempty_mulEquiv_of_eq_neg_mul`, Theorem 3.3 of 2021; all in `QuadraticIterates/Main/Integers`),
+[leanprover/comparator](https://github.com/leanprover/comparator): the results for integer
+parameters, which contain the main result of Section 3 of M. Stoll, Arch. Math. 59 (1992) (three
+challenges, one per case) and the theorems of Li extending it (Theorem 3.5 of 2020 as
+`forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`, Theorem 3.9 of 2021 as
+`li2021_theorem_3_9`, and Theorem 3.3 of 2021 in the strengthened form
+`nonempty_mulEquiv_of_eq_neg_mul`; all in `QuadraticIterates/Main/Integers`),
 the main theorem for rational parameters `a = r/s`
 (`nonempty_mulEquiv_of_twoAdicClass_of_criteria` in `QuadraticIterates/Main/Theorem`), and its
 three corollaries: level two decides outside the interval `(α, α′]`
@@ -142,22 +144,26 @@ end QuadraticIterates
 
 open QuadraticIterates
 
-/-- Section 3 main result (`section3_main`), case a): if `a > 0` and `a ≡ 1 mod 4`, then
-`Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_section3_main_pos_emod_four_eq_one (a : ℤ) (ha : 0 < a) (ha4 : a % 4 = 1) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
+/-- Integer parameters (`nonempty_mulEquiv_of_pos_of_emod_four_eq_one`): if `a > 0` and
+`a ≡ 1 mod 4`, then `Ω_n ≅ [C₂]ⁿ` for all `n`; case a) of the main result of Section 3 of
+M. Stoll, Arch. Math. 59 (1992). -/
+theorem challenge_nonempty_mulEquiv_of_pos_of_emod_four_eq_one (a : ℤ) (ha : 0 < a)
+    (ha4 : a % 4 = 1) (n : ℕ) : Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   sorry
 
-/-- Section 3 main result (`section3_main`), case b): if `a > 0` and `a ≡ 2 mod 4`, then
-`Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_section3_main_pos_emod_four_eq_two (a : ℤ) (ha : 0 < a) (ha4 : a % 4 = 2) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
+/-- Integer parameters (`nonempty_mulEquiv_of_pos_of_emod_four_eq_two`): if `a > 0` and
+`a ≡ 2 mod 4`, then `Ω_n ≅ [C₂]ⁿ` for all `n`; case b) of the main result of Section 3 of
+M. Stoll, Arch. Math. 59 (1992). -/
+theorem challenge_nonempty_mulEquiv_of_pos_of_emod_four_eq_two (a : ℤ) (ha : 0 < a)
+    (ha4 : a % 4 = 2) (n : ℕ) : Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   sorry
 
-/-- Section 3 main result (`section3_main`), case c): if `a < 0`, `a ≡ 0 mod 4` and `-a` is not a
-square, then `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1`. -/
-theorem challenge_section3_main_neg_emod_four_eq_zero (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 0)
-    (hsq : ¬IsSquare (-a)) : ∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
+/-- Integer parameters (`nonempty_mulEquiv_of_neg_of_emod_four_eq_zero`): if `a < 0`,
+`a ≡ 0 mod 4` and `-a` is not a square, then `Ω_n ≅ [C₂]ⁿ` for all `n`; case c) of the main result
+of Section 3 of M. Stoll, Arch. Math. 59 (1992). -/
+theorem challenge_nonempty_mulEquiv_of_neg_of_emod_four_eq_zero (a : ℤ) (ha : a < 0)
+    (ha4 : a % 4 = 0) (hsq : ¬IsSquare (-a)) (n : ℕ) :
+    Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   sorry
 
 /-- For `a = -(4k+2)(4k+3)`, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` (`nonempty_mulEquiv_of_eq_neg_mul`);
@@ -173,12 +179,12 @@ theorem challenge_li2021_theorem_3_9 (k : ℕ) :
       Nonempty (GaloisGroup ((-((4 * k + 1) * (4 * k + 2) + 1) : ℤ) : ℚ) n ≃* WreathPower n) :=
   sorry
 
-/-- Theorem 3.5 of H.-C. Li, Arch. Math. 114 (2020) (`li2020_theorem_3_5`): for `a < 0` with
-`a ≡ 3 mod 4` and `-a` not a square, `Ω_n ≅ [C₂]ⁿ` for all `n ≥ 1` if and only if `-a - 1` is not
-a square. -/
-theorem challenge_li2020_theorem_3_5 (a : ℤ) (ha : a < 0) (ha4 : a % 4 = 3)
-    (hsq : ¬IsSquare (-a)) :
-    (∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) :=
+/-- Integer parameters (`forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`): for `a < 0`
+with `a ≡ 3 mod 4` and `-a` not a square, `Ω_n ≅ [C₂]ⁿ` for all `n` if and only if `-a - 1` is
+not a square; Theorem 3.5 of H.-C. Li, Arch. Math. 114 (2020). -/
+theorem challenge_forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three (a : ℤ) (ha : a < 0)
+    (ha4 : a % 4 = 3) (hsq : ¬IsSquare (-a)) :
+    (∀ n, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) :=
   sorry
 
 /-- **The main theorem** for rational parameters (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`):
