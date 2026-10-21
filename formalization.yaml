@@ -341,7 +341,7 @@ alignment:
       status: "proved"
       note: "for any rational a with f_n irreducible and c_{n+1} ≠ 0, which is weaker than the paper's maximality hypothesis, and extended to n = 0"
     - source: "Theorem (Section 1), part 1"
-      lean: "nonempty_mulEquiv_iff_twoIndependent, section1_a_iff_b_of_irreducible"
+      lean: "nonempty_mulEquiv_iff_twoIndependent, nonempty_mulEquiv_iff_twoIndependent_of_irreducible"
       module: "QuadraticIterates.Galois.Criterion"
       status: "proved"
       note: "(a) ⟺ (b) for every rational a; (c), about the b_n, is not formalized on this branch"

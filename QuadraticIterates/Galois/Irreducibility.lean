@@ -22,8 +22,8 @@ the roots of an irreducible `f_n` that the degree criterion needs close the file
 
 * `QuadraticIterates.irreducible_iteratedPoly_succ_of_not_isSquare`: if `f_n` is irreducible and
   `c_{n+1}` is not a square in `ℚ`, then `f_{n+1}` is irreducible.
-* `QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq` (Lemma 1.2): if none of
-  `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible.
+* `QuadraticIterates.irreducible_iteratedPoly_of_not_isSquare_cSeq` (Lemma 1.2 of [Stoll 1992]): if
+  none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is irreducible.
 
 ## References
 

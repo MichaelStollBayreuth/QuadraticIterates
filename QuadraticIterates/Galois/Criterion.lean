@@ -23,8 +23,8 @@ unconditional.
 
 ## Main statements
 
-* `QuadraticIterates.section1_a_iff_b_of_irreducible`: the criterion when `f_0, …, f_n` are
-  irreducible.
+* `QuadraticIterates.nonempty_mulEquiv_iff_twoIndependent_of_irreducible`: the criterion when
+  `f_0, …, f_n` are irreducible.
 * `QuadraticIterates.irreducible_iteratedPoly_of_nonempty_mulEquiv`: if `Ω_n ≅ [C₂]ⁿ`, then
   `f_0, …, f_n` are irreducible.
 * `QuadraticIterates.nonempty_mulEquiv_iff_twoIndependent`: the criterion for every rational `a`.
@@ -47,15 +47,16 @@ section
 
 variable {a : ℚ}
 
-/-- Section 1, `(a) ↔ (b)`, for a rational parameter `a` whose iterates `f_0, …, f_n` are
-irreducible: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on `n`:
-`Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
-(`QuadraticIterates.nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that
-`c_{n+1}` is not a square in `K_n` (`QuadraticIterates.relfinrank_succ_eq_two_pow_iff`, Lemma 1.6,
-which needs `f_n` irreducible and `c_{n+1} ≠ 0`, i.e. `f_{n+1}` irreducible), and given
-`Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent
-(`QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc`, Lemma 1.5). -/
-theorem section1_a_iff_b_of_irreducible {n : ℕ} (hirr : ∀ k ≤ n, Irreducible fℚ[a, k]) :
+/-- Section 1 of [Stoll 1992], `(a) ↔ (b)`, for a rational parameter `a` whose iterates
+`f_0, …, f_n` are irreducible: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on
+`n`: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
+(`QuadraticIterates.nonempty_mulEquiv_succ_iff`, Lemma 1.4 of [Stoll 1992]), the degree condition
+says that `c_{n+1}` is not a square in `K_n` (`QuadraticIterates.relfinrank_succ_eq_two_pow_iff`,
+Lemma 1.6 of [Stoll 1992], which needs `f_n` irreducible and `c_{n+1} ≠ 0`, i.e. `f_{n+1}`
+irreducible), and given `Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent
+(`QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc`, Lemma 1.5 of [Stoll 1992]). -/
+theorem nonempty_mulEquiv_iff_twoIndependent_of_irreducible {n : ℕ}
+    (hirr : ∀ k ≤ n, Irreducible fℚ[a, k]) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       TwoIndependent (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1)) := by
   induction n with
@@ -123,13 +124,13 @@ theorem irreducible_iteratedPoly_of_twoIndependent {n : ℕ}
 variable (a) in
 /-- **Stoll's criterion**: for every rational `a`, `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are
 2-independent. Either side forces `f_0, …, f_n` to be irreducible, and then
-`QuadraticIterates.section1_a_iff_b_of_irreducible` applies. -/
+`QuadraticIterates.nonempty_mulEquiv_iff_twoIndependent_of_irreducible` applies. -/
 theorem nonempty_mulEquiv_iff_twoIndependent (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
       TwoIndependent fun i : Fin n ↦ cSeq a ((i : ℕ) + 1) :=
-  ⟨fun h ↦ (section1_a_iff_b_of_irreducible fun _ ↦
+  ⟨fun h ↦ (nonempty_mulEquiv_iff_twoIndependent_of_irreducible fun _ ↦
       irreducible_iteratedPoly_of_nonempty_mulEquiv h).mp h,
-    fun h ↦ (section1_a_iff_b_of_irreducible fun _ ↦
+    fun h ↦ (nonempty_mulEquiv_iff_twoIndependent_of_irreducible fun _ ↦
       irreducible_iteratedPoly_of_twoIndependent h).mpr h⟩
 
 variable (a) in

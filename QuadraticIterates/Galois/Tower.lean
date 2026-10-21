@@ -27,8 +27,8 @@ so `Ω_n` embeds into `[C₂]ⁿ` (Odoni). Comparing orders gives Lemma 1.4 of [
 * `QuadraticIterates.exists_injective_monoidHom_wreathPower`: `Ω_n` embeds into `[C₂]ⁿ`; hence
   `Ω_n ≅ [C₂]ⁿ` iff `[K_n : ℚ] = 2^{2^n - 1}`
   (`QuadraticIterates.nonempty_mulEquiv_iff_finrank_eq`).
-* `QuadraticIterates.nonempty_mulEquiv_succ_iff` (Lemma 1.4): `Ω_{n+1} ≅ [C₂]^{n+1}` iff
-  `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`.
+* `QuadraticIterates.nonempty_mulEquiv_succ_iff` (Lemma 1.4 of [Stoll 1992]): `Ω_{n+1} ≅ [C₂]^{n+1}`
+  iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`.
 
 ## References
 
@@ -181,7 +181,7 @@ theorem exists_injective_monoidHom_wreathPower (n : ℕ) :
     ((Nat.card_coe_set_eq _).trans_le (ncard_rootSet_iteratedPoly_le a n))
     (Multiplicative (ZMod 2)) (Nat.card_zmod 2)
 
-/-! ### Lemma 1.4: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}` -/
+/-! ### Lemma 1.4 of [Stoll 1992]: maximality of `Ω_{n+1}` from `Ω_n` and `[K_{n+1} : K_n]` -/
 
 /-- `#Ω_n = [K_n : ℚ]`, since `K_n` is a Galois splitting field of `f_n` over `ℚ`. -/
 lemma card_galoisGroup_eq_finrank (n : ℕ) :
@@ -198,9 +198,10 @@ theorem nonempty_mulEquiv_iff_finrank_eq (n : ℕ) :
   obtain ⟨φ, hφ⟩ := exists_injective_monoidHom_wreathPower a n
   rw [φ.nonempty_mulEquiv_iff_card_eq hφ, card_galoisGroup_eq_finrank, card_wreathPower]
 
-/-- Lemma 1.4: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`. Both
-`#Ω_n ≤ #[C₂]ⁿ` (by `QuadraticIterates.exists_injective_monoidHom_wreathPower`) and
-`[K_{n+1} : K_n] ≤ 2^{2^n}`, and the products of the two sides agree iff both factors do. -/
+/-- Lemma 1.4 of [Stoll 1992]: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and
+`[K_{n+1} : K_n] = 2^{2^n}`. Both `#Ω_n ≤ #[C₂]ⁿ` (by
+`QuadraticIterates.exists_injective_monoidHom_wreathPower`) and `[K_{n+1} : K_n] ≤ 2^{2^n}`, and the
+products of the two sides agree iff both factors do. -/
 theorem nonempty_mulEquiv_succ_iff (n : ℕ) :
     Nonempty (GaloisGroup a (n + 1) ≃* WreathPower (n + 1)) ↔
       Nonempty (GaloisGroup a n ≃* WreathPower n) ∧

@@ -20,9 +20,9 @@ import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 For a rational parameter `a`, `K_{n+1}` is generated over `K_n` by square roots of the shifted
 roots `β - a` of `f_n`, so `[K_{n+1} : K_n] = 2^{2^n - d}` with `d` the `𝔽₂`-dimension of the
 space of multiplicative relations among them. When `f_n` is irreducible and `c_{n+1} ≠ 0`, that
-space vanishes exactly when `c_{n+1} = ∏_β (β - a)` is not a square in `K_n` (Lemma 1.6), and
-when `Ω_n ≅ [C₂]ⁿ` the rationals that are squares in `K_n` are determined by `c_1, …, c_n`
-(Lemma 1.5).
+space vanishes exactly when `c_{n+1} = ∏_β (β - a)` is not a square in `K_n` (Lemma 1.6 of
+[Stoll 1992]), and when `Ω_n ≅ [C₂]ⁿ` the rationals that are squares in `K_n` are determined by
+`c_1, …, c_n` (Lemma 1.5 of [Stoll 1992]).
 
 ## Main definitions
 
@@ -34,12 +34,12 @@ when `Ω_n ≅ [C₂]ⁿ` the rationals that are squares in `K_n` are determined
   `[K_{n+1} : K_n] = 2^{2^n - dim rootRelations (rootShift a n)}`.
 * `QuadraticIterates.prod_rootShift_eq_cSeq`, `QuadraticIterates.isSquare_algebraMap_cSeq`: the norm
   identity `∏_β (β - a) = c_{n+1}` in `K_n`; hence `c_1, …, c_n` are squares in `K_n`.
-* `QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6): for irreducible `f_n` and
-  `c_{n+1} ≠ 0`, `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a square in `K_n`, through
-  `QuadraticIterates.rootRelations_rootShift_eq_bot_iff`.
-* `QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc` (Lemma 1.5): if `Ω_n ≅ [C₂]ⁿ`
-  and `c_1, …, c_n` are 2-independent, a rational `c` is a non-square in `K_n` iff `c_1, …, c_n, c`
-  are 2-independent.
+* `QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6 of [Stoll 1992]): for irreducible
+  `f_n` and `c_{n+1} ≠ 0`, `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is not a square in `K_n`,
+  through `QuadraticIterates.rootRelations_rootShift_eq_bot_iff`.
+* `QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc` (Lemma 1.5 of [Stoll 1992]):
+  if `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent, a rational `c` is a non-square in `K_n` iff
+  `c_1, …, c_n, c` are 2-independent.
 
 ## References
 
@@ -140,7 +140,7 @@ lemma isSquare_algebraMap_cSeq {k n : ℕ} (hkn : k < n) :
   · rw [← Multiset.prod_map_pow, Multiset.map_congr rfl fun β _ ↦ hg β, prod_aroots_sub_eq_cSeq,
       eq_ratCast]
 
-/-! ### Lemma 1.6: the degree criterion -/
+/-! ### Lemma 1.6 of [Stoll 1992]: the degree criterion -/
 
 /-- For irreducible `f_n` with `c_{n+1} ≠ 0`, the relation space of the shifted roots vanishes iff
 `c_{n+1}` is not a square in `K_n`: if it is nonzero, it contains the all-ones vector, `Ω_n` being
@@ -160,9 +160,9 @@ lemma rootRelations_rootShift_eq_bot_iff [DecidableEq (AlgebraicClosure ℚ)] {n
   rw [hbot, Submodule.mem_bot] at hmem
   exact congrFun hmem (Classical.arbitrary _)
 
-/-- Lemma 1.6: for irreducible `f_n` with `c_{n+1} ≠ 0` (as when `f_{n+1}` is irreducible,
-`QuadraticIterates.cSeq_succ_ne_zero_of_irreducible`), `[K_{n+1} : K_n] = 2^{2^n}` iff `c_{n+1}` is
-not a square in `K_n`, by `QuadraticIterates.relfinrank_succ_eq_pow` and
+/-- Lemma 1.6 of [Stoll 1992]: for irreducible `f_n` with `c_{n+1} ≠ 0` (as when `f_{n+1}` is
+irreducible, `QuadraticIterates.cSeq_succ_ne_zero_of_irreducible`), `[K_{n+1} : K_n] = 2^{2^n}` iff
+`c_{n+1}` is not a square in `K_n`, by `QuadraticIterates.relfinrank_succ_eq_pow` and
 `QuadraticIterates.rootRelations_rootShift_eq_bot_iff`. -/
 theorem relfinrank_succ_eq_two_pow_iff {n : ℕ} (hirr : Irreducible fℚ[a, n])
     (hc : cSeq a (n + 1) ≠ 0) :
@@ -173,7 +173,7 @@ theorem relfinrank_succ_eq_two_pow_iff {n : ℕ} (hirr : Irreducible fℚ[a, n])
     relfinrank_succ_eq_pow hirr hc, Nat.pow_right_inj one_lt_two]
   lia [(finrank_rootRelations_le (rootShift a n)).trans_eq (card_rootSet_iteratedPoly hirr)]
 
-/-! ### Lemma 1.5: the Kummer extension criterion -/
+/-! ### Lemma 1.5 of [Stoll 1992]: the Kummer extension criterion -/
 
 /-- If `Ω_n ≅ [C₂]ⁿ`, then `Gal(K_n/ℚ)` has exactly `2^n` characters to `C₂`
 (`IteratedWreathProduct.card_monoidHom_multiplicative_zmod_two`), which bounds the degree of the
@@ -219,8 +219,8 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
       (fun i _ ↦ hindep.ne_zero i) c]
   exact exists_congr fun S ↦ and_iff_right (Finset.subset_univ S)
 
-/-- Lemma 1.5: if `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent, then `c ∈ ℚ` is a
-non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent (for `c = 0` both sides fail). -/
+/-- Lemma 1.5 of [Stoll 1992]: if `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent, then `c ∈ ℚ` is
+a non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent (for `c = 0` both sides fail). -/
 theorem not_isSquare_algebraMap_iff_twoIndependent_snoc {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
     (hindep : TwoIndependent (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1))) {c : ℚ} :
