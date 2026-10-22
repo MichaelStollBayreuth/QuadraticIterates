@@ -142,7 +142,8 @@ $(c_n)_{n \ge 1}$ is~$2$-independent, we use group homomorphisms $\QQ^\times \to
     Rat.signChar_apply_of_neg, Rat.valChar, Rat.valChar_intCast, Rat.unitPartChar,
     Rat.unitPartChar_intCast, Rat.unitPartChar_natCast_self, ZMod.isUnit_intCast_of_not_dvd,
     Rat.valChar_intCast_of_not_dvd, Rat.valChar_neg_one, Rat.valChar_natCast_self,
-    Rat.unitPartChar_neg_one}
+    Rat.unitPartChar_neg_one, ZMod.quadraticChar_neg_one_of_mod_four_eq_one,
+    ZMod.quadraticChar_neg_one_of_mod_four_eq_three}
   \leanok
   We use the following homomorphisms $\QQ^\times \to \{\pm 1\}$. For a prime~$p$ and
   $z \in \QQ^\times$, let~$z_p$ denote an integer whose image in~$\ZZ/p\ZZ$ (in~$\ZZ/8\ZZ$ when
@@ -158,7 +159,9 @@ $(c_n)_{n \ge 1}$ is~$2$-independent, we use group homomorphisms $\QQ^\times \to
   \end{enumerate}
   The class of~$z$ modulo squares is determined by~$\sgn(z)$ and all $\val_p(z)$; the characters
   induced by Dirichlet characters are nevertheless useful. We call~$\val_p$, $\chi_p$ (resp.\
-  $\val_2$, $\chi_4$, $\chi_8$) and their products the \emph{characters at~$p$}.
+  $\val_2$, $\chi_4$, $\chi_8$) and their products the \emph{characters at~$p$}. For an odd
+  prime~$p$, $\chi_p(-1) = \Leg{-1}{p}$ is~$1$ if $p \equiv 1 \bmod 4$ and~$-1$ if
+  $p \equiv 3 \bmod 4$.
   \formalnote{In the mirror file \lname{QuadraticIterates/Mathlib/NumberTheory/MulChar/Rat.lean}.
   The last two items are instances of one construction: for a power~$N$ of~$p$ and a
   character~$\psi$ of $(\ZZ/N\ZZ)^\times$ with values~$\pm 1$, $\chi_\psi(z) = \psi(u \bmod N)$,
@@ -194,6 +197,7 @@ $a \in \QQ \setminus \{-1, 0\}$.
   \label{prop:tfae}
   \uses{prop:criterion, prop:crit, prop:crit-converse, def:phin}
   \lean{QuadraticIterates.tfae_forall_nonempty_mulEquiv,
+    QuadraticIterates.forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern,
     QuadraticIterates.forall_nonempty_mulEquiv_of_forall_hasCharPattern}
   \leanok
   Let $a \in \QQ \setminus \{-1, 0\}$. Then~$\rho_a$ is surjective if and only if~$a$

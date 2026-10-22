@@ -201,7 +201,7 @@ this means that~$s$ is odd and $r \equiv s \bmod 4$.
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:reduction}
+  \uses{lem:reduction, lem:orbit}
   $r + s \equiv 2 \bmod 4$, so the statement on~$\val_2$ is Lemma~\ref{lem:pat-rs}(1) with $q = 2$.
   In~$\ZZ/8\ZZ$, $\bar a \in \{1, 5\}$ and $(\bar c_n)$ is $(-1, 2, 5, 2, 5, \dots)$ for
   $\bar a = 1$ and $(3, 6, 1, 6, 1, \dots)$ for $\bar a = 5$. For $n \ge 2$,
@@ -262,6 +262,7 @@ sufficient conditions for each of them.
   \lean{QuadraticIterates.NegFirstCriterion,
     QuadraticIterates.hasCharPattern_mulSingle_one_of_negFirstCriterion,
     QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_of_odd,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_of_apply,
     QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right,
     QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_two,
     QuadraticIterates.hasCharPattern_mulSingle_one_of_dvd_right_four,

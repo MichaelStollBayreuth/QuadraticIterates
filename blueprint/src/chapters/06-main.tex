@@ -15,13 +15,14 @@ The second level in terms of~$r$ and~$s$, and the integer squares modulo powers 
   \leanok
   Modulo squares, $c_1 \sim -rs$, $c_2 \sim r(r+s)$ and $c_1 c_2 \sim -s(r+s)$; so
   $(c_1, c_2)$ is~$2$-independent if and only if none of~$-rs$, $r(r+s)$ and $-s(r+s)$ is a
-  square. As~$r$, $s$ and~$r + s$ are coprime in pairs, $c_1$ is a square if and only if $r < 0$
-  and~$|r|$, $s$ are squares; $c_2$ if and only if~$r$ and~$r + s$ have the same sign and~$|r|$,
-  $|r + s|$ are squares; $c_1 c_2$ if and only if $r + s < 0$ and~$s$, $|r + s|$ are squares.
+  square. For $a \notin \{0, -1\}$, as~$r$, $s$ and~$r + s$ are coprime in pairs, $c_1$ is a
+  square if and only if $r < 0$ and~$|r|$, $s$ are squares; $c_2$ if and only if~$r$ and~$r + s$
+  have the same sign and~$|r|$, $|r + s|$ are squares; $c_1 c_2$ if and only if $r + s < 0$
+  and~$s$, $|r + s|$ are squares.
   \formalnote{\lname{twoIndependent\_fin\_two\_cSeq\_iff} states the first claim for all
   $a = r/s$ (for $r = 0$ or $s = 0$ both sides fail), with the two-independence of $(c_1, c_2)$
-  written as \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}. The last statement, on the
-  squares among pairwise coprime integers, is used inside the proofs.}
+  written as \lname{TwoIndependent (fun i : Fin 2 ↦ cSeq a (i + 1))}. The last statement is not
+  formalized: the proofs only use that a product of two squares is a square.}
 \end{lemma}
 \begin{proof}
   \leanok
@@ -116,8 +117,8 @@ result.
   $(2,3)$; $(1,0)$, $(1,2)$; and for $\eps = 1$: $(1,1)$, $(1,3)$; $(2,1)$, $(0,3)$; $(3,0)$,
   $(3,2)$.
 
-  (1) Assume (iii); by Lemma~\ref{lem:level2}, at most one of~$|r|$, $s$, $|r + s|$ is a
-  square when $r < 0$.
+  (1) Assume (iii). When $r + s < 0$, at most one of~$|r|$, $s$, $|r + s|$ is a square, since
+  the products of two of them are $-rs$, $r(r+s)$ and $-s(r+s)$.
   \begin{itemize}
     \item $a > 0$. (O1) holds, and~$r$ and~$r + s$ are positive and not both squares. In the
           classes $(1,3)$, $(2,1)$, $(0,3)$ and $(3,0)$, $r + s \equiv 0$ or~$3 \bmod 4$, so this

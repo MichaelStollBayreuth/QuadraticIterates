@@ -33,7 +33,6 @@ of~$w_3$).
 \begin{lemma}[Reflection for $p \equiv 1 \bmod 4$]
   \label{lem:reflection-one}
   \uses{lem:reflection}
-  \lean{ZMod.quadraticChar_neg_one_of_mod_four_eq_one}
   \leanok
   Let $n \ge 1$ and let $p \equiv 1 \bmod 4$ be a prime with $p \mid v_n$ and $p \nmid r$ (automatic
   for $n \ge 2$). Then $\chi_p(c_m) = \chi_p(c_n) \ne 0$ for all $m \ge n$.
@@ -43,13 +42,14 @@ of~$w_3$).
 \end{lemma}
 \begin{proof}
   \leanok
+  \uses{def:chars}
   As in the proof of Lemma~\ref{lem:reflection}, $\bar c_m = -\bar c_n$ is a unit in~$\ZZ/p\ZZ$ for
   $m > n$; now $\Leg{-1}{p} = 1$.
 \end{proof}
 
 \begin{lemma}[Period three]
   \label{lem:period3}
-  \uses{lem:strongcong3, lem:localeval, lem:wseq-res, lem:sqclass, def:chars}
+  \uses{lem:strongcong3, lem:localeval, lem:wseq-res, lem:sqclass, def:chars, lem:reduction}
   \lean{QuadraticIterates.unitPartChar_cSeq_one_of_dvd_wSeq_three,
     QuadraticIterates.unitPartChar_cSeq_three_mul_add_one_of_dvd_wSeq_three,
     QuadraticIterates.unitPartChar_cSeq_three_mul_add_two_of_dvd_wSeq_three,
