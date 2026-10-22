@@ -15,6 +15,7 @@ import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Mathlib.RingTheory.Multiplicity
 
 /-!
@@ -184,8 +185,7 @@ private lemma criteria_of_emod_four_eq_two (hrs : IsCoprime r s) (hs : 0 < s) (h
   · obtain ⟨p, hp, hp4, hpr⟩ := Int.exists_prime_dvd_of_emod_eight_eq_six (x := -r) (by lia)
       (by lia)
     rcases negFirstCriterion_or_negTailCriterion_of_prime_dvd hr.ne hp hp4 (dvd_neg.mp hpr)
-      fun hps ↦ (Nat.prime_iff_prime_int.mp hp).not_isUnit (hrs.isUnit_of_dvd' (dvd_neg.mp hpr) hps)
-      with h | h
+      (Int.Prime.not_dvd_of_isCoprime hp hrs.symm (dvd_neg.mp hpr)) with h | h
     exacts [.inl ⟨hZ, h⟩, .inr (.inl ⟨hZ, h⟩)]
   · exact .inl ⟨hZ, negFirstCriterion_of_not_isSquare_right hs.le
       (Int.not_isSquare_of_emod_eight_eq_five h)⟩
@@ -193,8 +193,8 @@ private lemma criteria_of_emod_four_eq_two (hrs : IsCoprime r s) (hs : 0 < s) (h
 /-- In the class `(0, 3)`: (O3)/(O4), as `s ≡ 3 (mod 4)`; and (Z1) if `|r|` is not a square in
 `ℚ₂`, (Z2) at a prime `p ≡ ±3 (mod 8)` dividing `(r + 2s)/2 ≡ ±3 (mod 8)` if
 `r + 2s ≡ ±6 (mod 16)`. -/
-private lemma criteria_of_emod_four_eq_three (hs : 0 < s) (hr : r < 0) (h2 : 0 < r + 2 * s)
-    (hs4 : s % 4 = 3) (h : (∀ j : ℕ, ∀ m : ℤ, -r = 4 ^ j * m → m % 8 ≠ 1) ∨
+private lemma criteria_of_emod_four_eq_three (hs : 0 < s) (hr : r < 0) (hs4 : s % 4 = 3)
+    (h : (∀ j : ℕ, ∀ m : ℤ, -r = 4 ^ j * m → m % 8 ≠ 1) ∨
       (r + 2 * s) % 16 = 6 ∨ (r + 2 * s) % 16 = 10) :
     NegAllCriterion r s ∧ NegFirstCriterion r s ∨ NegAllCriterion r s ∧ NegTailCriterion r s ∨
       NegFirstCriterion r s ∧ NegTailCriterion r s := by
@@ -205,7 +205,7 @@ private lemma criteria_of_emod_four_eq_three (hs : 0 < s) (hr : r < 0) (h2 : 0 <
     obtain ⟨j, m, he, hm⟩ := Int.exists_eq_four_pow_mul_of_isSquare hsq (by lia)
     exact h j m he hm
   · obtain ⟨p, hp, hp8, hpd⟩ :=
-      Int.exists_prime_dvd_of_emod_eight_eq_three_or_five (x := (r + 2 * s) / 2) (by lia) (by lia)
+      Int.exists_prime_dvd_of_emod_eight_eq_three_or_five (x := (r + 2 * s) / 2) (by lia)
     exact .dvd_add_two_mul p hp hp8 (hpd.trans ⟨2, by lia⟩)
 
 /-- In the class `(3, 0)` with `r ≡ 3 (mod 8)` and `s ≢ 4 (mod 32)`: (Z1), as `|r| ≡ 5 (mod 8)`;
@@ -223,17 +223,6 @@ private lemma criteria_of_emod_eight_eq_three (hs : 0 < s) (hr : r < 0) (hr8 : r
   refine negFirstCriterion_of_eq_four_pow_mul ?_ hsm hm hr8
   rcases j with _ | _ | j <;> lia
 
-/-- The classes of the hypothesis of
-`QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_emod` lie in `TwoAdicClass r s 1`. -/
-private lemma twoAdicClass_one_of_emod
-    (h : r % 4 = 1 ∧ s % 2 = 1 ∨ r % 4 = 3 ∧ s % 2 = 0 ∨ r % 4 = 2 ∧ s % 4 = 1 ∨
-      r % 4 = 0 ∧ s % 4 = 3) :
-    TwoAdicClass r s 1 := by
-  rcases h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
-  · exact .inl ⟨Int.odd_iff.mpr h₂, by rw [Int.ModEq]; lia⟩
-  · exact .inr (.inr ⟨Int.even_iff.mpr h₂, by rw [Int.ModEq]; lia⟩)
-  all_goals exact .inr (.inl ⟨Int.odd_iff.mpr (by lia), by rw [Int.ModEq]; lia⟩)
-
 /-- **Automatic classes on the interval** `α < a < -1`: for `a = r/s` in one of the following
 classes, `Ω_n ≅ [C₂]ⁿ` for all `n`: `(r, s) ≡ (1, 1)`, `(1, 3)` or `(3, 2) (mod 4)`; `(2, 1)` with
 `r ≡ 2` or `s ≡ 5 (mod 8)`; `(0, 3)` with `|r|` not a square in `ℚ₂` (not `4^j m` with
@@ -247,18 +236,14 @@ theorem nonempty_mulEquiv_of_lt_neg_one_of_emod (hrs : IsCoprime r s) (hs : 0 < 
         (r + 2 * s) % 16 = 6 ∨ (r + 2 * s) % 16 = 10) ∨
       r % 8 = 3 ∧ s % 4 = 0 ∧ s % 32 ≠ 4) (n : ℕ) :
     Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) := by
-  have h2 : 0 < r + 2 * s := by
-    by_contra! h2
-    lia [mul_nonpos_of_nonneg_of_nonpos (sq_nonneg r) h2,
-      mul_neg_of_pos_of_neg (pow_pos hs 2) (by lia : r + s < 0)]
   refine nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs (.inr ⟨hα, rfl⟩)
-    (twoAdicClass_one_of_emod ?_) ?_ n
+    (twoAdicClass_one_iff.mpr ?_) ?_ n
   · rcases h with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂, -⟩ | ⟨h₁, h₂, -⟩ | ⟨h₁, h₂, -⟩ <;> lia
   rcases h with h | h | ⟨h₁, -, h₃⟩ | ⟨-, h₂, h₃⟩ | ⟨h₁, h₂, h₃⟩
   · exact criteria_of_emod_four hs (by lia) (by lia) (.inl h)
   · exact criteria_of_emod_four hs (by lia) (by lia) (.inr h)
   · exact criteria_of_emod_four_eq_two hrs hs (by lia) h₁ h₃
-  · exact criteria_of_emod_four_eq_three hs (by lia) h2 h₂ h₃
+  · exact criteria_of_emod_four_eq_three hs (by lia) h₂ h₃
   · exact criteria_of_emod_eight_eq_three hs (by lia) h₁ h₂ h₃
 
 end QuadraticIterates

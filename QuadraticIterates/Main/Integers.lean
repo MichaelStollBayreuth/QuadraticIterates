@@ -62,7 +62,7 @@ are negative. This is case a) of the main result of Section 3 of [Stoll 1992]. -
 theorem nonempty_mulEquiv_of_pos_of_emod_four_eq_one (ha : 0 < a) (ha4 : a % 4 = 1) (n : ℕ) :
     Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   (forall_nonempty_mulEquiv_intCast_iff_of_twoAdicClass (.inr ⟨ha, rfl⟩)
-    (.inl ⟨odd_one, by rw [Int.ModEq]; lia⟩)).mpr
+    (twoAdicClass_one_iff.mpr (by lia))).mpr
     ⟨not_isSquare_of_neg (by lia), not_isSquare_of_neg (by lia)⟩ n
 
 /-- For `a > 0` with `a ≡ 2 mod 4`, `Ω_n ≅ [C₂]ⁿ` for all `n`: the class (C2), and `-a`, `-a - 1`
@@ -70,7 +70,7 @@ are negative. This is case b) of the main result of Section 3 of [Stoll 1992]. -
 theorem nonempty_mulEquiv_of_pos_of_emod_four_eq_two (ha : 0 < a) (ha4 : a % 4 = 2) (n : ℕ) :
     Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   (forall_nonempty_mulEquiv_intCast_iff_of_twoAdicClass (.inr ⟨ha, rfl⟩)
-    (.inr (.inl ⟨odd_one, by rw [Int.ModEq]; lia⟩))).mpr
+    (twoAdicClass_one_iff.mpr (by lia))).mpr
     ⟨not_isSquare_of_neg (by lia), not_isSquare_of_neg (by lia)⟩ n
 
 /-- For `a < 0` with `a ≡ 0 mod 4` and `-a` not a square, `Ω_n ≅ [C₂]ⁿ` for all `n`: the class
@@ -78,7 +78,7 @@ theorem nonempty_mulEquiv_of_pos_of_emod_four_eq_two (ha : 0 < a) (ha4 : a % 4 =
 theorem nonempty_mulEquiv_of_neg_of_emod_four_eq_zero (ha : a < 0) (ha4 : a % 4 = 0)
     (hsq : ¬IsSquare (-a)) (n : ℕ) : Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   (forall_nonempty_mulEquiv_intCast_iff_of_twoAdicClass (.inl ⟨by lia, rfl⟩)
-    (.inr (.inl ⟨odd_one, by rw [Int.ModEq]; lia⟩))).mpr
+    (twoAdicClass_neg_one_iff.mpr (by lia))).mpr
     ⟨hsq, Int.not_isSquare_of_two_le_emod_four (by lia)⟩ n
 
 /-- **Theorem 3.5 of [Li 2020]**: for `a < 0` with `a ≡ 3 mod 4` and `-a` not a square, the
@@ -89,7 +89,7 @@ theorem forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three (ha : a < 0) (
     (∀ n, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔ ¬IsSquare (-a - 1) := by
   have ha2 : a ≤ -2 := by_contra fun _ ↦ hsq ⟨1, by lia⟩
   exact (forall_nonempty_mulEquiv_intCast_iff_of_twoAdicClass (.inl ⟨ha2, rfl⟩)
-    (.inl ⟨odd_one, by rw [Int.ModEq]; lia⟩)).trans (and_iff_right hsq)
+    (twoAdicClass_neg_one_iff.mpr (by lia))).trans (and_iff_right hsq)
 
 /-- For `a < 0` with `a ≡ 3 mod 4` and neither `-a` nor `-a - 1` a square, `Ω_n ≅ [C₂]ⁿ` for all
 `n`: the direction `⇐` of

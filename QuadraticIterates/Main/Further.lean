@@ -15,6 +15,7 @@ import QuadraticIterates.Main.TwoAdic
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Patterns.Primes
 import QuadraticIterates.Patterns.Reflection
 import QuadraticIterates.Sequence.Orbit
@@ -72,15 +73,14 @@ private lemma jacobiSym_eq_zero_of_dvd {x : ℤ} (hx : (p : ℤ) ∣ x) : jacobi
 /-- A prime dividing `w_3` does not divide `r + s`: `w_3 ≡ s³ (mod r + s)`. -/
 private lemma not_dvd_add_of_dvd_wSeq_three (hrs : IsCoprime r s) (hp : (p : ℤ) ∣ wSeq r s 3) :
     ¬(p : ℤ) ∣ r + s := fun h ↦ by
-  have hp' := Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)
   have h3 := ((wSeq_two_mul_add_one_modEq hrs (k := 1) le_rfl).of_dvd h).dvd_iff.mp hp
-  exact hp'.not_isUnit ((isCoprime_wSeq_right hrs (n := 3) (by norm_num)).isUnit_of_dvd' hp
-    (hp'.dvd_of_dvd_pow h3))
+  exact Int.Prime.not_dvd_of_isCoprime Fact.out
+    (isCoprime_wSeq_right hrs (n := 3) (by norm_num)).symm hp (Int.Prime.dvd_pow' Fact.out h3)
 
 /-- A prime dividing `v_2 = w_3 + (r + s) s²` does not divide `r + s`. -/
 private lemma not_dvd_add_of_dvd_vSeq_two (hrs : IsCoprime r s) (hp : (p : ℤ) ∣ vSeq r s 2) :
     ¬(p : ℤ) ∣ r + s := fun h ↦ not_dvd_add_of_dvd_wSeq_three hrs
-  ((dvd_add_left (h.mul_right (s ^ 2))).mp (by simpa [vSeq] using hp)) h
+  ((dvd_add_left (h.mul_right (s ^ 2))).mp (by simpa [vSeq_eq] using hp)) h
 
 /-! ### Primes of `v_2` and `v_3` -/
 
@@ -188,8 +188,8 @@ private lemma exists_mulChar_of_dvd_wSeq_three (hrs : IsCoprime r s) (hs : s ≠
   obtain ⟨p₁, p₂, p₃, p₀⟩ := quadraticChar_values_of_dvd_wSeq_three hrs hs hp
   obtain ⟨q₁, q₂, q₃, q₀⟩ := quadraticChar_values_of_dvd_wSeq_three hrs hs hq
   have hq' := Nat.prime_iff_prime_int.mp (Fact.out : q.Prime)
-  have hqs := fun h ↦ hq'.not_isUnit
-    ((isCoprime_wSeq_right hrs (n := 3) (by norm_num)).isUnit_of_dvd' hq h)
+  have hqs := Int.Prime.not_dvd_of_isCoprime Fact.out
+    (isCoprime_wSeq_right hrs (n := 3) (by norm_num)).symm hq
   have hq1 := ZMod.quadraticChar_neg_one_of_mod_four_eq_three hq4
   rcases jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp
     (hq'.coprime_iff_not_dvd.mpr (dvd_neg.not.mpr
@@ -241,8 +241,8 @@ theorem hasCharPattern_neg_mulSingle_one_of_dvd_wSeq_three (hrs : IsCoprime r s)
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-Pi.mulSingle 1 (-1)) := by
   obtain ⟨ℓ, _, hℓ, hval⟩ := exists_prime_dvd_valChar_eq_neg_one hw hw'
   obtain ⟨Φ, h₁, h₂, h₃, h₀⟩ := exists_mulChar_of_dvd_wSeq_three hrs hs hq4 hq hp hy
-  have hr : r ≠ 0 := fun hr ↦ (Nat.prime_iff_prime_int.mp (Fact.out : q.Prime)).not_isUnit
-    ((isCoprime_wSeq_left hrs (n := 3) (by norm_num)).isUnit_of_dvd' hq (hr ▸ dvd_zero _))
+  have hr : r ≠ 0 := fun hr ↦ Int.Prime.not_dvd_of_isCoprime Fact.out
+    (isCoprime_wSeq_left hrs (n := 3) (by norm_num)).symm hq (hr ▸ dvd_zero _)
   have hw0 : wSeq r s 3 ≠ 0 := fun h ↦ hw (h ▸ .zero)
   have hc : cSeq ((r : ℚ) / s) 3 ≠ 0 := by
     rw [cSeq_div_eq r hs (by norm_num)]

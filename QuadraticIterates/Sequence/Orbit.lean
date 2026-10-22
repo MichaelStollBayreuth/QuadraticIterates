@@ -9,6 +9,7 @@ public import QuadraticIterates.Sequence.WSeq
 
 import Mathlib.Data.ZMod.Units
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.RingTheory.Coprime.Basic
 
 /-!
 # Orbits of `x ↦ x² + a`, rigid divisibility, and periodicity modulo `w_m²`
@@ -20,7 +21,8 @@ moreover `c_n + c_{n+2} = (c_n + c_{n+1})(c_n² - c_n + a + 1)`. If `c_m² = 0`,
 `c_{mk} ≡ c_m (mod c_m²)`. Modulo `w_m²` it applies to `a = r/s` and gives the congruence of
 `w_{mk}` modulo `w_m²`. If `(a + 1)² = 0`, the sequence is `1 - t, -t, t - 1, -t, t - 1, …` with
 `t = a + 1`; modulo `r + s`, where the parameter `r/s` is `-1`, this gives the congruences of
-`w_{2k+1}` and `u_{2k+1}` modulo `r + s`. In `ZMod 8`, the sequence of a parameter `a ∈ {1, 5}` is
+`w_{2k+1}` and `u_{2k+1}` modulo `r + s`. In `ZMod 8` every sequence is `2`-periodic from `n = 2`
+on, `c_n + c_{n+1} = -1` for odd `a`, and the sequence of `a ∈ {1, 5}` is
 `(-a, a + 1, a + 4, a + 1, …)`.
 
 ## Main statements
@@ -41,6 +43,8 @@ moreover `c_n + c_{n+2} = (c_n + c_{n+1})(c_n² - c_n + a + 1)`. If `c_m² = 0`,
 * `QuadraticIterates.cSeq_neg_two`, `QuadraticIterates.cSeq_two_mul_add_one_of_sq_eq_neg_one`,
   `QuadraticIterates.cSeq_two_mul_of_sq_eq_neg_one`: the sequences of `a = -2` and of `a` with
   `a² = -1`.
+* `QuadraticIterates.cSeq_add_two_zmod_eight`, `QuadraticIterates.cSeq_add_cSeq_succ_zmod_eight`:
+  `2`-periodicity in `ZMod 8`, and `c_n + c_{n+1} = -1` for odd `a`.
 * `QuadraticIterates.cSeq_two_mul_zmod_eight`, `QuadraticIterates.cSeq_two_mul_add_one_zmod_eight`:
   the sequence of `a ∈ {1, 5}` in `ZMod 8`.
 -/
@@ -156,7 +160,7 @@ theorem cSeq_eq_self_of_sq_eq_zero (h : a ^ 2 = 0) {k : ℕ} (hk : 2 ≤ k) : cS
 /-- If `m ≥ 1` is the first index with `c_m = 0`, and `a ≠ 0`, then `c_n = 0 ↔ m ∣ n` for `n ≥ 1`:
 the sequence is `m`-periodic from `n = 2` on, with `c_{m+1} = c_m² + a = a`. -/
 theorem cSeq_eq_zero_iff_dvd {m : ℕ} (hm : 1 ≤ m) (h : cSeq a m = 0) (ha : a ≠ 0)
-    (hmin : ∀ j, 1 ≤ j → j < m → cSeq a j ≠ 0) {n : ℕ} (hn : 1 ≤ n) : cSeq a n = 0 ↔ m ∣ n := by
+    (hmin : ∀ j ≥ 1, j < m → cSeq a j ≠ 0) {n : ℕ} (hn : 1 ≤ n) : cSeq a n = 0 ↔ m ∣ n := by
   have hc : cSeq a m ^ 2 = 0 := by rw [h, zero_pow two_ne_zero]
   have hm2 : 2 ≤ m := by
     by_contra! h'
@@ -207,10 +211,24 @@ end Orbit
 
 section ZModEight
 
-private lemma cSeq_four_eq_two_zmod_eight (a : ZMod 8) : cSeq a (2 + 2) = cSeq a 2 := by
+/-- In `ZMod 8` the sequence of every parameter is `2`-periodic from `n = 2` on: `c_4 = c_2` for
+each of the eight parameters. -/
+theorem cSeq_add_two_zmod_eight (a : ZMod 8) {n : ℕ} (hn : 2 ≤ n) : cSeq a (n + 2) = cSeq a n := by
+  refine cSeq_add_eq_of_add_eq one_le_two ?_ hn
   rw [cSeq_succ a (by norm_num), cSeq_succ a (by norm_num), cSeq_two]
   revert a
   decide
+
+/-- For `a² = 1` in `ZMod 8`, that is, for odd `a`, `c_n + c_{n+1} = -1` for `n ≥ 2`: the
+sequence is `2`-periodic from `n = 2` on (`QuadraticIterates.cSeq_add_two_zmod_eight`), and
+`c_2 + c_3 = -1`. -/
+theorem cSeq_add_cSeq_succ_zmod_eight {a : ZMod 8} (ha : a ^ 2 = 1) {n : ℕ} (hn : 2 ≤ n) :
+    cSeq a n + cSeq a (n + 1) = -1 := by
+  induction n, hn using Nat.le_induction with
+  | base =>
+    rw [cSeq_succ a (n := 2) (by norm_num), cSeq_two]
+    decide +revert
+  | succ n hn ih => rw [cSeq_add_two_zmod_eight a hn, add_comm, ih]
 
 variable {a : ZMod 8} (ha : a = 1 ∨ a = 5)
 include ha
@@ -218,10 +236,9 @@ include ha
 /-- For `a ≡ 1 mod 4` in `ZMod 8`, the even terms are `a + 1`:
 `(c_n) = (-a, a + 1, a + 4, a + 1, …)`. -/
 theorem cSeq_two_mul_zmod_eight {j : ℕ} (hj : 1 ≤ j) : cSeq a (2 * j) = a + 1 := by
-  obtain ⟨i, rfl⟩ := Nat.exists_eq_add_one.mpr hj
-  rw [mul_add, mul_one, add_comm,
-    cSeq_add_mul_eq_of_add_eq (by norm_num) (cSeq_four_eq_two_zmod_eight a) le_rfl, cSeq_two]
-  rcases ha with rfl | rfl <;> decide
+  induction j, hj using Nat.le_induction with
+  | base => rw [mul_one, cSeq_two]; rcases ha with rfl | rfl <;> decide
+  | succ j hj ih => rw [mul_add, mul_one, cSeq_add_two_zmod_eight a (by lia), ih]
 
 /-- For `a ≡ 1 mod 4` in `ZMod 8`, the odd terms from `n = 3` on are `a + 4`. -/
 theorem cSeq_two_mul_add_one_zmod_eight {j : ℕ} (hj : 1 ≤ j) : cSeq a (2 * j + 1) = a + 4 := by
@@ -280,9 +297,8 @@ theorem wSeq_two_mul_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
 `c̄_{2k+1} = -1`. -/
 theorem wSeq_two_mul_add_one_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k) :
     wSeq r s (2 * k + 1) ≡ s ^ (2 ^ (2 * k) - 1) [ZMOD r + s] := by
-  have hs := isUnit_intCast_zmod_natAbs (m := r + s) (by simpa using hrs.add_mul_left_left 1)
-  have hr := isUnit_intCast_zmod_natAbs (m := r + s)
-    (by simpa [add_comm] using hrs.symm.add_mul_left_left 1)
+  have hs := isUnit_intCast_zmod_natAbs hrs.add_self_left
+  have hr := isUnit_intCast_zmod_natAbs hrs.symm.self_add_left
   obtain ⟨σ, hσ⟩ := hs.exists_right_inv
   obtain ⟨ρ, hρ⟩ := hr.exists_right_inv
   have h0 := ZMod.intCast_self_natAbs (r + s)
@@ -313,7 +329,7 @@ theorem uSeq_two_mul_add_one_modEq (hrs : IsCoprime r s) {k : ℕ} (hk : 1 ≤ k
     Int.modEq_zero_iff_dvd.mpr (dvd_mul_right _ _)
   calc uSeq r s (2 * k + 1)
       = (r * wSeq r s (2 * k + 1)) ^ 2 - r * wSeq r s (2 * k + 1) * s ^ 2 ^ (2 * k) +
-          (r + s) * s ^ (2 ^ (2 * k + 1) - 1) := by rw [uSeq, Nat.add_sub_cancel]; ring
+          (r + s) * s ^ (2 ^ (2 * k + 1) - 1) := by rw [uSeq_eq, Nat.add_sub_cancel]; ring
     _ ≡ (-1 * s ^ 2 ^ (2 * k)) ^ 2 - -1 * s ^ 2 ^ (2 * k) * s ^ 2 ^ (2 * k) + 0 [ZMOD r + s] :=
       ((hX.pow 2).sub (hX.mul_right _)).add h0
     _ = 2 * s ^ 2 ^ (2 * k + 1) := by rw [pow_succ 2 (2 * k), pow_mul]; ring

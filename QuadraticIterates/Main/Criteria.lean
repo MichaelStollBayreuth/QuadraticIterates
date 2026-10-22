@@ -14,6 +14,8 @@ import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
+import QuadraticIterates.Mathlib.RingTheory.Coprime.Basic
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Mathlib.RingTheory.Multiplicity
 import QuadraticIterates.Patterns.Dyadic
 import QuadraticIterates.Patterns.Primes
@@ -168,8 +170,8 @@ private lemma unitPartChar_cSeq_of_eq_pow_mul (hrs : IsCoprime r s) (hs : s ≠ 
     (hm : ¬(p : ℤ) ∣ m) (ψ : MulChar (ZMod N) ℤ) {n : ℕ} (hn : 1 ≤ n) :
     unitPartChar p ψ (cSeq ((r : ℚ) / s) n) = (Pi.mulSingle 1 (ψ (-1)) : ℕ → ℤ) n * ψ (m * s) := by
   rcases hn.eq_or_lt with rfl | hn
-  · have hps : ¬(p : ℤ) ∣ s := fun h ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit
-      (hrs.isUnit_of_dvd' (hr ▸ (dvd_pow_self _ (by lia)).mul_right m) h)
+  · have hps : ¬(p : ℤ) ∣ s :=
+      Int.Prime.not_dvd_of_isCoprime Fact.out hrs.symm (hr ▸ (dvd_pow_self _ (by lia)).mul_right m)
     rw [mulChar_cSeq_one_eq_mul _ hs, unitPartChar_neg_one hN, unitPartChar_intCast hN hps, hr,
       unitPartChar_intCast_pow_mul hN ψ k hm, mul_assoc, ← map_mul, Pi.mulSingle_eq_same]
   · have hNr : (N : ℤ) ∣ r := by
@@ -281,8 +283,8 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_of_apply (hrs : IsCoprime r s)
   have hNs : (N : ℤ) ∣ s := by
     rw [hN, hsm, Nat.cast_pow]
     exact (pow_dvd_pow _ hjk).mul_right m
-  have hpr : ¬(p : ℤ) ∣ r := fun h ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit
-    (hrs.isUnit_of_dvd' h (hsm ▸ (dvd_pow_self _ (by lia)).mul_right m))
+  have hpr : ¬(p : ℤ) ∣ r :=
+    Int.Prime.not_dvd_of_isCoprime Fact.out hrs (hsm ▸ (dvd_pow_self _ (by lia)).mul_right m)
   refine hasCharPattern_mulSingle_one_of_apply (unitPartChar p ψ) ?_
     fun n hn ↦ unitPartChar_cSeq_of_dvd_right hrs hs hN hj hNs ψ hn
   rw [mulChar_cSeq_one_eq_mul _ hs, unitPartChar_neg_one hN, unitPartChar_intCast hN hpr, hsm,
@@ -293,8 +295,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_of_odd (hrs : IsCoprime r s) (
     {k : ℕ} {m : ℤ} (hk : Odd k) (hsm : s = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) :
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
   have hps : (p : ℤ) ∣ s := hsm ▸ (dvd_pow_self _ hk.pos.ne').mul_right m
-  have hpr : ¬(p : ℤ) ∣ r := fun h ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit
-    (hrs.isUnit_of_dvd' h hps)
+  have hpr : ¬(p : ℤ) ∣ r := Int.Prime.not_dvd_of_isCoprime Fact.out hrs hps
   refine hasCharPattern_mulSingle_one_of_apply (valChar p) ?_
     fun n hn ↦ valChar_cSeq_of_dvd_right hrs hs hps hn
   rw [mulChar_cSeq_one_eq_mul _ hs, valChar_neg_one, valChar_intCast_of_not_dvd hpr, hsm,
@@ -443,8 +444,7 @@ theorem hasCharPattern_neg_mulSingle_one_of_dvd_add_of_not_isSquare (hrs : IsCop
     {ψ : MulChar (ZMod N) ℤ} (hψ : ψ (-1) = -1) (h : ¬IsSquare (r + s))
     (h' : ¬IsSquare (-(r + s))) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-Pi.mulSingle 1 (-1)) := by
   have hp : (p : ℤ) ∣ r + s := (dvd_pow_self (p : ℤ) hj).trans (mod_cast hN ▸ hNrs)
-  have hps : ¬(p : ℤ) ∣ s := fun h ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit
-    ((by simpa using hrs.add_mul_left_left 1 : IsCoprime (r + s) s).isUnit_of_dvd' hp h)
+  have hps : ¬(p : ℤ) ∣ s := Int.Prime.not_dvd_of_isCoprime Fact.out hrs.symm.add_self_right hp
   have hrs0 : ((r + s : ℤ) : ℚ) ≠ 0 := mod_cast fun h0 : r + s = 0 ↦ h (h0 ▸ .zero)
   rcases Int.isUnit_iff.mp (((ZMod.isUnit_intCast_of_not_dvd hN hps).map ψ).mul
     (hrs0.isUnit.map (unitPartChar p ψ))) with hy | hy
@@ -554,7 +554,7 @@ theorem hasCharPattern_mulSingle_one_of_prime_dvd (hrs : IsCoprime r s) (hs : s 
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
   obtain ⟨k, m, hk, hrm, hm⟩ := Int.exists_pow_mul_of_dvd Fact.out hr hpr
   have hp := Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)
-  have hps : ¬(p : ℤ) ∣ s := fun h ↦ hp.not_isUnit (hrs.isUnit_of_dvd' hpr h)
+  have hps : ¬(p : ℤ) ∣ s := Int.Prime.not_dvd_of_isCoprime Fact.out hrs.symm hpr
   rcases jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp
     (hp.coprime_iff_not_dvd.mpr (hp.not_dvd_mul hm hps)).symm) with h | h
   · exact hasCharPattern_mulSingle_one_of_dvd_left hrs hs hp4 hk hrm hm h

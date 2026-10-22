@@ -74,7 +74,7 @@ lemma intCast_mul_zmod_eight_of_modEq_four (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) 
   obtain ⟨t, ht⟩ := h4.symm.dvd
   obtain rfl : r = s + 4 * t := by lia
   push_cast
-  rw [add_mul, ← sq, ZMod.intCast_sq_eight_eq_one_of_odd hs, mul_assoc]
+  rw [add_mul, ZMod.intCast_mul_self_eight_eq_one_of_odd hs, mul_assoc]
   generalize (t : ZMod 8) * s = x
   decide +revert
 

@@ -44,6 +44,8 @@ public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
+public import QuadraticIterates.Mathlib.RingTheory.Coprime.Basic
+public import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 public import QuadraticIterates.Mathlib.RingTheory.Multiplicity
 public import QuadraticIterates.Mathlib.RingTheory.UniqueFactorizationDomain
 public import QuadraticIterates.Patterns.Dyadic

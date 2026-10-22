@@ -12,6 +12,8 @@ import QuadraticIterates.Main.Theorem
 import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+import QuadraticIterates.Mathlib.RingTheory.Coprime.Basic
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Mathlib.RingTheory.Multiplicity
 
 /-!
@@ -77,9 +79,6 @@ private lemma not_dvd_left_of_dvd_add_mul (hrs : IsCoprime r s) {p c : ℤ} (hp 
   hp.not_isUnit <| hrs.isUnit_of_dvd' hpr <|
     (hp.dvd_or_dvd ((dvd_add_right hpr).mp h)).resolve_left hpc
 
-private lemma not_dvd_two_of_prime {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) : ¬(p : ℤ) ∣ 2 :=
-  fun h ↦ hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp (mod_cast h))
-
 /-! ### Theorem R⁺ -/
 
 private lemma not_two_dvd_and (hrs : IsCoprime r s) : ¬((2 : ℤ) ∣ r ∧ 2 ∣ s) :=
@@ -95,7 +94,7 @@ private lemma negAllCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r s
     (hrs.symm.add_mul_right_right 2).neg_left hM (by simpa using h) with
     ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, -⟩ | ⟨h8, -⟩
   · have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ not_dvd_left_of_dvd_add_mul hrs
-      (Nat.prime_iff_prime_int.mp hp) (not_dvd_two_of_prime hp hp2) hpN
+      (Nat.prime_iff_prime_int.mp hp) (Int.Prime.not_dvd_two hp hp2) hpN
       (ht ▸ dvd_pow hpt two_ne_zero)
     have h1 := (jacobiSym.mod_left' (Int.modEq_iff_dvd.mpr (by rw [← ht]; simpa using hpN) :
       2 * -s ≡ t ^ 2 [ZMOD p])).trans (jacobiSym.sq_one_of_not_dvd hp hpt)
@@ -112,7 +111,7 @@ private lemma negTailCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r 
   have hr0 : 0 ≤ r := ht ▸ sq_nonneg t
   refine .not_isSquare_add hns (not_isSquare_of_neg (by lia)) ?_
   rcases exists_of_not_isSquare_of_dvd (x := s) (N := r + s) (by lia)
-    (by simpa using hrs.symm.add_mul_right_right 1) hM h with
+    hrs.symm.add_self_right hM h with
     ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, -⟩ | ⟨h8, -⟩
   · have hp' := Nat.prime_iff_prime_int.mp hp
     have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ not_dvd_left_of_dvd_add_mul hrs hp'
@@ -162,11 +161,7 @@ theorem criteria_of_neg_lt_of_certificate (hs : 0 < s) (hrs : IsCoprime r s) (hr
 /-- The `2`-adic classes of Theorem R⁺ are `QuadraticIterates.TwoAdicClass r s 1`. -/
 theorem twoAdicClass_one_of_emod
     (hc : (s % 2 = 1 ∧ (r % 4 = 1 ∨ (r + s) % 4 = 3)) ∨ (s % 2 = 0 ∧ r % 4 = 3)) :
-    TwoAdicClass r s 1 := by
-  rcases hc with ⟨hs, h | h⟩ | ⟨hs, h⟩
-  · exact .inl ⟨Int.odd_iff.mpr hs, by rw [Int.ModEq]; lia⟩
-  · exact .inr (.inl ⟨Int.odd_iff.mpr hs, by rw [Int.ModEq]; lia⟩)
-  · exact .inr (.inr ⟨Int.even_iff.mpr hs, by rw [Int.ModEq]; lia⟩)
+    TwoAdicClass r s 1 := twoAdicClass_one_iff.mpr (by lia)
 
 /-- **Theorem R⁺** from the main theorem
 `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`. -/
@@ -178,9 +173,7 @@ theorem nonempty_mulEquiv_of_neg_lt_of_certificate (hs : 0 < s) (hrs : IsCoprime
         (s % 2 = 0 ∧ r % 4 = 3 ∧ (r + s) % 8 ≠ 1) ∨
           (¬IsSquare (r + s) ∧ ∃ M : ℕ, (M : ℤ) ∣ r + s ∧ ¬IsSquare (s : ZMod M))) (n : ℕ) :
     Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) :=
-  nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs
-    (.inr ⟨by nlinarith [mul_pos (by lia : 0 < r + s) (by nlinarith [sq_nonneg (2 * r + s)] :
-      0 < r ^ 2 + r * s + s ^ 2), pow_pos hs 3], rfl⟩)
+  nonempty_mulEquiv_of_twoAdicClass_of_criteria hrs hs (.inr ⟨cubic_pos_of_neg_lt hs hr, rfl⟩)
     (twoAdicClass_one_of_emod hc) (criteria_of_neg_lt_of_certificate hs hrs hr hsq hcert) n
 
 /-! ### Theorem R⁻ -/
@@ -243,9 +236,8 @@ private lemma negTailCriterion_of_cert_sub (hs : 0 < s) (hRs : IsCoprime R s) (h
   rcases exists_of_not_isSquare_of_dvd (x := -s) (N := R - s) (by lia)
     (by simpa [sub_eq_add_neg] using (hRs.symm.add_mul_right_right (-1)).neg_left) hM
     (by simpa using h) with ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, -⟩ | ⟨h8, -⟩
-  · have hp' := Nat.prime_iff_prime_int.mp hp
-    have hps : ¬(p : ℤ) ∣ s := fun hps ↦
-      hp'.not_isUnit (hRs.isUnit_of_dvd' ((dvd_sub_left hps).mp hpN) hps)
+  · have hps : ¬(p : ℤ) ∣ s := fun hps ↦
+      Int.Prime.not_dvd_of_isCoprime hp hRs hps ((dvd_sub_left hps).mp hpN)
     have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦
       hps ((ht.of_dvd hpN).dvd_iff.mpr (dvd_pow hpt two_ne_zero))
     refine .inr ⟨p, hp, emod_four_of_jacobiSym_neg_one hp hp2 ?_, he ▸ hpN.neg_right⟩
@@ -331,8 +323,7 @@ private lemma negFirstCriterion_or_negTailCriterion_of_eq_sq_right_of_cert (hRs 
   have h2 := not_two_dvd_and hRs
   rcases exists_of_not_isSquare_of_dvd (x := -s) (N := R) hR0 hRs.symm.neg_left hM
     (by simpa using h) with ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, hs4⟩ | ⟨h8, -⟩
-  · have hp' := Nat.prime_iff_prime_int.mp hp
-    have hps : ¬(p : ℤ) ∣ s := fun hps ↦ hp'.not_isUnit (hRs.isUnit_of_dvd' hpN hps)
+  · have hps : ¬(p : ℤ) ∣ s := Int.Prime.not_dvd_of_isCoprime hp hRs.symm hpN
     have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ hps (ht ▸ dvd_pow hpt two_ne_zero)
     rw [ht, show -t ^ 2 = -1 * t ^ 2 by ring, jacobiSym.mul_left,
       jacobiSym.sq_one_of_not_dvd hp hpt, mul_one] at hj
@@ -358,7 +349,7 @@ private lemma negFirstCriterion_or_negTailCriterion_of_eq_sq_right (hs : 0 < s)
   · exact negFirstCriterion_or_negTailCriterion_of_eq_sq_right_of_cert hRs (by lia) ht hM h
   · obtain ⟨p, hp, hp4, hpR⟩ := Int.exists_prime_dvd_of_emod_four_eq_three (by lia) hR4
     exact negFirstCriterion_or_negTailCriterion_of_prime_dvd (by lia) hp hp4 hpR.neg_right
-      fun hps ↦ (Nat.prime_iff_prime_int.mp hp).not_isUnit (hRs.isUnit_of_dvd' hpR hps)
+      (Int.Prime.not_dvd_of_isCoprime hp hRs.symm hpR)
   · exact .inr (negTailCriterion_of_cert_sub hs hRs hR t (ht ▸ .refl _) hns hM h)
 
 /-- The hypotheses of Theorem R⁻ (`a = -R/s ≤ -2`) give two of the three lists of criteria. -/
@@ -388,11 +379,7 @@ theorem criteria_of_two_mul_le_of_certificate (hs : 0 < s) (hRs : IsCoprime R s)
 /-- The `2`-adic classes of Theorem R⁻ are `QuadraticIterates.TwoAdicClass (-R) s (-1)`. -/
 theorem twoAdicClass_neg_one_of_emod
     (hc : (s % 2 = 1 ∧ (R % 4 = 1 ∨ (R - s) % 4 = 3)) ∨ (s % 2 = 0 ∧ R % 4 = 3)) :
-    TwoAdicClass (-R) s (-1) := by
-  rcases hc with ⟨hs, h | h⟩ | ⟨hs, h⟩
-  · exact .inl ⟨Int.odd_iff.mpr hs, by rw [Int.ModEq]; lia⟩
-  · exact .inr (.inl ⟨Int.odd_iff.mpr hs, by rw [Int.ModEq]; lia⟩)
-  · exact .inr (.inr ⟨Int.even_iff.mpr hs, by rw [Int.ModEq]; lia⟩)
+    TwoAdicClass (-R) s (-1) := twoAdicClass_neg_one_iff.mpr (by lia)
 
 /-- **Theorem R⁻** from the main theorem
 `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`. -/

@@ -88,8 +88,10 @@ theorem exists_prime_dvd_of_emod_eight_eq_six {x : ℤ} (hx : 0 < x) (h : x % 8 
   let ⟨p, hp, hp4, hpd⟩ := Nat.exists_prime_dvd_of_mod_eight_eq_six (m := x.natAbs) (by lia)
   ⟨p, hp, hp4, Int.ofNat_dvd_left.mpr hpd⟩
 
-theorem exists_prime_dvd_of_emod_eight_eq_three_or_five {x : ℤ} (hx : 0 < x)
-    (h : x % 8 = 3 ∨ x % 8 = 5) : ∃ p : ℕ, p.Prime ∧ (p % 8 = 3 ∨ p % 8 = 5) ∧ (p : ℤ) ∣ x :=
+/-- An integer `≡ ±3 (mod 8)` has a prime factor `≡ ±3 (mod 8)`, whatever its sign: `|x| ≡ ±3`
+as well. -/
+theorem exists_prime_dvd_of_emod_eight_eq_three_or_five {x : ℤ} (h : x % 8 = 3 ∨ x % 8 = 5) :
+    ∃ p : ℕ, p.Prime ∧ (p % 8 = 3 ∨ p % 8 = 5) ∧ (p : ℤ) ∣ x :=
   let ⟨p, hp, hp8, hpd⟩ :=
     Nat.exists_prime_dvd_of_mod_eight_eq_three_or_five (m := x.natAbs) (by lia)
   ⟨p, hp, hp8, Int.ofNat_dvd_left.mpr hpd⟩

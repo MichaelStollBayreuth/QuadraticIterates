@@ -69,24 +69,11 @@ theorem twoIndependent_fin_two_cSeq_iff :
   exact and_congr (isSquare_cSeq_one_iff hs).not <| and_congr (isSquare_cSeq_two_iff hs).not
     (isSquare_cSeq_one_mul_cSeq_two_iff hr hs).not
 
-/-- The classes of `(r, s) mod 4` of `TwoAdicClass r s (-1)`. -/
-private lemma emod_four_of_twoAdicClass_neg_one (hc : TwoAdicClass r s (-1)) :
-    r % 4 = 3 ∧ s % 4 = 1 ∨ r % 4 = 3 ∧ s % 4 = 3 ∨ r % 4 = 0 ∧ s % 4 = 1 ∨
-      r % 4 = 2 ∧ s % 4 = 3 ∨ r % 4 = 1 ∧ s % 4 = 0 ∨ r % 4 = 1 ∧ s % 4 = 2 := by
-  rcases hc with ⟨⟨k, rfl⟩, h⟩ | ⟨⟨k, rfl⟩, h⟩ | ⟨⟨k, rfl⟩, h⟩ <;> rw [Int.ModEq] at h <;> lia
-
-/-- The classes of `(r, s) mod 4` of `TwoAdicClass r s 1`. -/
-private lemma emod_four_of_twoAdicClass_one (hc : TwoAdicClass r s 1) :
-    r % 4 = 1 ∧ s % 4 = 1 ∨ r % 4 = 1 ∧ s % 4 = 3 ∨ r % 4 = 2 ∧ s % 4 = 1 ∨
-      r % 4 = 0 ∧ s % 4 = 3 ∨ r % 4 = 3 ∧ s % 4 = 0 ∨ r % 4 = 3 ∧ s % 4 = 2 := by
-  rcases hc with ⟨⟨k, rfl⟩, h⟩ | ⟨⟨k, rfl⟩, h⟩ | ⟨⟨k, rfl⟩, h⟩ <;> rw [Int.ModEq] at h <;> lia
-
 /-- (Z2) for `r + 2s ≡ ±3 (mod 8)`. -/
-private lemma negAllCriterion_of_emod_eight
-    (h : (r + 2 * s) % 8 = 3 ∨ (r + 2 * s) % 8 = 5) : NegAllCriterion r s := by
-  obtain ⟨p, hp, hp8, hpd⟩ :=
-    Nat.exists_prime_dvd_of_mod_eight_eq_three_or_five (m := (r + 2 * s).natAbs) (by lia)
-  exact .dvd_add_two_mul p hp hp8 (Int.natCast_dvd.mpr hpd)
+private lemma negAllCriterion_of_emod_eight (h : (r + 2 * s) % 8 = 3 ∨ (r + 2 * s) % 8 = 5) :
+    NegAllCriterion r s :=
+  let ⟨p, hp, hp8, hpd⟩ := Int.exists_prime_dvd_of_emod_eight_eq_three_or_five h
+  .dvd_add_two_mul p hp hp8 hpd
 
 /-- With `r < 0`, two of `-r`, `s`, `-(r + s)` are not squares; they give two of (Z1), (O3)/(O4)
 and the criterion for `τ` supplied by `hT`. -/
@@ -130,7 +117,7 @@ private lemma criteria_of_pos (hs : 0 < s) (hr : 0 < r) (hc : TwoAdicClass r s 1
   have hns : ¬IsSquare (r + s) := fun h ↦ h₂ (hsq.mul h)
   obtain ⟨t, ht⟩ := hsq
   exact .inr (.inr ⟨.pos hr, negTailCriterion_of_emod_four hns (not_isSquare_of_neg (by lia))
-    (by lia [Int.sq_emod_four t, emod_four_of_twoAdicClass_one hc])⟩)
+    (by lia [Int.sq_emod_four t, twoAdicClass_one_iff.mp hc])⟩)
 
 /-- For `a ≤ -2`: the classes `(3, 3)` (`QuadraticIterates.criteria_of_modEq_four`) and `(1, 2)`
 directly, the others by `QuadraticIterates.criteria_of_not_isSquare` with (T3), as `r + s ≡ 0` or
@@ -148,7 +135,7 @@ private lemma criteria_of_le_neg_two (hs : 0 < s) (ha : r ≤ -2 * s) (hc : TwoA
       (Int.not_isSquare_of_two_le_emod_four (by lia)),
       negFirstCriterion_of_not_isSquare_right hs.le (Int.not_isSquare_of_two_le_emod_four (by lia))⟩
   exact criteria_of_not_isSquare hr hs.le (fun h ↦ negTailCriterion_of_emod_four
-    (not_isSquare_of_neg (by lia)) h (by lia [emod_four_of_twoAdicClass_neg_one hc])) h₁ h₂ h₁₂
+    (not_isSquare_of_neg (by lia)) h (by lia [twoAdicClass_neg_one_iff.mp hc])) h₁ h₂ h₁₂
 
 /-- For `a > -1`, or `a < -1` in the window `c_3 < 0 < c_4`. -/
 private lemma criteria_of_twoAdicClass_one (hs : 0 < s)
@@ -165,12 +152,6 @@ private lemma criteria_of_twoAdicClass_one (hs : 0 < s)
     · exact criteria_of_pos hs hr hc h₂
   · exact criteria_of_not_isSquare (by lia) hs.le
       (.window hr h₃ h₄ (not_isSquare_of_neg (by lia))) h₁ h₂ h₁₂
-
-/-- For `a > -1`: `r³ + 2r²s + 2rs² + 2s³ = (r + s)(r² + rs + s²) + s³ > 0`. -/
-private lemma cubic_pos_of_neg_lt (hs : 0 < s) (h : -s < r) :
-    0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 := by
-  lia [mul_pos (by lia : 0 < r + s)
-    (by lia [sq_nonneg (2 * r + s), pow_pos hs 2] : 0 < r ^ 2 + r * s + s ^ 2), pow_pos hs 3]
 
 /-- The window `c_3 < 0 < c_4` lies above `α`: with `X = r² + rs = s² c_2` and
 `Y = X² + rs³ = s⁴ c_3`, `Y < -s⁴`, then `X < s²`, and `r (r³ + 2r²s + 2rs² + 2s³) = X s² + Y`. -/
@@ -243,7 +224,7 @@ theorem forall_nonempty_mulEquiv_iff_of_le_neg_two (hrs : IsCoprime r s) (hs : 0
   have hsq (n : ℕ) (hn : 1 ≤ n) : ¬IsSquare (cSeq ((r : ℚ) / s) n) :=
     fun h ↦ χ.apply_ne_neg_one_of_isSquare h (hχ n hn)
   rw [forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass hrs hs (.inl ⟨ha, rfl⟩)
-      (.inl ⟨Int.odd_iff.mpr (by lia), by rw [Int.ModEq]; lia⟩), ← isSquare_cSeq_one_iff hs.ne',
+      (twoAdicClass_neg_one_iff.mpr (by lia)), ← isSquare_cSeq_one_iff hs.ne',
     ← isSquare_cSeq_two_iff hs.ne', and_iff_right (hsq 1 le_rfl),
     and_iff_right (hsq 2 one_le_two), ← Rat.isSquare_intCast_iff,
     ← isSquare_mul_sq_iff₀ (a := -((r : ℚ) / s + 1)) (Int.cast_ne_zero.mpr hs.ne')]

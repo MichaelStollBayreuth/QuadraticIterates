@@ -13,6 +13,8 @@ import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
 import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.RingTheory.Coprime.Basic
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Patterns.Dyadic
 import QuadraticIterates.Sequence.Orbit
 
@@ -66,7 +68,7 @@ theorem neg_vSeq_neg_mul_add_eq {n : ℕ} (hn : 1 ≤ n) :
     -vSeq (-(u * (u + v))) (v ^ 2) n =
       ((u + v) * -wSeq (-(u * (u + v))) (v ^ 2) n - v ^ (2 ^ n - 1)) *
         (u * -wSeq (-(u * (u + v))) (v ^ 2) n + v ^ (2 ^ n - 1)) := by
-  rw [vSeq, wSeq_succ _ _ hn, sq_pow_two_pow v hn]
+  rw [vSeq_eq, wSeq_succ _ _ hn, sq_pow_two_pow v hn]
   ring
 
 /-- In the classes `(u, v) ≡ (2, 1)`, `(3, 3) (mod 4)`, the first resp. second factor of
@@ -138,7 +140,7 @@ theorem nonempty_mulEquiv_of_eq_neg_mul_add_one (huv : IsCoprime u v) (hv : 0 < 
   rw [show -((u : ℚ) / v * ((u : ℚ) / v + 1)) = ((-(u * (u + v)) : ℤ) : ℚ) / ((v ^ 2 : ℤ) : ℚ) by
     push_cast; field]
   have hrs : IsCoprime (-(u * (u + v))) (v ^ 2) :=
-    (huv.mul_left (by simpa using huv.add_mul_left_left 1)).neg_left.pow_right
+    (huv.mul_left huv.add_self_left).neg_left.pow_right
   have hr4 := emod_four_neg_mul_add h
   have h₀ := hasCharPattern_neg_one_of_negAllCriterion hrs (pow_pos hv 2).ne'
     (.not_isSquare (Int.not_isSquare_of_two_le_emod_four (by lia))
@@ -166,7 +168,7 @@ theorem uSeq_eq_mul_of_add_eq (hs : s = v ^ 2) (hr : r + s = -(u * (u + v))) {n 
     rw [← pow_succ', Nat.sub_add_cancel Nat.one_le_two_pow]
   have h₂ : s ^ (2 ^ n - 1) = s * (s ^ (2 ^ (n - 1) - 1)) ^ 2 := by
     rw [← pow_mul', ← pow_succ', Nat.two_pow_sub_one_eq hn]
-  rw [uSeq, h₁, h₂, hr, hs]
+  rw [uSeq_eq, h₁, h₂, hr, hs]
   ring
 
 /-- Modulo `r + s`, `-r T ≡ s^{2^{n-1} - 1}` when `T ≡ s^{2^{n-1} - 2}` (`n ≥ 2`). -/
@@ -205,9 +207,6 @@ private lemma not_dvd_add_of_modEq (huv : IsCoprime u v) {p : ℤ} (hp : Prime p
   · exact not_dvd_add_two_mul huv hp hp2 hpuv h
   · exact not_dvd_right_of_dvd_mul_add huv hp hpuv (hp.dvd_of_dvd_pow (hp.dvd_of_dvd_pow h))
 
-private lemma not_dvd_two_of_mod_four_eq_three {p : ℕ} (hp4 : p % 4 = 3) : ¬(p : ℤ) ∣ 2 :=
-  fun h ↦ by lia [Int.le_of_dvd two_pos h]
-
 /-- `K ≡ 3 (mod 4)` from `X + e = d K` with `X ≡ 2` and `d ≡ e ≡ 1 (mod 4)`. -/
 private lemma emod_four_eq_three_of_add_eq_mul {X e d K : ℤ} (h : X + e = d * K)
     (hX : (X : ZMod 4) = 2) (hd : (d : ZMod 4) = 1) (he : (e : ZMod 4) = 1) : K % 4 = 3 := by
@@ -236,7 +235,7 @@ private lemma exists_prime_dvd_uSeq_of_one_one (huv : IsCoprime u v) (hu : 0 < u
     (emod_four_eq_three_of_add_eq_mul hK hX4 (by simpa using hu')
       (by simp [hQ, hu', intCast_zmod_four_of_emod hv4]))
   refine ⟨p, hp, hp4, ?_, not_dvd_add_of_modEq huv (Nat.prime_iff_prime_int.mp hp)
-    (not_dvd_two_of_mod_four_eq_three hp4) hr (m := 2 ^ (n - 1) - 1) ?_ hpK⟩
+    (Int.Prime.not_dvd_two hp (by lia)) hr (m := 2 ^ (n - 1) - 1) ?_ hpK⟩
   · rw [uSeq_eq_mul_of_add_eq rfl hr (by lia), hK]
     exact dvd_mul_of_dvd_right (dvd_mul_of_dvd_right hpK u) _
   · calc K = (u + v) * (-r * T) + v * Q := by ring
@@ -245,7 +244,7 @@ private lemma exists_prime_dvd_uSeq_of_one_one (huv : IsCoprime u v) (hu : 0 < u
 
 private lemma isCoprime_neg_sq_add_add (huv : IsCoprime u v) :
     IsCoprime (-(u ^ 2 + u * v + v ^ 2)) (v ^ 2) := by
-  have := (huv.mul_left (by simpa using huv.add_mul_left_left 1)).add_mul_left_left v
+  have := (huv.mul_left huv.add_self_left).add_mul_left_left v
   exact (by convert this using 1; ring : IsCoprime (u ^ 2 + u * v + v ^ 2) v).neg_left.pow_right
 
 private lemma modEq_four_neg_sq_add_add (h : u % 4 = 1 ∧ v % 4 = 1 ∨ u % 4 = 2 ∧ v % 4 = 3) :
@@ -287,7 +286,7 @@ theorem exists_prime_dvd_uSeq_neg_sq_add_add (huv : IsCoprime u v) (hu : 0 < u) 
   · exact exists_prime_dvd_uSeq_of_one_one huv hu hu4 hv4 rfl (by ring) hn hw hT
       (add_pos (lt_of_lt_of_le (by positivity) hX) (by positivity)) hX4
   · exact exists_prime_dvd_uSeq_of_one_one (u := u + v) (v := -v)
-      (by simpa using (huv.add_mul_left_left 1).neg_right) (by lia) (by lia) (by lia)
+      huv.add_self_left.neg_right (by lia) (by lia) (by lia)
       (neg_sq v).symm (by ring) hn hw hT (by linear_combination hX + mul_pos (pow_pos hu 2) hQ) hX4
 
 /-- **Li's Theorem 3.9 for rational parameters**: for `a = -(ℓ² + ℓ + 1) ≤ -2` with `ℓ = u/v`,
@@ -307,9 +306,8 @@ theorem nonempty_mulEquiv_of_eq_neg_sq_add_add_one (huv : IsCoprime u v) (hu : 0
   have h4 := modEq_four_neg_sq_add_add h
   have h₀ := hasCharPattern_neg_one_of_negAllCriterion hrs (pow_pos hv 2).ne'
     (negAllCriterion_neg_sq_add_add hu hv h)
-  refine forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun m hm ↦ ?_) n
-  rcases hm.eq_or_lt with rfl | hm
-  · exact hasCharPattern_mulSingle_one_of_modEq_four hrs hodd h4
+  refine forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern
+    (hasCharPattern_mulSingle_one_of_modEq_four hrs hodd h4) (fun m hm ↦ ?_) n
   rcases Nat.even_or_odd m with he | ho
   · obtain ⟨p, hp, hp4, hpu, hprs⟩ := exists_prime_dvd_uSeq_neg_sq_add_add huv hu hv h2 h hm he
     have := Fact.mk hp

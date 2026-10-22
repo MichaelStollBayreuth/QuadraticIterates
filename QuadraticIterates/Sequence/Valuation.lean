@@ -10,6 +10,7 @@ public import QuadraticIterates.Sequence.WSeq
 
 import Mathlib.Algebra.Field.ZMod
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Sequence.Orbit
 import QuadraticIterates.Sequence.Signs
 
@@ -120,7 +121,7 @@ private lemma two_le_of_dvd_wSeq {m : ℕ} (hm : 1 ≤ m) (hpm : (p : ℤ) ∣ w
 `p ∣ w_m`, then `p ∣ w_n ↔ m ∣ n` for `n ≥ 1`. Modulo `p`, `r w_n = s^{2^{n-1}} c̄_n`, and `0` is
 periodic of exact period `m` (`QuadraticIterates.cSeq_eq_zero_iff_dvd`). -/
 theorem dvd_wSeq_iff (hpr : ¬(p : ℤ) ∣ r) (hps : ¬(p : ℤ) ∣ s) {m : ℕ} (hm : 1 ≤ m)
-    (hpm : (p : ℤ) ∣ wSeq r s m) (hmin : ∀ j, 1 ≤ j → j < m → ¬(p : ℤ) ∣ wSeq r s j) {n : ℕ}
+    (hpm : (p : ℤ) ∣ wSeq r s m) (hmin : ∀ j ≥ 1, j < m → ¬(p : ℤ) ∣ wSeq r s j) {n : ℕ}
     (hn : 1 ≤ n) : (p : ℤ) ∣ wSeq r s n ↔ m ∣ n := by
   obtain ⟨σ, hσ⟩ := (ZMod.isUnit_intCast_of_not_dvd (pow_one p).symm hps).exists_right_inv
   have hr0 : (r : ZMod p) ≠ 0 := mt (ZMod.intCast_zmod_eq_zero_iff_dvd r p).mp hpr
@@ -138,7 +139,7 @@ if `m ∣ n`, and `0` otherwise. For `n = mk`, `w_{mk} = w_m T` with `T` prime t
 (`QuadraticIterates.exists_wSeq_mul_eq`). -/
 theorem padicValInt_wSeq_eq_ite (hrs : IsCoprime r s) (hpr : ¬(p : ℤ) ∣ r) (hps : ¬(p : ℤ) ∣ s)
     {m : ℕ} (hm : 1 ≤ m) (hpm : (p : ℤ) ∣ wSeq r s m)
-    (hmin : ∀ j, 1 ≤ j → j < m → ¬(p : ℤ) ∣ wSeq r s j) (hw : wSeq r s m ≠ 0) {n : ℕ}
+    (hmin : ∀ j ≥ 1, j < m → ¬(p : ℤ) ∣ wSeq r s j) (hw : wSeq r s m ≠ 0) {n : ℕ}
     (hn : 1 ≤ n) :
     padicValInt p (wSeq r s n) = if m ∣ n then padicValInt p (wSeq r s m) else 0 := by
   split_ifs with h
@@ -155,10 +156,9 @@ theorem padicValInt_wSeq_eq_ite (hrs : IsCoprime r s) (hpr : ¬(p : ℤ) ∣ r) 
 theorem padicValRat_cSeq_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) (hr : r ≠ 0)
     (hpr : (p : ℤ) ∣ r) {n : ℕ} (hn : 1 ≤ n) :
     padicValRat p (cSeq ((r : ℚ) / s) n) = padicValInt p r := by
-  have hp := Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)
   have hpw : ¬(p : ℤ) ∣ wSeq r s n :=
-    fun h ↦ hp.not_isUnit ((isCoprime_wSeq_left hrs hn).isUnit_of_dvd' h hpr)
-  rw [padicValRat_cSeq_eq_padicValInt hs (fun h ↦ hp.not_isUnit (hrs.isUnit_of_dvd' hpr h)) hn,
+    Int.Prime.not_dvd_of_isCoprime Fact.out (isCoprime_wSeq_left hrs hn) hpr
+  rw [padicValRat_cSeq_eq_padicValInt hs (Int.Prime.not_dvd_of_isCoprime Fact.out hrs.symm hpr) hn,
     padicValInt.mul hr (b := wSeq r s n) fun h ↦ hpw (h ▸ dvd_zero _),
     padicValInt.eq_zero_of_not_dvd hpw, add_zero]
 
@@ -166,7 +166,7 @@ theorem padicValRat_cSeq_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) (hr : 
 if `m ∣ n`, and `0` otherwise (`QuadraticIterates.padicValInt_wSeq_eq_ite`). -/
 theorem padicValRat_cSeq_eq_ite (hrs : IsCoprime r s) (hs : s ≠ 0) (hpr : ¬(p : ℤ) ∣ r)
     (hps : ¬(p : ℤ) ∣ s) {m : ℕ} (hm : 1 ≤ m) (hpm : (p : ℤ) ∣ wSeq r s m)
-    (hmin : ∀ j, 1 ≤ j → j < m → ¬(p : ℤ) ∣ wSeq r s j) (hw : wSeq r s m ≠ 0) {n : ℕ}
+    (hmin : ∀ j ≥ 1, j < m → ¬(p : ℤ) ∣ wSeq r s j) (hw : wSeq r s m ≠ 0) {n : ℕ}
     (hn : 1 ≤ n) : padicValRat p (cSeq ((r : ℚ) / s) n) =
       if m ∣ n then (padicValInt p (wSeq r s m) : ℤ) else 0 := by
   have h := padicValInt_wSeq_eq_ite hrs hpr hps hm hpm hmin hw hn

@@ -12,8 +12,8 @@ public import Mathlib.Data.ZMod.Defs
 public import Mathlib.RingTheory.Coprime.Basic
 
 import Mathlib.Data.ZMod.Units
-import Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 
 /-!
 # `ZMod` lemmas
@@ -34,6 +34,10 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 lemma ZMod.intCast_sq_eight_eq_one_of_odd {x : ℤ} (hx : Odd x) : (x : ZMod 8) ^ 2 = 1 := by
   rw [← Int.cast_pow, ← Int.cast_one, intCast_eq_intCast_iff_dvd_sub]
   exact_mod_cast dvd_sub_comm.mp (Int.eight_dvd_sq_sub_one_of_odd hx)
+
+/-- An odd integer is its own inverse in `ZMod 8`. -/
+lemma ZMod.intCast_mul_self_eight_eq_one_of_odd {x : ℤ} (hx : Odd x) : (x : ZMod 8) * x = 1 :=
+  (sq (x : ZMod 8)).symm.trans (intCast_sq_eight_eq_one_of_odd hx)
 
 /-- For odd `x`, `x^(2^k) = 1` in `ZMod 8` (`k ≥ 1`). -/
 lemma ZMod.intCast_pow_two_pow_eight_of_odd {x : ℤ} (hx : Odd x) {k : ℕ} (hk : 1 ≤ k) :
@@ -67,7 +71,7 @@ unit. -/
 lemma ZMod.not_isUnit_intCast_of_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k ≠ 0)
     {m : ℤ} (hm : (p : ℤ) ∣ m) : ¬IsUnit (m : ZMod N) := by
   rw [ZMod.coe_int_isUnit_iff_isCoprime]
-  refine fun h ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit (h.isUnit_of_dvd' ?_ hm)
+  refine fun h ↦ Int.Prime.not_dvd_of_isCoprime Fact.out h hm ?_
   rw [hN, Nat.cast_pow]
   exact dvd_pow_self _ hk
 

@@ -70,9 +70,7 @@ theorem forall_nonempty_mulEquiv_of_forall_dvd_vSeq (hrs : IsCoprime r s)
     (h : ∀ n ≥ 2, (∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ vSeq r s n ∧ ¬(p : ℤ) ∣ r) ∨
       (4 ∣ vSeq r s n ∧ ¬2 ∣ r)) (n : ℕ) :
     Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) := by
-  refine forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ ?_) n
-  rcases hn.eq_or_lt with rfl | hn
-  · exact h₁
+  refine forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern h₁ (fun n hn ↦ ?_) n
   rcases h n hn with ⟨p, hp, hp4, hpv, -⟩ | ⟨h4, hr⟩
   · exact hasCharPattern_mulSingle_of_prime_dvd_vSeq hrs h₀ hn hp hp4 hpv
   · exact hasCharPattern_mulSingle_of_dvd_vSeq (p := 2) hrs (N := 4) rfl two_ne_zero
@@ -83,7 +81,7 @@ theorem forall_nonempty_mulEquiv_of_forall_dvd_vSeq (hrs : IsCoprime r s)
 `p ≡ 3 (mod 4)` divides `v_n` (`QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass`), and
 `χ_p` reflects at `c_n` (`QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`). -/
 theorem hasCharPattern_mulSingle_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s) {ε : ℤ}
-    (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
+    (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
     (hc : TwoAdicClass r s ε) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ}
     (hn : 2 ≤ n) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
   have hr0 : r ≠ 0 := fun h ↦ h₀.ne_zero le_rfl (by simp) (by simp [h])
@@ -96,20 +94,19 @@ give `Ω_n ≅ [C₂]ⁿ` for all `n` (`QuadraticIterates.hasCharPattern_mulSing
 `n ≥ 2`). -/
 theorem nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern (hrs : IsCoprime r s) (hs : 0 < s)
     {ε : ℤ}
-    (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
+    (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
     (hc : TwoAdicClass r s ε) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1))
     (h₁ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1))) (n : ℕ) :
-    Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) := by
-  refine forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ ?_) n
-  rcases hn.eq_or_lt with rfl | hn
-  exacts [h₁, hasCharPattern_mulSingle_of_twoAdicClass hrs hs hε hc h₀ hn]
+    Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) :=
+  forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern h₁
+    (fun _ ↦ hasCharPattern_mulSingle_of_twoAdicClass hrs hs hε hc h₀) n
 
 /-- **The main theorem** for rational parameters: let `a = r/s` with `r, s` coprime, `s > 0`, and
 either `a ≤ -2` and `ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and `ε = 1`. If `(r, s, ε)` is in one of
 the `2`-adic classes (C1)–(C3) and two of the three lists of criteria (Z), (O), (T) apply, then
 `Ω_n ≅ [C₂]ⁿ` for all `n`: the arboreal Galois representation of `X² + a` is surjective. -/
 theorem nonempty_mulEquiv_of_twoAdicClass_of_criteria (hrs : IsCoprime r s) (hs : 0 < s) {ε : ℤ}
-    (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
+    (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
     (hc : TwoAdicClass r s ε)
     (h : NegAllCriterion r s ∧ NegFirstCriterion r s ∨ NegAllCriterion r s ∧ NegTailCriterion r s ∨
       NegFirstCriterion r s ∧ NegTailCriterion r s) (n : ℕ) :

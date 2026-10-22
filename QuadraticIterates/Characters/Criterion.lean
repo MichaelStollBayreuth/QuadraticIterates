@@ -126,6 +126,15 @@ theorem forall_nonempty_mulEquiv_of_forall_hasCharPattern {a : ℚ}
     Nonempty (GaloisGroup a n ≃* WreathPower n) :=
   (forall_nonempty_mulEquiv_iff_twoIndependent a).mpr (twoIndependent_of_forall_hasCharPattern h) n
 
+/-- The form of `QuadraticIterates.forall_nonempty_mulEquiv_of_forall_hasCharPattern` used in the
+applications: `φ₁` (the pattern `Pi.mulSingle 1 (-1)` along `c_n` from `1` on) comes separately
+from the `φ_n` with `n ≥ 2`. -/
+theorem forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern {a : ℚ}
+    (h₁ : HasCharPattern (cSeq a) 1 (Pi.mulSingle 1 (-1)))
+    (h : ∀ n ≥ 2, HasCharPattern (cSeq a) n (Pi.mulSingle n (-1))) (n : ℕ) :
+    Nonempty (GaloisGroup a n ≃* WreathPower n) :=
+  forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ hn.eq_or_lt.elim (· ▸ h₁) (h n)) n
+
 /-- If `a ∈ ℚ` has `φ₀` and `φ₁` (the patterns `-1` and `Pi.mulSingle 1 (-1)` along `c_n` from
 `1` on), and for every `n ≥ 2` some character `ψ` with `ψ(c_n) ≠ 0` takes the value `-ψ(c_n)` at
 all later terms, then the Galois groups `Ω_n` of the iterates of `X² + a` satisfy
@@ -135,9 +144,7 @@ theorem forall_nonempty_mulEquiv_of_forall_exists_mulChar {a : ℚ}
     (h₀ : HasCharPattern (cSeq a) 1 (-1)) (h₁ : HasCharPattern (cSeq a) 1 (Pi.mulSingle 1 (-1)))
     (h : ∀ n ≥ 2, ∃ ψ : MulChar ℚ ℤ, ψ (cSeq a n) ≠ 0 ∧ ∀ m > n, ψ (cSeq a m) = -ψ (cSeq a n))
     (n : ℕ) : Nonempty (GaloisGroup a n ≃* WreathPower n) := by
-  refine forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ ?_) n
-  rcases hn.eq_or_lt with rfl | hn
-  · exact h₁
+  refine forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern h₁ (fun n hn ↦ ?_) n
   obtain ⟨ψ, hψ, hψn⟩ := h n hn
   exact hasCharPattern_mulSingle_of_neg_of_forall_lt (h₀.mono (by lia)) hψ hψn
 

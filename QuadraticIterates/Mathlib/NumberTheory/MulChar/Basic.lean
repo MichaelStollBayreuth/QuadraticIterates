@@ -11,8 +11,9 @@ public import Mathlib.NumberTheory.MulChar.Basic
 # Multiplicative characters with values in `ℤ`
 
 A multiplicative character with values in `ℤ` takes the values `±1` at units, so it is quadratic
-(`MulChar.isQuadratic_int`); on a commutative group with zero it is invariant under inversion and
-trivial on nonzero squares. A character with values in an ordered ring is never `-1` at a square
+(`MulChar.isQuadratic_int`), `1` at even powers of units and unchanged by odd powers; on a
+commutative group with zero it is invariant under inversion and trivial on nonzero squares. A
+character with values in an ordered ring is never `-1` at a square
 (`MulChar.apply_ne_neg_one_of_isSquare`), which is how characters detect non-squares.
 
 Auxiliary material for the formalization of the surjectivity of arboreal Galois representations of
@@ -39,6 +40,16 @@ lemma apply_eq_of_mul_eq_one (χ : MulChar M ℤ) {x y : M} (h : x * y = 1) : χ
 
 lemma apply_sq_of_isUnit (χ : MulChar M ℤ) {x : M} (hx : IsUnit x) : χ (x ^ 2) = 1 := by
   rw [map_pow, sq, Int.isUnit_mul_self (hx.map χ)]
+
+lemma apply_pow_of_even (χ : MulChar M ℤ) {x : M} (hx : IsUnit x) {n : ℕ} (hn : Even n) :
+    χ (x ^ n) = 1 := by
+  obtain ⟨m, rfl⟩ := hn
+  rw [← two_mul, pow_mul', χ.apply_sq_of_isUnit (hx.pow m)]
+
+/-- No unit hypothesis is needed: at a non-unit `x` both sides are `0`, as `n ≥ 1`. -/
+lemma apply_pow_of_odd (χ : MulChar M ℤ) (x : M) {n : ℕ} (hn : Odd n) : χ (x ^ n) = χ x := by
+  rw [map_pow]
+  rcases χ.isQuadratic_int x with h | h | h <;> simp [h, hn.neg_one_pow, hn.pos.ne']
 
 /-- A square never has the value `-1` under a character into an ordered ring, since
 `χ (y * y) = χ y * χ y ≥ 0`. -/

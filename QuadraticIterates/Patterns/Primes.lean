@@ -8,9 +8,10 @@ module
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 public import QuadraticIterates.Sequence.WSeq
 
-import Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
+import QuadraticIterates.Mathlib.RingTheory.Coprime.Basic
+import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 import QuadraticIterates.Sequence.Orbit
 import QuadraticIterates.Sequence.SquareClasses
 
@@ -45,18 +46,6 @@ three from `n = 2` on, with value `1` at `n = 1`.
 
 @[expose] public section
 
--- These two `MulChar` lemmas belong in the mirror file
--- `QuadraticIterates/Mathlib/NumberTheory/MulChar/Basic.lean`.
-private lemma MulChar.apply_pow_of_even {M : Type*} [CommMonoid M] (χ : MulChar M ℤ) {x : M}
-    (hx : IsUnit x) {n : ℕ} (hn : Even n) : χ (x ^ n) = 1 := by
-  obtain ⟨m, rfl⟩ := hn
-  rw [← two_mul, pow_mul', χ.apply_sq_of_isUnit (hx.pow m)]
-
-private lemma MulChar.apply_pow_of_odd {M : Type*} [CommMonoid M] (χ : MulChar M ℤ) (x : M) {n : ℕ}
-    (hn : Odd n) : χ (x ^ n) = χ x := by
-  rw [map_pow]
-  rcases χ.isQuadratic_int x with h | h | h <;> simp [h, hn.neg_one_pow, hn.pos.ne']
-
 namespace QuadraticIterates
 
 open Rat
@@ -73,7 +62,7 @@ variable [Fact p.Prime]
 
 private lemma not_dvd_of_isCoprime {x y : ℤ} (h : IsCoprime x y) (hy : (p : ℤ) ∣ y) :
     ¬(p : ℤ) ∣ x :=
-  fun hx ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_isUnit (h.isUnit_of_dvd' hx hy)
+  Int.Prime.not_dvd_of_isCoprime Fact.out h hy
 
 private lemma not_dvd_of_modEq_pow {M x y : ℤ} {k : ℕ} (hM : (p : ℤ) ∣ M) (hy : ¬(p : ℤ) ∣ y)
     (h : x ≡ y ^ k [ZMOD M]) : ¬(p : ℤ) ∣ x :=
@@ -81,12 +70,6 @@ private lemma not_dvd_of_modEq_pow {M x y : ℤ} {k : ℕ} (hM : (p : ℤ) ∣ M
 
 private lemma not_dvd_mul {x y : ℤ} (hx : ¬(p : ℤ) ∣ x) (hy : ¬(p : ℤ) ∣ y) : ¬(p : ℤ) ∣ x * y :=
   (Nat.prime_iff_prime_int.mp Fact.out).not_dvd_mul hx hy
-
-private lemma isCoprime_add_left (hrs : IsCoprime r s) : IsCoprime (r + s) r := by
-  simpa [add_comm] using hrs.symm.add_mul_left_left 1
-
-private lemma isCoprime_add_right (hrs : IsCoprime r s) : IsCoprime (r + s) s := by
-  simpa using hrs.add_mul_left_left 1
 
 private lemma odd_two_pow_sub_one {m : ℕ} (hm : m ≠ 0) : Odd (2 ^ m - 1) :=
   Nat.Even.sub_odd Nat.one_le_two_pow (Nat.even_pow.mpr ⟨even_two, hm⟩) odd_one
@@ -139,11 +122,10 @@ theorem unitPartChar_cSeq_of_dvd_right (hrs : IsCoprime r s) (hs : s ≠ 0) {N k
 theorem unitPartChar_two_cSeq_of_even (hrs : IsCoprime r s) (hs : s ≠ 0) (hev : Even s)
     {N k : ℕ} (hN : N = 2 ^ k) (hk : k ≤ 3) (ψ : MulChar (ZMod N) ℤ) {n : ℕ} (hn : 3 ≤ n) :
     unitPartChar 2 ψ (cSeq ((r : ℚ) / s) n) = 1 := by
-  have hr : Odd r := Int.not_even_iff_odd.mp fun h ↦
-    not_dvd_of_isCoprime (p := 2) hrs (even_iff_two_dvd.mp hev) (even_iff_two_dvd.mp h)
+  have hr : Odd r := Int.isCoprime_two_right.mp (hrs.of_isCoprime_of_dvd_right hev.two_dvd)
   have h8 : ((r * wSeq r s n : ℤ) : ZMod 8) = 1 := by
     push_cast
-    rw [intCast_wSeq_zmod_eight_of_even hev hr hn, ← sq, ZMod.intCast_sq_eight_eq_one_of_odd hr]
+    rw [intCast_wSeq_zmod_eight_of_even hev hr hn, ZMod.intCast_mul_self_eight_eq_one_of_odd hr]
   have h1 : ((r * wSeq r s n : ℤ) : ZMod N) = 1 := by
     have := congr(ZMod.castHom (hN ▸ pow_dvd_pow 2 hk : N ∣ 2 ^ 3) (ZMod N) $h8)
     rwa [map_intCast, map_one] at this
@@ -157,8 +139,8 @@ theorem unitPartChar_two_cSeq_of_even (hrs : IsCoprime r s) (hs : s ≠ 0) (hev 
 /-- At a prime `p ∣ r + s`, `v_p(c_n)` is even for odd `n`: `c_n` is a `p`-adic unit. -/
 theorem valChar_cSeq_two_mul_add_one_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0)
     (hp : (p : ℤ) ∣ r + s) (k : ℕ) : valChar p (cSeq ((r : ℚ) / s) (2 * k + 1)) = 1 := by
-  have hpr := not_dvd_of_isCoprime (isCoprime_add_left hrs).symm hp
-  have hps := not_dvd_of_isCoprime (isCoprime_add_right hrs).symm hp
+  have hpr := not_dvd_of_isCoprime hrs.self_add_right hp
+  have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · rw [mulChar_cSeq_one_eq_mul _ hs, valChar_neg_one, valChar_intCast_of_not_dvd hpr,
       valChar_intCast_of_not_dvd hps, mul_one, mul_one]
@@ -171,8 +153,8 @@ theorem valChar_cSeq_two_mul_add_one_of_dvd_add (hrs : IsCoprime r s) (hs : s �
 theorem valChar_cSeq_two_mul_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0)
     (hp : (p : ℤ) ∣ r + s) {k : ℕ} (hk : 1 ≤ k) :
     valChar p (cSeq ((r : ℚ) / s) (2 * k)) = valChar p ((r + s : ℤ) : ℚ) := by
-  have hpr := not_dvd_of_isCoprime (isCoprime_add_left hrs).symm hp
-  have hps := not_dvd_of_isCoprime (isCoprime_add_right hrs).symm hp
+  have hpr := not_dvd_of_isCoprime hrs.self_add_right hp
+  have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
   obtain ⟨T, hw, hT⟩ := exists_wSeq_two_mul_eq hrs hk
   rw [mulChar_cSeq_of_two_le _ hs (by lia), hw, Int.cast_mul, map_mul, map_mul,
     valChar_intCast_of_not_dvd hpr, valChar_intCast_of_not_dvd (not_dvd_of_modEq_pow hp hps hT),
@@ -183,8 +165,8 @@ theorem unitPartChar_cSeq_one_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0) {N
     (hN : N = p ^ k) (hk : k ≠ 0) (hNrs : (N : ℤ) ∣ r + s) (ψ : MulChar (ZMod N) ℤ) :
     unitPartChar p ψ (cSeq ((r : ℚ) / s) 1) = 1 := by
   have hp := dvd_of_natCast_pow_dvd hN hk hNrs
-  have hps := not_dvd_of_isCoprime (isCoprime_add_right hrs).symm hp
-  have hpr := not_dvd_of_isCoprime (isCoprime_add_left hrs).symm hp
+  have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
+  have hpr := not_dvd_of_isCoprime hrs.self_add_right hp
   have hc : ((-(r * s) : ℤ) : ZMod N) = ((s ^ 2 : ℤ) : ZMod N) :=
     (ZMod.intCast_eq_intCast_iff_dvd_sub _ _ _).mpr (hNrs.trans ⟨s, by ring⟩)
   have hrs' : ¬(p : ℤ) ∣ -(r * s) := by simpa using not_dvd_mul hpr hps
@@ -197,8 +179,8 @@ theorem unitPartChar_cSeq_two_mul_add_one_of_dvd_add (hrs : IsCoprime r s) (hs :
     (hN : N = p ^ k) (hk : k ≠ 0) (hNrs : (N : ℤ) ∣ r + s) (ψ : MulChar (ZMod N) ℤ) {j : ℕ}
     (hj : 1 ≤ j) : unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j + 1)) = ψ (-1) := by
   have hp := dvd_of_natCast_pow_dvd hN hk hNrs
-  have hps := not_dvd_of_isCoprime (isCoprime_add_right hrs).symm hp
-  have hpr := not_dvd_of_isCoprime (isCoprime_add_left hrs).symm hp
+  have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
+  have hpr := not_dvd_of_isCoprime hrs.self_add_right hp
   have hpw := not_dvd_of_modEq_pow hp hps (wSeq_two_mul_add_one_modEq hrs hj)
   have hc : ((r * wSeq r s (2 * j + 1) : ℤ) : ZMod N) = -1 * ((s : ZMod N) ^ 2 ^ (2 * j - 1)) ^ 2 :=
     mod_cast (ZMod.intCast_eq_intCast_iff _ _ _).mpr
@@ -215,8 +197,8 @@ theorem unitPartChar_cSeq_two_mul_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0
     (hj : 1 ≤ j) : unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j)) =
       ψ (-1) * ψ s * unitPartChar p ψ ((r + s : ℤ) : ℚ) := by
   have hp := dvd_of_natCast_pow_dvd hN hk hNrs
-  have hps := not_dvd_of_isCoprime (isCoprime_add_right hrs).symm hp
-  have hpr := not_dvd_of_isCoprime (isCoprime_add_left hrs).symm hp
+  have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
+  have hpr := not_dvd_of_isCoprime hrs.self_add_right hp
   obtain ⟨T, hw, hT⟩ := exists_wSeq_two_mul_eq hrs hj
   have hr : (r : ZMod N) = -1 * s := by
     rwa [neg_one_mul, eq_neg_iff_add_eq_zero, ← Int.cast_add, ZMod.intCast_zmod_eq_zero_iff_dvd]
@@ -228,8 +210,7 @@ theorem unitPartChar_cSeq_two_mul_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0
       ((Nat.even_pow.mpr ⟨even_two, by lia⟩).tsub even_two), mul_one]
 
 private lemma isUnit_two_zmod {N k : ℕ} (hN : N = p ^ k) (hp2 : p ≠ 2) : IsUnit (2 : ZMod N) :=
-  mod_cast ZMod.isUnit_intCast_of_not_dvd hN (m := 2) fun h ↦ hp2 <|
-    (Nat.prime_dvd_prime_iff_eq Fact.out Nat.prime_two).mp (mod_cast h)
+  mod_cast ZMod.isUnit_intCast_of_not_dvd hN (m := 2) (Int.Prime.not_dvd_two Fact.out hp2)
 
 /-- At a power `N = p^k` (`k ≥ 1`) of an odd prime dividing `r + 2s`, `χ_ψ(c_n) = ψ(2)` for
 `n ≥ 1`: modulo `N`, `a = -2`, whose sequence is constant `2`. -/

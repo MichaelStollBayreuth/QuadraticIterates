@@ -7,6 +7,7 @@ module
 
 public import QuadraticIterates.Galois.Iterates
 
+import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
 import QuadraticIterates.Mathlib.Data.ZMod
 
 /-!
@@ -70,7 +71,12 @@ def vSeq (n : ℕ) : ℤ := wSeq r s (n + 1) + wSeq r s n * s ^ 2 ^ (n - 1)
 def uSeq (n : ℕ) : ℤ :=
   r ^ 2 * wSeq r s n ^ 2 - r * wSeq r s n * s ^ 2 ^ (n - 1) + (r + s) * s ^ (2 ^ n - 1)
 
-@[simp] lemma vSeq_one : vSeq r s 1 = r := by simp [vSeq]
+lemma vSeq_eq (n : ℕ) : vSeq r s n = wSeq r s (n + 1) + wSeq r s n * s ^ 2 ^ (n - 1) := rfl
+
+lemma uSeq_eq (n : ℕ) : uSeq r s n =
+    r ^ 2 * wSeq r s n ^ 2 - r * wSeq r s n * s ^ 2 ^ (n - 1) + (r + s) * s ^ (2 ^ n - 1) := rfl
+
+@[simp] lemma vSeq_one : vSeq r s 1 = r := by simp [vSeq_eq]
 
 section Reduction
 
@@ -98,13 +104,13 @@ theorem intCast_mul_vSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
       (s : S) ^ 2 ^ n * (cSeq ((r : S) * σ) n + cSeq ((r : S) * σ) (n + 1)) := by
   have h₂ := intCast_mul_wSeq r hσ (n := n + 1) (by lia)
   rw [Nat.add_sub_cancel] at h₂
-  simp only [vSeq, Int.cast_add, Int.cast_mul, Int.cast_pow]
+  simp only [vSeq_eq, Int.cast_add, Int.cast_mul, Int.cast_pow]
   grobner [intCast_mul_wSeq r hσ hn, sq_pow_two_pow_pred (s : S) hn]
 
 theorem intCast_uSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
     (uSeq r s n : S) =
       (s : S) ^ 2 ^ n * (cSeq ((r : S) * σ) n ^ 2 - cSeq ((r : S) * σ) n + r * σ + 1) := by
-  simp only [uSeq, Int.cast_add, Int.cast_sub, Int.cast_mul, Int.cast_pow]
+  simp only [uSeq_eq, Int.cast_add, Int.cast_sub, Int.cast_mul, Int.cast_pow]
   grobner [intCast_mul_wSeq r hσ hn, sq_pow_two_pow_pred (s : S) hn,
     pow_sub_one_mul (Nat.two_pow_pos n).ne' (s : S)]
 
@@ -168,14 +174,14 @@ theorem isCoprime_wSeq_right {n : ℕ} (hn : 1 ≤ n) : IsCoprime (wSeq r s n) s
 
 theorem isCoprime_vSeq_right (n : ℕ) : IsCoprime (vSeq r s n) s := by
   obtain ⟨t, ht⟩ := dvd_pow_self s (Nat.two_pow_pos (n - 1)).ne'
-  rw [vSeq, ht, mul_left_comm]
+  rw [vSeq_eq, ht, mul_left_comm]
   exact (isCoprime_wSeq_right hrs (by lia)).add_mul_left_left _
 
 theorem isCoprime_uSeq_right {n : ℕ} (hn : 1 ≤ n) : IsCoprime (uSeq r s n) s := by
   obtain ⟨t, ht⟩ := dvd_pow_self s (Nat.two_pow_pos (n - 1)).ne'
   obtain ⟨t', ht'⟩ := dvd_pow_self s (Nat.sub_ne_zero_of_lt (Nat.one_lt_two_pow (n := n) (by lia)))
   have hu : uSeq r s n = r ^ 2 * wSeq r s n ^ 2 + s * (-(r * wSeq r s n * t) + (r + s) * t') := by
-    rw [uSeq, ht, ht']
+    rw [uSeq_eq, ht, ht']
     ring
   rw [hu]
   exact (hrs.pow_left.mul_left (isCoprime_wSeq_right hrs hn).pow_left).add_mul_left_left _
@@ -191,9 +197,8 @@ theorem wSeq_modEq_right {n : ℕ} (hn : 2 ≤ n) : wSeq r s n ≡ r ^ (2 ^ (n -
   | base => simp [Int.ModEq]
   | succ n hn ih =>
     obtain ⟨t, ht⟩ := dvd_pow_self s (Nat.sub_ne_zero_of_lt (Nat.one_lt_two_pow (n := n) (by lia)))
-    have he : 2 ^ (n + 1 - 1) - 1 = 2 * (2 ^ (n - 1) - 1) + 1 := by
-      lia [Nat.two_pow_pred_mul_two (w := n) (by lia), Nat.one_le_two_pow (n := n - 1)]
-    rw [wSeq_succ r s (by lia), ht, he, Int.ModEq, Int.add_mul_emod_self_left, ← Int.ModEq]
+    rw [wSeq_succ r s (by lia), ht, Nat.add_sub_cancel, Nat.two_pow_sub_one_eq (by lia), Int.ModEq,
+      Int.add_mul_emod_self_left, ← Int.ModEq]
     calc r * wSeq r s n ^ 2 ≡ r * (r ^ (2 ^ (n - 1) - 1)) ^ 2 [ZMOD s] := (ih.pow 2).mul_left r
       _ = r ^ (2 * (2 ^ (n - 1) - 1) + 1) := by ring
 
@@ -205,7 +210,7 @@ theorem vSeq_modEq_left {n : ℕ} (hn : 2 ≤ n) : vSeq r s n ≡ 2 * s ^ (2 ^ n
     rw [← pow_add]
     congr 1
     lia [Nat.two_pow_pred_mul_two (w := n) (by lia), Nat.one_le_two_pow (n := n - 1)]
-  rw [vSeq, two_mul]
+  rw [vSeq_eq, two_mul]
   exact h₁.add (he ▸ h₂.mul_right _)
 
 section Dyadic
@@ -246,8 +251,7 @@ variable (r) in
 `ZMod 8`: `s` is its own inverse modulo `8`, and `s^{2^{n-1}} ≡ 1`. -/
 theorem intCast_mul_wSeq_zmod_eight (hs : Odd s) {n : ℕ} (hn : 2 ≤ n) :
     ((r * wSeq r s n : ℤ) : ZMod 8) = cSeq ((r : ZMod 8) * s) n := by
-  have hσ : (s : ZMod 8) * s = 1 := sq (s : ZMod 8) ▸ ZMod.intCast_sq_eight_eq_one_of_odd hs
-  rw [Int.cast_mul, intCast_mul_wSeq r hσ (by lia),
+  rw [Int.cast_mul, intCast_mul_wSeq r (ZMod.intCast_mul_self_eight_eq_one_of_odd hs) (by lia),
     ZMod.intCast_pow_two_pow_eight_of_odd hs (by lia), one_mul]
 
 end Dyadic
