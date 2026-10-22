@@ -194,8 +194,7 @@ private lemma padicValRat_cSeq_of_not_dvd (hrs : IsCoprime r s) (hs : s ≠ 0) (
     rw [padicValRat_cSeq_of_dvd_left hrs hs hr hpr hn]
     simp
   by_cases hex : ∃ n, 1 ≤ n ∧ (p : ℤ) ∣ wSeq r s n
-  · classical
-    obtain ⟨hm, hpm⟩ := Nat.find_spec hex
+  · obtain ⟨hm, hpm⟩ := Nat.find_spec hex
     exact .inr ⟨_, hm, _, mod_cast hval (hw _ hm) hpm, fun n hn ↦ padicValRat_cSeq_eq_ite hrs hs
       hpr hps hm hpm (fun j hj hjm h ↦ Nat.find_min hex hjm ⟨hj, h⟩) (hw _ hm) hn⟩
   · refine .inl fun n hn ↦ ?_

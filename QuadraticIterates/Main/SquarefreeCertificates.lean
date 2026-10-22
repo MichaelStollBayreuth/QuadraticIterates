@@ -203,12 +203,6 @@ private lemma exists_sq_eq_two_pow_mul {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t) 
   have hu' : Odd u := Int.not_even_iff_odd.mp fun he ↦ hu (mod_cast he.two_dvd)
   exact ⟨j, u, hj, by simpa using htu, hu', Int.sq_emod_eight_eq_one_of_odd hu'⟩
 
-/-- If `8 ∣ t² = 2^{2j} u²` with `u² ≡ 1 (mod 8)`, then `j ≥ 2`. -/
-private lemma two_le_of_eight_dvd_sq {t u : ℤ} {j : ℕ} (htu : t ^ 2 = 2 ^ (2 * j) * u ^ 2)
-    (hu8 : u ^ 2 % 8 = 1) (h8 : 8 ∣ t ^ 2) : 2 ≤ j := by
-  by_contra! hj
-  interval_cases j <;> lia
-
 /-- For `R = t²` with `t` even and `s` odd: (T2) at `2` if `-s ≡ 3 (mod 4)`, (Z4) at `2` if
 `8 ∣ R` and `-s ≡ 5 (mod 8)`. -/
 private lemma negAllCriterion_or_negTailCriterion_of_two_dvd_sq {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t)
@@ -220,8 +214,7 @@ private lemma negAllCriterion_or_negTailCriterion_of_two_dvd_sq {t : ℤ} (ht : 
   have hus : -u ^ 2 * s = -(8 * (u ^ 2 / 8) * s) - s := by linear_combination (-s) * hu
   rcases h with h4 | ⟨h8, h5⟩
   · exact .inr (.dvd_left_two (2 * j) (-u ^ 2) (by lia) hr (by lia))
-  · exact .inl (.dvd_left_two (2 * j) (-u ^ 2) (by lia [two_le_of_eight_dvd_sq htu hu8 h8]) hr
-      (.inr (by lia)))
+  · exact .inl (.dvd_left_two (2 * j) (-u ^ 2) (by lia) hr (.inr (by lia)))
 
 variable {R : ℤ}
 
@@ -291,7 +284,7 @@ private lemma negFirstCriterion_of_two_dvd_sq_right {t : ℤ} (ht : t ≠ 0) (h2
   rcases h with h | ⟨h8, h⟩
   · rcases (by lia : j = 1 ∨ 2 ≤ j) with rfl | hj2
     exacts [.inl ⟨rfl, by lia⟩, .inr ⟨even_two_mul j, by lia, by lia⟩]
-  · exact .inr ⟨even_two_mul j, by lia [two_le_of_eight_dvd_sq htu hu8 h8], by lia⟩
+  · exact .inr ⟨even_two_mul j, by lia, by lia⟩
 
 /-- The first certificate of Theorem R⁻ for `s = t²` gives (O3) or (O4): a prime `p ∣ t` with
 `(R / p) = -1`, or `4 ∣ s` with `R ≡ 3 (mod 4)`, or `8 ∣ s` with `R ≡ 5 (mod 8)`. -/

@@ -25,5 +25,3 @@ lemma two_pow_sub_one_eq {n : ℕ} (hn : 1 ≤ n) : 2 ^ n - 1 = 2 * (2 ^ (n - 1)
   lia [Nat.one_le_two_pow (n := n - 1), pow_succ 2 (n - 1), Nat.sub_add_cancel hn]
 
 end Nat
-
-end

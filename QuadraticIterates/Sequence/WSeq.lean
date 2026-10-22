@@ -209,7 +209,7 @@ theorem vSeq_modEq_left {n : ℕ} (hn : 2 ≤ n) : vSeq r s n ≡ 2 * s ^ (2 ^ n
   have he : s ^ (2 ^ (n - 1) - 1) * s ^ 2 ^ (n - 1) = s ^ (2 ^ n - 1) := by
     rw [← pow_add]
     congr 1
-    lia [Nat.two_pow_pred_mul_two (w := n) (by lia), Nat.one_le_two_pow (n := n - 1)]
+    lia [Nat.two_pow_pred_mul_two (w := n) (by lia)]
   rw [vSeq_eq, two_mul]
   exact h₁.add (he ▸ h₂.mul_right _)
 

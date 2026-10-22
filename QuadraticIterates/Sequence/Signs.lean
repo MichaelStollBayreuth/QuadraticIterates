@@ -58,8 +58,7 @@ theorem cSeq_le_sq_add (h₂ : -2 ≤ a) (h₀ : a ≤ 0) {n : ℕ} (hn : 2 ≤ 
 -- the real root of `x³ + 2x² + 2x + 2` is larger than `-2`
 private lemma neg_two_lt_of_pos (h : 0 < a ^ 3 + 2 * a ^ 2 + 2 * a + 2) : -2 < a := by
   by_contra! h'
-  have h1 := mul_nonpos_of_nonneg_of_nonpos (sq_nonneg a) (by linarith : a + 2 ≤ 0)
-  linarith [(by linear_combination h1 + 2 * h' : a ^ 3 + 2 * a ^ 2 + 2 * a + 2 ≤ -2)]
+  linarith [mul_nonpos_of_nonneg_of_nonpos (sq_nonneg a) (by linarith : a + 2 ≤ 0)]
 
 /-- The first iterate `a = -c_1` and the second, `c_2 = a² + a`, have negative sum for
 `-2 < a < 0`. -/

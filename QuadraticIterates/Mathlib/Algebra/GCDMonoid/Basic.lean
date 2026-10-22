@@ -19,7 +19,7 @@ Auxiliary material for the formalization of the surjectivity of arboreal Galois 
 
 @[expose] public section
 
-theorem normalize_map_normalize {α : Type*} [MonoidWithZero α] [NormalizationMonoid α]
-    [IsLeftCancelMulZero α] {F : Type*} [FunLike F α α] [MonoidHomClass F α α] (f : F) (x : α) :
+theorem normalize_map_normalize {α : Type*} [MonoidWithZero α] [NormalizationMonoid α] {F : Type*}
+    [FunLike F α α] [MonoidHomClass F α α] (f : F) (x : α) :
     normalize (f (normalize x)) = normalize (f x) :=
   normalize_eq_normalize_iff_associated.mpr ((normalize_associated x).map f)

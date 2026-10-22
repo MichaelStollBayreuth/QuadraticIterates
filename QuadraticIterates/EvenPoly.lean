@@ -124,8 +124,8 @@ theorem gammaSeq_eq_ite_even_of_add_two_eq {ε : R} {n₀ : ℕ} (hn₀ : 1 ≤ 
     rw [← h, gammaSeq_succ g ε (n := n₀ + 1) (by lia)]
   intro n hn
   induction n, hn using Nat.le_induction with
-  | base => grind [Nat.even_add_one]
-  | succ n hn ih => grind [gammaSeq_succ g ε (by lia : 1 ≤ n), Nat.even_add_one]
+  | base => grind
+  | succ n hn ih => grind [gammaSeq_succ g ε (by lia : 1 ≤ n)]
 
 end
 

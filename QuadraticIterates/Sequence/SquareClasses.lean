@@ -98,33 +98,25 @@ theorem valChar_cSeq_of_isUnit {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk
     Rat.valChar_intCast_of_not_dvd (mt (Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow hps),
     mul_one]
 
+-- A rational number is a square iff an integer it equals up to a nonzero square factor is.
+private lemma isSquare_iff_of_mul_sq_eq {q y : ℚ} {x : ℤ} (hy : y ≠ 0) (h : q * y ^ 2 = x) :
+    IsSquare q ↔ IsSquare x := by
+  rw [← Rat.isSquare_intCast_iff, ← h, isSquare_mul_sq_iff₀ hy]
+
 /-- `c_1 = -r/s = -rs/s²`. -/
 theorem isSquare_cSeq_one_iff (hs : s ≠ 0) :
-    IsSquare (cSeq ((r : ℚ) / s) 1) ↔ IsSquare (-(r * s)) := by
-  rw [← Rat.isSquare_intCast_iff, ← isSquare_mul_sq_iff₀ (Int.cast_ne_zero.mpr hs : (s : ℚ) ≠ 0)]
-  congr! 1
-  rw [cSeq_one]
-  push_cast
-  field
+    IsSquare (cSeq ((r : ℚ) / s) 1) ↔ IsSquare (-(r * s)) :=
+  isSquare_iff_of_mul_sq_eq (Int.cast_ne_zero.mpr hs) (by rw [cSeq_one]; push_cast; field)
 
 /-- `c_2 = r(r + s)/s²`. -/
 theorem isSquare_cSeq_two_iff (hs : s ≠ 0) :
-    IsSquare (cSeq ((r : ℚ) / s) 2) ↔ IsSquare (r * (r + s)) := by
-  rw [← Rat.isSquare_intCast_iff, ← isSquare_mul_sq_iff₀ (Int.cast_ne_zero.mpr hs : (s : ℚ) ≠ 0)]
-  congr! 1
-  rw [cSeq_two]
-  push_cast
-  field
+    IsSquare (cSeq ((r : ℚ) / s) 2) ↔ IsSquare (r * (r + s)) :=
+  isSquare_iff_of_mul_sq_eq (Int.cast_ne_zero.mpr hs) (by rw [cSeq_two]; push_cast; field)
 
 /-- `c_1 c_2 = -r²(r + s)/s³ = (r/s²)² · (-s(r + s))`. -/
 theorem isSquare_cSeq_one_mul_cSeq_two_iff (hr : r ≠ 0) (hs : s ≠ 0) :
-    IsSquare (cSeq ((r : ℚ) / s) 1 * cSeq ((r : ℚ) / s) 2) ↔ IsSquare (-(s * (r + s))) := by
-  have hr' : (r : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hr
-  have hs' : (s : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hs
-  rw [← Rat.isSquare_intCast_iff, ← isSquare_mul_sq_iff₀ (div_ne_zero (pow_ne_zero 2 hs') hr')]
-  congr! 1
-  rw [cSeq_one, cSeq_two]
-  push_cast
-  field
+    IsSquare (cSeq ((r : ℚ) / s) 1 * cSeq ((r : ℚ) / s) 2) ↔ IsSquare (-(s * (r + s))) :=
+  isSquare_iff_of_mul_sq_eq (div_ne_zero (pow_ne_zero 2 (Int.cast_ne_zero.mpr hs))
+    (Int.cast_ne_zero.mpr hr)) (by rw [cSeq_one, cSeq_two]; push_cast; field)
 
 end QuadraticIterates

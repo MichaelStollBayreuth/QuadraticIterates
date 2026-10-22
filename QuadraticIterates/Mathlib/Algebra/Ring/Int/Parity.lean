@@ -39,6 +39,6 @@ theorem not_isSquare_mul_add_one {a : ℤ} (h₀ : a ≠ 0) (h₁ : a ≠ -1) : 
     have h : (2 * a + 1 - 2 * t).natAbs * (2 * a + 1 + 2 * t).natAbs = 1 := by
       rw [← natAbs_mul, show (2 * a + 1 - 2 * t) * (2 * a + 1 + 2 * t) = 1 by grobner]
       rfl
-    lia [Nat.eq_one_of_mul_eq_one_right h, Nat.eq_one_of_mul_eq_one_left h]
+    lia [Nat.eq_one_of_mul_eq_one_right h]
 
 end Int
