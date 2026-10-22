@@ -7,16 +7,16 @@ Section 3 of M. Stoll, Arch. Math. 59 (1992) (one challenge per case:
 `nonempty_mulEquiv_of_pos_of_emod_four_eq_one`, `nonempty_mulEquiv_of_pos_of_emod_four_eq_two`,
 `nonempty_mulEquiv_of_neg_of_emod_four_eq_zero`) and the **theorems of Li** extending it (Theorem
 3.5 of 2020 as `forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three`; Theorems 3.3 and 3.9
-of 2021 in the strengthened forms `nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two`,
-for `a = -ℓ(ℓ + 1)` with any positive `ℓ ≡ 2 mod 4` rather than Li's `ℓ = 8k + 2`, and
+of 2021 as `nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two`, strengthened to
+`a = -ℓ(ℓ + 1)` with any positive `ℓ ≡ 2 mod 4` rather than Li's `ℓ = 8k + 2`, and
 `nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one`), the **main theorem for
-rational parameters**
-(`nonempty_mulEquiv_of_twoAdicClass_of_criteria`, with its `2`-adic classes and three lists of
-criteria reproduced as definitions) with its three corollaries — **level two decides** outside the
-interval `α < a ≤ α′` (`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), shorter
-lists of criteria on the interval `α < a < -1` (`nonempty_mulEquiv_of_lt_neg_one_of_criteria`) and
-the classes of `(r, s)` in which no criterion is needed there
-(`nonempty_mulEquiv_of_lt_neg_one_of_emod`) — independently of the repository's own build and using only the permitted axioms.
+rational parameters** (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`, with its `2`-adic classes
+and three lists of criteria reproduced as definitions) with its three corollaries — **level two
+decides** outside the interval `α < a ≤ α′`
+(`forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass`), shorter lists of criteria on the
+interval `α < a < -1` (`nonempty_mulEquiv_of_lt_neg_one_of_criteria`) and the classes of `(r, s)`
+in which no criterion is needed there (`nonempty_mulEquiv_of_lt_neg_one_of_emod`) — independently
+of the repository's own build and using only the permitted axioms.
 
 ## What is checked
 
@@ -24,9 +24,9 @@ the classes of `(r, s)` in which no criterion is needed there
   non-Mathlib definitions the statements mention — `iteratedPoly`, `GaloisGroup`, `WreathPower`,
   for the main theorem `NegAllCriterion`, `NegFirstCriterion`, `NegTailCriterion` and
   `TwoAdicClass`, and for the second corollary `NegFirstCriterion'` and `NegTailCriterion'`, under
-  their library names in the `QuadraticIterates` namespace — and states the
-  results with `sorry` proofs. Because it depends on nothing in this repository, it is a
-  self-contained specification of the claims.
+  their library names in the `QuadraticIterates` namespace — and states the results with `sorry`
+  proofs. Because it depends on nothing in this repository, it is a self-contained specification of
+  the claims.
 - [`Solution.lean`](Solution.lean) imports `QuadraticIterates` and proves each statement via the
   corresponding library theorem.
 
