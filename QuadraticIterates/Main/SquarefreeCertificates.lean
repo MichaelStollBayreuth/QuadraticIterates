@@ -9,6 +9,7 @@ public import QuadraticIterates.Main.Criteria
 public import QuadraticIterates.Main.TwoAdic
 
 import QuadraticIterates.Main.Theorem
+import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 import QuadraticIterates.Mathlib.RingTheory.Multiplicity
@@ -32,6 +33,8 @@ consistency check of the new criteria against the earlier theorems, not part of 
   `QuadraticIterates.nonempty_mulEquiv_of_neg_lt_of_certificate`: Theorem R⁺.
 * `QuadraticIterates.criteria_of_two_mul_le_of_certificate`,
   `QuadraticIterates.nonempty_mulEquiv_of_two_mul_le_of_certificate`: Theorem R⁻.
+* `QuadraticIterates.twoAdicClass_one_of_emod`, `QuadraticIterates.twoAdicClass_neg_one_of_emod`:
+  the `2`-adic classes of Theorems R⁺ and R⁻ as `QuadraticIterates.TwoAdicClass`.
 -/
 
 @[expose] public section
@@ -47,14 +50,14 @@ private lemma emod_eight_of_jacobiSym_two {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 
   have ho := hp.odd_of_ne_two hp2
   rw [jacobiSym.at_two ho, ZMod.χ₈_nat_eq_if_mod_eight] at h
   split_ifs at h
-  lia [Nat.odd_iff.mp ho]
+  lia
 
 private lemma emod_four_of_jacobiSym_neg_one {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
     (h : jacobiSym (-1) p = -1) : p % 4 = 3 := by
   have ho := hp.odd_of_ne_two hp2
   rw [jacobiSym.at_neg_one ho, ZMod.χ₄_nat_eq_if_mod_four] at h
   split_ifs at h
-  lia [Nat.odd_iff.mp ho]
+  lia
 
 /-- A certificate `¬IsSquare (x : ZMod M)` with `M ∣ N ≠ 0` and `x` prime to `N` gives an odd prime
 `p ∣ N` with `(x / p) = -1`, or `4 ∣ N` and `x ≡ 3 (mod 4)`, or `8 ∣ N` and `x ≢ 1 (mod 8)`. -/
@@ -63,11 +66,10 @@ private lemma exists_of_not_isSquare_of_dvd {x N : ℤ} {M : ℕ} (hN : N ≠ 0)
     (∃ p : ℕ, p.Prime ∧ p ≠ 2 ∧ (p : ℤ) ∣ N ∧ jacobiSym x p = -1) ∨ (4 ∣ N ∧ x % 4 = 3) ∨
       (8 ∣ N ∧ x % 8 ≠ 1) := by
   have hM : M ≠ 0 := by rintro rfl; simp_all
-  rcases ZMod.exists_of_not_isSquare_intCast hM (hx.of_isCoprime_of_dvd_right hMN) h with
-    ⟨p, hp, hp2, hpM, hj⟩ | ⟨h4, hx4⟩ | ⟨h8, hx8⟩
-  · exact .inl ⟨p, hp, hp2, (Int.natCast_dvd_natCast.mpr hpM).trans hMN, hj⟩
-  · exact .inr (.inl ⟨(Int.natCast_dvd_natCast.mpr h4).trans hMN, hx4⟩)
-  · exact .inr (.inr ⟨(Int.natCast_dvd_natCast.mpr h8).trans hMN, hx8⟩)
+  have hlift {d : ℕ} (hd : d ∣ M) : (d : ℤ) ∣ N := (Int.natCast_dvd_natCast.mpr hd).trans hMN
+  exact (ZMod.exists_of_not_isSquare_intCast hM (hx.of_isCoprime_of_dvd_right hMN) h).imp
+    (fun ⟨p, hp, hp2, hpM, hj⟩ ↦ ⟨p, hp, hp2, hlift hpM, hj⟩)
+    (.imp (.imp_left hlift) (.imp_left hlift))
 
 /-- A prime `p ∤ c` dividing `r + c s`, with `r, s` coprime, does not divide `r`. -/
 private lemma not_dvd_left_of_dvd_add_mul (hrs : IsCoprime r s) {p c : ℤ} (hp : Prime p)
@@ -75,7 +77,7 @@ private lemma not_dvd_left_of_dvd_add_mul (hrs : IsCoprime r s) {p c : ℤ} (hp 
   hp.not_isUnit <| hrs.isUnit_of_dvd' hpr <|
     (hp.dvd_or_dvd ((dvd_add_right hpr).mp h)).resolve_left hpc
 
-private lemma not_two_dvd_of_prime {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) : ¬(p : ℤ) ∣ 2 :=
+private lemma not_dvd_two_of_prime {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) : ¬(p : ℤ) ∣ 2 :=
   fun h ↦ hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp (mod_cast h))
 
 /-! ### Theorem R⁺ -/
@@ -93,7 +95,7 @@ private lemma negAllCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r s
     (hrs.symm.add_mul_right_right 2).neg_left hM (by simpa using h) with
     ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, -⟩ | ⟨h8, -⟩
   · have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ not_dvd_left_of_dvd_add_mul hrs
-      (Nat.prime_iff_prime_int.mp hp) (not_two_dvd_of_prime hp hp2) hpN
+      (Nat.prime_iff_prime_int.mp hp) (not_dvd_two_of_prime hp hp2) hpN
       (ht ▸ dvd_pow hpt two_ne_zero)
     have h1 := (jacobiSym.mod_left' (Int.modEq_iff_dvd.mpr (by rw [← ht]; simpa using hpN) :
       2 * -s ≡ t ^ 2 [ZMOD p])).trans (jacobiSym.sq_one_of_not_dvd hp hpt)
@@ -108,7 +110,7 @@ private lemma negTailCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r 
     (ht : r = t ^ 2) (hns : ¬IsSquare (r + s)) {M : ℕ} (hM : (M : ℤ) ∣ r + s)
     (h : ¬IsSquare (s : ZMod M)) : NegTailCriterion r s := by
   have hr0 : 0 ≤ r := ht ▸ sq_nonneg t
-  refine .not_isSquare_add hns (fun ⟨u, hu⟩ ↦ by lia [mul_self_nonneg u]) ?_
+  refine .not_isSquare_add hns (not_isSquare_of_neg (by lia)) ?_
   rcases exists_of_not_isSquare_of_dvd (x := s) (N := r + s) (by lia)
     (by simpa using hrs.symm.add_mul_right_right 1) hM h with
     ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, -⟩ | ⟨h8, -⟩
@@ -147,18 +149,15 @@ theorem criteria_of_neg_lt_of_certificate (hs : 0 < s) (hrs : IsCoprime r s) (hr
       NegFirstCriterion r s ∧ NegTailCriterion r s := by
   rcases lt_trichotomy r 0 with h0 | rfl | h0
   · by_cases hr2 : IsSquare (-r)
-    · obtain ⟨t, ht⟩ := hr2
-      have hns : ¬IsSquare s := fun ⟨u, hu⟩ ↦ hsq ⟨t * u, by linear_combination s * ht + t ^ 2 * hu⟩
-      exact .inr (.inr ⟨negFirstCriterion_of_not_isSquare_right hs.le hns, .neg_one_lt hr h0⟩)
-    · exact .inr (.inl ⟨.not_isSquare (fun ⟨u, hu⟩ ↦ by lia [mul_self_nonneg u]) hr2,
-        .neg_one_lt hr h0⟩)
+    · exact .inr (.inr ⟨negFirstCriterion_of_not_isSquare_right hs.le
+        fun h ↦ hsq (neg_mul r s ▸ hr2.mul h), .neg_one_lt hr h0⟩)
+    · exact .inr (.inl ⟨.not_isSquare (not_isSquare_of_neg h0) hr2, .neg_one_lt hr h0⟩)
   · exact absurd ⟨0, by simp⟩ hsq
   · by_cases hr2 : IsSquare r
     · obtain ⟨t, ht⟩ := hr2
-      rcases negAllCriterion_or_negTailCriterion_of_eq_sq hs hrs (t := t) (by rw [ht, sq])
-        hcert with h | h
-      exacts [.inl ⟨h, .pos h0⟩, .inr (.inr ⟨.pos h0, h⟩)]
-    · exact .inl ⟨.not_isSquare hr2 fun ⟨u, hu⟩ ↦ by lia [mul_self_nonneg u], .pos h0⟩
+      exact (negAllCriterion_or_negTailCriterion_of_eq_sq hs hrs (t := t) (by rw [ht, sq])
+        hcert).imp (⟨·, .pos h0⟩) fun h ↦ .inr ⟨.pos h0, h⟩
+    · exact .inl ⟨.not_isSquare hr2 (not_isSquare_of_neg (neg_neg_of_pos h0)), .pos h0⟩
 
 /-- The `2`-adic classes of Theorem R⁺ are `QuadraticIterates.TwoAdicClass r s 1`. -/
 theorem twoAdicClass_one_of_emod
@@ -187,22 +186,19 @@ theorem nonempty_mulEquiv_of_neg_lt_of_certificate (hs : 0 < s) (hrs : IsCoprime
 /-! ### Theorem R⁻ -/
 
 private lemma not_dvd_neg_sq {p : ℕ} (hp : p.Prime) {u : ℤ} (hu : ¬(p : ℤ) ∣ u) :
-    ¬(p : ℤ) ∣ -u ^ 2 := by
-  rw [dvd_neg]
-  exact fun h ↦ hu ((Nat.prime_iff_prime_int.mp hp).dvd_of_dvd_pow h)
+    ¬(p : ℤ) ∣ -u ^ 2 := fun h ↦ hu ((Nat.prime_iff_prime_int.mp hp).dvd_of_dvd_pow (dvd_neg.mp h))
 
 /-- For `R = t²` and an odd prime `p ∣ R` with `(-s / p) = -1`: (Z4) for `p ≡ 1` and (T2) for
 `p ≡ 3 (mod 4)`, from `-R = p^{2j} (-u²)`. -/
-private lemma negAll_or_negTail_of_dvd_sq {t : ℤ} (ht : t ≠ 0) {p : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (hpt : (p : ℤ) ∣ t) (hj : jacobiSym (-s) p = -1) :
+private lemma negAllCriterion_or_negTailCriterion_of_dvd_sq {t : ℤ} (ht : t ≠ 0) {p : ℕ}
+    (hp : p.Prime) (hp2 : p ≠ 2) (hpt : (p : ℤ) ∣ t) (hj : jacobiSym (-s) p = -1) :
     NegAllCriterion (-t ^ 2) s ∨ NegTailCriterion (-t ^ 2) s := by
   obtain ⟨j, u, hj0, htu, hu⟩ := Int.exists_sq_eq_pow_mul_of_dvd hp ht hpt
   have hr : -t ^ 2 = p ^ (2 * j) * -u ^ 2 := by rw [htu]; ring
   have h : jacobiSym (-u ^ 2 * s) p = -1 := by
     rw [show -u ^ 2 * s = u ^ 2 * -s by ring, jacobiSym.mul_left,
       jacobiSym.sq_one_of_not_dvd hp hu, hj, one_mul]
-  have := Nat.odd_iff.mp (hp.odd_of_ne_two hp2)
-  rcases (by lia : p % 4 = 1 ∨ p % 4 = 3) with h4 | h4
+  rcases (by lia [Nat.odd_iff.mp (hp.odd_of_ne_two hp2)] : p % 4 = 1 ∨ p % 4 = 3) with h4 | h4
   · exact .inl (.dvd_left p (2 * j) (-u ^ 2) hp h4 (by lia) hr (not_dvd_neg_sq hp hu) h)
   · exact .inr (.dvd_left p (2 * j) (-u ^ 2) hp h4 (by lia) hr (not_dvd_neg_sq hp hu) h)
 
@@ -212,69 +208,74 @@ private lemma exists_sq_eq_two_pow_mul {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t) 
     ∃ j : ℕ, ∃ u : ℤ, 0 < j ∧ t ^ 2 = 2 ^ (2 * j) * u ^ 2 ∧ Odd u ∧ u ^ 2 % 8 = 1 := by
   obtain ⟨j, u, hj, htu, hu⟩ := Int.exists_sq_eq_pow_mul_of_dvd Nat.prime_two ht (mod_cast h2t)
   have hu' : Odd u := Int.not_even_iff_odd.mp fun he ↦ hu (mod_cast he.two_dvd)
-  exact ⟨j, u, hj, by simpa using htu, hu', by lia [Int.eight_dvd_sq_sub_one_of_odd hu']⟩
+  exact ⟨j, u, hj, by simpa using htu, hu', Int.sq_emod_eight_eq_one_of_odd hu'⟩
+
+/-- If `8 ∣ t² = 2^{2j} u²` with `u² ≡ 1 (mod 8)`, then `j ≥ 2`. -/
+private lemma two_le_of_eight_dvd_sq {t u : ℤ} {j : ℕ} (htu : t ^ 2 = 2 ^ (2 * j) * u ^ 2)
+    (hu8 : u ^ 2 % 8 = 1) (h8 : 8 ∣ t ^ 2) : 2 ≤ j := by
+  by_contra! hj
+  interval_cases j <;> lia
 
 /-- For `R = t²` with `t` even and `s` odd: (T2) at `2` if `-s ≡ 3 (mod 4)`, (Z4) at `2` if
 `8 ∣ R` and `-s ≡ 5 (mod 8)`. -/
-private lemma negAll_or_negTail_of_two_dvd_sq {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t)
+private lemma negAllCriterion_or_negTailCriterion_of_two_dvd_sq {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t)
     (h : -s % 4 = 3 ∨ 8 ∣ t ^ 2 ∧ -s % 8 = 5) :
     NegAllCriterion (-t ^ 2) s ∨ NegTailCriterion (-t ^ 2) s := by
   obtain ⟨j, u, hj, htu, -, hu8⟩ := exists_sq_eq_two_pow_mul ht h2t
   have hr : -t ^ 2 = 2 ^ (2 * j) * -u ^ 2 := by rw [htu]; ring
   have hu : u ^ 2 = 8 * (u ^ 2 / 8) + 1 := by lia
-  have hus : -u ^ 2 * s = -(8 * (u ^ 2 / 8) * s) - s := by
-    generalize u ^ 2 / 8 = a at hu
-    rw [hu]
-    ring
+  have hus : -u ^ 2 * s = -(8 * (u ^ 2 / 8) * s) - s := by linear_combination (-s) * hu
   rcases h with h4 | ⟨h8, h5⟩
   · exact .inr (.dvd_left_two (2 * j) (-u ^ 2) (by lia) hr (by lia))
-  · have hj2 : 2 ≤ j := by
-      by_contra hj2
-      obtain rfl : j = 1 := by lia
-      lia [show (u ^ 2) % 2 = 1 by lia]
-    exact .inl (.dvd_left_two (2 * j) (-u ^ 2) (by lia) hr (.inr (by lia)))
+  · exact .inl (.dvd_left_two (2 * j) (-u ^ 2) (by lia [two_le_of_eight_dvd_sq htu hu8 h8]) hr
+      (.inr (by lia)))
 
 variable {R : ℤ}
 
-/-- (T3) for `a = -R/s ≤ -2` from the fourth certificate of Theorem R⁻, given `(s / p) = 1` for
-the odd primes `p ∣ R - s`. -/
+/-- (T3) for `a = -R/s ≤ -2` from the fourth certificate of Theorem R⁻ when `s ≡ t² (mod R - s)`,
+as for `R = t²` or `s = t²`: then `(s / p) = 1` at the odd primes `p ∣ R - s`, so `(-s / p) = -1`
+forces `p ≡ 3 (mod 4)`. -/
 private lemma negTailCriterion_of_cert_sub (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R)
-    (hns : ¬IsSquare (R - s)) {M : ℕ} (hM : (M : ℤ) ∣ R - s) (h : ¬IsSquare (-(s : ZMod M)))
-    (hJ : ∀ p : ℕ, p.Prime → p ≠ 2 → (p : ℤ) ∣ R - s → jacobiSym s p = 1) :
-    NegTailCriterion (-R) s := by
+    (t : ℤ) (ht : s ≡ t ^ 2 [ZMOD R - s]) (hns : ¬IsSquare (R - s)) {M : ℕ} (hM : (M : ℤ) ∣ R - s)
+    (h : ¬IsSquare (-(s : ZMod M))) : NegTailCriterion (-R) s := by
   have he : -R + s = -(R - s) := by ring
-  refine .not_isSquare_add (fun ⟨u, hu⟩ ↦ by lia [mul_self_nonneg u]) (by rwa [he, neg_neg]) ?_
+  refine .not_isSquare_add (not_isSquare_of_neg (by lia)) (by rwa [he, neg_neg]) ?_
   rcases exists_of_not_isSquare_of_dvd (x := -s) (N := R - s) (by lia)
     (by simpa [sub_eq_add_neg] using (hRs.symm.add_mul_right_right (-1)).neg_left) hM
     (by simpa using h) with ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, -⟩ | ⟨h8, -⟩
-  · refine .inr ⟨p, hp, emod_four_of_jacobiSym_neg_one hp hp2 ?_, he ▸ hpN.neg_right⟩
-    rw [show -s = -1 * s by ring, jacobiSym.mul_left, hJ p hp hp2 hpN] at hj
+  · have hp' := Nat.prime_iff_prime_int.mp hp
+    have hps : ¬(p : ℤ) ∣ s := fun hps ↦
+      hp'.not_isUnit (hRs.isUnit_of_dvd' ((dvd_sub_left hps).mp hpN) hps)
+    have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦
+      hps ((ht.of_dvd hpN).dvd_iff.mpr (dvd_pow hpt two_ne_zero))
+    refine .inr ⟨p, hp, emod_four_of_jacobiSym_neg_one hp hp2 ?_, he ▸ hpN.neg_right⟩
+    rw [show -s = -1 * s by ring, jacobiSym.mul_left, jacobiSym.mod_left' (ht.of_dvd hpN),
+      jacobiSym.sq_one_of_not_dvd hp hpt] at hj
     simpa using hj
   · exact .inl (he ▸ h4.neg_right)
   · exact .inl (he ▸ ((by norm_num : (4 : ℤ) ∣ 8).trans h8).neg_right)
 
 /-- The second certificate of Theorem R⁻ for `R = t²` gives (Z4) or (T2), at an odd prime or
 at `2`. -/
-private lemma negAll_or_negTail_of_eq_sq_of_cert (hRs : IsCoprime R s) {t : ℤ} (ht : R = t ^ 2)
-    (ht0 : t ≠ 0) {M : ℕ} (hM : (M : ℤ) ∣ R) (h : ¬IsSquare (-(s : ZMod M))) :
+private lemma negAllCriterion_or_negTailCriterion_of_eq_sq_of_cert (hRs : IsCoprime R s) {t : ℤ}
+    (ht : R = t ^ 2) (ht0 : t ≠ 0) {M : ℕ} (hM : (M : ℤ) ∣ R) (h : ¬IsSquare (-(s : ZMod M))) :
     NegAllCriterion (-R) s ∨ NegTailCriterion (-R) s := by
   have h2 := not_two_dvd_and hRs
   subst ht
   rcases exists_of_not_isSquare_of_dvd (x := -s) (N := t ^ 2) (by positivity) hRs.symm.neg_left hM
     (by simpa using h) with ⟨p, hp, hp2, hpN, hj⟩ | ⟨h4, hs4⟩ | ⟨h8, hs8⟩
-  · exact negAll_or_negTail_of_dvd_sq ht0 hp hp2
+  · exact negAllCriterion_or_negTailCriterion_of_dvd_sq ht0 hp hp2
       ((Nat.prime_iff_prime_int.mp hp).dvd_of_dvd_pow hpN) hj
-  · exact negAll_or_negTail_of_two_dvd_sq ht0
+  · exact negAllCriterion_or_negTailCriterion_of_two_dvd_sq ht0
       (Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 4).trans h4)) (.inl hs4)
   · have h2t := Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 8).trans h8)
     have : ¬(2 : ℤ) ∣ s := fun h2s ↦ h2 ⟨dvd_pow h2t two_ne_zero, h2s⟩
-    rcases (by lia : -s % 4 = 3 ∨ -s % 8 = 5) with h' | h'
-    exacts [negAll_or_negTail_of_two_dvd_sq ht0 h2t (.inl h'),
-      negAll_or_negTail_of_two_dvd_sq ht0 h2t (.inr ⟨h8, h'⟩)]
+    exact negAllCriterion_or_negTailCriterion_of_two_dvd_sq ht0 h2t
+      ((by lia : -s % 4 = 3 ∨ -s % 8 = 5).imp_right (⟨h8, ·⟩))
 
 /-- For `R = t²`, the certificates of Theorem R⁻ give (Z4) or a `τ`. -/
-private lemma negAll_or_negTail_of_eq_sq_of_two_mul_le (hs : 0 < s) (hRs : IsCoprime R s)
-    (hR : 2 * s ≤ R) {t : ℤ} (ht : R = t ^ 2)
+private lemma negAllCriterion_or_negTailCriterion_of_eq_sq_of_two_mul_le (hs : 0 < s)
+    (hRs : IsCoprime R s) (hR : 2 * s ≤ R) {t : ℤ} (ht : R = t ^ 2)
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
       (∃ M : ℕ, (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
         (s % 2 = 0 ∧ R % 4 = 3 ∧ (R - s) % 8 ≠ 1) ∨
@@ -283,33 +284,22 @@ private lemma negAll_or_negTail_of_eq_sq_of_two_mul_le (hs : 0 < s) (hRs : IsCop
   have ht0 : t ≠ 0 := by rintro rfl; lia
   rcases hcert with ⟨M, -, h⟩ | ⟨M, hM, h⟩ | ⟨-, h, -⟩ | ⟨hns, M, hM, h⟩
   · exact absurd ⟨(t : ZMod M), by rw [ht]; push_cast; ring⟩ h
-  · exact negAll_or_negTail_of_eq_sq_of_cert hRs ht ht0 hM h
+  · exact negAllCriterion_or_negTailCriterion_of_eq_sq_of_cert hRs ht ht0 hM h
   · lia [Int.sq_emod_four t]
-  · refine .inr (negTailCriterion_of_cert_sub hs hRs hR hns hM h fun p hp hp2 hpN ↦ ?_)
-    have hp' := Nat.prime_iff_prime_int.mp hp
-    have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ hp'.not_isUnit (hRs.isUnit_of_dvd'
-      (ht ▸ dvd_pow hpt two_ne_zero) ((dvd_sub_right (ht ▸ dvd_pow hpt two_ne_zero)).mp hpN))
-    rw [← jacobiSym.sq_one_of_not_dvd hp hpt, ← ht]
-    exact jacobiSym.mod_left' (Int.modEq_iff_dvd.mpr hpN)
+  · exact .inr (negTailCriterion_of_cert_sub hs hRs hR t
+      (by rw [← ht]; exact (Int.modEq_sub R s).symm) hns hM h)
 
 /-- (O4) for `s = t²` with `t` even: `R ≡ 3 (mod 4)`, or `8 ∣ s` and `R ≡ 5 (mod 8)`. -/
 private lemma negFirstCriterion_of_two_dvd_sq_right {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t)
     (h : R % 4 = 3 ∨ 8 ∣ t ^ 2 ∧ R % 8 = 5) : NegFirstCriterion (-R) (t ^ 2) := by
   obtain ⟨j, u, hj, htu, hu, hu8⟩ := exists_sq_eq_two_pow_mul ht h2t
   have hu2 : u ^ 2 = 8 * (u ^ 2 / 8) + 1 := by lia
-  have hRu : -R * u ^ 2 = -(8 * (u ^ 2 / 8) * R) - R := by
-    generalize u ^ 2 / 8 = a at hu2
-    rw [hu2]
-    ring
+  have hRu : -R * u ^ 2 = -(8 * (u ^ 2 / 8) * R) - R := by linear_combination (-R) * hu2
   refine .dvd_right_two (2 * j) (u ^ 2) (by simpa using htu) hu.pow (.inr ?_)
   rcases h with h | ⟨h8, h⟩
   · rcases (by lia : j = 1 ∨ 2 ≤ j) with rfl | hj2
     exacts [.inl ⟨rfl, by lia⟩, .inr ⟨even_two_mul j, by lia, by lia⟩]
-  · have hj2 : 2 ≤ j := by
-      by_contra hj2
-      obtain rfl : j = 1 := by lia
-      lia [show (u ^ 2) % 2 = 1 by lia]
-    exact .inr ⟨even_two_mul j, by lia, by lia⟩
+  · exact .inr ⟨even_two_mul j, by lia [two_le_of_eight_dvd_sq htu hu8 h8], by lia⟩
 
 /-- The first certificate of Theorem R⁻ for `s = t²` gives (O3) or (O4): a prime `p ∣ t` with
 `(R / p) = -1`, or `4 ∣ s` with `R ≡ 3 (mod 4)`, or `8 ∣ s` with `R ≡ 5 (mod 8)`. -/
@@ -329,14 +319,14 @@ private lemma negFirstCriterion_of_eq_sq_right_of_cert {t : ℤ} (hRs : IsCoprim
       (Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 4).trans h4)) (.inl hR4)
   · have h2t := Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 8).trans h8)
     have : ¬(2 : ℤ) ∣ R := fun h2R ↦ h2 ⟨h2R, dvd_pow h2t two_ne_zero⟩
-    rcases (by lia : R % 4 = 3 ∨ R % 8 = 5) with h' | h'
-    exacts [negFirstCriterion_of_two_dvd_sq_right ht0 h2t (.inl h'),
-      negFirstCriterion_of_two_dvd_sq_right ht0 h2t (.inr ⟨h8, h'⟩)]
+    exact negFirstCriterion_of_two_dvd_sq_right ht0 h2t
+      ((by lia : R % 4 = 3 ∨ R % 8 = 5).imp_right (⟨h8, ·⟩))
 
 /-- The second certificate of Theorem R⁻ for `s = t²` gives (O5) or (T2): a prime `p ∣ R` with
 `(-s / p) = -1` is `≡ 3 (mod 4)`, as `s` is a square. -/
-private lemma negFirst_or_negTail_of_eq_sq_right_of_cert (hRs : IsCoprime R s) (hR0 : R ≠ 0)
-    {t : ℤ} (ht : s = t ^ 2) {M : ℕ} (hM : (M : ℤ) ∣ R) (h : ¬IsSquare (-(s : ZMod M))) :
+private lemma negFirstCriterion_or_negTailCriterion_of_eq_sq_right_of_cert (hRs : IsCoprime R s)
+    (hR0 : R ≠ 0) {t : ℤ} (ht : s = t ^ 2) {M : ℕ} (hM : (M : ℤ) ∣ R)
+    (h : ¬IsSquare (-(s : ZMod M))) :
     NegFirstCriterion (-R) s ∨ NegTailCriterion (-R) s := by
   have h2 := not_two_dvd_and hRs
   rcases exists_of_not_isSquare_of_dvd (x := -s) (N := R) hR0 hRs.symm.neg_left hM
@@ -350,13 +340,12 @@ private lemma negFirst_or_negTail_of_eq_sq_right_of_cert (hRs : IsCoprime R s) (
       (emod_four_of_jacobiSym_neg_one hp hp2 hj) hpN.neg_right hps
   · exact negFirstCriterion_or_negTailCriterion_of_four_dvd (neg_ne_zero.mpr hR0) h4.neg_right
       (Int.odd_iff.mpr (by lia))
-  · have h4 := (by norm_num : (4 : ℤ) ∣ 8).trans h8
-    exact negFirstCriterion_or_negTailCriterion_of_four_dvd (neg_ne_zero.mpr hR0) h4.neg_right
-      (Int.not_even_iff_odd.mp fun he ↦ h2 ⟨(by norm_num : (2 : ℤ) ∣ 4).trans h4, he.two_dvd⟩)
+  · exact negFirstCriterion_or_negTailCriterion_of_four_dvd (neg_ne_zero.mpr hR0)
+      ((by norm_num : (4 : ℤ) ∣ 8).trans h8).neg_right (Int.odd_iff.mpr (by lia))
 
 /-- For `s = t²`, the certificates of Theorem R⁻ give `φ₁` ((O3), (O4), (O5)) or a `τ`. -/
-private lemma negFirst_or_negTail_of_eq_sq_right (hs : 0 < s) (hRs : IsCoprime R s)
-    (hR : 2 * s ≤ R) {t : ℤ} (ht : s = t ^ 2)
+private lemma negFirstCriterion_or_negTailCriterion_of_eq_sq_right (hs : 0 < s)
+    (hRs : IsCoprime R s) (hR : 2 * s ≤ R) {t : ℤ} (ht : s = t ^ 2)
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨
       (∃ M : ℕ, (M : ℤ) ∣ R ∧ ¬IsSquare (-(s : ZMod M))) ∨
         (s % 2 = 0 ∧ R % 4 = 3 ∧ (R - s) % 8 ≠ 1) ∨
@@ -366,16 +355,11 @@ private lemma negFirst_or_negTail_of_eq_sq_right (hs : 0 < s) (hRs : IsCoprime R
   rcases hcert with ⟨M, hM, h⟩ | ⟨M, hM, h⟩ | ⟨hs2, hR4, -⟩ | ⟨hns, M, hM, h⟩
   · rw [ht] at hM hRs ⊢
     exact .inl (negFirstCriterion_of_eq_sq_right_of_cert hRs ht0 hM h)
-  · exact negFirst_or_negTail_of_eq_sq_right_of_cert hRs (by lia) ht hM h
+  · exact negFirstCriterion_or_negTailCriterion_of_eq_sq_right_of_cert hRs (by lia) ht hM h
   · obtain ⟨p, hp, hp4, hpR⟩ := Int.exists_prime_dvd_of_emod_four_eq_three (by lia) hR4
     exact negFirstCriterion_or_negTailCriterion_of_prime_dvd (by lia) hp hp4 hpR.neg_right
       fun hps ↦ (Nat.prime_iff_prime_int.mp hp).not_isUnit (hRs.isUnit_of_dvd' hpR hps)
-  · refine .inr (negTailCriterion_of_cert_sub hs hRs hR hns hM h fun p hp hp2 hpN ↦ ?_)
-    have hp' := Nat.prime_iff_prime_int.mp hp
-    have hpt : ¬(p : ℤ) ∣ t := fun hpt ↦ hp'.not_isUnit (hRs.isUnit_of_dvd'
-      ((dvd_sub_left (ht ▸ dvd_pow hpt two_ne_zero)).mp hpN) (ht ▸ dvd_pow hpt two_ne_zero))
-    rw [ht]
-    exact jacobiSym.sq_one_of_not_dvd hp hpt
+  · exact .inr (negTailCriterion_of_cert_sub hs hRs hR t (ht ▸ .refl _) hns hM h)
 
 /-- The hypotheses of Theorem R⁻ (`a = -R/s ≤ -2`) give two of the three lists of criteria. -/
 theorem criteria_of_two_mul_le_of_certificate (hs : 0 < s) (hRs : IsCoprime R s)
@@ -388,19 +372,17 @@ theorem criteria_of_two_mul_le_of_certificate (hs : 0 < s) (hRs : IsCoprime R s)
       NegAllCriterion (-R) s ∧ NegTailCriterion (-R) s ∨
         NegFirstCriterion (-R) s ∧ NegTailCriterion (-R) s := by
   by_cases hRsq : IsSquare R
-  · obtain ⟨t, ht⟩ := hRsq
-    have h₁ : NegFirstCriterion (-R) s := negFirstCriterion_of_not_isSquare_right hs.le
-      fun ⟨u, hu⟩ ↦ hsq ⟨t * u, by rw [ht, hu]; ring⟩
-    rcases negAll_or_negTail_of_eq_sq_of_two_mul_le hs hRs hR (t := t) (by rw [ht, sq]) hcert
-      with h | h
-    exacts [.inl ⟨h, h₁⟩, .inr (.inr ⟨h₁, h⟩)]
+  · have h₁ : NegFirstCriterion (-R) s :=
+      negFirstCriterion_of_not_isSquare_right hs.le fun h ↦ hsq (hRsq.mul h)
+    obtain ⟨t, ht⟩ := hRsq
+    exact (negAllCriterion_or_negTailCriterion_of_eq_sq_of_two_mul_le hs hRs hR (t := t)
+      (by rw [ht, sq]) hcert).imp (⟨·, h₁⟩) fun h ↦ .inr ⟨h₁, h⟩
   · have h₀ : NegAllCriterion (-R) s :=
-      .not_isSquare (fun ⟨u, hu⟩ ↦ by lia [mul_self_nonneg u]) (by rwa [neg_neg])
+      .not_isSquare (not_isSquare_of_neg (by lia)) (by rwa [neg_neg])
     by_cases hssq : IsSquare s
     · obtain ⟨t, ht⟩ := hssq
-      rcases negFirst_or_negTail_of_eq_sq_right hs hRs hR (t := t) (by rw [ht, sq]) hcert
-        with h | h
-      exacts [.inl ⟨h₀, h⟩, .inr (.inl ⟨h₀, h⟩)]
+      exact (negFirstCriterion_or_negTailCriterion_of_eq_sq_right hs hRs hR (t := t)
+        (by rw [ht, sq]) hcert).imp (⟨h₀, ·⟩) fun h ↦ .inl ⟨h₀, h⟩
     · exact .inl ⟨h₀, negFirstCriterion_of_not_isSquare_right hs.le hssq⟩
 
 /-- The `2`-adic classes of Theorem R⁻ are `QuadraticIterates.TwoAdicClass (-R) s (-1)`. -/

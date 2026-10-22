@@ -18,7 +18,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 namespace Function.ExtendByZero
 
-/-- Extension by zero along an injective map is injective. -/
 theorem linearMap_injective (R : Type*) [Semiring R] (M : Type*) [AddCommMonoid M] [Module R M]
     {ι η : Type*} {s : ι → η} (hs : Injective s) :
     Injective (linearMap R M s) :=

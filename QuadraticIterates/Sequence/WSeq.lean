@@ -29,8 +29,9 @@ this turns congruences for `w_n` into computations with `c̄`.
 * `QuadraticIterates.intCast_mul_wSeq`, `QuadraticIterates.intCast_mul_vSeq`,
   `QuadraticIterates.intCast_uSeq`: the reduction lemmas; `QuadraticIterates.cSeq_div_eq`:
   `c_n = r w_n / s^{2^{n-1}}`.
-* `QuadraticIterates.isCoprime_wSeq_left`, `QuadraticIterates.isCoprime_wSeq_right`: for coprime
-  `r, s`, `w_n` is prime to `r` and to `s`; `v_n` and `u_n` are prime to `s`.
+* `QuadraticIterates.isCoprime_wSeq_left`, `QuadraticIterates.isCoprime_wSeq_right`,
+  `QuadraticIterates.isCoprime_vSeq_right`, `QuadraticIterates.isCoprime_uSeq_right`: for coprime
+  `r, s`, `w_n` is prime to `r` and to `s`, and `v_n` and `u_n` are prime to `s`.
 * `QuadraticIterates.wSeq_modEq_left`, `QuadraticIterates.wSeq_modEq_right`,
   `QuadraticIterates.vSeq_modEq_left`: residues modulo `r` and `s`; residues modulo `8`
   (`QuadraticIterates.intCast_mul_wSeq_zmod_eight`: `r w_n ≡ c̄_n (mod 8)` for odd `s`).
@@ -55,7 +56,7 @@ def wSeq : ℕ → ℤ
 @[simp] lemma wSeq_one : wSeq r s 1 = -1 := rfl
 
 lemma wSeq_succ {n : ℕ} (hn : 1 ≤ n) : wSeq r s (n + 1) = r * wSeq r s n ^ 2 + s ^ (2 ^ n - 1) := by
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one.mpr hn
   rfl
 
 @[simp] lemma wSeq_two : wSeq r s 2 = r + s := by simp [wSeq_succ r s le_rfl]
@@ -75,6 +76,10 @@ section Reduction
 
 variable {s} {S : Type*} [CommRing S] {σ : S}
 
+private lemma sq_pow_two_pow_pred (x : S) {n : ℕ} (hn : 1 ≤ n) :
+    (x ^ 2 ^ (n - 1)) ^ 2 = x ^ 2 ^ n := by
+  rw [← pow_mul, Nat.two_pow_pred_mul_two hn]
+
 /-- **Reduction**: if `s` is invertible in `S` with inverse `σ`, then `r w_n = s^{2^{n-1}} c̄_n`
 in `S`, where `c̄` is the sequence of the parameter `r σ`. -/
 theorem intCast_mul_wSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
@@ -84,35 +89,24 @@ theorem intCast_mul_wSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
     simp
     grobner
   | succ n hn ih =>
-    have he : (s : S) ^ 2 ^ n = (s : S) ^ (2 ^ n - 1) * s := by
-      rw [← pow_succ, Nat.sub_add_cancel Nat.one_le_two_pow]
-    have hsq : ((s : S) ^ 2 ^ (n - 1)) ^ 2 = (s : S) ^ 2 ^ n := by
-      rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel hn]
     rw [wSeq_succ r s hn, cSeq_succ _ hn, Nat.add_sub_cancel]
     push_cast
-    grobner
+    grobner [sq_pow_two_pow_pred (s : S) hn, pow_sub_one_mul (Nat.two_pow_pos n).ne' (s : S)]
 
 theorem intCast_mul_vSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
     (r : S) * vSeq r s n =
       (s : S) ^ 2 ^ n * (cSeq ((r : S) * σ) n + cSeq ((r : S) * σ) (n + 1)) := by
-  have h₁ := intCast_mul_wSeq r hσ hn
   have h₂ := intCast_mul_wSeq r hσ (n := n + 1) (by lia)
-  have hsq : ((s : S) ^ 2 ^ (n - 1)) ^ 2 = (s : S) ^ 2 ^ n := by
-    rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel hn]
   rw [Nat.add_sub_cancel] at h₂
   simp only [vSeq, Int.cast_add, Int.cast_mul, Int.cast_pow]
-  grobner
+  grobner [intCast_mul_wSeq r hσ hn, sq_pow_two_pow_pred (s : S) hn]
 
 theorem intCast_uSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
     (uSeq r s n : S) =
       (s : S) ^ 2 ^ n * (cSeq ((r : S) * σ) n ^ 2 - cSeq ((r : S) * σ) n + r * σ + 1) := by
-  have h₁ := intCast_mul_wSeq r hσ hn
-  have hsq : ((s : S) ^ 2 ^ (n - 1)) ^ 2 = (s : S) ^ 2 ^ n := by
-    rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel hn]
-  have he : (s : S) ^ 2 ^ n = (s : S) ^ (2 ^ n - 1) * s := by
-    rw [← pow_succ, Nat.sub_add_cancel Nat.one_le_two_pow]
   simp only [uSeq, Int.cast_add, Int.cast_sub, Int.cast_mul, Int.cast_pow]
-  grobner
+  grobner [intCast_mul_wSeq r hσ hn, sq_pow_two_pow_pred (s : S) hn,
+    pow_sub_one_mul (Nat.two_pow_pos n).ne' (s : S)]
 
 /-- `c_n = r w_n / s^{2^{n-1}}` for the parameter `a = r/s`. -/
 theorem cSeq_div_eq (hs : s ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
@@ -190,8 +184,7 @@ end Coprime
 
 theorem wSeq_modEq_left {n : ℕ} (hn : 2 ≤ n) : wSeq r s n ≡ s ^ (2 ^ (n - 1) - 1) [ZMOD r] := by
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by lia⟩
-  rw [wSeq_succ r s (by lia), Nat.add_sub_cancel, add_comm, Int.ModEq,
-    Int.add_mul_emod_self_left]
+  rw [wSeq_succ r s (by lia), Nat.add_sub_cancel, add_comm, Int.ModEq, Int.add_mul_emod_self_left]
 
 theorem wSeq_modEq_right {n : ℕ} (hn : 2 ≤ n) : wSeq r s n ≡ r ^ (2 ^ (n - 1) - 1) [ZMOD s] := by
   induction n, hn using Nat.le_induction with
@@ -199,9 +192,7 @@ theorem wSeq_modEq_right {n : ℕ} (hn : 2 ≤ n) : wSeq r s n ≡ r ^ (2 ^ (n -
   | succ n hn ih =>
     obtain ⟨t, ht⟩ := dvd_pow_self s (Nat.sub_ne_zero_of_lt (Nat.one_lt_two_pow (n := n) (by lia)))
     have he : 2 ^ (n + 1 - 1) - 1 = 2 * (2 ^ (n - 1) - 1) + 1 := by
-      have := Nat.one_le_two_pow (n := n - 1)
-      rw [Nat.add_sub_cancel, ← Nat.sub_add_cancel (by lia : 1 ≤ n), pow_succ]
-      lia
+      lia [Nat.two_pow_pred_mul_two (w := n) (by lia), Nat.one_le_two_pow (n := n - 1)]
     rw [wSeq_succ r s (by lia), ht, he, Int.ModEq, Int.add_mul_emod_self_left, ← Int.ModEq]
     calc r * wSeq r s n ^ 2 ≡ r * (r ^ (2 ^ (n - 1) - 1)) ^ 2 [ZMOD s] := (ih.pow 2).mul_left r
       _ = r ^ (2 * (2 ^ (n - 1) - 1) + 1) := by ring
@@ -213,9 +204,7 @@ theorem vSeq_modEq_left {n : ℕ} (hn : 2 ≤ n) : vSeq r s n ≡ 2 * s ^ (2 ^ n
   have he : s ^ (2 ^ (n - 1) - 1) * s ^ 2 ^ (n - 1) = s ^ (2 ^ n - 1) := by
     rw [← pow_add]
     congr 1
-    have := Nat.one_le_two_pow (n := n - 1)
-    rw [← Nat.sub_add_cancel (by lia : 1 ≤ n), pow_succ, Nat.add_sub_cancel]
-    lia
+    lia [Nat.two_pow_pred_mul_two (w := n) (by lia), Nat.one_le_two_pow (n := n - 1)]
   rw [vSeq, two_mul]
   exact h₁.add (he ▸ h₂.mul_right _)
 
@@ -240,12 +229,10 @@ theorem intCast_wSeq_zmod_eight_of_even (hs : Even s) (hr : Odd r) {n : ℕ} (hn
     refine (ZMod.intCast_zmod_eq_zero_iff_dvd _ 8).mpr
       ((Dvd.intro (t ^ 3) (by ring : (8 : ℤ) * t ^ 3 = (t + t) ^ 3)).trans
         (pow_dvd_pow (t + t) (?_ : 3 ≤ 2 ^ m - 1)))
-    have := Nat.pow_le_pow_right two_pos (by lia : 2 ≤ m)
-    lia
+    lia [Nat.pow_le_pow_right two_pos (by lia : 2 ≤ m)]
   rw [wSeq_succ r s (by lia)]
   push_cast at h8 ⊢
-  rw [h8, ZMod.intCast_sq_eight_eq_one_of_odd (odd_wSeq_of_even hs hr (by lia)), mul_one,
-    add_zero]
+  rw [h8, ZMod.intCast_sq_eight_eq_one_of_odd (odd_wSeq_of_even hs hr (by lia)), mul_one, add_zero]
 
 /-- For odd `s`, `w_{n+1} ≡ r w_n² + s (mod 8)`: `s^{2^n - 1} ≡ s`. -/
 theorem intCast_wSeq_succ_zmod_eight_of_odd (hs : Odd s) {n : ℕ} (hn : 1 ≤ n) :
@@ -259,7 +246,7 @@ variable (r) in
 `ZMod 8`: `s` is its own inverse modulo `8`, and `s^{2^{n-1}} ≡ 1`. -/
 theorem intCast_mul_wSeq_zmod_eight (hs : Odd s) {n : ℕ} (hn : 2 ≤ n) :
     ((r * wSeq r s n : ℤ) : ZMod 8) = cSeq ((r : ZMod 8) * s) n := by
-  have hσ : (s : ZMod 8) * s = 1 := by rw [← sq]; exact ZMod.intCast_sq_eight_eq_one_of_odd hs
+  have hσ : (s : ZMod 8) * s = 1 := sq (s : ZMod 8) ▸ ZMod.intCast_sq_eight_eq_one_of_odd hs
   rw [Int.cast_mul, intCast_mul_wSeq r hσ (by lia),
     ZMod.intCast_pow_two_pow_eight_of_odd hs (by lia), one_mul]
 

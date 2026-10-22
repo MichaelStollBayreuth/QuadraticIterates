@@ -20,23 +20,17 @@ namespace Int
 
 /-- An integer `≡ 2` or `3 (mod 4)` is not a square. -/
 theorem not_isSquare_of_two_le_emod_four {x : ℤ} (h : 2 ≤ x % 4) : ¬IsSquare x :=
-  fun ⟨t, ht⟩ ↦ by
-    have := Int.sq_emod_four t
-    rw [sq, ← ht] at this
-    lia
+  fun ⟨t, ht⟩ ↦ by lia [Int.sq_emod_four t]
 
 theorem sq_emod_eight_eq_one_of_odd {x : ℤ} (hx : Odd x) : x ^ 2 % 8 = 1 := by
-  rw [sq, Int.mul_emod]
-  rcases (by lia [Int.odd_iff.mp hx] : x % 8 = 1 ∨ x % 8 = 3 ∨ x % 8 = 5 ∨ x % 8 = 7) with
-    h | h | h | h <;> simp [h]
+  lia [Int.eight_dvd_sq_sub_one_of_odd hx]
 
 /-- An integer `≡ 5 (mod 8)` is not a square. -/
 theorem not_isSquare_of_emod_eight_eq_five {x : ℤ} (h : x % 8 = 5) : ¬IsSquare x :=
   fun ⟨t, ht⟩ ↦ by
-    subst ht
-    rcases (by lia : t % 8 = 0 ∨ t % 8 = 1 ∨ t % 8 = 2 ∨ t % 8 = 3 ∨ t % 8 = 4 ∨ t % 8 = 5 ∨
-      t % 8 = 6 ∨ t % 8 = 7) with h' | h' | h' | h' | h' | h' | h' | h' <;>
-      simp [Int.mul_emod, h'] at h
+    rcases t.even_or_odd with ⟨k, rfl⟩ | ht'
+    · lia
+    · lia [sq_emod_eight_eq_one_of_odd ht']
 
 /-- `a (a + 1)` is a square only for `a = 0, -1`: from `a (a + 1) = t²`,
 `(2a + 1 - 2t)(2a + 1 + 2t) = 1`, so both factors are `±1` and `t = 0`. -/

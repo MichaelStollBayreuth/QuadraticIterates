@@ -16,6 +16,11 @@ import QuadraticIterates.Sequence.Signs
 
 For `a > 0` the signs of `c_1, c_2, …` are `(-, +, +, …)`, so the sign character realizes `φ₁`;
 for `-1 < a < 0` they are `(+, -, -, …)`, the pattern `τ`.
+
+## Main statements
+
+* `QuadraticIterates.hasCharPattern_mulSingle_one_of_pos`: `φ₁` for `a > 0`.
+* `QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_neg_one_lt`: `τ` for `-1 < a < 0`.
 -/
 
 @[expose] public section

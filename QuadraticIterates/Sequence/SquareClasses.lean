@@ -19,7 +19,17 @@ For `a = r/s`, the term `c_1 = -r/s` has the square class of `-rs`, and `c_n`, `
 `r w_n`. For the character `χ_ψ = Rat.unitPartChar p ψ` attached to a character `ψ` modulo a power
 `N` of a prime `p` not dividing `s`, `χ_ψ(c_n) = ψ(c̄_n)` whenever the term `c̄_n` of the sequence
 of `r/s` in `ZMod N` is a unit (`QuadraticIterates.unitPartChar_cSeq`): every local computation
-of `χ_ψ` along `(c_n)` happens in `ZMod N`.
+of `χ_ψ` along `(c_n)` happens in `ZMod N`. The square classes of `c_1`, `c_2` and `c_1 c_2` are
+those of `-rs`, `r(r + s)` and `-s(r + s)`.
+
+## Main statements
+
+* `QuadraticIterates.mulChar_cSeq_one`, `QuadraticIterates.mulChar_cSeq_of_two_le`: the square
+  classes of the terms, seen by a character of `ℚ`.
+* `QuadraticIterates.unitPartChar_cSeq`, `QuadraticIterates.valChar_cSeq_of_isUnit`: the local
+  evaluation of `χ_ψ`, and the parity of `v_p(c_n)`, at a term with `c̄_n` a unit.
+* `QuadraticIterates.isSquare_cSeq_one_iff`, `QuadraticIterates.isSquare_cSeq_two_iff`,
+  `QuadraticIterates.isSquare_cSeq_one_mul_cSeq_two_iff`: squareness of `c_1`, `c_2`, `c_1 c_2`.
 -/
 
 @[expose] public section
@@ -70,14 +80,11 @@ theorem unitPartChar_cSeq {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k 
     Rat.unitPartChar p ψ (cSeq ((r : ℚ) / s) n) = ψ (cSeq ((r : ZMod N) * σ) n) := by
   obtain ⟨hps, hpw⟩ := not_dvd_of_isUnit_cSeq hN hk hσ hn hu
   have hs : s ≠ 0 := fun h ↦ hps (h ▸ dvd_zero _)
-  have hψs : ψ s ^ 2 = 1 := by
-    rcases ψ.apply_eq_one_or_eq_neg_one (IsUnit.of_mul_eq_one σ hσ) with h | h <;> simp [h]
   rw [cSeq_div_eq r hs hn, MulChar.apply_div, ← Int.cast_mul, ← Int.cast_pow,
-    Rat.unitPartChar_intCast hN hpw, Rat.unitPartChar_intCast hN
-      fun h ↦ hps ((Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow h),
+    Rat.unitPartChar_intCast hN hpw,
+    Rat.unitPartChar_intCast hN (mt (Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow hps),
     Int.cast_mul, intCast_mul_wSeq r hσ hn, Int.cast_pow, map_mul, map_pow, mul_right_comm,
-    ← mul_pow, ← sq,
-    hψs, one_pow, one_mul]
+    ← mul_pow, ← sq, Int.isUnit_sq ((IsUnit.of_mul_eq_one σ hσ).map ψ), one_pow, one_mul]
 
 /-- With the notation of `QuadraticIterates.unitPartChar_cSeq`: if `c̄_n` is a unit, then
 `v_p(c_n)` is even, as `r w_n = s^{2^{n-1}} c̄_n` is prime to `p`. -/
@@ -87,8 +94,9 @@ theorem valChar_cSeq_of_isUnit {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk
   obtain ⟨hps, hpw⟩ := not_dvd_of_isUnit_cSeq hN hk hσ hn hu
   have hs : s ≠ 0 := fun h ↦ hps (h ▸ dvd_zero _)
   rw [cSeq_div_eq r hs hn, MulChar.apply_div, ← Int.cast_mul, ← Int.cast_pow,
-    Rat.valChar_intCast_of_not_dvd hpw, Rat.valChar_intCast_of_not_dvd
-      fun h ↦ hps ((Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow h), mul_one]
+    Rat.valChar_intCast_of_not_dvd hpw,
+    Rat.valChar_intCast_of_not_dvd (mt (Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow hps),
+    mul_one]
 
 /-- `c_1 = -r/s = -rs/s²`. -/
 theorem isSquare_cSeq_one_iff (hs : s ≠ 0) :

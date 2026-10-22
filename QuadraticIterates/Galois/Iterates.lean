@@ -31,6 +31,11 @@ splitting field `K_n` of `f_n` over `ℚ`, taken inside `AlgebraicClosure ℚ`, 
 ## Notation
 
 `fℚ[a, n]` is scoped notation for `iteratedPoly (a : ℚ) n`, the iterate `f_n` over `ℚ`.
+
+## References
+
+* M. Stoll, *Galois groups over ℚ of some iterated polynomials*, Arch. Math. **59** (1992),
+  239-244.
 -/
 
 @[expose] public section
@@ -42,10 +47,10 @@ namespace QuadraticIterates
 /-! ### The iterates `f_n` of `X² + a` -/
 
 /-- The iterates `f_n` of `f = X² + a` over a commutative (semi)ring `R`: `f_0 = X`,
-`f_{n+1} = f_n² + a`. Over `ℤ` (`R := ℤ`) this is the sequence of the paper. -/
+`f_{n+1} = f_n² + a`. Over `ℤ` (`R := ℤ`) this is the sequence of [Stoll 1992]. -/
 noncomputable def iteratedPoly {R : Type*} [CommSemiring R] (a : R) : ℕ → R[X]
   | 0 => X
-  | n + 1 => (iteratedPoly a n) ^ 2 + C a
+  | n + 1 => iteratedPoly a n ^ 2 + C a
 
 section
 
@@ -55,8 +60,7 @@ variable {R : Type*} [CommSemiring R] (a : R)
 
 lemma iteratedPoly_succ (n : ℕ) : iteratedPoly a (n + 1) = iteratedPoly a n ^ 2 + C a := rfl
 
-lemma iteratedPoly_one : iteratedPoly a 1 = X ^ 2 + C a := by
-  rw [iteratedPoly_succ, iteratedPoly_zero]
+lemma iteratedPoly_one : iteratedPoly a 1 = X ^ 2 + C a := rfl
 
 lemma map_iteratedPoly {S : Type*} [CommSemiring S] (φ : R →+* S) (n : ℕ) :
     (iteratedPoly a n).map φ = iteratedPoly (φ a) n := by
@@ -68,9 +72,7 @@ lemma iteratedPoly_succ_comp (n : ℕ) :
     iteratedPoly a (n + 1) = (iteratedPoly a n).comp (X ^ 2 + C a) := by
   induction n with
   | zero => simp [iteratedPoly_succ]
-  | succ k ih =>
-    nth_rw 1 [iteratedPoly_succ a (k + 1), ih]
-    rw [iteratedPoly_succ, add_comp, pow_comp, C_comp]
+  | succ k ih => simp [iteratedPoly_succ, ← ih]
 
 lemma eval_zero_iteratedPoly_succ (n : ℕ) :
     (iteratedPoly a (n + 1)).eval 0 = (iteratedPoly a n).eval a := by
@@ -80,8 +82,7 @@ lemma monic_iteratedPoly [Nontrivial R] (n : ℕ) : (iteratedPoly a n).Monic := 
   induction n with
   | zero => exact monic_X
   | succ k ih =>
-    rw [iteratedPoly_succ_comp]
-    exact ih.comp (monic_X_pow_add_C a two_ne_zero) (by simp)
+    exact iteratedPoly_succ_comp a k ▸ ih.comp (monic_X_pow_add_C a two_ne_zero) (by simp)
 
 lemma natDegree_iteratedPoly [NoZeroDivisors R] [Nontrivial R] (n : ℕ) :
     (iteratedPoly a n).natDegree = 2 ^ n := by
@@ -90,9 +91,7 @@ lemma natDegree_iteratedPoly [NoZeroDivisors R] [Nontrivial R] (n : ℕ) :
   | succ k ih => rw [iteratedPoly_succ_comp, natDegree_comp, ih, natDegree_X_pow_add_C, pow_succ]
 
 @[simp] lemma iteratedPoly_zero_left (n : ℕ) : iteratedPoly (0 : R) n = X ^ 2 ^ n := by
-  induction n with
-  | zero => simp
-  | succ n ih => simp [iteratedPoly_succ, ih, ← pow_mul, ← pow_succ]
+  induction n <;> simp [iteratedPoly_succ, ← pow_mul, ← pow_succ, *]
 
 end
 
@@ -155,8 +154,9 @@ variable {R : Type*} [CommRing R] (a : R)
 
 /-- The sequence `c_n` (indexed from 1) of a parameter `a` in a commutative ring: `c_1 = -a`,
 `c_{n+1} = c_n² + a`; the value at index `0` is `0`. It is the `γ`-sequence of `X² + a` with
-`ε = -1`. Over `ℤ` this is the integer sequence of the paper, and `QuadraticIterates.intCast_cSeq`
-identifies its cast into a ring `S` with the sequence of the cast parameter. -/
+`ε = -1`. Over `ℤ` this is the integer sequence of [Stoll 1992], and
+`QuadraticIterates.intCast_cSeq` identifies its cast into a ring `S` with the sequence of the cast
+parameter. -/
 noncomputable def cSeq : ℕ → R := gammaSeq (X ^ 2 + C a) (-1)
 
 lemma cSeq_eq_gammaSeq (n : ℕ) : cSeq a n = gammaSeq (X ^ 2 + C a) (-1) n := rfl
@@ -176,11 +176,10 @@ lemma cSeq_two : cSeq a 2 = a ^ 2 + a := by simp [cSeq_succ a le_rfl]
 theorem cSeq_succ_eq_neg_one_pow_mul_eval (k : ℕ) :
     cSeq a (k + 1) = (-1) ^ 2 ^ k * (iteratedPoly a k).eval a := by
   induction k with
-  | zero => simp [cSeq_one]
+  | zero => simp
   | succ i ih =>
-    have hone : (-1 : R) ^ 2 ^ (i + 1) = 1 := by simp [pow_succ, pow_mul']
     rw [cSeq_succ a (by lia), ih, iteratedPoly_succ]
-    simp [mul_pow, ← pow_mul, ← pow_succ, hone]
+    simp [mul_pow, ← pow_mul, ← pow_succ, Nat.even_pow]
 
 /-- `c_{n+1} = (-1)^{2^n} · f_{n+1}(0)`: the sign is `-1` exactly for `n = 0`. -/
 theorem cSeq_succ_eq_neg_one_pow_mul_eval_zero (n : ℕ) :

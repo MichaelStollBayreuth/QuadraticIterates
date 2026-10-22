@@ -97,7 +97,8 @@ theorem hasCharPattern_neg_of_mulSingle_of_neg_mulSingle
 
 /-! ### Patterns from values -/
 
-/-- A character that is `-1` at `v 1` and `1` at all later terms realizes `φ₁` from `1` on. -/
+/-- A character that is `-1` at `v 1` and `1` at all later terms realizes `φ₁` (the pattern
+`Pi.mulSingle 1 (-1)`) from `1` on. -/
 theorem hasCharPattern_mulSingle_one_of_apply (χ : MulChar M ℤ) (h₁ : χ (v 1) = -1)
     (h : ∀ n ≥ 2, χ (v n) = 1) :
     HasCharPattern v 1 (Pi.mulSingle 1 (-1)) :=
@@ -106,7 +107,8 @@ theorem hasCharPattern_mulSingle_one_of_apply (χ : MulChar M ℤ) (h₁ : χ (v
     · simpa using h₁
     · rw [h n hn, Pi.mulSingle_eq_of_ne (by lia)]⟩
 
-/-- A character that is `1` at `v 1` and `-1` at all later terms realizes `τ` from `1` on. -/
+/-- A character that is `1` at `v 1` and `-1` at all later terms realizes `τ` (the pattern
+`-Pi.mulSingle 1 (-1)`) from `1` on. -/
 theorem hasCharPattern_neg_mulSingle_one_of_apply (χ : MulChar M ℤ) (h₁ : χ (v 1) = 1)
     (h : ∀ n ≥ 2, χ (v n) = -1) :
     HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) :=
@@ -118,8 +120,8 @@ theorem hasCharPattern_neg_mulSingle_one_of_apply (χ : MulChar M ℤ) (h₁ : �
 /-! ### Jumps -/
 
 /-- Given `φ₀` (the constant pattern `-1`) from `n`, a character `ψ` with `ψ (v n) ≠ 0` whose
-later values are all `-ψ (v n)` yields `φ_n`: `ψ` itself if `ψ (v n) = -1`, `φ₀ ψ` if
-`ψ (v n) = 1`. -/
+later values are all `-ψ (v n)` yields `φ_n` (the pattern `Pi.mulSingle n (-1)`): `ψ` itself if
+`ψ (v n) = -1`, `φ₀ ψ` if `ψ (v n) = 1`. -/
 theorem hasCharPattern_mulSingle_of_neg_of_forall_lt (h₀ : HasCharPattern v n (-1))
     {ψ : MulChar M ℤ} (hψ : ψ (v n) ≠ 0) (h : ∀ m > n, ψ (v m) = -ψ (v n)) :
     HasCharPattern v n (Pi.mulSingle n (-1)) := by
@@ -144,16 +146,17 @@ private lemma eq_of_lt_of_add_two_eq {f : ℕ → ℤ} {c : ℤ} (h₁ : f (n + 
   | one => exact h₂
   | more k ih _ => simpa [hp (n + k + 1) (by lia), ← add_assoc] using ih (by lia)
 
-/-- Given `φ₀` from `n` and a character `ψ` alternating from `n` on, a character `χ` with the
-pattern `(x, y, -x, y, -x, …)` from `n` on yields `φ_n`: `χ` itself has the pattern
-`(x, -x, -x, …)` of `QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt` if
-`y = -x`, and `χ ψ` has such a pattern if `y = x`. -/
+/-- Given `φ₀` (the constant pattern `-1`) from `n` and a character `ψ` alternating from `n` on, a
+character `χ` with the pattern `(x, y, -x, y, -x, …)` from `n` on yields `φ_n`
+(`Pi.mulSingle n (-1)`): `χ` itself has the pattern `(x, -x, -x, …)` of
+`QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt` if `y = -x`, and `χ ψ` has such
+a pattern if `y = x`. -/
 theorem hasCharPattern_mulSingle_of_neg_of_alternating (h₀ : HasCharPattern v n (-1))
     {ψ : MulChar M ℤ} (hψ₀ : ψ (v n) ≠ 0) (hψ : ∀ m ≥ n, ψ (v (m + 1)) = -ψ (v m))
     {χ : MulChar M ℤ} (hχ₀ : χ (v n) ≠ 0) (hχ₁ : χ (v (n + 1)) ≠ 0)
     (hχ₂ : χ (v (n + 2)) = -χ (v n)) (hχ : ∀ m ≥ n + 1, χ (v (m + 2)) = χ (v m)) :
     HasCharPattern v n (Pi.mulSingle n (-1)) := by
-  have hψ₂ (m : ℕ) (hm : m ≥ n) : ψ (v (m + 2)) = ψ (v m) := by
+  have hψ₂ : ∀ m ≥ n, ψ (v (m + 2)) = ψ (v m) := fun m hm ↦ by
     rw [hψ (m + 1) (by lia), hψ m hm, neg_neg]
   have hxy : χ (v (n + 1)) = -χ (v n) ∨ χ (v (n + 1)) = χ (v n) := by
     grind [(χ.isQuadratic_int (v n)).resolve_left hχ₀,

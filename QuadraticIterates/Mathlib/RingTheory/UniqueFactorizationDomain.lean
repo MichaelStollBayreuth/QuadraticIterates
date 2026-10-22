@@ -5,7 +5,7 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.RingTheory.UniqueFactorizationDomain.Multiplicity
+public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
 
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 import QuadraticIterates.Mathlib.Data.Multiset
@@ -25,10 +25,11 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 
 open UniqueFactorizationMonoid
 
+variable {α : Type*} [CommMonoidWithZero α] [NormalizationMonoid α] [UniqueFactorizationMonoid α]
+
 /-- If `σ` is a multiplicative automorphism of a normalization UFD and `σ p` is associated to
 `p`, then `normalize ∘ σ` permutes the multiset of normalized factors of `p`. -/
-lemma normalizedFactors_map_mulEquiv_eq {α : Type*} [CommMonoidWithZero α]
-    [NormalizationMonoid α] [UniqueFactorizationMonoid α] (σ : α ≃* α) {p : α} (hp0 : p ≠ 0)
+lemma normalizedFactors_map_mulEquiv_eq (σ : α ≃* α) {p : α} (hp0 : p ≠ 0)
     (hassoc : Associated (σ p) p) :
     (normalizedFactors p).map (fun q ↦ normalize (σ q)) = normalizedFactors p := by
   have hirr : ∀ q ∈ (normalizedFactors p).map σ, Irreducible q :=
@@ -46,10 +47,9 @@ lemma normalizedFactors_map_mulEquiv_eq {α : Type*} [CommMonoidWithZero α]
 /-- If `σ` is an involutive multiplicative automorphism of a normalization UFD, `σ p` is
 associated to `p`, `p` is not irreducible, and every divisor of `p` that is `σ`-invariant up to
 associates is trivial, then the normalized factors of `p` pair up under `normalize ∘ σ`. -/
-theorem exists_normalizedFactors_eq_add_map {α : Type*} [CommMonoidWithZero α]
-    [NormalizationMonoid α] [UniqueFactorizationMonoid α] (σ : α ≃* α)
-    (hσ : Function.Involutive σ) {p : α} (hp0 : p ≠ 0) (hσp : Associated (σ p) p)
-    (hp : ¬Irreducible p) (h : ∀ d : α, d ∣ p → Associated (σ d) d → IsUnit d ∨ Associated d p) :
+theorem exists_normalizedFactors_eq_add_map (σ : α ≃* α) (hσ : Function.Involutive σ) {p : α}
+    (hp0 : p ≠ 0) (hσp : Associated (σ p) p) (hp : ¬Irreducible p)
+    (h : ∀ d : α, d ∣ p → Associated (σ d) d → IsUnit d ∨ Associated d p) :
     ∃ N : Multiset α, normalizedFactors p = N + N.map fun q ↦ normalize (σ q) := by
   refine Multiset.exists_add_map_of_involutive (fun q ↦ normalize (σ q)) _ (fun q hq ↦ ?_)
     (normalizedFactors_map_mulEquiv_eq σ hp0 hσp) fun q hq hfix ↦ ?_
@@ -58,24 +58,3 @@ theorem exists_normalizedFactors_eq_add_map {α : Type*} [CommMonoidWithZero α]
     have hσq : Associated (σ q) q := (normalize_associated (σ q)).symm.trans (by rw [hfix])
     exact (h q (dvd_of_mem_normalizedFactors hq) hσq).elim hirr.not_isUnit
       fun hap ↦ hp (hap.irreducible hirr)
-
-section Factorization
-
-variable {R : Type*} [CommMonoidWithZero R] [UniqueFactorizationMonoid R]
-    [NormalizationMonoid R] [DecidableEq R]
-
-end Factorization
-
-section GCD
-
-variable {R : Type*} [CommMonoidWithZero R] [UniqueFactorizationMonoid R]
-    [NormalizedGCDMonoid R] [DecidableEq R]
-
-end GCD
-
-section PeriodicShape
-
-variable {S : Type*} [CommRing S] [UniqueFactorizationMonoid S]
-    [NormalizationMonoid S] [DecidableEq S]
-
-end PeriodicShape

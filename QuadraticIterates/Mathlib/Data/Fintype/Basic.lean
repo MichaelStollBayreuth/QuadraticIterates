@@ -24,7 +24,6 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 `i.castSucc ∈ T`. -/
 theorem Fin.exists_eq_map_castSuccEmb_or_insert_last {n : ℕ} (T : Finset (Fin (n + 1))) :
     ∃ S : Finset (Fin n), T = S.map castSuccEmb ∨ T = insert (last n) (S.map castSuccEmb) := by
-  refine ⟨({i | i.castSucc ∈ T} : Finset (Fin n)),
-    (Decidable.em (last n ∈ T)).symm.imp ?_ ?_⟩ <;>
+  refine ⟨({i | i.castSucc ∈ T} : Finset (Fin n)), (Decidable.em (last n ∈ T)).symm.imp ?_ ?_⟩ <;>
     exact fun hlast ↦ Finset.ext fun x ↦ by
       rcases eq_castSucc_or_eq_last x with ⟨j, rfl⟩ | rfl <;> simp [hlast]

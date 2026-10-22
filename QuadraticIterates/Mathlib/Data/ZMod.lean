@@ -18,8 +18,9 @@ import QuadraticIterates.Mathlib.Algebra.Group.Nat.Defs
 /-!
 # `ZMod` lemmas
 
-Units and negatives modulo `m` from coprimality and divisibility data; residues of odd and even
-integers modulo `8`; integer scalars on a `ZMod 2`-module.
+Residues modulo `8` of odd integers and of integers with a given residue modulo `4`; units modulo
+a prime power; congruence modulo an integer `m` as equality in `ZMod |m|`; integer scalars on a
+`ZMod 2`-module.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -52,6 +53,8 @@ lemma ZMod.intCast_eight_eq_or_eq_of_emod_four {x c : ℤ} (h : x % 4 = c) :
   · exact .inl ((ZMod.intCast_eq_intCast_iff' x c 8).mpr h8)
   · exact .inr (mod_cast (ZMod.intCast_eq_intCast_iff' x (c + 4) 8).mpr h8)
 
+/-! ### Units modulo a prime power, congruences modulo an integer -/
+
 /-- Modulo a power `N` of a prime `p`, an integer prime to `p` is a unit. -/
 lemma ZMod.isUnit_intCast_of_not_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) {m : ℤ}
     (hm : ¬(p : ℤ) ∣ m) : IsUnit (m : ZMod N) := by
@@ -69,19 +72,15 @@ lemma ZMod.not_isUnit_intCast_of_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ 
   exact dvd_pow_self _ hk
 
 /-- Congruence modulo an integer `m` is equality in `ZMod |m|`. -/
-lemma ZMod.intCast_eq_intCast_iff_modEq {m a b : ℤ} :
-    (a : ZMod m.natAbs) = b ↔ a ≡ b [ZMOD m] := by
-  rw [ZMod.intCast_eq_intCast_iff, Int.natCast_natAbs, Int.ModEq, Int.ModEq, Int.emod_abs,
-    Int.emod_abs]
+lemma ZMod.intCast_eq_intCast_iff_modEq {m a b : ℤ} : (a : ZMod m.natAbs) = b ↔ a ≡ b [ZMOD m] :=
+  (ZMod.intCast_eq_intCast_iff a b m.natAbs).trans Int.modEq_natAbs
 
-@[simp] lemma ZMod.intCast_self_natAbs (m : ℤ) : (m : ZMod m.natAbs) = 0 := by
-  simpa using (ZMod.intCast_eq_intCast_iff_modEq (a := m) (b := 0)).mpr (by simp [Int.ModEq])
+@[simp] lemma ZMod.intCast_self_natAbs (m : ℤ) : (m : ZMod m.natAbs) = 0 :=
+  (ZMod.intCast_zmod_eq_zero_iff_dvd m m.natAbs).mpr (Int.natAbs_dvd.mpr dvd_rfl)
 
 /-! ### `ZMod 2`-modules -/
 
 /-- In a `ZMod 2`-module an integer scalar acts through its absolute value. -/
 theorem ZModModule.zsmul_eq_natAbs_nsmul {M : Type*} [AddCommGroup M] [Module (ZMod 2) M] (k : ℤ)
     (v : M) : k • v = k.natAbs • v := by
-  rcases Int.natAbs_eq k with h | h <;> nth_rw 1 [h]
-  · rw [natCast_zsmul]
-  · rw [neg_zsmul, natCast_zsmul, ZModModule.neg_eq_self]
+  obtain ⟨n, rfl | rfl⟩ := Int.eq_nat_or_neg k <;> simp [ZModModule.neg_eq_self]

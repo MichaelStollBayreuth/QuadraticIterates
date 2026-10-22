@@ -24,8 +24,8 @@ whose 2-independence of `c₁, c₂` the challenges spell out by
 `QuadraticIterates.twoIndependent_fin_two_iff`. Importing the library brings in the definitions
 `iteratedPoly`, `GaloisGroup`, `WreathPower`, `NegAllCriterion`, `NegFirstCriterion`,
 `NegTailCriterion`, `TwoAdicClass`, `NegFirstCriterion'` and `NegTailCriterion'` that the
-statements refer to; Comparator checks that these
-agree with the copies reproduced in `Challenge.lean`.
+statements refer to; Comparator checks that these agree with the copies reproduced in
+`Challenge.lean`.
 -/
 
 @[expose] public section

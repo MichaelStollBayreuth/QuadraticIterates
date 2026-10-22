@@ -31,7 +31,9 @@ value exactly at the multiples of some `m ≥ 1`; or `2^{n-1} v_p(a)` with `v_p(
 * `QuadraticIterates.padicValRat_cSeq_of_padicValRat_neg`,
   `QuadraticIterates.padicValRat_cSeq_of_dvd_left`, `QuadraticIterates.padicValRat_cSeq_eq_ite`:
   the three cases.
-* `QuadraticIterates.dvd_wSeq_iff`: rigid divisibility of `(w_n)` at a prime `p ∤ rs`.
+* `QuadraticIterates.padicValRat_cSeq_eq_padicValInt`: `v_p(c_n) = v_p(r w_n)` at a prime `p ∤ s`.
+* `QuadraticIterates.dvd_wSeq_iff`, `QuadraticIterates.padicValInt_wSeq_eq_ite`: rigid
+  divisibility of `(w_n)` at a prime `p ∤ rs`, and the valuations `v_p(w_n)`.
 -/
 
 @[expose] public section
@@ -48,9 +50,7 @@ theorem padicValRat_cSeq_of_padicValRat_neg {a : ℚ} (ha : padicValRat p a < 0)
   | base => simp
   | succ n hn ih =>
     have ha0 : a ≠ 0 := by rintro rfl; simp at ha
-    have hc : cSeq a n ^ 2 ≠ 0 := pow_ne_zero 2 fun h ↦ by
-      rw [h, padicValRat.zero] at ih
-      lia [mul_neg_of_pos_of_neg (pow_pos two_pos (n - 1) : (0 : ℤ) < 2 ^ (n - 1)) ha]
+    have hc : cSeq a n ^ 2 ≠ 0 := pow_ne_zero 2 fun h ↦ by simp [h, ha.ne] at ih
     have hpow : (2 : ℤ) ^ (n + 1 - 1) = 2 * 2 ^ (n - 1) := by
       rw [← pow_succ', Nat.sub_add_cancel hn, Nat.add_sub_cancel]
     have hlt : padicValRat p (cSeq a n ^ 2) < padicValRat p a := by
@@ -63,6 +63,14 @@ theorem padicValRat_cSeq_of_padicValRat_neg {a : ℚ} (ha : padicValRat p a < 0)
     · push_cast; ring
     · rw [eq_neg_of_add_eq_zero_left h, padicValRat.neg] at hlt
       exact hlt.false
+
+/-- A prime `q` dividing the denominator of `a` has `v_q(a) < 0`, as it does not divide the
+numerator. -/
+private lemma padicValRat_neg_of_dvd_den {q : ℕ} [Fact q.Prime] {a : ℚ} (h : q ∣ a.den) :
+    padicValRat q a < 0 := by
+  have h1 := one_le_padicValNat_of_dvd a.den_nz h
+  rw [padicValRat_def, (a.num_or_den_zero_padicVal Fact.out).resolve_right (by lia)]
+  lia
 
 /-- For `a ∈ ℚ \ {-1, 0}`, no term `c_n` with `n ≥ 1` vanishes. A prime of the denominator gives
 `v_p(c_n) < 0` (`QuadraticIterates.padicValRat_cSeq_of_padicValRat_neg`); an integral `a` has
@@ -80,24 +88,16 @@ theorem cSeq_ne_zero {a : ℚ} (h₀ : a ≠ 0) (h₁ : a ≠ -1) {n : ℕ} (hn 
       exact neg_pos.mpr (mod_cast h.trans_lt (by norm_num))
   · obtain ⟨q, hq, hqd⟩ := Nat.exists_prime_and_dvd hd
     have := Fact.mk hq
-    have hv : padicValRat q a < 0 := by
-      rw [padicValRat_def, padicValInt.eq_zero_of_not_dvd fun h ↦ hq.one_lt.ne'
-        ((Nat.Coprime.coprime_dvd_left (Int.natCast_dvd.mp h) a.reduced).eq_one_of_dvd hqd)]
-      lia [one_le_padicValNat_of_dvd a.den_nz hqd]
-    intro h
-    have := padicValRat_cSeq_of_padicValRat_neg hv hn
-    rw [h, padicValRat.zero] at this
-    lia [mul_neg_of_pos_of_neg (pow_pos two_pos (n - 1) : (0 : ℤ) < 2 ^ (n - 1)) hv]
+    have hv := padicValRat_neg_of_dvd_den hqd
+    exact fun h ↦ by simpa [h, hv.ne] using padicValRat_cSeq_of_padicValRat_neg hv hn
 
 /-- For `a ∈ ℚ`, some term `c_n` with `n ≥ 1` vanishes iff `a ∈ {0, -1}`, where `c_1 = 0`,
 resp. `c_2 = 0`. -/
 theorem exists_cSeq_eq_zero_iff {a : ℚ} : (∃ n ≥ 1, cSeq a n = 0) ↔ a = 0 ∨ a = -1 := by
-  refine ⟨fun ⟨n, hn, h⟩ ↦ ?_, ?_⟩
-  · by_contra! h'
-    exact cSeq_ne_zero h'.1 h'.2 hn h
-  · rintro (rfl | rfl)
-    · exact ⟨1, le_rfl, by simp⟩
-    · exact ⟨2, by norm_num, by norm_num [cSeq_two]⟩
+  refine ⟨fun ⟨n, hn, h⟩ ↦ or_iff_not_and_not.mpr fun ⟨h₀, h₁⟩ ↦ cSeq_ne_zero h₀ h₁ hn h, ?_⟩
+  rintro (rfl | rfl)
+  · exact ⟨1, le_rfl, by simp⟩
+  · exact ⟨2, by norm_num, by norm_num [cSeq_two]⟩
 
 section Integral
 
@@ -113,11 +113,8 @@ theorem padicValRat_cSeq_eq_padicValInt (hs : s ≠ 0) (hps : ¬(p : ℤ) ∣ s)
       padicValRat.of_int, padicValRat.of_int, padicValInt.eq_zero_of_not_dvd hps]
     simp
 
-private lemma two_le_of_dvd_wSeq {m : ℕ} (hm : 1 ≤ m) (hpm : (p : ℤ) ∣ wSeq r s m) : 2 ≤ m := by
-  by_contra! h
-  obtain rfl : m = 1 := by lia
-  rw [wSeq_one, Int.dvd_neg, Int.natCast_dvd_ofNat, Nat.dvd_one] at hpm
-  exact (Fact.out : p.Prime).one_lt.ne' hpm
+private lemma two_le_of_dvd_wSeq {m : ℕ} (hm : 1 ≤ m) (hpm : (p : ℤ) ∣ wSeq r s m) : 2 ≤ m :=
+  hm.lt_of_ne fun h ↦ (Nat.prime_iff_prime_int.mp Fact.out).not_dvd_one (by simpa [← h] using hpm)
 
 /-- **Rigid divisibility of `(w_n)`** at a prime `p ∤ rs`: if `m ≥ 1` is the first index with
 `p ∣ w_m`, then `p ∣ w_n ↔ m ∣ n` for `n ≥ 1`. Modulo `p`, `r w_n = s^{2^{n-1}} c̄_n`, and `0` is
@@ -126,8 +123,8 @@ theorem dvd_wSeq_iff (hpr : ¬(p : ℤ) ∣ r) (hps : ¬(p : ℤ) ∣ s) {m : �
     (hpm : (p : ℤ) ∣ wSeq r s m) (hmin : ∀ j, 1 ≤ j → j < m → ¬(p : ℤ) ∣ wSeq r s j) {n : ℕ}
     (hn : 1 ≤ n) : (p : ℤ) ∣ wSeq r s n ↔ m ∣ n := by
   obtain ⟨σ, hσ⟩ := (ZMod.isUnit_intCast_of_not_dvd (pow_one p).symm hps).exists_right_inv
-  have hr0 : (r : ZMod p) ≠ 0 := fun h ↦ hpr ((ZMod.intCast_zmod_eq_zero_iff_dvd r p).mp h)
-  have hs0 : (s : ZMod p) ≠ 0 := fun h ↦ hps ((ZMod.intCast_zmod_eq_zero_iff_dvd s p).mp h)
+  have hr0 : (r : ZMod p) ≠ 0 := mt (ZMod.intCast_zmod_eq_zero_iff_dvd r p).mp hpr
+  have hs0 : (s : ZMod p) ≠ 0 := mt (ZMod.intCast_zmod_eq_zero_iff_dvd s p).mp hps
   have key (j : ℕ) (hj : 1 ≤ j) : (p : ℤ) ∣ wSeq r s j ↔ cSeq ((r : ZMod p) * σ) j = 0 := by
     rw [← ZMod.intCast_zmod_eq_zero_iff_dvd, ← mul_right_inj' hr0, mul_zero,
       intCast_mul_wSeq r hσ hj, mul_eq_zero, or_iff_right (pow_ne_zero _ hs0)]
@@ -146,8 +143,8 @@ theorem padicValInt_wSeq_eq_ite (hrs : IsCoprime r s) (hpr : ¬(p : ℤ) ∣ r) 
     padicValInt p (wSeq r s n) = if m ∣ n then padicValInt p (wSeq r s m) else 0 := by
   split_ifs with h
   · obtain ⟨k, rfl⟩ := h
-    obtain ⟨T, hT, hTm⟩ := exists_wSeq_mul_eq hrs (k := k) (two_le_of_dvd_wSeq hm hpm)
-      (Nat.pos_of_ne_zero (by rintro rfl; simp at hn))
+    obtain ⟨T, hT, hTm⟩ := exists_wSeq_mul_eq hrs (two_le_of_dvd_wSeq hm hpm)
+      (Nat.pos_of_mul_pos_left hn)
     have hpT : ¬(p : ℤ) ∣ T := fun h ↦ hps <| (Nat.prime_iff_prime_int.mp Fact.out).dvd_of_dvd_pow
       ((hTm.of_dvd hpm).dvd_iff.mp h)
     rw [hT, padicValInt.mul hw (by rintro rfl; exact hpT (dvd_zero _)),
@@ -179,15 +176,6 @@ theorem padicValRat_cSeq_eq_ite (hrs : IsCoprime r s) (hs : s ≠ 0) (hpr : ¬(p
   · rw [padicValInt.mul (by rintro rfl; exact hpr (dvd_zero _)) h0,
       padicValInt.eq_zero_of_not_dvd hpr, zero_add, h]
     split_ifs <;> rfl
-
-private lemma not_dvd_den_of_padicValRat_nonneg (hrs : IsCoprime r s) (hr : r ≠ 0) (hs : s ≠ 0)
-    (hv : 0 ≤ padicValRat p ((r : ℚ) / s)) : ¬(p : ℤ) ∣ s := by
-  intro h
-  have hp := Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)
-  rw [padicValRat.div (mod_cast hr) (mod_cast hs), padicValRat.of_int, padicValRat.of_int,
-    padicValInt.eq_zero_of_not_dvd fun h' ↦ hp.not_isUnit (hrs.isUnit_of_dvd' h' h)] at hv
-  have := ((padicValInt_dvd_iff 1 s).mp (by simpa using h)).resolve_left hs
-  lia
 
 /-- At a prime `p ∤ s`, for `a = r/s ∉ {0, -1}`: `v_p(c_n) = v_p(r) > 0` for all `n ≥ 1` if
 `p ∣ r`; otherwise either all `v_p(c_n)` vanish, or `v_p(c_n) = v_p(w_m) > 0` exactly for the
@@ -229,10 +217,11 @@ theorem padicValRat_cSeq_trichotomy {a : ℚ} (h₀ : a ≠ 0) (h₁ : a ≠ -1)
       ∃ e < 0, ∀ n ≥ 1, padicValRat p (cSeq a n) = 2 ^ (n - 1) * e := by
   rcases lt_or_ge (padicValRat p a) 0 with hv | hv
   · exact .inr <| .inr ⟨_, hv, fun n hn ↦ padicValRat_cSeq_of_padicValRat_neg hv hn⟩
-  obtain ⟨r, s, hrs, hs, rfl⟩ : ∃ r s : ℤ, IsCoprime r s ∧ s ≠ 0 ∧ a = r / s :=
-    ⟨a.num, a.den, Int.isCoprime_iff_gcd_eq_one.mpr a.reduced, mod_cast a.den_nz, by
-      push_cast; exact (Rat.num_div_den a).symm⟩
-  have hps := not_dvd_den_of_padicValRat_nonneg hrs (by rintro rfl; simp at h₀) hs hv
+  obtain ⟨r, s, hrs, hps, rfl⟩ : ∃ r s : ℤ, IsCoprime r s ∧ ¬(p : ℤ) ∣ s ∧ a = r / s :=
+    ⟨a.num, a.den, Int.isCoprime_iff_gcd_eq_one.mpr a.reduced,
+      fun h ↦ (padicValRat_neg_of_dvd_den (Int.natCast_dvd_natCast.mp h)).not_ge hv,
+      mod_cast (Rat.num_div_den a).symm⟩
+  have hs : s ≠ 0 := fun h ↦ hps (h ▸ dvd_zero _)
   exact (padicValRat_cSeq_of_not_dvd hrs hs hps h₀ h₁).imp_right .inl
 
 end QuadraticIterates

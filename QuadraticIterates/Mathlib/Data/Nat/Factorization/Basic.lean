@@ -8,7 +8,11 @@ module
 public import Mathlib.Data.Nat.Factorization.Basic
 
 /-!
-# Non-squares have a prime with odd exponent
+# Non-squares have a prime with odd exponent; integer squares at `2`
+
+A nonnegative integer that is not a square has a prime with odd exponent
+(`Int.exists_prime_pow_mul_of_not_isSquare`), and a nonzero square is `4^k m` with
+`m ≡ 1 (mod 8)` (`Int.exists_eq_four_pow_mul_of_isSquare`).
 
 Auxiliary material for the formalization of the surjectivity of arboreal Galois representations of
 `X² + a`; upstreaming candidates for Mathlib.
@@ -27,8 +31,7 @@ theorem exists_prime_pow_mul_of_not_isSquare {s : ℤ} (hs : 0 ≤ s) (h : ¬IsS
   refine ⟨p, _, (ordCompl[p] s.natAbs : ℕ), hp, Nat.not_even_iff_odd.mp hk, ?_, ?_⟩
   · rw [← Nat.cast_pow, ← Nat.cast_mul, Nat.ordProj_mul_ordCompl_eq_self, Int.natCast_natAbs,
       abs_of_nonneg hs]
-  · exact_mod_cast Nat.not_dvd_ordCompl hp
-      (Int.natAbs_ne_zero.mpr <| by rintro rfl; exact h .zero)
+  · exact_mod_cast Nat.not_dvd_ordCompl hp (Int.natAbs_ne_zero.mpr <| by rintro rfl; exact h .zero)
 
 /-- A nonzero square is `4^k m` with `m ≡ 1 (mod 8)`; the integers not of this form are the
 non-squares in `ℚ₂`. -/

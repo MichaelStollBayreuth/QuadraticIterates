@@ -9,6 +9,7 @@ public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Galois.TwoIndependent
 public import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 
+import Mathlib.Algebra.Field.ZMod
 import QuadraticIterates.Galois.Irreducibility
 import QuadraticIterates.Galois.Tower
 import QuadraticIterates.Mathlib.Algebra.Polynomial.Roots
@@ -26,7 +27,7 @@ space vanishes exactly when `c_{n+1} = ∏_β (β - a)` is not a square in `K_n`
 
 ## Main definitions
 
-* `rootShift a n β`: the shifted root `β - a` of `f_n`, as an element of `K_n`.
+* `QuadraticIterates.rootShift a n β`: the shifted root `β - a` of `f_n`, as an element of `K_n`.
 
 ## Main statements
 
@@ -74,15 +75,15 @@ variable {a}
 /-- The shifted roots are nonzero when `c_{n+1} = ± f_n(a) ≠ 0`. -/
 lemma rootShift_ne_zero {n : ℕ} (hc : cSeq a (n + 1) ≠ 0)
     (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) : rootShift a n β ≠ 0 :=
-  fun h ↦ sub_ratCast_ne_zero_of_mem_rootSet hc β.2 (congrArg Subtype.val h)
+  fun h ↦ sub_ratCast_ne_zero_of_mem_rootSet hc β.2 congr(Subtype.val $h)
 
 /-- For irreducible `f_n` with `c_{n+1} ≠ 0`, the relative degree `[K_{n+1} : K_n]` equals
 `2 ^ (2^n - d)`, where `d` is the `𝔽₂`-dimension of the multiquadratic relations among the shifted
 roots `β - a` of `f_n`. -/
 theorem relfinrank_succ_eq_pow [DecidableEq (AlgebraicClosure ℚ)] {n : ℕ}
     (hirr : Irreducible fℚ[a, n]) (hc : cSeq a (n + 1) ≠ 0) :
-    (splittingField a n).relfinrank (splittingField a (n + 1))
-      = 2 ^ (2 ^ n - Module.finrank (ZMod 2) (rootRelations (rootShift a n))) := by
+    (splittingField a n).relfinrank (splittingField a (n + 1)) =
+      2 ^ (2 ^ n - Module.finrank (ZMod 2) (rootRelations (rootShift a n))) := by
   choose g hg using exists_sq_eq_sub a
   rw [relfinrank_succ_eq_finrank_adjoin a n g hg, Set.image_eq_range,
     finrank_adjoin_range_eq_two_pow_sub (r := rootShift a n) (hg ·) (rootShift_ne_zero hc),
@@ -103,8 +104,8 @@ variable (a) in
 /-- The norm identity `∏ (α - a) = c_{n+1}` over the roots `α` of `f_n` (with multiplicity), by
 evaluating the monic split `f_n` at `a`. -/
 lemma prod_aroots_sub_eq_cSeq (n : ℕ) :
-    ((fℚ[a, n].aroots (AlgebraicClosure ℚ)).map (· - (a : AlgebraicClosure ℚ))).prod
-      = ((cSeq a (n + 1) : ℚ) : AlgebraicClosure ℚ) := by
+    ((fℚ[a, n].aroots (AlgebraicClosure ℚ)).map (· - (a : AlgebraicClosure ℚ))).prod =
+      ((cSeq a (n + 1) : ℚ) : AlgebraicClosure ℚ) := by
   have hcard : (fℚ[a, n].aroots (AlgebraicClosure ℚ)).card = 2 ^ n :=
     IsAlgClosed.card_aroots_eq_natDegree.trans (natDegree_iteratedPoly _ n)
   rw [cSeq_succ_eq_neg_one_pow_mul_eval, Rat.cast_mul, Rat.cast_pow, Rat.cast_neg, Rat.cast_one,
@@ -116,8 +117,8 @@ lemma prod_aroots_sub_eq_cSeq (n : ℕ) :
 /-- The norm identity over the root set: `∏_β (β - a) = c_{n+1}` for the `2^n` distinct roots `β`
 of an irreducible `f_n` in `ℚ̄`. -/
 lemma prod_rootSet_sub_eq_cSeq {n : ℕ} (hirr : Irreducible fℚ[a, n]) :
-    ∏ β : fℚ[a, n].rootSet (AlgebraicClosure ℚ), ((β : AlgebraicClosure ℚ) - a)
-      = ((cSeq a (n + 1) : ℚ) : AlgebraicClosure ℚ) :=
+    ∏ β : fℚ[a, n].rootSet (AlgebraicClosure ℚ), ((β : AlgebraicClosure ℚ) - a) =
+      ((cSeq a (n + 1) : ℚ) : AlgebraicClosure ℚ) :=
   (prod_rootSet_eq_prod_aroots (nodup_roots hirr.separable.map)
     (· - (a : AlgebraicClosure ℚ))).trans (prod_aroots_sub_eq_cSeq a n)
 
@@ -144,7 +145,7 @@ lemma isSquare_algebraMap_cSeq {k n : ℕ} (hkn : k < n) :
 
 /-- For irreducible `f_n` with `c_{n+1} ≠ 0`, the relation space of the shifted roots vanishes iff
 `c_{n+1}` is not a square in `K_n`: if it is nonzero, it contains the all-ones vector, `Ω_n` being
-a 2-group acting transitively on the roots (`one_mem_rootRelations_of_ne_bot`), and the all-ones
+a `2`-group acting transitively on the roots (`one_mem_rootRelations_of_ne_bot`), and the all-ones
 vector is a relation iff `∏_β (β - a) = c_{n+1}` is a square. -/
 lemma rootRelations_rootShift_eq_bot_iff [DecidableEq (AlgebraicClosure ℚ)] {n : ℕ}
     (hirr : Irreducible fℚ[a, n]) (hc : cSeq a (n + 1) ≠ 0) :
@@ -154,11 +155,10 @@ lemma rootRelations_rootShift_eq_bot_iff [DecidableEq (AlgebraicClosure ℚ)] {n
   have : Nonempty ↥(fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :=
     Fintype.card_pos_iff.mp (card_rootSet_iteratedPoly hirr ▸ Nat.two_pow_pos n)
   have := Gal.galAction_isPretransitive fℚ[a, n] (AlgebraicClosure ℚ) hirr
-  rw [← prod_rootShift_eq_cSeq hirr, ← one_mem_rootRelations_iff hrne, ← not_iff_not, not_not]
-  refine ⟨one_mem_rootRelations_of_ne_bot (isPGroup_galoisGroup a n) hrne
-    (exists_ringEquiv_rootShift_smul n), fun hmem hbot ↦ one_ne_zero (α := ZMod 2) ?_⟩
-  rw [hbot, Submodule.mem_bot] at hmem
-  exact congrFun hmem (Classical.arbitrary _)
+  rw [← prod_rootShift_eq_cSeq hirr, ← one_mem_rootRelations_iff hrne, iff_not_comm]
+  exact ⟨fun hmem hbot ↦ one_ne_zero ((Submodule.mem_bot (ZMod 2)).mp (hbot ▸ hmem)),
+    one_mem_rootRelations_of_ne_bot (isPGroup_galoisGroup a n) hrne
+      (exists_ringEquiv_rootShift_smul n)⟩
 
 /-- Lemma 1.6 of [Stoll 1992]: for irreducible `f_n` with `c_{n+1} ≠ 0` (as when `f_{n+1}` is
 irreducible, `QuadraticIterates.cSeq_succ_ne_zero_of_irreducible`), `[K_{n+1} : K_n] = 2^{2^n}` iff
@@ -179,8 +179,8 @@ theorem relfinrank_succ_eq_two_pow_iff {n : ℕ} (hirr : Irreducible fℚ[a, n])
 (`IteratedWreathProduct.card_monoidHom_multiplicative_zmod_two`), which bounds the degree of the
 subfields of `K_n` generated by square roots of rationals. -/
 lemma card_monoidHom_eq_two_pow {n : ℕ} (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n)) :
-    Nat.card ((↥(splittingField a n) ≃ₐ[ℚ] ↥(splittingField a n)) →* Multiplicative (ZMod 2))
-      = 2 ^ n :=
+    Nat.card ((↥(splittingField a n) ≃ₐ[ℚ] ↥(splittingField a n)) →* Multiplicative (ZMod 2)) =
+      2 ^ n :=
   (Nat.card_congr ((AlgEquiv.autCongr (IsSplittingField.algEquiv _ fℚ[a, n])).trans
     hiso.some).monoidHomCongrLeftEquiv).trans
     (IteratedWreathProduct.card_monoidHom_multiplicative_zmod_two n)
@@ -191,7 +191,7 @@ image of `c : ℚ` in `K_n` is a square iff it is the square of some
 subfield of `K_n` generated by square roots of rationals. -/
 theorem isSquare_algebraMap_iff_exists_sq_eq {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
-    (hindep : TwoIndependent (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1)))
+    (hindep : TwoIndependent fun i : Fin n ↦ cSeq a ((i : ℕ) + 1))
     {x : Fin n → ↥(splittingField a n)}
     (hx : ∀ i, x i ^ 2 = algebraMap ℚ ↥(splittingField a n) (cSeq a ((i : ℕ) + 1))) (c : ℚ) :
     IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
@@ -209,7 +209,7 @@ subfield of `K_n` generated by square roots of rationals, and squares descend al
 (`IntermediateField.exists_mem_adjoin_sq_eq_algebraMap_iff`). -/
 lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
-    (hindep : TwoIndependent (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1))) (c : ℚ) :
+    (hindep : TwoIndependent fun i : Fin n ↦ cSeq a ((i : ℕ) + 1)) (c : ℚ) :
     IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       ∃ S : Finset (Fin n), IsSquare (c * ∏ i ∈ S, cSeq a ((i : ℕ) + 1)) := by
   choose x hx using fun i : Fin n ↦ (isSquare_algebraMap_cSeq i.2).exists_sq
@@ -217,13 +217,13 @@ lemma isSquare_algebraMap_iff_exists_mul_prod {n : ℕ}
     ← Set.image_univ, ← Finset.coe_univ,
     IntermediateField.exists_mem_adjoin_sq_eq_algebraMap_iff (fun i _ ↦ (hx i).symm)
       (fun i _ ↦ hindep.ne_zero i) c]
-  exact exists_congr fun S ↦ and_iff_right (Finset.subset_univ S)
+  exact congr(∃ S, $(and_iff_right (Finset.subset_univ S)))
 
 /-- Lemma 1.5 of [Stoll 1992]: if `Ω_n ≅ [C₂]ⁿ` and `c_1, …, c_n` are 2-independent, then `c ∈ ℚ` is
 a non-square in `K_n` iff `c_1, …, c_n, c` are 2-independent (for `c = 0` both sides fail). -/
 theorem not_isSquare_algebraMap_iff_twoIndependent_snoc {n : ℕ}
     (hiso : Nonempty (GaloisGroup a n ≃* WreathPower n))
-    (hindep : TwoIndependent (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1))) {c : ℚ} :
+    (hindep : TwoIndependent fun i : Fin n ↦ cSeq a ((i : ℕ) + 1)) {c : ℚ} :
     ¬IsSquare (algebraMap ℚ ↥(splittingField a n) c) ↔
       TwoIndependent (Fin.snoc (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1)) c) := by
   rw [twoIndependent_snoc_iff, and_iff_right hindep,
@@ -232,5 +232,3 @@ theorem not_isSquare_algebraMap_iff_twoIndependent_snoc {n : ℕ}
 end
 
 end QuadraticIterates
-
-end

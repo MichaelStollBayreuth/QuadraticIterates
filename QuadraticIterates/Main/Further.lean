@@ -41,6 +41,11 @@ criteria, these characters complete the Klein four-group of patterns
   ((R1), (R2), (R3) of the blueprint).
 * `QuadraticIterates.hasCharPattern_neg_mulSingle_one_of_dvd_wSeq_three`: `τ` from the primes of
   `w_3` ((P3)).
+
+## Notation
+
+In the docstrings, `(x / p)` is the Jacobi symbol `jacobiSym x p`, and `χ_p` is the character
+`Rat.unitPartChar p (quadraticChar (ZMod p))` of `ℚ` at an odd prime `p`.
 -/
 
 @[expose] public section
@@ -52,12 +57,6 @@ open Rat
 variable {r s : ℤ} {p : ℕ} [Fact p.Prime]
 
 /-! ### Values of `χ_p` as Jacobi symbols -/
-
-private lemma unitPartChar_cSeq_one_eq_jacobiSym (hs : s ≠ 0) (hp : ¬(p : ℤ) ∣ r * s) :
-    unitPartChar p (quadraticChar (ZMod p)) (cSeq ((r : ℚ) / s) 1) = jacobiSym (-(r * s)) p := by
-  rw [mulChar_cSeq_one _ hs, show -((r : ℚ) * s) = ((-(r * s) : ℤ) : ℚ) by push_cast; ring,
-    unitPartChar_intCast (pow_one p).symm (by rwa [dvd_neg])]
-  exact jacobiSym.legendreSym.to_jacobiSym p _
 
 private lemma unitPartChar_cSeq_eq_jacobiSym (hs : s ≠ 0) {n : ℕ} (hn : 2 ≤ n)
     (hp : ¬(p : ℤ) ∣ r * wSeq r s n) :
@@ -80,10 +79,8 @@ private lemma not_dvd_add_of_dvd_wSeq_three (hrs : IsCoprime r s) (hp : (p : ℤ
 
 /-- A prime dividing `v_2 = w_3 + (r + s) s²` does not divide `r + s`. -/
 private lemma not_dvd_add_of_dvd_vSeq_two (hrs : IsCoprime r s) (hp : (p : ℤ) ∣ vSeq r s 2) :
-    ¬(p : ℤ) ∣ r + s := fun h ↦ not_dvd_add_of_dvd_wSeq_three hrs (by
-  have hv : vSeq r s 2 = wSeq r s 3 + (r + s) * s ^ 2 := by simp [vSeq]
-  have hd := dvd_sub hp (h.mul_right (s ^ 2))
-  rwa [hv, add_sub_cancel_right] at hd) h
+    ¬(p : ℤ) ∣ r + s := fun h ↦ not_dvd_add_of_dvd_wSeq_three hrs
+  ((dvd_add_left (h.mul_right (s ^ 2))).mp (by simpa [vSeq] using hp)) h
 
 /-! ### Primes of `v_2` and `v_3` -/
 
@@ -134,8 +131,7 @@ theorem unitPartChar_mul_unitPartChar_cSeq_of_dvd_vSeq_two {q : ℕ} [Fact q.Pri
 character `χ_p` is constant from `c_2` on: by reflection from `c_3` on, and
 `χ_p(c_2 c_3) = ((r + s) w_3 / p)`. -/
 theorem unitPartChar_cSeq_of_dvd_vSeq_three (hrs : IsCoprime r s) (hs : s ≠ 0) (hp4 : p % 4 = 1)
-    (hp : (p : ℤ) ∣ vSeq r s 3) (h : jacobiSym ((r + s) * wSeq r s 3) p = 1) {m : ℕ}
-    (hm : 2 ≤ m) :
+    (hp : (p : ℤ) ∣ vSeq r s 3) (h : jacobiSym ((r + s) * wSeq r s 3) p = 1) {m : ℕ} (hm : 2 ≤ m) :
     unitPartChar p (quadraticChar (ZMod p)) (cSeq ((r : ℚ) / s) m) = jacobiSym (r * (r + s)) p := by
   have hp' := Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)
   have hpr := not_dvd_left_of_dvd_vSeq hrs (by norm_num) Fact.out (by lia) hp
@@ -155,8 +151,7 @@ theorem unitPartChar_cSeq_of_dvd_vSeq_three (hrs : IsCoprime r s) (hs : s ≠ 0)
   · exact h₂
   · rw [h₃, hJ]
   rw [unitPartChar_cSeq_of_dvd_vSeq hrs (pow_one p).symm one_ne_zero _ (n := 3) (by norm_num) hp
-    hpr hm,
-    ZMod.quadraticChar_neg_one_of_mod_four_eq_one hp4, one_mul, h₃, hJ]
+    hpr hm, ZMod.quadraticChar_neg_one_of_mod_four_eq_one hp4, one_mul, h₃, hJ]
 
 /-! ### Primes of `w_3` -/
 
@@ -196,12 +191,9 @@ private lemma exists_mulChar_of_dvd_wSeq_three (hrs : IsCoprime r s) (hs : s ≠
   have hqs := fun h ↦ hq'.not_isUnit
     ((isCoprime_wSeq_right hrs (n := 3) (by norm_num)).isUnit_of_dvd' hq h)
   have hq1 := ZMod.quadraticChar_neg_one_of_mod_four_eq_three hq4
-  have hyq : jacobiSym (-(s * (r + s))) q = 1 ∨ jacobiSym (-(s * (r + s))) q = -1 := by
-    rw [← jacobiSym.legendreSym.to_jacobiSym]
-    refine legendreSym.eq_one_or_neg_one q ?_
-    rw [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd, dvd_neg]
-    exact hq'.not_dvd_mul hqs (not_dvd_add_of_dvd_wSeq_three hrs hq)
-  rcases hyq with hyq | hyq
+  rcases jacobiSym.eq_one_or_neg_one (Int.isCoprime_iff_gcd_eq_one.mp
+    (hq'.coprime_iff_not_dvd.mpr (dvd_neg.not.mpr
+      (hq'.not_dvd_mul hqs (not_dvd_add_of_dvd_wSeq_three hrs hq)))).symm) with hyq | hyq
   · rcases quadraticChar_dichotomy (F := ZMod p) (neg_ne_zero.mpr one_ne_zero) with hp1 | hp1
     · refine ⟨unitPartChar p (quadraticChar (ZMod p)) * unitPartChar q (quadraticChar (ZMod q)),
         ?_, fun j hj ↦ ?_, fun j ↦ ?_, fun j hj ↦ ?_⟩ <;>
@@ -210,6 +202,18 @@ private lemma exists_mulChar_of_dvd_wSeq_three (hrs : IsCoprime r s) (hs : s ≠
         by rw [p₃ j, q₃ j, hy, hyq, mul_one], by rw [p₀ j hj, q₀ j hj]]
     · exact ⟨_, p₁, fun j hj ↦ (p₂ j hj).trans hp1, fun j ↦ (p₃ j).trans hy, p₀⟩
   · exact ⟨_, q₁, fun j hj ↦ (q₂ j hj).trans hq1, fun j ↦ (q₃ j).trans hyq, q₀⟩
+
+/-- `τ` from a character that is `1` at `v 1` and `-1` at every `v n` with `n ≥ 2`, the
+hypotheses split by the residue of `n` modulo `3`. -/
+private lemma hasCharPattern_neg_mulSingle_one_of_mod_three {M : Type*} [CommMonoid M]
+    {v : ℕ → M} (Ψ : MulChar M ℤ) (h₁ : Ψ (v 1) = 1) (h₂ : ∀ j ≥ 1, Ψ (v (3 * j + 1)) = -1)
+    (h₃ : ∀ j, Ψ (v (3 * j + 2)) = -1) (h₀ : ∀ j ≥ 1, Ψ (v (3 * j)) = -1) :
+    HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) := by
+  refine hasCharPattern_neg_mulSingle_one_of_apply Ψ h₁ fun n hn ↦ ?_
+  obtain ⟨j, i, hi, rfl⟩ : ∃ j i, i < 3 ∧ n = 3 * j + i :=
+    ⟨n / 3, n % 3, Nat.mod_lt _ three_pos, (Nat.div_add_mod n 3).symm⟩
+  interval_cases i
+  exacts [h₀ j (by lia), h₂ j (by lia), h₃ j]
 
 /-- A character `Φ` that is `1` at `v 1`, `-1` at the `v n` with `n ≥ 2` and `3 ∤ n`, and `±1`
 and constant on the `v (3j)`, together with a character `Λ` that is `-1` exactly at the multiples
@@ -220,18 +224,11 @@ private lemma hasCharPattern_neg_mulSingle_one_of_three {M : Type*} [CommMonoid 
     (hu : Φ (v 3) = 1 ∨ Φ (v 3) = -1) (hΛ₁ : ∀ j, Λ (v (3 * j + 1)) = 1)
     (hΛ₂ : ∀ j, Λ (v (3 * j + 2)) = 1) (hΛ₀ : ∀ j ≥ 1, Λ (v (3 * j)) = -1) :
     HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) := by
-  have key (Ψ : MulChar M ℤ) (hΨ₁ : Ψ (v 1) = 1) (hΨ₂ : ∀ j ≥ 1, Ψ (v (3 * j + 1)) = -1)
-      (hΨ₃ : ∀ j, Ψ (v (3 * j + 2)) = -1) (hΨ₀ : ∀ j ≥ 1, Ψ (v (3 * j)) = -1) :
-      HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) := by
-    refine hasCharPattern_neg_mulSingle_one_of_apply Ψ hΨ₁ fun n hn ↦ ?_
-    obtain ⟨j, i, hi, rfl⟩ : ∃ j i, i < 3 ∧ n = 3 * j + i :=
-      ⟨n / 3, n % 3, Nat.mod_lt _ (by norm_num), (Nat.div_add_mod n 3).symm⟩
-    interval_cases i
-    exacts [hΨ₀ j (by lia), hΨ₂ j (by lia), hΨ₃ j]
   rcases hu with hu | hu
-  · exact key (Φ * Λ) (by simpa [h₁] using hΛ₁ 0) (fun j hj ↦ by simp [h₂ j hj, hΛ₁ j])
-      (fun j ↦ by simp [h₃ j, hΛ₂ j]) fun j hj ↦ by simp [h₀ j hj, hu, hΛ₀ j hj]
-  · exact key Φ h₁ h₂ h₃ fun j hj ↦ (h₀ j hj).trans hu
+  · exact hasCharPattern_neg_mulSingle_one_of_mod_three (Φ * Λ) (by simpa [h₁] using hΛ₁ 0)
+      (fun j hj ↦ by simp [h₂ j hj, hΛ₁ j]) (fun j ↦ by simp [h₃ j, hΛ₂ j])
+      fun j hj ↦ by simp [h₀ j hj, hu, hΛ₀ j hj]
+  · exact hasCharPattern_neg_mulSingle_one_of_mod_three Φ h₁ h₂ h₃ fun j hj ↦ (h₀ j hj).trans hu
 
 /-- **(P3)** If `w_3 ≠ ±□`, a prime `q ≡ 3 (mod 4)` divides `w_3`, and `(-s(r + s) / p) = -1`
 for some prime `p ∣ w_3`, then `a` has `τ`. Modulo the primes of `w_3`, `0` has period `3`; a
@@ -246,10 +243,10 @@ theorem hasCharPattern_neg_mulSingle_one_of_dvd_wSeq_three (hrs : IsCoprime r s)
   obtain ⟨Φ, h₁, h₂, h₃, h₀⟩ := exists_mulChar_of_dvd_wSeq_three hrs hs hq4 hq hp hy
   have hr : r ≠ 0 := fun hr ↦ (Nat.prime_iff_prime_int.mp (Fact.out : q.Prime)).not_isUnit
     ((isCoprime_wSeq_left hrs (n := 3) (by norm_num)).isUnit_of_dvd' hq (hr ▸ dvd_zero _))
-  have hw0 : wSeq r s 3 ≠ 0 := fun h ↦ hw (h ▸ ⟨0, by simp⟩)
+  have hw0 : wSeq r s 3 ≠ 0 := fun h ↦ hw (h ▸ .zero)
   have hc : cSeq ((r : ℚ) / s) 3 ≠ 0 := by
     rw [cSeq_div_eq r hs (by norm_num)]
-    exact div_ne_zero (mul_ne_zero (mod_cast hr) (mod_cast hw0)) (pow_ne_zero _ (mod_cast hs))
+    positivity
   exact hasCharPattern_neg_mulSingle_one_of_three h₁ h₂ h₃ h₀
     (Φ.apply_eq_one_or_eq_neg_one hc.isUnit)
     (fun j ↦ valChar_cSeq_three_mul_add_one_of_dvd_wSeq_three hrs hℓ j)

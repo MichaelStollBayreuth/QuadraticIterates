@@ -22,10 +22,7 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 namespace Nat
 
 lemma two_pow_sub_one_eq {n : ℕ} (hn : 1 ≤ n) : 2 ^ n - 1 = 2 * (2 ^ (n - 1) - 1) + 1 := by
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
-  have := Nat.one_le_two_pow (n := m)
-  rw [Nat.add_sub_cancel, pow_succ]
-  lia
+  lia [Nat.one_le_two_pow (n := n - 1), pow_succ 2 (n - 1), Nat.sub_add_cancel hn]
 
 end Nat
 

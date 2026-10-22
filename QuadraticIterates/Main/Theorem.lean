@@ -9,9 +9,7 @@ public import QuadraticIterates.Main.Criteria
 public import QuadraticIterates.Main.TwoAdic
 
 import QuadraticIterates.Characters.Criterion
-import QuadraticIterates.Galois.Criterion
 import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
-import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 import QuadraticIterates.Patterns.Dyadic
 import QuadraticIterates.Patterns.Reflection
 import QuadraticIterates.Sequence.Signs
@@ -19,11 +17,11 @@ import QuadraticIterates.Sequence.Signs
 /-!
 # The main theorem
 
-Surjectivity of the arboreal Galois representation of `X² + a` for rational `a = r/s`: the patterns
-`φ₀` and `φ₁` along `(c_n)` and the `2`-adic classes (C1)–(C3) of
-`QuadraticIterates.TwoAdicClass` give `Ω_n ≅ [C₂]ⁿ` for all `n`, and any two of the three lists of
-criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriterion` and
-`QuadraticIterates.NegTailCriterion` supply the two patterns.
+Surjectivity of the arboreal Galois representation of `X² + a` for rational `a = r/s` with `a ≤ -2`
+or `a³ + 2a² + 2a + 2 > 0`: the patterns `φ₀` and `φ₁` along `(c_n)` and the `2`-adic classes
+(C1)–(C3) of `QuadraticIterates.TwoAdicClass` give `Ω_n ≅ [C₂]ⁿ` for all `n`, and any two of the
+three lists of criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriterion`
+and `QuadraticIterates.NegTailCriterion` supply the two patterns.
 
 ## Main statements
 
@@ -37,6 +35,12 @@ criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriteri
   `a ≡ 1 mod 4`.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_odd`: for `a ≡ 1 mod 4`, `φ₀` gives `φ_n` at
   every odd level `n ≥ 3`.
+
+## Notation
+
+In the docstrings, `𝒜` is the set of `a` with `a ≤ -2` (sign `ε = -1`) or `a³ + 2a² + 2a + 2 > 0`
+(sign `ε = 1`); `χ_p` is the character `Rat.unitPartChar p (quadraticChar (ZMod p))` of `ℚ` at an
+odd prime `p`, and `val₂` is `Rat.valChar 2`.
 -/
 
 @[expose] public section
@@ -44,6 +48,18 @@ criteria `QuadraticIterates.NegAllCriterion`, `QuadraticIterates.NegFirstCriteri
 namespace QuadraticIterates
 
 variable {r s : ℤ}
+
+/-- Reflection at a prime `p ≡ 3 (mod 4)` dividing `v_n`, `n ≥ 2`: `φ₀` gives `φ_n` through `χ_p`
+(`QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`); `p ∤ r` is automatic
+(`QuadraticIterates.not_dvd_left_of_dvd_vSeq`). -/
+private lemma hasCharPattern_mulSingle_of_prime_dvd_vSeq (hrs : IsCoprime r s)
+    (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ} (hn : 2 ≤ n) {p : ℕ}
+    (hp : p.Prime) (hp4 : p % 4 = 3) (hpv : (p : ℤ) ∣ vSeq r s n) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
+  have := Fact.mk hp
+  exact hasCharPattern_mulSingle_of_dvd_vSeq hrs (pow_one p).symm one_ne_zero
+    (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) (by lia) (by simpa using hpv)
+    (not_dvd_left_of_dvd_vSeq hrs hn hp (by lia) hpv) (h₀.mono (by lia))
 
 /-- **Reflection at every level**: if `a = r/s` has `φ₀` and `φ₁`, and for every `n ≥ 2` the
 integer `v_n` is divisible by a prime `p ≡ 3 (mod 4)` not dividing `r`, or by `4` with `r` odd, then
@@ -57,34 +73,27 @@ theorem forall_nonempty_mulEquiv_of_forall_dvd_vSeq (hrs : IsCoprime r s)
   refine forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ ?_) n
   rcases hn.eq_or_lt with rfl | hn
   · exact h₁
-  rcases h n hn with ⟨p, hp, hp4, hpv, hpr⟩ | ⟨h4, hr⟩
-  · have := Fact.mk hp
-    exact hasCharPattern_mulSingle_of_dvd_vSeq hrs (pow_one p).symm one_ne_zero
-      (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) (by lia) (by simpa using hpv) hpr
-      (h₀.mono (by lia))
+  rcases h n hn with ⟨p, hp, hp4, hpv, -⟩ | ⟨h4, hr⟩
+  · exact hasCharPattern_mulSingle_of_prime_dvd_vSeq hrs h₀ hn hp hp4 hpv
   · exact hasCharPattern_mulSingle_of_dvd_vSeq (p := 2) hrs (N := 4) rfl two_ne_zero
       (show ZMod.χ₄ (-1) = -1 by decide) (by lia) (mod_cast h4) (mod_cast hr) (h₀.mono (by lia))
 
-/-- For `a = r/s ∈ 𝒜` with sign `ε` in one of the `2`-adic classes (C1)–(C3), `φ₀` gives `φ_n`
-for every `n ≥ 2`: a prime `p ≡ 3 (mod 4)` divides `v_n`
-(`QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass`), and `χ_p` reflects at `c_n`
-(`QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`). -/
+/-- For `a = r/s ∈ 𝒜` with sign `ε` (`a ≤ -2` and `ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and
+`ε = 1`) in one of the `2`-adic classes (C1)–(C3), `φ₀` gives `φ_n` for every `n ≥ 2`: a prime
+`p ≡ 3 (mod 4)` divides `v_n` (`QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass`), and
+`χ_p` reflects at `c_n` (`QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`). -/
 theorem hasCharPattern_mulSingle_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s) {ε : ℤ}
     (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
     (hc : TwoAdicClass r s ε) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ}
     (hn : 2 ≤ n) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
-  have hr0 : r ≠ 0 := by
-    rintro rfl
-    exact h₀.ne_zero le_rfl (by simp) (by simp)
-  obtain ⟨p, hp, hp4, hpv, hpr⟩ := exists_prime_dvd_vSeq_of_twoAdicClass hrs hs hr0 hε hc hn
-  have := Fact.mk hp
-  exact hasCharPattern_mulSingle_of_dvd_vSeq hrs (pow_one p).symm one_ne_zero
-    (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) (by lia) (by simpa using hpv) hpr
-    (h₀.mono (by lia))
+  have hr0 : r ≠ 0 := fun h ↦ h₀.ne_zero le_rfl (by simp) (by simp [h])
+  obtain ⟨p, hp, hp4, hpv, -⟩ := exists_prime_dvd_vSeq_of_twoAdicClass hrs hs hr0 hε hc hn
+  exact hasCharPattern_mulSingle_of_prime_dvd_vSeq hrs h₀ hn hp hp4 hpv
 
-/-- **The main theorem, abstract form**: for `a = r/s ∈ 𝒜` with sign `ε` in one of the `2`-adic
-classes (C1)–(C3), `φ₀` and `φ₁` give `Ω_n ≅ [C₂]ⁿ` for all `n`
-(`QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass` for `n ≥ 2`). -/
+/-- **The main theorem, abstract form**: for `a = r/s ∈ 𝒜` with sign `ε` (`a ≤ -2` and `ε = -1`,
+or `a³ + 2a² + 2a + 2 > 0` and `ε = 1`) in one of the `2`-adic classes (C1)–(C3), `φ₀` and `φ₁`
+give `Ω_n ≅ [C₂]ⁿ` for all `n` (`QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass` for
+`n ≥ 2`). -/
 theorem nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern (hrs : IsCoprime r s) (hs : 0 < s)
     {ε : ℤ}
     (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
@@ -99,8 +108,7 @@ theorem nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern (hrs : IsCoprime r s
 either `a ≤ -2` and `ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and `ε = 1`. If `(r, s, ε)` is in one of
 the `2`-adic classes (C1)–(C3) and two of the three lists of criteria (Z), (O), (T) apply, then
 `Ω_n ≅ [C₂]ⁿ` for all `n`: the arboreal Galois representation of `X² + a` is surjective. -/
-theorem nonempty_mulEquiv_of_twoAdicClass_of_criteria (hrs : IsCoprime r s) (hs : 0 < s)
-    {ε : ℤ}
+theorem nonempty_mulEquiv_of_twoAdicClass_of_criteria (hrs : IsCoprime r s) (hs : 0 < s) {ε : ℤ}
     (hε : (r ≤ -2 * s ∧ ε = -1) ∨ (0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1))
     (hc : TwoAdicClass r s ε)
     (h : NegAllCriterion r s ∧ NegFirstCriterion r s ∨ NegAllCriterion r s ∧ NegTailCriterion r s ∨
@@ -119,16 +127,14 @@ theorem nonempty_mulEquiv_of_twoAdicClass_of_criteria (hrs : IsCoprime r s) (hs 
 theorem hasCharPattern_mulSingle_of_prime_dvd_uSeq (hrs : IsCoprime r s) (hs : Odd s)
     (h4 : r ≡ s [ZMOD 4]) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ} (hn : 1 ≤ n)
     {p : ℕ} [Fact p.Prime] (hp4 : p % 4 = 3) (hpu : (p : ℤ) ∣ uSeq r s n)
-    (hprs : ¬(p : ℤ) ∣ r + s) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
-  refine hasCharPattern_mulSingle_of_dvd_uSeq hrs (pow_one p).symm one_ne_zero
+    (hprs : ¬(p : ℤ) ∣ r + s) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) :=
+  hasCharPattern_mulSingle_of_dvd_uSeq hrs (pow_one p).symm one_ne_zero
     (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) hn (by simpa using hpu) hprs
-    (h₀.mono hn) (χ := Rat.valChar 2) ?_
+    (h₀.mono hn) (χ := Rat.valChar 2) ((h₀.ne_zero hn (by simp)).isUnit.map _).ne_zero
     fun m hm ↦ valChar_two_cSeq_succ_of_modEq_four hrs hs h4 (by lia)
-  have hc := h₀.ne_zero hn (by simp)
-  rcases (Rat.valChar 2).apply_eq_one_or_eq_neg_one (Ne.isUnit hc) with h | h <;> simp [h]
 
 /-- **Odd levels** for `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`) with `a ≤ -2`, or `a > -1`,
-or `a < -1` and `c₃ < 0 < c₄`: `φ₀` gives `φ_n` for every odd `n ≥ 3`. Here `u_n > 0`, a prime
+or `a < -1` and `c_3 < 0 < c_4`: `φ₀` gives `φ_n` for every odd `n ≥ 3`. Here `u_n > 0`, a prime
 `p ≡ 3 (mod 4)` divides `u_n` and not `r + s`, and `val₂` alternates. -/
 theorem hasCharPattern_mulSingle_of_odd (hrs : IsCoprime r s) (hs : 0 < s) (hodd : Odd s)
     (h4 : r ≡ s [ZMOD 4])

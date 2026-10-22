@@ -52,13 +52,14 @@ variable {a : ℚ}
 `n`: `Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
 (`QuadraticIterates.nonempty_mulEquiv_succ_iff`, Lemma 1.4 of [Stoll 1992]), the degree condition
 says that `c_{n+1}` is not a square in `K_n` (`QuadraticIterates.relfinrank_succ_eq_two_pow_iff`,
-Lemma 1.6 of [Stoll 1992], which needs `f_n` irreducible and `c_{n+1} ≠ 0`, i.e. `f_{n+1}`
-irreducible), and given `Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent
-(`QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc`, Lemma 1.5 of [Stoll 1992]). -/
+Lemma 1.6 of [Stoll 1992], which needs `f_n` irreducible and `c_{n+1} ≠ 0`, the latter as
+`f_{n+1}` is irreducible), and given `Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are
+2-independent (`QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc`, Lemma 1.5 of
+[Stoll 1992]). -/
 theorem nonempty_mulEquiv_iff_twoIndependent_of_irreducible {n : ℕ}
     (hirr : ∀ k ≤ n, Irreducible fℚ[a, k]) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
-      TwoIndependent (fun i : Fin n ↦ cSeq a ((i : ℕ) + 1)) := by
+      TwoIndependent fun i : Fin n ↦ cSeq a ((i : ℕ) + 1) := by
   induction n with
   | zero =>
     exact ⟨fun _ S ⟨i, _⟩ ↦ i.elim0, fun _ ↦ (nonempty_mulEquiv_iff_finrank_eq a 0).mpr (by simp)⟩
@@ -70,7 +71,7 @@ theorem nonempty_mulEquiv_iff_twoIndependent_of_irreducible {n : ℕ}
       nonempty_mulEquiv_succ_iff a n]
     refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun h ↦ ?_⟩
     · exact (not_isSquare_algebraMap_iff_twoIndependent_snoc hiso (ih.mp hiso)).mp (h16.mp hrel)
-    · have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr h.of_snoc
+    · have hiso := ih.mpr h.of_snoc
       exact ⟨hiso, h16.mpr ((not_isSquare_algebraMap_iff_twoIndependent_snoc hiso h.of_snoc).mpr h)⟩
 
 /-- If `f_n` is irreducible and `[K_{n+1} : K_n] = 2^{2^n}`, then `c_{n+1} ≠ 0`: otherwise `a` is a
@@ -78,13 +79,11 @@ rational root of the irreducible `f_n`, so `n = 0` and `a = -c_1 = 0`, but then
 `K_1 = K_0 = ℚ`. -/
 lemma cSeq_succ_ne_zero_of_relfinrank_eq {n : ℕ} (hirr : Irreducible fℚ[a, n])
     (h : (splittingField a n).relfinrank (splittingField a (n + 1)) = 2 ^ 2 ^ n) :
-    cSeq a (n + 1) ≠ 0 := by
-  intro h0
+    cSeq a (n + 1) ≠ 0 := fun h0 ↦ by
   have hroot : fℚ[a, n].IsRoot a := by simpa [cSeq_succ_eq_neg_one_pow_mul_eval] using h0
   obtain rfl : n = 0 := by
-    have h1 : fℚ[a, n].natDegree = 1 :=
-      natDegree_eq_of_degree_eq_some (degree_eq_one_of_irreducible_of_root hirr hroot)
-    simpa [natDegree_iteratedPoly] using h1
+    by_contra hn
+    exact hirr.not_isRoot_of_natDegree_ne_one (by simpa [natDegree_iteratedPoly]) hroot
   obtain rfl : a = 0 := by simpa using h0
   simp at h
 
@@ -109,8 +108,8 @@ theorem irreducible_iteratedPoly_of_nonempty_mulEquiv {n : ℕ}
   | zero => simpa [Nat.le_zero.mp hk] using irreducible_X (R := ℚ)
   | succ n ih =>
     obtain ⟨hiso, hrel⟩ := (nonempty_mulEquiv_succ_iff a n).mp h
-    rcases hk.lt_or_eq with hk | rfl
-    · exact ih hiso (Nat.le_of_lt_succ hk)
+    rcases Nat.le_succ_iff.mp hk with hk | rfl
+    · exact ih hiso hk
     · exact irreducible_iteratedPoly_succ_of_relfinrank_eq (ih hiso le_rfl) hrel
 
 /-- The iterates `f_0, …, f_n` are irreducible over `ℚ` when `c_1, …, c_n` are 2-independent, none

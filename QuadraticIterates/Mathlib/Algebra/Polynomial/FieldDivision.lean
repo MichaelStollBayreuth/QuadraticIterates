@@ -37,8 +37,7 @@ theorem comp_dvd_comp_iff {p q r : K[X]} (hr : 0 < r.natDegree) : p.comp r ∣ q
     exact dvd_sub h (dvd_mul_right _ _)
   refine EuclideanDomain.mod_eq_zero.mp (by_contra fun hne ↦ ?_)
   have h1 := natDegree_le_of_dvd hmod (hcomp _ hne)
-  have h2 := natDegree_lt_natDegree hne (degree_mod_lt q hp)
-  simp only [natDegree_comp] at h1
-  exact absurd h1 ((Nat.mul_lt_mul_right hr).mpr h2).not_ge
+  simp only [natDegree_comp, Nat.mul_le_mul_right_iff hr] at h1
+  exact h1.not_gt (natDegree_lt_natDegree hne (degree_mod_lt q hp))
 
 end Polynomial

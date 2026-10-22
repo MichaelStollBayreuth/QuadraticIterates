@@ -28,28 +28,23 @@ section CommMonoid
 variable {M : Type*} [CommMonoid M]
 
 /-- A multiplicative character with values in `ℤ` takes the values `±1` at units. -/
-lemma apply_eq_one_or_eq_neg_one (χ : MulChar M ℤ) {x : M} (hx : IsUnit x) :
-    χ x = 1 ∨ χ x = -1 :=
+lemma apply_eq_one_or_eq_neg_one (χ : MulChar M ℤ) {x : M} (hx : IsUnit x) : χ x = 1 ∨ χ x = -1 :=
   Int.isUnit_iff.mp (hx.map χ)
 
-lemma isQuadratic_int (χ : MulChar M ℤ) : χ.IsQuadratic := fun x ↦ by
-  by_cases hx : IsUnit x
-  · exact .inr (χ.apply_eq_one_or_eq_neg_one hx)
-  · exact .inl (χ.map_nonunit hx)
+lemma isQuadratic_int (χ : MulChar M ℤ) : χ.IsQuadratic := fun x ↦
+  (em (IsUnit x)).symm.imp χ.map_nonunit χ.apply_eq_one_or_eq_neg_one
 
 lemma apply_eq_of_mul_eq_one (χ : MulChar M ℤ) {x y : M} (h : x * y = 1) : χ y = χ x :=
   Int.eq_of_mul_eq_one (by rw [mul_comm, ← map_mul, h, map_one])
 
 lemma apply_sq_of_isUnit (χ : MulChar M ℤ) {x : M} (hx : IsUnit x) : χ (x ^ 2) = 1 := by
-  rcases χ.apply_eq_one_or_eq_neg_one hx with h | h <;> simp [map_pow, h]
+  rw [map_pow, sq, Int.isUnit_mul_self (hx.map χ)]
 
 /-- A square never has the value `-1` under a character into an ordered ring, since
 `χ (y * y) = χ y * χ y ≥ 0`. -/
 lemma apply_ne_neg_one_of_isSquare {R : Type*} [CommRing R] [LinearOrder R]
-    [IsStrictOrderedRing R] (χ : MulChar M R) {x : M} (hx : IsSquare x) : χ x ≠ -1 := by
-  obtain ⟨y, rfl⟩ := hx
-  rw [map_mul]
-  exact (neg_one_lt_zero.trans_le (mul_self_nonneg _)).ne'
+    [IsStrictOrderedRing R] (χ : MulChar M R) {x : M} (hx : IsSquare x) : χ x ≠ -1 :=
+  (neg_one_lt_zero.trans_le (hx.map χ).nonneg).ne'
 
 end CommMonoid
 
@@ -58,9 +53,7 @@ section CommGroupWithZero
 variable {K : Type*} [CommGroupWithZero K] (χ : MulChar K ℤ)
 
 @[simp] lemma apply_inv (x : K) : χ x⁻¹ = χ x := by
-  rcases eq_or_ne x 0 with rfl | hx
-  · simp
-  · exact Int.eq_of_mul_eq_one (by rw [← map_mul, inv_mul_cancel₀ hx, map_one])
+  rw [← inv_apply', χ.isQuadratic_int.inv]
 
 lemma apply_div (x y : K) : χ (x / y) = χ x * χ y := by
   rw [div_eq_mul_inv, map_mul, apply_inv]

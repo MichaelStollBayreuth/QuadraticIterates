@@ -27,16 +27,13 @@ theorem Multiset.exists_add_map_of_involutive {β : Type*} (τ : β → β) (M :
     ∃ N : Multiset β, M = N + N.map τ := by
   induction M using Multiset.strongInductionOn with
   | _ M ih =>
-  rcases M.empty_or_exists_mem with rfl | ⟨x, hx⟩
-  · exact ⟨0, rfl⟩
-  obtain ⟨M₀, rfl⟩ := exists_cons_of_mem hx
-  have hτx : τ x ∈ M₀ := (mem_cons.mp (hinv ▸ mem_map_of_mem τ hx)).resolve_left (hfix x hx)
-  obtain ⟨M', rfl⟩ := exists_cons_of_mem hτx
-  have hmem {y : β} (hy : y ∈ M') : y ∈ x ::ₘ τ x ::ₘ M' := mem_cons_of_mem (mem_cons_of_mem hy)
-  have hinv' : M'.map τ = M' := by
-    simp only [map_cons, hτ x hx] at hinv
-    rw [cons_swap] at hinv
-    exact (cons_inj_right _).mp ((cons_inj_right _).mp hinv)
-  obtain ⟨N', rfl⟩ := ih M' ((lt_cons_self _ _).trans (lt_cons_self _ _))
-    (fun y hy ↦ hτ y (hmem hy)) hinv' (fun y hy ↦ hfix y (hmem hy))
-  exact ⟨x ::ₘ N', by rw [map_cons, cons_add, add_cons]⟩
+    rcases M.empty_or_exists_mem with rfl | ⟨x, hx⟩
+    · exact ⟨0, rfl⟩
+    obtain ⟨M₀, rfl⟩ := exists_cons_of_mem hx
+    have hτx : τ x ∈ M₀ := (mem_cons.mp (hinv ▸ mem_map_of_mem τ hx)).resolve_left (hfix x hx)
+    obtain ⟨M', rfl⟩ := exists_cons_of_mem hτx
+    have hmem {y : β} (hy : y ∈ M') : y ∈ x ::ₘ τ x ::ₘ M' := mem_cons_of_mem (mem_cons_of_mem hy)
+    have hinv' : M'.map τ = M' := by simpa [hτ x hx, cons_swap] using hinv
+    obtain ⟨N', rfl⟩ := ih M' ((lt_cons_self _ _).trans (lt_cons_self _ _))
+      (fun y hy ↦ hτ y (hmem hy)) hinv' (fun y hy ↦ hfix y (hmem hy))
+    exact ⟨x ::ₘ N', by rw [map_cons, cons_add, add_cons]⟩

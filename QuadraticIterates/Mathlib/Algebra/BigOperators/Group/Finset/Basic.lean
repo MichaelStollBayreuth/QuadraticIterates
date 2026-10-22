@@ -20,10 +20,7 @@ namespace Finset
 
 variable {ι M : Type*} [CommMonoid M]
 
-/-- A product over the elements of `s` satisfying `p`, indexed by the type `↥s`, is the product
-over `s.filter p`. -/
-@[to_additive /-- A sum over the elements of `s` satisfying `p`, indexed by the type `↥s`, is the
-sum over `s.filter p`. -/]
+@[to_additive]
 theorem prod_filter_coe_sort (s : Finset ι) (p : ι → Prop) [DecidablePred p] (f : ι → M) :
     ∏ x : ↥s with p x.1, f x = ∏ x ∈ s with p x, f x := by
   rw [prod_filter, prod_filter, prod_coe_sort s fun x ↦ if p x then f x else 1]

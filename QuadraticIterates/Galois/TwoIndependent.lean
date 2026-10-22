@@ -26,8 +26,11 @@ their classes in the `𝔽₂`-vector space `Lˣ/(Lˣ)²` are linearly independe
   2-independence is linear independence of the square classes.
 * `QuadraticIterates.twoIndependent_snoc_iff`: when a family extended by one member is
   2-independent.
-* `QuadraticIterates.twoIndependent_iff_forall_fin`: a sequence is 2-independent iff all its
-  initial segments are.
+* `QuadraticIterates.twoIndependent_iff_forall_finset`,
+  `QuadraticIterates.twoIndependent_iff_forall_fin`: a family is 2-independent iff all its finite
+  subfamilies are, and a sequence iff all its initial segments are.
+* `QuadraticIterates.TwoIndependent.finrank_adjoin_range_eq_two_pow`: square roots of a
+  2-independent family of `m` radicands generate an extension of degree `2 ^ m`.
 -/
 
 @[expose] public section
@@ -38,8 +41,8 @@ section TwoIndependent
 
 variable {ι M : Type*}
 
-/-- A family of elements of a commutative monoid is *2-independent* if no nonempty subfamily has
-a square product. For nonzero rationals this says that the classes in `ℚ*/(ℚ*)²` are
+/-- A family of elements of a commutative monoid is *2-independent* if no nonempty finite
+subfamily has a square product. For nonzero rationals this says that the classes in `ℚ*/(ℚ*)²` are
 `𝔽₂`-linearly independent (`QuadraticIterates.twoIndependent_iff_linearIndependent`). -/
 def TwoIndependent [CommMonoid M] (v : ι → M) : Prop :=
   ∀ S : Finset ι, S.Nonempty → ¬IsSquare (∏ i ∈ S, v i)
@@ -59,47 +62,45 @@ theorem TwoIndependent.comp [CommMonoid M] {κ : Type*} {v : ι → M} (h : TwoI
     (f : κ → ι) (hf : Function.Injective f) : TwoIndependent (v ∘ f) := fun S hS ↦ by
   simpa using h (S.map ⟨f, hf⟩) hS.map
 
+/-- A family is 2-independent iff all its finite subfamilies are. -/
+theorem twoIndependent_iff_forall_finset [CommMonoid M] {v : ι → M} :
+    TwoIndependent v ↔ ∀ s : Finset ι, TwoIndependent fun i : s ↦ v i := by
+  refine ⟨fun h s ↦ h.comp _ Subtype.val_injective, fun h S hS ↦ ?_⟩
+  simpa [Finset.prod_attach] using h S Finset.univ (by simpa using hS)
+
 /-- A sequence is 2-independent iff all its initial segments are: a finite set of indices lies in
 some `{0, …, n - 1}`. -/
 theorem twoIndependent_iff_forall_fin [CommMonoid M] {v : ℕ → M} :
     TwoIndependent v ↔ ∀ n, TwoIndependent fun i : Fin n ↦ v i := by
-  refine ⟨fun h n ↦ h.comp _ Fin.val_injective, fun h S hS ↦ ?_⟩
+  refine ⟨fun h n ↦ h.comp _ Fin.val_injective,
+    fun h ↦ twoIndependent_iff_forall_finset.mpr fun S ↦ ?_⟩
   obtain ⟨n, hn⟩ := S.exists_nat_subset_range
-  have hlt (m : ℕ) (hm : m ∈ S) : m < n := Finset.mem_range.mp (hn hm)
-  have hprod := Finset.prod_map (S.attachFin hlt) Fin.valEmbedding v
-  rw [Finset.map_valEmbedding_attachFin] at hprod
-  simpa [hprod] using
-    h n (S.attachFin hlt) (Finset.map_nonempty.mp (by rwa [Finset.map_valEmbedding_attachFin]))
+  exact (h n).comp (fun i : S ↦ ⟨i, Finset.mem_range.mp (hn i.2)⟩)
+    fun _ _ hij ↦ Subtype.ext congr(Fin.val $hij)
 
 theorem twoIndependent_fin_two_iff [CommMonoid M] {v : Fin 2 → M} :
     TwoIndependent v ↔ ¬IsSquare (v 0) ∧ ¬IsSquare (v 1) ∧ ¬IsSquare (v 0 * v 1) := by
   refine ⟨fun h ↦ ⟨h.not_isSquare 0, h.not_isSquare 1, by
     simpa [Fin.prod_univ_two] using h Finset.univ Finset.univ_nonempty⟩,
     fun ⟨h₀, h₁, h₀₁⟩ S hS ↦ ?_⟩
-  rcases (by revert S; decide : ∀ S : Finset (Fin 2), S.Nonempty → S = {0} ∨ S = {1} ∨
-    S = Finset.univ) S hS with rfl | rfl | rfl
+  obtain rfl | rfl | rfl : S = {0} ∨ S = {1} ∨ S = Finset.univ := by revert S; decide
   · simpa using h₀
   · simpa using h₁
   · simpa [Fin.prod_univ_two] using h₀₁
 
 theorem TwoIndependent.of_snoc [CommMonoid M] {n : ℕ} {v : Fin n → M} {c : M}
     (h : TwoIndependent (Fin.snoc v c)) :
-    TwoIndependent v := fun S hS ↦ by
-  simpa [Fin.snoc_castSucc, Finset.prod_map S Fin.castSuccEmb (Fin.snoc v c)] using
-    h (S.map Fin.castSuccEmb) hS.map
+    TwoIndependent v := by simpa using h.comp _ (Fin.castSucc_injective n)
 
 theorem twoIndependent_snoc_iff [CommMonoid M] {n : ℕ} (v : Fin n → M) (c : M) :
     TwoIndependent (Fin.snoc v c) ↔
       TwoIndependent v ∧ ∀ S : Finset (Fin n), ¬IsSquare (c * ∏ i ∈ S, v i) := by
-  have hprod (S : Finset (Fin n)) :
-      ∏ i ∈ S.map Fin.castSuccEmb, Fin.snoc v c i = ∏ i ∈ S, v i := by
-    simp [Fin.snoc_castSucc]
   refine ⟨fun h ↦ ⟨h.of_snoc, fun S ↦ ?_⟩, fun ⟨hv, hc⟩ T hT ↦ ?_⟩
-  · simpa [Finset.prod_insert, hprod S, Fin.snoc_last] using
+  · simpa [Finset.prod_insert] using
       h (insert (Fin.last n) (S.map Fin.castSuccEmb)) (Finset.insert_nonempty _ _)
   · obtain ⟨S, rfl | rfl⟩ := Fin.exists_eq_map_castSuccEmb_or_insert_last T
-    · exact hprod S ▸ hv S (Finset.map_nonempty.mp hT)
-    · simpa [Finset.prod_insert, Fin.snoc_last, hprod] using hc S
+    · simpa using hv S (Finset.map_nonempty.mp hT)
+    · simpa [Finset.prod_insert] using hc S
 
 private theorem twoIndependent_iff_linearIndependent_of_finite [Finite ι] {L : Type*} [Field L]
     [DecidableEq L] (v : ι → L) :
@@ -117,13 +118,7 @@ private theorem twoIndependent_iff_linearIndependent_of_finite [Finite ι] {L : 
       (mem_rootRelations hv0).mpr (by simpa using hsq)
     obtain ⟨i, hiS⟩ := hS
     have h0 := (Submodule.mem_bot (ZMod 2)).mp (((rootRelations_eq_bot_iff v).mpr H).le hmem)
-    simpa [hiS] using congrFun h0 i
-
-/-- A family is 2-independent iff all its finite subfamilies are. -/
-theorem twoIndependent_iff_forall_finset [CommMonoid M] {v : ι → M} :
-    TwoIndependent v ↔ ∀ s : Finset ι, TwoIndependent fun i : s ↦ v i := by
-  refine ⟨fun h s ↦ h.comp _ Subtype.val_injective, fun h S hS ↦ ?_⟩
-  simpa [Finset.prod_attach] using h S Finset.univ (by simpa using hS)
+    simpa [hiS] using congr($h0 i)
 
 /-- A family in a field `L` is 2-independent iff the family of its classes in `Lˣ/(Lˣ)²` is
 `𝔽₂`-linearly independent. -/

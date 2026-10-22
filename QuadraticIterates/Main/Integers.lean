@@ -13,7 +13,7 @@ import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 /-!
 # Integer parameters
 
-For `a ∈ ℤ`, that is `s = 1`, the square class `c₂ ∼ a(a + 1)` is never trivial
+For `a ∈ ℤ`, that is `s = 1`, the square class `c_2 ∼ a(a + 1)` is never trivial
 (`Int.not_isSquare_mul_add_one`), so for `a > 0` or `a ≤ -2` in a `2`-adic class the level-two
 criterion `QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass` says that
 the arboreal representation of `X² + a` is surjective if and only if neither `-a` nor `-a - 1` is a
@@ -32,8 +32,10 @@ first three, `-a - 1` is negative or `≡ 3 mod 4`. This contains the main resul
 
 ## References
 
-* [M. Stoll, *Galois groups over ℚ of some iterated polynomials*, Arch. Math. 59 (1992)]
-* [H.-C. Li, Arch. Math. 114 (2020), 265-269]
+* M. Stoll, *Galois groups over ℚ of some iterated polynomials*, Arch. Math. **59** (1992),
+  239-244.
+* H.-C. Li, *Arboreal Galois representation for a certain type of quadratic polynomials*,
+  Arch. Math. **114** (2020), 265-269.
 -/
 
 @[expose] public section
@@ -42,8 +44,8 @@ namespace QuadraticIterates
 
 variable {a : ℤ}
 
-/-- The level-two criterion at `s = 1`: as `c₂ ∼ a(a + 1)` is not a square, only `c₁ ∼ -a` and
-`c₁ c₂ ∼ -a - 1` remain. -/
+/-- The level-two criterion at `s = 1`: as `c_2 ∼ a(a + 1)` is not a square, only `c_1 ∼ -a` and
+`c_1 c_2 ∼ -a - 1` remain. -/
 private lemma forall_nonempty_mulEquiv_intCast_iff_of_twoAdicClass {ε : ℤ}
     (ha : a ≤ -2 ∧ ε = -1 ∨ 0 < a ∧ ε = 1) (hc : TwoAdicClass a 1 ε) :
     (∀ n, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)) ↔
@@ -90,7 +92,9 @@ theorem forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three (ha : a < 0) (
     (.inl ⟨odd_one, by rw [Int.ModEq]; lia⟩)).trans (and_iff_right hsq)
 
 /-- For `a < 0` with `a ≡ 3 mod 4` and neither `-a` nor `-a - 1` a square, `Ω_n ≅ [C₂]ⁿ` for all
-`n`. -/
+`n`: the direction `⇐` of
+`QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three` (Theorem 3.5 of
+[Li 2020]). -/
 theorem nonempty_mulEquiv_of_neg_of_emod_four_eq_three (ha : a < 0) (ha4 : a % 4 = 3)
     (h₁ : ¬IsSquare (-a)) (h₂ : ¬IsSquare (-a - 1)) (n : ℕ) :
     Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=

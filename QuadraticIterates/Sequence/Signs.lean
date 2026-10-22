@@ -14,8 +14,9 @@ import QuadraticIterates.Mathlib.Algebra.QuadraticDiscriminant
 
 For a parameter `a` in a linearly ordered commutative ring: the signs of `c_n` for `a > 0`, for
 `-1 < a < 0` and for `a ≤ -2`; the window `a < -1`, `c_3 < 0 < c_4`, in which the odd terms lie
-in `[a, c_3]` with `c_3 < -1` and the even terms in `[c_4, c_2]` with `c_4 > 0`; and the
-negativity of `c_n + c_{n+1}` for `α < a < 0`, `α` the real root of `x³ + 2x² + 2x + 2`.
+in `[a, c_3]` with `c_3 < -1` and the even terms in `[c_4, c_2]` with `c_4 > 0`; the negativity
+of `c_n + c_{n+1}` for `α < a < 0`, `α` the real root of `x³ + 2x² + 2x + 2`; and the positivity
+of `c_n² - c_n + a + 1` for `a ≤ -2`, for `a > -1`, and at the odd `n ≥ 3` in the window.
 
 ## Main statements
 
@@ -23,6 +24,9 @@ negativity of `c_n + c_{n+1}` for `α < a < 0`, `α` the real root of `x³ + 2x�
   `QuadraticIterates.neg_le_cSeq_of_le_neg_two`: the signs.
 * `QuadraticIterates.cSeq_mem_Icc_of_even`, `QuadraticIterates.cSeq_mem_Icc_of_odd`: the window.
 * `QuadraticIterates.cSeq_add_cSeq_succ_neg`: `c_n + c_{n+1} < 0` for `α < a < 0` and `n ≥ 2`.
+* `QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_le_neg_two`,
+  `QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt`,
+  `QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_odd`: `c_n² - c_n + a + 1 > 0`.
 -/
 
 @[expose] public section
@@ -40,8 +44,7 @@ theorem le_cSeq {n : ℕ} (hn : 2 ≤ n) : a ≤ cSeq a n := by
 
 /-- For `-2 ≤ a ≤ 0` the second iterate `c_2 = a² + a` bounds the sequence from above: the
 interval `[a, a² + a]`, contained in `[a, -a]`, is mapped into itself by `x ↦ x² + a`. -/
-theorem cSeq_le_sq_add (h₂ : -2 ≤ a) (h₀ : a ≤ 0) {n : ℕ} (hn : 2 ≤ n) :
-    cSeq a n ≤ a ^ 2 + a := by
+theorem cSeq_le_sq_add (h₂ : -2 ≤ a) (h₀ : a ≤ 0) {n : ℕ} (hn : 2 ≤ n) : cSeq a n ≤ a ^ 2 + a := by
   induction n, hn using Nat.le_induction with
   | base => exact (cSeq_two a).le
   | succ k hk ih =>
@@ -88,19 +91,15 @@ theorem cSeq_add_cSeq_succ_neg_of_lt {α : R} (hα : α ^ 3 + 2 * α ^ 2 + 2 * �
     (ha : a < 0) {n : ℕ} (hn : 2 ≤ n) : cSeq a n + cSeq a (n + 1) < 0 := by
   refine cSeq_add_cSeq_succ_neg a ha ?_ hn
   have hpos : 0 < a ^ 2 + a * α + α ^ 2 + 2 * a + 2 * α + 2 := by
-    nlinarith [sq_nonneg (2 * a + α + 2), sq_nonneg (3 * α + 2)]
+    linarith [sq_nonneg (2 * a + α + 2), sq_nonneg (3 * α + 2)]
   linear_combination mul_pos (sub_pos.2 h) hpos - hα
-
 
 variable {a}
 
-theorem cSeq_pos_of_pos (ha : 0 < a) {n : ℕ} (hn : 2 ≤ n) : 0 < cSeq a n := by
-  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by lia⟩
-  rw [cSeq_succ a (by lia)]
-  positivity
+theorem cSeq_pos_of_pos (ha : 0 < a) {n : ℕ} (hn : 2 ≤ n) : 0 < cSeq a n :=
+  ha.trans_le (le_cSeq a hn)
 
-theorem cSeq_neg_of_neg_one_lt (h₁ : -1 < a) (h₀ : a < 0) {n : ℕ} (hn : 2 ≤ n) :
-    cSeq a n < 0 :=
+theorem cSeq_neg_of_neg_one_lt (h₁ : -1 < a) (h₀ : a < 0) {n : ℕ} (hn : 2 ≤ n) : cSeq a n < 0 :=
   (cSeq_le_sq_add a (by linarith) h₀.le hn).trans_lt (by nlinarith)
 
 theorem neg_le_cSeq_of_le_neg_two (ha : a ≤ -2) {n : ℕ} (hn : 1 ≤ n) : -a ≤ cSeq a n := by
@@ -159,8 +158,8 @@ theorem cSeq_sq_sub_cSeq_add_pos_of_le_neg_two (ha : a ≤ -2) {n : ℕ} (hn : 1
 theorem cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt (ha : -1 < a) {n : ℕ} (hn : 2 ≤ n) :
     0 < cSeq a n ^ 2 - cSeq a n + a + 1 := by
   rcases le_or_gt 0 a with h | h
-  · nlinarith [sq_nonneg (cSeq a n), sq_nonneg (cSeq a n - 1)]
-  · nlinarith [cSeq_neg_of_neg_one_lt ha h hn, sq_nonneg (cSeq a n)]
+  · linarith [sq_nonneg (cSeq a n), sq_nonneg (cSeq a n - 1)]
+  · linarith [cSeq_neg_of_neg_one_lt ha h hn, sq_nonneg (cSeq a n)]
 
 /-- In the window `a < -1`, `c_3 < 0 < c_4`, `c_n² - c_n + a + 1 > 0` for odd `n ≥ 3`: there
 `c_n ≤ c_3 < -1`, and `a > -2`. -/
@@ -169,7 +168,7 @@ theorem cSeq_sq_sub_cSeq_add_pos_of_odd (ha : a < -1) (h₃ : cSeq a 3 < 0) (h�
   have hc := (cSeq_mem_Icc_of_odd ha h₃ h₄ hn ho).2.trans_lt (cSeq_three_lt_neg_one ha h₃ h₄)
   have ha₂ : -2 < a := lt_of_not_ge fun h ↦
     h₃.not_ge ((neg_nonneg.mpr (by linarith)).trans (neg_le_cSeq_of_le_neg_two h (by norm_num)))
-  nlinarith
+  linarith [sq_nonneg (cSeq a n)]
 
 end
 

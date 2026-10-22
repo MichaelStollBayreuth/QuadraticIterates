@@ -50,9 +50,9 @@ private lemma isSquare_cSeq_of_even_factorization {j : ℕ} {g : ℚ[X]}
     (hgeq : g * g.comp (-X) = C ((-1 : ℚ) ^ g.natDegree) * fℚ[a, j + 1]) :
     IsSquare (cSeq a (j + 1)) := by
   have hgnd : g.natDegree = 2 ^ j := by grind [natDegree_iteratedPoly]
-  have heval := congrArg (eval 0) hgeq
+  have heval := congr(eval 0 $hgeq)
   simp only [eval_mul, eval_C, eval_comp, eval_neg, eval_X, neg_zero] at heval
-  exact ⟨g.eval 0, by rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd]; exact heval.symm⟩
+  exact ⟨g.eval 0, by rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, ← hgnd, heval]⟩
 
 /-- Lemma 1.2 of [Stoll 1992], one step: if `f_n` is irreducible over `ℚ` and `c_{n+1}` is not a
 square, then `f_{n+1}` is irreducible. `f_{n+1} = f_n ∘ (X² + a)` is even and, `f_n` being
@@ -64,9 +64,8 @@ theorem irreducible_iteratedPoly_succ_of_not_isSquare {n : ℕ} (hirr : Irreduci
   by_contra hred
   obtain ⟨g, hgdeg, hgeq⟩ :=
     (monic_iteratedPoly a (n + 1)).exists_mul_comp_neg_X_eq_of_not_irreducible
-      (iteratedPoly_succ_comp_neg_X a n) hred fun _ ↦ by
-        rw [iteratedPoly_succ_comp]
-        exact hirr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X hF0
+      (iteratedPoly_succ_comp_neg_X a n) hred fun _ ↦ iteratedPoly_succ_comp a n ▸
+        hirr.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X hF0
   exact hc (isSquare_cSeq_of_even_factorization hgdeg hgeq)
 
 /-- Lemma 1.2 of [Stoll 1992]: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is
@@ -84,12 +83,10 @@ theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ}
 /-- `c_{n+1} = ± f_{n+1}(0)` is nonzero when `f_{n+1}` is irreducible: otherwise `X` would divide
 `f_{n+1}`. -/
 lemma cSeq_succ_ne_zero_of_irreducible {n : ℕ} (hirr : Irreducible fℚ[a, n + 1]) :
-    cSeq a (n + 1) ≠ 0 := fun h ↦ by
-  rw [cSeq_succ_eq_neg_one_pow_mul_eval_zero, mul_eq_zero, pow_eq_zero_iff (Nat.two_pow_pos n).ne']
-    at h
-  have := Nat.one_lt_two_pow n.succ_ne_zero
-  exact hirr.not_isRoot_of_natDegree_ne_one (by rw [natDegree_iteratedPoly]; lia)
-    (h.resolve_left (neg_ne_zero.mpr one_ne_zero))
+    cSeq a (n + 1) ≠ 0 := fun h ↦
+  hirr.not_isRoot_of_natDegree_ne_one
+    (natDegree_iteratedPoly a (n + 1) ▸ (Nat.one_lt_two_pow n.succ_ne_zero).ne')
+    (by simpa [cSeq_succ_eq_neg_one_pow_mul_eval_zero] using h)
 
 /-- `a` is not a root of `f_n` when `c_{n+1} = ± f_n(a) ≠ 0`: the shifted roots `β - a` of `f_n`,
 whose square roots generate `K_{n+1}` over `K_n`, are nonzero. -/

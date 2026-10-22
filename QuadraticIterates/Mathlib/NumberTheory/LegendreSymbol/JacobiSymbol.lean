@@ -61,16 +61,14 @@ theorem exists_sq_modEq_prime_pow {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y 
     | zero => exact ⟨y, .refl _, by simpa using h⟩
     | succ k ih =>
       obtain ⟨z, hzy, hz⟩ := ih
-      have hcop : IsCoprime (2 * z) p := (hp'.coprime_iff_not_dvd.mpr fun h2z ↦
-        (hp'.dvd_or_dvd h2z).elim (fun h2 ↦ hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp
-          (mod_cast h2))) fun hz' ↦ hy ((hzy.dvd_iff ..).mp hz')).symm
+      have hcop : IsCoprime (2 * z) p := .mul_left
+        (Nat.isCoprime_iff_coprime.mpr ((Nat.coprime_primes Nat.prime_two hp).mpr hp2.symm))
+        (hp'.coprime_iff_not_dvd.mpr fun hz' ↦ hy ((hzy.dvd_iff ..).mp hz')).symm
       obtain ⟨t, ht⟩ := exists_add_mul_sq_modEq_mul (dvd_pow_self _ k.succ_ne_zero) hz hcop
       refine ⟨z + t * p ^ (k + 1), Int.ModEq.trans ?_ hzy, by rwa [← pow_succ] at ht⟩
       exact Int.modEq_iff_dvd.mpr ⟨-(t * p ^ k), by ring⟩
-  rcases k.eq_zero_or_pos with rfl | hk
-  · exact ⟨0, by simp [Int.ModEq]⟩
-  · obtain ⟨z, -, hz⟩ := key (k - 1)
-    exact ⟨z, by rwa [Nat.sub_add_cancel hk] at hz⟩
+  obtain ⟨z, -, hz⟩ := key k
+  exact ⟨z, hz.of_dvd (pow_dvd_pow _ k.le_succ)⟩
 
 /-- An integer `≡ 1 (mod 8)` is a square modulo every power of `2`. -/
 theorem exists_sq_modEq_two_pow {x : ℤ} (hx : x ≡ 1 [ZMOD 8]) (k : ℕ) :
@@ -84,16 +82,15 @@ theorem exists_sq_modEq_two_pow {x : ℤ} (hx : x ≡ 1 [ZMOD 8]) (k : ℕ) :
         (show z ^ 2 ≡ x [ZMOD 2 * 2 ^ (k + 2)] by rwa [← pow_succ'])
       refine ⟨z + t * 2 ^ (k + 2), hz.add_even ⟨t * 2 ^ (k + 1), by ring⟩, ?_⟩
       rwa [show (4 : ℤ) * 2 ^ (k + 2) = 2 ^ (k + 1 + 3) by ring] at ht
-  rcases le_or_gt k 3 with hk | hk
-  · exact ⟨1, (hx.symm.of_dvd (pow_dvd_pow 2 hk : (2 : ℤ) ^ k ∣ 2 ^ 3)).trans (by simp)⟩
-  · obtain ⟨z, -, hz⟩ := key (k - 3)
-    exact ⟨z, by rwa [Nat.sub_add_cancel hk.le] at hz⟩
+  obtain ⟨z, -, hz⟩ := key k
+  exact ⟨z, hz.of_dvd (pow_dvd_pow 2 (k.le_add_right 3))⟩
 
 end Int
 
 namespace ZMod
 
-/-- An integer that is a square modulo coprime `m` and `n` is a square modulo `m n`. -/
+/-- An integer that is a square modulo coprime `m` and `n` is a square modulo `m n`; this
+generalizes `ZMod.isSquare_neg_one_mul` from `-1` to any integer. -/
 theorem isSquare_intCast_mul {m n : ℕ} (hmn : m.Coprime n) {x : ℤ}
     (hm : IsSquare (x : ZMod m)) (hn : IsSquare (x : ZMod n)) : IsSquare (x : ZMod (m * n)) := by
   obtain ⟨a, ha⟩ := hm
@@ -112,13 +109,13 @@ of `p`. -/
 theorem isSquare_intCast_prime_pow_of_jacobiSym_eq_one {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2)
     {x : ℤ} (h : jacobiSym x p = 1) (k : ℕ) : IsSquare (x : ZMod (p ^ k)) := by
   obtain ⟨y, hy⟩ := ZMod.isSquare_of_jacobiSym_eq_one h
+  obtain ⟨y, rfl⟩ := ZMod.intCast_surjective y
   have hx : (x : ZMod p) ≠ 0 := fun h0 ↦ by
     rw [← jacobiSym.legendreSym.to_jacobiSym, (legendreSym.eq_zero_iff p x).mpr h0] at h
     exact zero_ne_one h
-  have hyy : ((y.val : ℤ) : ZMod p) = y := by simp
-  obtain ⟨z, hz⟩ := Int.exists_sq_modEq_prime_pow (Fact.out : p.Prime) hp2 (x := x) (y := y.val)
-    (fun hd ↦ hx (by rw [hy, ← hyy, (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hd, mul_zero]))
-    ((ZMod.intCast_eq_intCast_iff _ _ p).mp (by rw [Int.cast_pow, hyy, hy, sq])) k
+  obtain ⟨z, hz⟩ := Int.exists_sq_modEq_prime_pow (Fact.out : p.Prime) hp2 (x := x) (y := y)
+    (fun hd ↦ hx (by rw [hy, (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hd, mul_zero]))
+    ((ZMod.intCast_eq_intCast_iff _ _ p).mp (by rw [Int.cast_pow, hy, sq])) k
   exact isSquare_intCast_of_modEq (by rwa [Nat.cast_pow])
 
 theorem isSquare_intCast_two_pow_of_modEq {x : ℤ} (hx : x ≡ 1 [ZMOD 8]) (k : ℕ) :
@@ -130,12 +127,10 @@ private lemma isSquare_intCast_two_pow {x : ℤ} {n : ℕ} (hn : 0 < n) (h4 : 4 
     (h8 : 8 ∣ 2 ^ n → x % 8 = 1) : IsSquare (x : ZMod (2 ^ n)) := by
   rcases (by lia : n = 1 ∨ n = 2 ∨ 3 ≤ n) with rfl | rfl | hn3
   · rw [pow_one]
-    generalize (x : ZMod 2) = y
-    revert y
-    decide
+    exact FiniteField.isSquare_of_char_two (ZMod.ringChar_zmod_n 2) _
   · rw [show (x : ZMod (2 ^ 2)) = 1 from (ZMod.intCast_eq_intCast_iff' x 1 4).mpr
       (by simpa using h4 dvd_rfl)]
-    exact ⟨1, (mul_one 1).symm⟩
+    exact .one
   · exact isSquare_intCast_two_pow_of_modEq (h8 (pow_dvd_pow 2 hn3 : 2 ^ 3 ∣ 2 ^ n)) n
 
 /-- An integer `x` is a square modulo `M ≠ 0` if `(x / p) = 1` for every odd prime `p ∣ M`,
@@ -166,15 +161,14 @@ theorem exists_of_not_isSquare_intCast {x : ℤ} {M : ℕ} (hM : M ≠ 0) (hx : 
     (h : ¬IsSquare (x : ZMod M)) :
     (∃ p : ℕ, p.Prime ∧ p ≠ 2 ∧ p ∣ M ∧ jacobiSym x p = -1) ∨ (4 ∣ M ∧ x % 4 = 3) ∨
       (8 ∣ M ∧ x % 8 ≠ 1) := by
-  by_contra! hc
-  obtain ⟨hp, h4, h8⟩ := hc
+  by_contra! ⟨hp, h4, h8⟩
   refine h (isSquare_intCast_of_forall hM (fun p hpp hp2 hpM ↦ ?_) (fun h4M ↦ ?_) h8)
   · have hcop : x.gcd p = 1 := Int.isCoprime_iff_gcd_eq_one.mp
       (hx.of_isCoprime_of_dvd_right (Int.natCast_dvd_natCast.mpr hpM))
     exact (jacobiSym.eq_one_or_neg_one hcop).resolve_right (hp p hpp hp2 hpM)
-  · have h2 : ¬(2 : ℤ) ∣ x := fun h2 ↦ (Nat.prime_iff_prime_int.mp Nat.prime_two).not_isUnit
+  · have h2 : ¬(2 : ℤ) ∣ x := fun h2 ↦ Int.prime_two.not_isUnit
       (hx.isUnit_of_dvd' h2 (Int.natCast_dvd_natCast.mpr ((dvd_mul_right 2 2).trans h4M)))
-    lia [h4 h4M]
+    lia
 
 end ZMod
 
