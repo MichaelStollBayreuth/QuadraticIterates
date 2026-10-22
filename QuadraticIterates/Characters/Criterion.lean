@@ -143,7 +143,8 @@ all later terms, then the Galois groups `Ω_n` of the iterates of `X² + a` sati
 theorem forall_nonempty_mulEquiv_of_forall_exists_mulChar {a : ℚ}
     (h₀ : HasCharPattern (cSeq a) 1 (-1)) (h₁ : HasCharPattern (cSeq a) 1 (Pi.mulSingle 1 (-1)))
     (h : ∀ n ≥ 2, ∃ ψ : MulChar ℚ ℤ, ψ (cSeq a n) ≠ 0 ∧ ∀ m > n, ψ (cSeq a m) = -ψ (cSeq a n))
-    (n : ℕ) : Nonempty (GaloisGroup a n ≃* WreathPower n) := by
+    (n : ℕ) :
+    Nonempty (GaloisGroup a n ≃* WreathPower n) := by
   refine forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern h₁ (fun n hn ↦ ?_) n
   obtain ⟨ψ, hψ, hψn⟩ := h n hn
   exact hasCharPattern_mulSingle_of_neg_of_forall_lt (h₀.mono (by lia)) hψ hψn

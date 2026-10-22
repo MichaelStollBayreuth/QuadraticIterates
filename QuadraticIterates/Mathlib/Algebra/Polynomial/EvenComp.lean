@@ -36,7 +36,8 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 namespace Polynomial
 
 theorem expand_contract_of_forall_coeff_eq_zero {R : Type*} [CommSemiring R] {p : ℕ} (hp : p ≠ 0)
-    {f : R[X]} (hf : ∀ n, ¬ p ∣ n → f.coeff n = 0) : expand R p (contract p f) = f := by
+    {f : R[X]} (hf : ∀ n, ¬ p ∣ n → f.coeff n = 0) :
+    expand R p (contract p f) = f := by
   ext n
   rw [coeff_expand hp.bot_lt, coeff_contract hp]
   split_ifs with h
@@ -51,7 +52,8 @@ lemma X_sq_add_C_comp_neg_X (c : R) : (X ^ 2 + C c).comp (-X) = X ^ 2 + C c := b
   natDegree_eq_of_degree_eq degree_comp_neg_X
 
 theorem comp_neg_X_eq_or_eq_neg_of_associated [IsDomain R] {p : R[X]} (hp : p ≠ 0)
-    (h : Associated (p.comp (-X)) p) : p.comp (-X) = p ∨ p.comp (-X) = -p := by
+    (h : Associated (p.comp (-X)) p) :
+    p.comp (-X) = p ∨ p.comp (-X) = -p := by
   obtain ⟨u, hu⟩ := h
   obtain ⟨c, -, hcu⟩ := isUnit_iff.mp u.isUnit
   rw [← hcu] at hu
@@ -73,7 +75,8 @@ variable [NoZeroDivisors R] [NeZero (2 : R)] {b : R[X]}
 /-- Over a domain of characteristic `≠ 2`, the odd coefficients of a polynomial fixed by
 `X ↦ -X` vanish. -/
 theorem coeff_eq_zero_of_comp_neg_X_eq_of_not_two_dvd (hb : b.comp (-X) = b) {n : ℕ}
-    (hn : ¬ 2 ∣ n) : b.coeff n = 0 := by
+    (hn : ¬ 2 ∣ n) :
+    b.coeff n = 0 := by
   have hcoeff : (b.comp (-X)).coeff n = b.coeff n * (-1) ^ n := by
     simpa using comp_C_mul_X_coeff (p := b) (r := -1) (n := n)
   rw [hb, Odd.neg_one_pow (Nat.odd_iff.mpr (by lia))] at hcoeff
@@ -101,7 +104,8 @@ section Field
 variable {K : Type*} [Field K]
 
 private theorem Monic.eq_C_neg_one_pow_mul_of_associated {g p : K[X]} (hg : g.Monic) (hp : p.Monic)
-    (h : Associated p (g * g.comp (-X))) : p = C ((-1) ^ g.natDegree) * (g * g.comp (-X)) := by
+    (h : Associated p (g * g.comp (-X))) :
+    p = C ((-1) ^ g.natDegree) * (g * g.comp (-X)) := by
   refine eq_of_monic_of_associated hp ?_ (h.trans (associated_unit_mul_left _ _
     (isUnit_C.mpr (isUnit_one.neg.pow _))).symm)
   simpa [mul_left_comm] using hg.mul hg.neg_one_pow_natDegree_mul_comp_neg_X

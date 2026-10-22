@@ -73,7 +73,8 @@ theorem unitPartChar_cSeq_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N 
 `N` is a unit, so `χ_ψ(c_n) = ψ(c̄_n) ≠ 0` (`QuadraticIterates.unitPartChar_cSeq`). -/
 theorem unitPartChar_cSeq_ne_zero_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N = p ^ k)
     (hk : k ≠ 0) (ψ : MulChar (ZMod N) ℤ) {n : ℕ} (hn : 1 ≤ n) (hdvd : (N : ℤ) ∣ vSeq r s n)
-    (hpr : ¬(p : ℤ) ∣ r) : unitPartChar p ψ (cSeq ((r : ℚ) / s) n) ≠ 0 := by
+    (hpr : ¬(p : ℤ) ∣ r) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) n) ≠ 0 := by
   obtain ⟨σ, hσ, -, hu⟩ := exists_inv_of_dvd_vSeq hrs hN hn hdvd hpr
   exact unitPartChar_cSeq hN hk ψ hσ hn hu ▸ (hu.map ψ).ne_zero
 
@@ -116,7 +117,8 @@ private lemma exists_inv_of_dvd_uSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N =
 at all `m ≥ n + 1`. -/
 private lemma isUnit_of_add_two_eq {M : Type*} [Monoid M] {c : ℕ → M} {n : ℕ}
     (h₁ : IsUnit (c (n + 1))) (h₂ : IsUnit (c (n + 2))) (hp : ∀ m ≥ n + 1, c (m + 2) = c m)
-    (m : ℕ) (hm : n + 1 ≤ m) : IsUnit (c m) := by
+    (m : ℕ) (hm : n + 1 ≤ m) :
+    IsUnit (c m) := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hm
   induction k using Nat.twoStepInduction with
   | zero => exact h₁

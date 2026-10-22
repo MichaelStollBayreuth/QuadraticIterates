@@ -145,7 +145,8 @@ theorem valChar_two_cSeq_succ_of_modEq_four (hrs : IsCoprime r s) (hs : Odd s)
 
 private lemma hasCharPattern_mulSingle_one_of_parity {M : Type*} [CommMonoid M] {v : ℕ → M}
     (χ : MulChar M ℤ) (h₁ : χ (v 1) = -1) (hodd : ∀ j ≥ 1, χ (v (2 * j + 1)) = 1)
-    (heven : ∀ j ≥ 1, χ (v (2 * j)) = 1) : HasCharPattern v 1 (Pi.mulSingle 1 (-1)) :=
+    (heven : ∀ j ≥ 1, χ (v (2 * j)) = 1) :
+    HasCharPattern v 1 (Pi.mulSingle 1 (-1)) :=
   hasCharPattern_mulSingle_one_of_apply χ h₁ fun n hn ↦ by
     obtain ⟨j, rfl | rfl⟩ := Nat.even_or_odd' n
     exacts [heven j (by lia), hodd j (by lia)]
@@ -154,7 +155,8 @@ private lemma hasCharPattern_mulSingle_one_of_parity {M : Type*} [CommMonoid M] 
 `(-1, χ₈(rs), 1, χ₈(rs), 1, …)`, and `val₂` the pattern `(1, -1, 1, -1, …)`, so `χ₄` (if
 `rs ≡ 1 mod 8`) or `χ₄ val₂` (if `rs ≡ 5 mod 8`) realizes `φ₁`. -/
 theorem hasCharPattern_mulSingle_one_of_modEq_four (hrs : IsCoprime r s) (hs : Odd s)
-    (h4 : r ≡ s [ZMOD 4]) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
+    (h4 : r ≡ s [ZMOD 4]) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
   have hs0 : s ≠ 0 := by rintro rfl; simp at hs
   have h2 := two_dvd_add_of_modEq_four hs h4
   have hodd (j : ℕ) := valChar_cSeq_two_mul_add_one_of_dvd_add hrs hs0 h2 j

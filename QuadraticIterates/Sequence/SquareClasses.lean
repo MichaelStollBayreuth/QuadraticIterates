@@ -90,7 +90,8 @@ theorem unitPartChar_cSeq {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k 
 `v_p(c_n)` is even, as `r w_n = s^{2^{n-1}} c̄_n` is prime to `p`. -/
 theorem valChar_cSeq_of_isUnit {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k ≠ 0)
     {σ : ZMod N} (hσ : (s : ZMod N) * σ = 1) {n : ℕ} (hn : 1 ≤ n)
-    (hu : IsUnit (cSeq ((r : ZMod N) * σ) n)) : Rat.valChar p (cSeq ((r : ℚ) / s) n) = 1 := by
+    (hu : IsUnit (cSeq ((r : ZMod N) * σ) n)) :
+    Rat.valChar p (cSeq ((r : ℚ) / s) n) = 1 := by
   obtain ⟨hps, hpw⟩ := not_dvd_of_isUnit_cSeq hN hk hσ hn hu
   have hs : s ≠ 0 := fun h ↦ hps (h ▸ dvd_zero _)
   rw [cSeq_div_eq r hs hn, MulChar.apply_div, ← Int.cast_mul, ← Int.cast_pow,

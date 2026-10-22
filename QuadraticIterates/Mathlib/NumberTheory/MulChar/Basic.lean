@@ -54,7 +54,8 @@ lemma apply_pow_of_odd (χ : MulChar M ℤ) (x : M) {n : ℕ} (hn : Odd n) : χ 
 /-- A square never has the value `-1` under a character into an ordered ring, since
 `χ (y * y) = χ y * χ y ≥ 0`. -/
 lemma apply_ne_neg_one_of_isSquare {R : Type*} [CommRing R] [LinearOrder R]
-    [IsStrictOrderedRing R] (χ : MulChar M R) {x : M} (hx : IsSquare x) : χ x ≠ -1 :=
+    [IsStrictOrderedRing R] (χ : MulChar M R) {x : M} (hx : IsSquare x) :
+    χ x ≠ -1 :=
   (neg_one_lt_zero.trans_le (hx.map χ).nonneg).ne'
 
 end CommMonoid

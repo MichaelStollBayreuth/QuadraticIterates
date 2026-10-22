@@ -135,7 +135,8 @@ permutation group is given as a group `G` with an injective homomorphism into `E
 theorem IsPGroup.exists_injective_monoidHom_iteratedWreathProduct {p : ℕ} [Fact p.Prime]
     {G : Type*} [Group G] (hG : IsPGroup p G) {X : Type*} [Finite X] {f : G →* Equiv.Perm X}
     (hf : Function.Injective f) {n : ℕ} (hX : Nat.card X ≤ p ^ n) (H : Type*) [Group H] [Finite H]
-    (hH : Nat.card H = p) : ∃ φ : G →* IteratedWreathProduct H n, Function.Injective φ := by
+    (hH : Nat.card H = p) :
+    ∃ φ : G →* IteratedWreathProduct H n, Function.Injective φ := by
   classical
   have := Fintype.ofFinite X
   have := Fintype.ofFinite H
@@ -161,7 +162,8 @@ theorem IteratedWreathProduct.card_monoidHom (D A : Type*) [Group D] [CommGroup 
 
 /-- A finite `𝔽_p`-vector space has as many additive characters `V →+ ZMod p` as elements. -/
 theorem Nat.card_addMonoidHom_zmod (p : ℕ) [Fact p.Prime] (V : Type*) [AddCommGroup V]
-    [Module (ZMod p) V] [Finite V] : Nat.card (V →+ ZMod p) = Nat.card V :=
+    [Module (ZMod p) V] [Finite V] :
+    Nat.card (V →+ ZMod p) = Nat.card V :=
   calc Nat.card (V →+ ZMod p)
       = Nat.card (Module.Dual (ZMod p) V) :=
         Nat.card_congr (AddMonoidHom.toZModLinearMapEquiv p).toEquiv
@@ -182,7 +184,8 @@ theorem Nat.card_monoidHom_multiplicative_zmod {H : Type*} [CommGroup H] [Finite
 /-- A finite group of exponent dividing `2` (automatically abelian) has as many characters
 `H →* Multiplicative (ZMod 2)` as elements. -/
 theorem Nat.card_monoidHom_multiplicative_zmod_two {H : Type*} [Group H] [Finite H]
-    (hexp : ∀ h : H, h ^ 2 = 1) : Nat.card (H →* Multiplicative (ZMod 2)) = Nat.card H := by
+    (hexp : ∀ h : H, h ^ 2 = 1) :
+    Nat.card (H →* Multiplicative (ZMod 2)) = Nat.card H := by
   let : CommGroup H := { ‹Group H› with
     mul_comm := Commute.of_orderOf_dvd_two fun g ↦ orderOf_dvd_of_pow_eq_one (hexp g) }
   exact card_monoidHom_multiplicative_zmod hexp

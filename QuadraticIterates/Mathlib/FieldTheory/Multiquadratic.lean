@@ -127,13 +127,15 @@ theorem isSquare_algebraMap_iff (K : IntermediateField L E) (e : L) :
   · simpa [sq] using hz2.symm
 
 theorem isSquare_algebraMap_iff_mem {K : IntermediateField L E} {e : L} {w : E}
-    (hw : w ^ 2 = algebraMap L E e) : IsSquare (algebraMap L K e) ↔ w ∈ K := by
+    (hw : w ^ 2 = algebraMap L E e) :
+    IsSquare (algebraMap L K e) ↔ w ∈ K := by
   refine (isSquare_algebraMap_iff K e).trans ⟨fun ⟨z, hzK, hz⟩ ↦ ?_, fun hwK ↦ ⟨w, hwK, hw⟩⟩
   rcases sq_eq_sq_iff_eq_or_eq_neg.mp (hw.trans hz.symm) with rfl | rfl
   exacts [hzK, neg_mem hzK]
 
 theorem not_isSquare_algebraMap_of_sqrt_notMem {K : IntermediateField L E} {e : L} {w : E}
-    (hw : w ^ 2 = algebraMap L E e) (hwK : w ∉ K) : ¬ IsSquare (algebraMap L K e) :=
+    (hw : w ^ 2 = algebraMap L E e) (hwK : w ∉ K) :
+    ¬ IsSquare (algebraMap L K e) :=
   (isSquare_algebraMap_iff_mem hw).not.mpr hwK
 
 theorem isSquare_algebraMap_bot_iff (x : L) :
@@ -163,7 +165,8 @@ theorem finrank_adjoin_insert_of_not_isSquare {S : Set E} {w : E} {c : L}
     ite_eq_right h, mul_comm]
 
 theorem mem_bot_of_add_mul_eq_zero {x : E} {p q : L} (hq : q ≠ 0)
-    (h : algebraMap L E p + algebraMap L E q * x = 0) : x ∈ (⊥ : IntermediateField L E) := by
+    (h : algebraMap L E p + algebraMap L E q * x = 0) :
+    x ∈ (⊥ : IntermediateField L E) := by
   refine mem_bot.mpr ⟨-p / q, ?_⟩
   rw [map_div₀, map_neg, div_eq_iff ((map_ne_zero _).mpr hq)]
   linear_combination -h
@@ -183,7 +186,8 @@ theorem mem_adjoin_sqrt_iff {y : E} {c : L} (hy : y ^ 2 = algebraMap L E c) {z :
   simp [Algebra.smul_def, eq_comm]
 
 theorem ne_zero_of_sq_eq_algebraMap_of_notMem_bot {x : E} {c : L} (hc : x ^ 2 = algebraMap L E c)
-    (hx : x ∉ (⊥ : IntermediateField L E)) : c ≠ 0 := by
+    (hx : x ∉ (⊥ : IntermediateField L E)) :
+    c ≠ 0 := by
   rintro rfl
   exact hx ((pow_eq_zero_iff two_ne_zero).mp (hc.trans (map_zero _)) ▸ zero_mem _)
 
@@ -203,7 +207,8 @@ theorem exists_mem_adjoin_simple_sq_eq_algebraMap_of_isSquare_mul {x : E} {c : L
 or `d · c` is a square in `L`. -/
 theorem isSquare_or_isSquare_mul_of_mem_adjoin_simple_of_sq_eq_algebraMap [NeZero (2 : L)] {x : E}
     {c : L} (hc : x ^ 2 = algebraMap L E c) (hx : x ∉ (⊥ : IntermediateField L E)) {d : L} {z : E}
-    (hz : z ∈ L⟮x⟯) (hz2 : z ^ 2 = algebraMap L E d) : IsSquare d ∨ IsSquare (d * c) := by
+    (hz : z ∈ L⟮x⟯) (hz2 : z ^ 2 = algebraMap L E d) :
+    IsSquare d ∨ IsSquare (d * c) := by
   obtain ⟨u, v, rfl⟩ := (mem_adjoin_sqrt_iff hc).mp hz
   have h : algebraMap L E (u ^ 2 + v ^ 2 * c - d) + algebraMap L E (2 * (u * v)) * x = 0 := by
     simp only [map_add, map_sub, map_mul, map_pow, map_ofNat]
@@ -295,7 +300,8 @@ theorem exists_mem_adjoin_sq_eq_algebraMap_iff [NeZero (2 : L)] {ι : Type*} {s 
       (ih (Finset.forall_of_forall_insert hx) (Finset.forall_of_forall_insert hr)) hz hz2
 
 theorem algEquiv_adjoin_sq_eq_one {S : Set E} (hS : ∀ y ∈ S, ∃ q : L, y ^ 2 = algebraMap L E q)
-    (τ : adjoin L S ≃ₐ[L] adjoin L S) : τ ^ 2 = 1 := by
+    (τ : adjoin L S ≃ₐ[L] adjoin L S) :
+    τ ^ 2 = 1 := by
   refine AlgEquiv.coe_toAlgHom_injective (adjoin_algHom_ext L fun x hx ↦ ?_)
   obtain ⟨q, hq⟩ := hS x hx
   have hgq : (⟨x, subset_adjoin L _ hx⟩ : adjoin L S) ^ 2 = algebraMap L _ q :=
@@ -303,7 +309,8 @@ theorem algEquiv_adjoin_sq_eq_one {S : Set E} (hS : ∀ y ∈ S, ∃ q : L, y ^ 
   rcases τ.apply_eq_or_eq_neg_of_sq_eq_algebraMap hgq with h | h <;> simp [sq, h]
 
 theorem isGalois_adjoin_of_sq_eq_algebraMap [IsGalois L E] {S : Set E}
-    (hS : ∀ y ∈ S, ∃ q : L, y ^ 2 = algebraMap L E q) : IsGalois L (adjoin L S) := by
+    (hS : ∀ y ∈ S, ∃ q : L, y ^ 2 = algebraMap L E q) :
+    IsGalois L (adjoin L S) := by
   have : Normal L (adjoin L S) := normal_iff_forall_map_le'.mpr fun σ ↦ by
     rw [adjoin_map, adjoin_le_iff]
     rintro x ⟨y, hyS, rfl⟩
@@ -331,7 +338,8 @@ an element of `L`: adjoining one outside `L(S)` would double the degree. -/
 theorem mem_adjoin_of_sq_eq_algebraMap_of_card_le [IsGalois L E] [FiniteDimensional L E]
     {S : Set E} (hS : ∀ y ∈ S, ∃ q : L, y ^ 2 = algebraMap L E q)
     (hmax : Nat.card ((E ≃ₐ[L] E) →* Multiplicative (ZMod 2)) ≤ Module.finrank L (adjoin L S))
-    {w : E} {c : L} (hw : w ^ 2 = algebraMap L E c) : w ∈ adjoin L S := by
+    {w : E} {c : L} (hw : w ^ 2 = algebraMap L E c) :
+    w ∈ adjoin L S := by
   by_contra hwS
   have h := finrank_adjoin_le_card_monoidHom (S := insert w S) fun y hy ↦
     hy.elim (fun h ↦ ⟨c, h ▸ hw⟩) (hS y)
@@ -415,7 +423,8 @@ theorem sqClass_div_sq (x : L) {y : L} (hy : y ≠ 0) : sqClass (x / y ^ 2) = sq
   exact sqClass_mul_sq x (inv_ne_zero hy)
 
 theorem isSquare_prod_iff_sum_sqClass_eq_zero {ι : Type*} {s : Finset ι} {r : ι → L}
-    (hr : ∀ i ∈ s, r i ≠ 0) : IsSquare (∏ i ∈ s, r i) ↔ ∑ i ∈ s, sqClass (r i) = 0 := by
+    (hr : ∀ i ∈ s, r i ≠ 0) :
+    IsSquare (∏ i ∈ s, r i) ↔ ∑ i ∈ s, sqClass (r i) = 0 := by
   rw [← sqClass_prod hr, sqClass_eq_zero_iff]
 
 theorem sqClass_prod_zpow {ι : Type*} {s : Finset ι} {r : ι → L} (e : ι → ℤ)
@@ -609,7 +618,8 @@ invariant under the coordinate action. -/
 theorem comp_smul_mem_rootRelations {G : Type*} [Group G] {ι : Type*} [Fintype ι] [MulAction G ι]
     {L : Type*} [Field L] [DecidableEq L] {r : ι → L} (hr : ∀ i, r i ≠ 0)
     (hcompat : ∀ g : G, ∃ φ : L ≃+* L, ∀ j, φ (r j) = r (g • j)) (g : G) {v : ι → ZMod 2}
-    (hv : v ∈ rootRelations r) : (fun i ↦ v (g • i)) ∈ rootRelations r := by
+    (hv : v ∈ rootRelations r) :
+    (fun i ↦ v (g • i)) ∈ rootRelations r := by
   obtain ⟨φ, hφ⟩ := hcompat g⁻¹
   rw [mem_rootRelations hr] at hv ⊢
   have : ∏ i with v (g • i) = 1, r i = φ (∏ j with v j = 1, r j) := by

@@ -48,14 +48,16 @@ variable {r s : ℤ}
 /-! ### Jacobi symbols -/
 
 private lemma emod_eight_of_jacobiSym_two {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (h : jacobiSym 2 p = -1) : p % 8 = 3 ∨ p % 8 = 5 := by
+    (h : jacobiSym 2 p = -1) :
+    p % 8 = 3 ∨ p % 8 = 5 := by
   have ho := hp.odd_of_ne_two hp2
   rw [jacobiSym.at_two ho, ZMod.χ₈_nat_eq_if_mod_eight] at h
   split_ifs at h
   lia
 
 private lemma emod_four_of_jacobiSym_neg_one {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (h : jacobiSym (-1) p = -1) : p % 4 = 3 := by
+    (h : jacobiSym (-1) p = -1) :
+    p % 4 = 3 := by
   have ho := hp.odd_of_ne_two hp2
   rw [jacobiSym.at_neg_one ho, ZMod.χ₄_nat_eq_if_mod_four] at h
   split_ifs at h
@@ -75,7 +77,8 @@ private lemma exists_of_not_isSquare_of_dvd {x N : ℤ} {M : ℕ} (hN : N ≠ 0)
 
 /-- A prime `p ∤ c` dividing `r + c s`, with `r, s` coprime, does not divide `r`. -/
 private lemma not_dvd_left_of_dvd_add_mul (hrs : IsCoprime r s) {p c : ℤ} (hp : Prime p)
-    (hpc : ¬p ∣ c) (h : p ∣ r + c * s) : ¬p ∣ r := fun hpr ↦
+    (hpc : ¬p ∣ c) (h : p ∣ r + c * s) :
+    ¬p ∣ r := fun hpr ↦
   hp.not_isUnit <| hrs.isUnit_of_dvd' hpr <|
     (hp.dvd_or_dvd ((dvd_add_right hpr).mp h)).resolve_left hpc
 
@@ -107,7 +110,8 @@ private lemma negAllCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r s
 `(s / p) = -1` has `(-1 / p) = -1`, as `-s ≡ t² (mod p)`. -/
 private lemma negTailCriterion_of_eq_sq_of_cert (hs : 0 < s) (hrs : IsCoprime r s) {t : ℤ}
     (ht : r = t ^ 2) (hns : ¬IsSquare (r + s)) {M : ℕ} (hM : (M : ℤ) ∣ r + s)
-    (h : ¬IsSquare (s : ZMod M)) : NegTailCriterion r s := by
+    (h : ¬IsSquare (s : ZMod M)) :
+    NegTailCriterion r s := by
   have hr0 : 0 ≤ r := ht ▸ sq_nonneg t
   refine .not_isSquare_add hns (not_isSquare_of_neg (by lia)) ?_
   rcases exists_of_not_isSquare_of_dvd (x := s) (N := r + s) (by lia)
@@ -223,7 +227,8 @@ as for `R = t²` or `s = t²`: then `(s / p) = 1` at the odd primes `p ∣ R - s
 forces `p ≡ 3 (mod 4)`. -/
 private lemma negTailCriterion_of_cert_sub (hs : 0 < s) (hRs : IsCoprime R s) (hR : 2 * s ≤ R)
     (t : ℤ) (ht : s ≡ t ^ 2 [ZMOD R - s]) (hns : ¬IsSquare (R - s)) {M : ℕ} (hM : (M : ℤ) ∣ R - s)
-    (h : ¬IsSquare (-(s : ZMod M))) : NegTailCriterion (-R) s := by
+    (h : ¬IsSquare (-(s : ZMod M))) :
+    NegTailCriterion (-R) s := by
   have he : -R + s = -(R - s) := by ring
   refine .not_isSquare_add (not_isSquare_of_neg (by lia)) (by rwa [he, neg_neg]) ?_
   rcases exists_of_not_isSquare_of_dvd (x := -s) (N := R - s) (by lia)
@@ -276,7 +281,8 @@ private lemma negAllCriterion_or_negTailCriterion_of_eq_sq_of_two_mul_le (hs : 0
 
 /-- (O4) for `s = t²` with `t` even: `R ≡ 3 (mod 4)`, or `8 ∣ s` and `R ≡ 5 (mod 8)`. -/
 private lemma negFirstCriterion_of_two_dvd_sq_right {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t)
-    (h : R % 4 = 3 ∨ 8 ∣ t ^ 2 ∧ R % 8 = 5) : NegFirstCriterion (-R) (t ^ 2) := by
+    (h : R % 4 = 3 ∨ 8 ∣ t ^ 2 ∧ R % 8 = 5) :
+    NegFirstCriterion (-R) (t ^ 2) := by
   obtain ⟨j, u, hj, htu, hu, hu8⟩ := exists_sq_eq_two_pow_mul ht h2t
   have hu2 : u ^ 2 = 8 * (u ^ 2 / 8) + 1 := by lia
   have hRu : -R * u ^ 2 = -(8 * (u ^ 2 / 8) * R) - R := by linear_combination (-R) * hu2

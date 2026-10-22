@@ -83,7 +83,8 @@ theorem forall_nonempty_mulEquiv_of_forall_dvd_vSeq (hrs : IsCoprime r s)
 theorem hasCharPattern_mulSingle_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s) {ε : ℤ}
     (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
     (hc : TwoAdicClass r s ε) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ}
-    (hn : 2 ≤ n) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
+    (hn : 2 ≤ n) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
   have hr0 : r ≠ 0 := fun h ↦ h₀.ne_zero le_rfl (by simp) (by simp [h])
   obtain ⟨p, hp, hp4, hpv, -⟩ := exists_prime_dvd_vSeq_of_twoAdicClass hrs hs hr0 hε hc hn
   exact hasCharPattern_mulSingle_of_prime_dvd_vSeq hrs h₀ hn hp hp4 hpv
@@ -124,7 +125,8 @@ theorem nonempty_mulEquiv_of_twoAdicClass_of_criteria (hrs : IsCoprime r s) (hs 
 theorem hasCharPattern_mulSingle_of_prime_dvd_uSeq (hrs : IsCoprime r s) (hs : Odd s)
     (h4 : r ≡ s [ZMOD 4]) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ} (hn : 1 ≤ n)
     {p : ℕ} [Fact p.Prime] (hp4 : p % 4 = 3) (hpu : (p : ℤ) ∣ uSeq r s n)
-    (hprs : ¬(p : ℤ) ∣ r + s) : HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) :=
+    (hprs : ¬(p : ℤ) ∣ r + s) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) :=
   hasCharPattern_mulSingle_of_dvd_uSeq hrs (pow_one p).symm one_ne_zero
     (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) hn (by simpa using hpu) hprs
     (h₀.mono hn) (χ := Rat.valChar 2) ((h₀.ne_zero hn (by simp)).isUnit.map _).ne_zero

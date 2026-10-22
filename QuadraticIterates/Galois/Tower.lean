@@ -112,7 +112,8 @@ theorem splittingField_succ_eq_sup_adjoin (n : ℕ) (g : AlgebraicClosure ℚ �
 
 /-- The square of a root of `f_{n+1}` lies in `K_n`: `K_n ⊆ K_{n+1}` is a `2`-Kummer extension. -/
 lemma sq_mem_splittingField_of_mem_rootSet_succ {n : ℕ} {β : AlgebraicClosure ℚ}
-    (hβ : β ∈ fℚ[a, n + 1].rootSet (AlgebraicClosure ℚ)) : β ^ 2 ∈ splittingField a n := by
+    (hβ : β ∈ fℚ[a, n + 1].rootSet (AlgebraicClosure ℚ)) :
+    β ^ 2 ∈ splittingField a n := by
   rw [← add_sub_cancel_right (β ^ 2) (a : AlgebraicClosure ℚ)]
   exact sub_mem
     (IntermediateField.subset_adjoin ℚ _ ((mem_rootSet_iteratedPoly_succ a n β).mp hβ))

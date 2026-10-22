@@ -74,7 +74,8 @@ variable {a}
 
 /-- The shifted roots are nonzero when `c_{n+1} = ± f_n(a) ≠ 0`. -/
 lemma rootShift_ne_zero {n : ℕ} (hc : cSeq a (n + 1) ≠ 0)
-    (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) : rootShift a n β ≠ 0 :=
+    (β : fℚ[a, n].rootSet (AlgebraicClosure ℚ)) :
+    rootShift a n β ≠ 0 :=
   fun h ↦ sub_ratCast_ne_zero_of_mem_rootSet hc β.2 congr(Subtype.val $h)
 
 /-- For irreducible `f_n` with `c_{n+1} ≠ 0`, the relative degree `[K_{n+1} : K_n]` equals

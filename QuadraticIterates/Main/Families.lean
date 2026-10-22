@@ -182,13 +182,15 @@ private lemma neg_mul_modEq {T : ℤ} {n : ℕ} (hn : 2 ≤ n)
 
 /-- A prime `p` dividing `u(u + v)`, with `u, v` coprime, does not divide `v`. -/
 private lemma not_dvd_right_of_dvd_mul_add (huv : IsCoprime u v) {p : ℤ} (hp : Prime p)
-    (h : p ∣ u * (u + v)) : ¬p ∣ v := fun hv ↦
+    (h : p ∣ u * (u + v)) :
+    ¬p ∣ v := fun hv ↦
   hp.not_isUnit <| huv.isUnit_of_dvd' ((hp.dvd_or_dvd h).elim id (dvd_add_left hv).mp) hv
 
 /-- A prime `p ∤ 2` dividing `u(u + v)`, with `u, v` coprime, does not divide `u + 2v`: it
 would divide `u(u + v) - (u + 2v)(u - v) = 2v²`. -/
 private lemma not_dvd_add_two_mul (huv : IsCoprime u v) {p : ℤ} (hp : Prime p) (hp2 : ¬p ∣ 2)
-    (h : p ∣ u * (u + v)) : ¬p ∣ u + 2 * v := fun hc ↦ by
+    (h : p ∣ u * (u + v)) :
+    ¬p ∣ u + 2 * v := fun hc ↦ by
   rcases hp.dvd_or_dvd (by convert dvd_sub h (hc.mul_right (u - v)) using 1; ring : p ∣ 2 * v ^ 2)
     with h2 | h2
   exacts [hp2 h2, not_dvd_right_of_dvd_mul_add huv hp h (hp.dvd_of_dvd_pow h2)]
@@ -209,7 +211,8 @@ private lemma not_dvd_add_of_modEq (huv : IsCoprime u v) {p : ℤ} (hp : Prime p
 
 /-- `K ≡ 3 (mod 4)` from `X + e = d K` with `X ≡ 2` and `d ≡ e ≡ 1 (mod 4)`. -/
 private lemma emod_four_eq_three_of_add_eq_mul {X e d K : ℤ} (h : X + e = d * K)
-    (hX : (X : ZMod 4) = 2) (hd : (d : ZMod 4) = 1) (he : (e : ZMod 4) = 1) : K % 4 = 3 := by
+    (hX : (X : ZMod 4) = 2) (hd : (d : ZMod 4) = 1) (he : (e : ZMod 4) = 1) :
+    K % 4 = 3 := by
   have h' := congr(($h : ZMod 4))
   push_cast [hX, hd, he] at h'
   simpa using (ZMod.intCast_eq_intCast_iff' K 3 4).mp (by push_cast; linear_combination -h')

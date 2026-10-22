@@ -92,7 +92,8 @@ theorem hasCharPattern_mulSingle_of_neg_of_neg_mulSingle (h₀ : HasCharPattern 
 
 theorem hasCharPattern_neg_of_mulSingle_of_neg_mulSingle
     (h₀ : HasCharPattern v n (Pi.mulSingle k (-1)))
-    (h₁ : HasCharPattern v n (-Pi.mulSingle k (-1))) : HasCharPattern v n (-1) := by
+    (h₁ : HasCharPattern v n (-Pi.mulSingle k (-1))) :
+    HasCharPattern v n (-1) := by
   simpa [← Pi.mulSingle_mul] using h₀.mul h₁
 
 /-! ### Patterns from values -/
@@ -139,7 +140,8 @@ theorem hasCharPattern_mulSingle_of_neg_of_forall_lt (h₀ : HasCharPattern v n 
 /-- A function that is `2`-periodic from `n + 1` on and takes the value `c` at `n + 1` and `n + 2`
 is `c` at all `m > n`. -/
 private lemma eq_of_lt_of_add_two_eq {f : ℕ → ℤ} {c : ℤ} (h₁ : f (n + 1) = c)
-    (h₂ : f (n + 2) = c) (hp : ∀ m ≥ n + 1, f (m + 2) = f m) (m : ℕ) (hm : n < m) : f m = c := by
+    (h₂ : f (n + 2) = c) (hp : ∀ m ≥ n + 1, f (m + 2) = f m) (m : ℕ) (hm : n < m) :
+    f m = c := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_lt hm
   induction k using Nat.twoStepInduction with
   | zero => exact h₁

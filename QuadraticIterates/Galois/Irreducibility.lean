@@ -59,7 +59,8 @@ square, then `f_{n+1}` is irreducible. `f_{n+1} = f_n ∘ (X² + a)` is even and
 irreducible, has no nontrivial even divisor, so a factorization would have the shape
 `g · g(-X) = ± f_{n+1}`, and evaluation at `0` would exhibit `c_{n+1}` as a square. -/
 theorem irreducible_iteratedPoly_succ_of_not_isSquare {n : ℕ} (hirr : Irreducible fℚ[a, n])
-    (hc : ¬IsSquare (cSeq a (n + 1))) : Irreducible fℚ[a, n + 1] := by
+    (hc : ¬IsSquare (cSeq a (n + 1))) :
+    Irreducible fℚ[a, n + 1] := by
   have hF0 : fℚ[a, n].eval a ≠ 0 := fun h0 ↦ hc (by simp [cSeq_succ_eq_neg_one_pow_mul_eval, h0])
   by_contra hred
   obtain ⟨g, hgdeg, hgeq⟩ :=
@@ -71,7 +72,8 @@ theorem irreducible_iteratedPoly_succ_of_not_isSquare {n : ℕ} (hirr : Irreduci
 /-- Lemma 1.2 of [Stoll 1992]: if none of `c_1, …, c_n` is a square in `ℚ`, then `f_n` is
 irreducible over `ℚ`. -/
 theorem irreducible_iteratedPoly_of_not_isSquare_cSeq {n : ℕ}
-    (h : ∀ k ≥ 1, k ≤ n → ¬IsSquare (cSeq a k)) : Irreducible fℚ[a, n] := by
+    (h : ∀ k ≥ 1, k ≤ n → ¬IsSquare (cSeq a k)) :
+    Irreducible fℚ[a, n] := by
   induction n with
   | zero => simpa using irreducible_X (R := ℚ)
   | succ n ih =>

@@ -59,7 +59,8 @@ lemma TwoIndependent.ne_zero [CommMonoidWithZero M] {v : ι → M} (h : TwoIndep
 
 /-- A 2-independent family stays 2-independent along an injective reindexing. -/
 theorem TwoIndependent.comp [CommMonoid M] {κ : Type*} {v : ι → M} (h : TwoIndependent v)
-    (f : κ → ι) (hf : Function.Injective f) : TwoIndependent (v ∘ f) := fun S hS ↦ by
+    (f : κ → ι) (hf : Function.Injective f) :
+    TwoIndependent (v ∘ f) := fun S hS ↦ by
   simpa using h (S.map ⟨f, hf⟩) hS.map
 
 /-- A family is 2-independent iff all its finite subfamilies are. -/

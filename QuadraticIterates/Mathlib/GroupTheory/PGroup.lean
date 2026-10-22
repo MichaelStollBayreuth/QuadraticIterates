@@ -76,7 +76,8 @@ on the coordinates `ι` contains the all-ones vector. -/
 theorem IsPGroup.one_mem_of_comp_smul_mem_of_ne_bot {p : ℕ} [Fact p.Prime] {G : Type*} [Group G]
     (hG : IsPGroup p G) {ι : Type*} [Finite ι] [MulAction G ι] [IsPretransitive G ι]
     {V : Submodule (ZMod p) (ι → ZMod p)} (hV : ∀ g : G, ∀ v ∈ V, (fun i ↦ v (g • i)) ∈ V)
-    (hne : V ≠ ⊥) : 1 ∈ V := by
+    (hne : V ≠ ⊥) :
+    1 ∈ V := by
   obtain ⟨w, hwV, hwne, hwfix⟩ := hG.domMulAct.exists_ne_zero_mem_fixedPoints_of_smul_mem
     (fun g ↦ hV (DomMulAct.mk.symm g)) hne
   obtain ⟨i₀⟩ : Nonempty ι := not_isEmpty_iff.mp fun _ ↦ hne Submodule.eq_bot_of_subsingleton

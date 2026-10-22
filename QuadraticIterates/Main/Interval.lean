@@ -100,7 +100,8 @@ private lemma negFirstCriterion_of_jacobiSym (hs : 0 < s) (hsq : IsSquare s) {p 
 
 /-- (O4) for `s = 4^j m` with `j ≥ 2`, `m ≡ 1 (mod 8)` and `r ≡ 3 (mod 8)`. -/
 private lemma negFirstCriterion_of_eq_four_pow_mul {j : ℕ} {m : ℤ} (hj : 2 ≤ j)
-    (hs : s = 4 ^ j * m) (hm : m % 8 = 1) (hr : r % 8 = 3) : NegFirstCriterion r s := by
+    (hs : s = 4 ^ j * m) (hm : m % 8 = 1) (hr : r % 8 = 3) :
+    NegFirstCriterion r s := by
   refine .dvd_right_two (2 * j) m (by rw [hs, pow_mul]; norm_num) (Int.odd_iff.mpr (by lia))
     (.inr (.inr ⟨even_two_mul j, by lia, ?_⟩))
   rw [Int.mul_emod, hr, hm]
@@ -109,7 +110,8 @@ private lemma negFirstCriterion_of_eq_four_pow_mul {j : ℕ} {m : ℤ} (hj : 2 �
 /-- (O4) for a square `s` with `16 ∣ s` and `r ≡ 3 (mod 8)`: `s = 4^j m` with `m ≡ 1 (mod 8)`
 and `j ≥ 2`. -/
 private lemma negFirstCriterion_of_sixteen_dvd (hs : 0 < s) (hsq : IsSquare s) (h16 : 16 ∣ s)
-    (hr : r % 8 = 3) : NegFirstCriterion r s := by
+    (hr : r % 8 = 3) :
+    NegFirstCriterion r s := by
   obtain ⟨j, m, hsm, hm⟩ := Int.exists_eq_four_pow_mul_of_isSquare hsq hs.ne'
   refine negFirstCriterion_of_eq_four_pow_mul ?_ hsm hm hr
   rcases j with _ | _ | j <;> lia
@@ -129,7 +131,8 @@ theorem negFirstCriterion_of_negFirstCriterion' (hs : 0 < s) (h : NegFirstCriter
 
 /-- (T') implies (T) when `r + s < 0` and `-(r + s)` is not a square. -/
 theorem negTailCriterion_of_negTailCriterion' (hrs : r + s < 0) (h' : ¬IsSquare (-(r + s)))
-    (h : NegTailCriterion' r s) : NegTailCriterion r s := by
+    (h : NegTailCriterion' r s) :
+    NegTailCriterion r s := by
   cases h with
   | dvd_left p k m hp hp4 hk hr hm h => exact .dvd_left p k m hp hp4 hk hr hm h
   | dvd_add p hp hp4 hdvd =>

@@ -24,7 +24,8 @@ open Polynomial
 `Polynomial.rootSet` equals the corresponding multiset sum over `Polynomial.aroots`. -/]
 lemma Polynomial.prod_rootSet_eq_prod_aroots {K E M : Type*} [CommRing K] [CommRing E]
     [IsDomain E] [Algebra K E] [CommMonoid M] {p : K[X]} (hnodup : (p.aroots E).Nodup)
-    (f : E → M) : ∏ β : p.rootSet E, f β = ((p.aroots E).map f).prod := by
+    (f : E → M) :
+    ∏ β : p.rootSet E, f β = ((p.aroots E).map f).prod := by
   classical
   rw [← Finset.prod_subtype (p.aroots E).toFinset
     (fun x ↦ by rw [Multiset.mem_toFinset, mem_aroots', mem_rootSet']) f,

@@ -61,7 +61,8 @@ lemma ZMod.intCast_eight_eq_or_eq_of_emod_four {x c : ℤ} (h : x % 4 = c) :
 
 /-- Modulo a power `N` of a prime `p`, an integer prime to `p` is a unit. -/
 lemma ZMod.isUnit_intCast_of_not_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) {m : ℤ}
-    (hm : ¬(p : ℤ) ∣ m) : IsUnit (m : ZMod N) := by
+    (hm : ¬(p : ℤ) ∣ m) :
+    IsUnit (m : ZMod N) := by
   refine (ZMod.coe_int_isUnit_iff_isCoprime m N).mpr ?_
   rw [hN, Nat.cast_pow]
   exact ((Nat.prime_iff_prime_int.mp Fact.out).coprime_iff_not_dvd.mpr hm).pow_left
@@ -69,7 +70,8 @@ lemma ZMod.isUnit_intCast_of_not_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ 
 /-- Modulo a power `N = p^k`, `k ≥ 1`, of a prime `p`, an integer divisible by `p` is not a
 unit. -/
 lemma ZMod.not_isUnit_intCast_of_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k ≠ 0)
-    {m : ℤ} (hm : (p : ℤ) ∣ m) : ¬IsUnit (m : ZMod N) := by
+    {m : ℤ} (hm : (p : ℤ) ∣ m) :
+    ¬IsUnit (m : ZMod N) := by
   rw [ZMod.coe_int_isUnit_iff_isCoprime]
   refine fun h ↦ Int.Prime.not_dvd_of_isCoprime Fact.out h hm ?_
   rw [hN, Nat.cast_pow]
@@ -86,5 +88,6 @@ lemma ZMod.intCast_eq_intCast_iff_modEq {m a b : ℤ} : (a : ZMod m.natAbs) = b 
 
 /-- In a `ZMod 2`-module an integer scalar acts through its absolute value. -/
 theorem ZModModule.zsmul_eq_natAbs_nsmul {M : Type*} [AddCommGroup M] [Module (ZMod 2) M] (k : ℤ)
-    (v : M) : k • v = k.natAbs • v := by
+    (v : M) :
+    k • v = k.natAbs • v := by
   obtain ⟨n, rfl | rfl⟩ := Int.eq_nat_or_neg k <;> simp [ZModModule.neg_eq_self]

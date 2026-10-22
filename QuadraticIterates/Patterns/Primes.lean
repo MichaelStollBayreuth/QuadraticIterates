@@ -55,7 +55,8 @@ section Primes
 variable {r s : ℤ} {p : ℕ}
 
 private lemma dvd_of_natCast_pow_dvd {N k : ℕ} (hN : N = p ^ k) (hk : k ≠ 0) {x : ℤ}
-    (h : (N : ℤ) ∣ x) : (p : ℤ) ∣ x :=
+    (h : (N : ℤ) ∣ x) :
+    (p : ℤ) ∣ x :=
   (dvd_pow_self (p : ℤ) hk).trans (mod_cast hN ▸ h)
 
 variable [Fact p.Prime]
@@ -65,7 +66,8 @@ private lemma not_dvd_of_isCoprime {x y : ℤ} (h : IsCoprime x y) (hy : (p : �
   Int.Prime.not_dvd_of_isCoprime Fact.out h hy
 
 private lemma not_dvd_of_modEq_pow {M x y : ℤ} {k : ℕ} (hM : (p : ℤ) ∣ M) (hy : ¬(p : ℤ) ∣ y)
-    (h : x ≡ y ^ k [ZMOD M]) : ¬(p : ℤ) ∣ x :=
+    (h : x ≡ y ^ k [ZMOD M]) :
+    ¬(p : ℤ) ∣ x :=
   fun hx ↦ hy (Int.Prime.dvd_pow' Fact.out ((h.of_dvd hM).dvd_iff.mp hx))
 
 private lemma not_dvd_mul {x y : ℤ} (hx : ¬(p : ℤ) ∣ x) (hy : ¬(p : ℤ) ∣ y) : ¬(p : ℤ) ∣ x * y :=
@@ -76,7 +78,8 @@ private lemma odd_two_pow_sub_one {m : ℕ} (hm : m ≠ 0) : Odd (2 ^ m - 1) :=
 
 /-- At a prime `p ∣ r`, `c_n` has the `p`-adic valuation of `r` modulo `2`, for all `n ≥ 1`. -/
 theorem valChar_cSeq_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) (hp : (p : ℤ) ∣ r) {n : ℕ}
-    (hn : 1 ≤ n) : valChar p (cSeq ((r : ℚ) / s) n) = valChar p r := by
+    (hn : 1 ≤ n) :
+    valChar p (cSeq ((r : ℚ) / s) n) = valChar p r := by
   rcases hn.eq_or_lt with rfl | hn
   · rw [mulChar_cSeq_one_eq_mul _ hs, valChar_neg_one,
       valChar_intCast_of_not_dvd (not_dvd_of_isCoprime hrs.symm hp), one_mul, mul_one]
@@ -88,7 +91,8 @@ theorem valChar_cSeq_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) (hp : (p :
 the square class of `r w_n`, and `w_n ≡ s^{2^{n-1} - 1} (mod r)` with an odd exponent. -/
 theorem unitPartChar_cSeq_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) {N k : ℕ}
     (hN : N = p ^ k) (hk : k ≠ 0) (hNr : (N : ℤ) ∣ r) (ψ : MulChar (ZMod N) ℤ) {n : ℕ}
-    (hn : 2 ≤ n) : unitPartChar p ψ (cSeq ((r : ℚ) / s) n) = ψ s * unitPartChar p ψ r := by
+    (hn : 2 ≤ n) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) n) = ψ s * unitPartChar p ψ r := by
   have hpr : (p : ℤ) ∣ r := dvd_of_natCast_pow_dvd hN hk hNr
   have hw : (wSeq r s n : ZMod N) = (s : ZMod N) ^ (2 ^ (n - 1) - 1) :=
     mod_cast (ZMod.intCast_eq_intCast_iff _ _ _).mpr ((wSeq_modEq_left r s hn).of_dvd hNr)
@@ -99,7 +103,8 @@ theorem unitPartChar_cSeq_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) {N k 
 /-- At a prime `p ∣ s`, `v_p(c_n)` is even for `n ≥ 2`: `c_n` has the square class of `r w_n`,
 which is prime to `s`. -/
 theorem valChar_cSeq_of_dvd_right (hrs : IsCoprime r s) (hs : s ≠ 0) (hp : (p : ℤ) ∣ s) {n : ℕ}
-    (hn : 2 ≤ n) : valChar p (cSeq ((r : ℚ) / s) n) = 1 := by
+    (hn : 2 ≤ n) :
+    valChar p (cSeq ((r : ℚ) / s) n) = 1 := by
   rw [mulChar_cSeq_of_two_le _ hs hn, ← Int.cast_mul, valChar_intCast_of_not_dvd
     (not_dvd_of_isCoprime (hrs.mul_left (isCoprime_wSeq_right hrs (by lia))) hp)]
 
@@ -107,7 +112,8 @@ theorem valChar_cSeq_of_dvd_right (hrs : IsCoprime r s) (hs : s ≠ 0) (hp : (p 
 square class of `r w_n`, and `r w_n ≡ r^{2^{n-1}} (mod s)` is a square of a unit. -/
 theorem unitPartChar_cSeq_of_dvd_right (hrs : IsCoprime r s) (hs : s ≠ 0) {N k : ℕ}
     (hN : N = p ^ k) (hk : k ≠ 0) (hNs : (N : ℤ) ∣ s) (ψ : MulChar (ZMod N) ℤ) {n : ℕ}
-    (hn : 2 ≤ n) : unitPartChar p ψ (cSeq ((r : ℚ) / s) n) = 1 := by
+    (hn : 2 ≤ n) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) n) = 1 := by
   have hps : (p : ℤ) ∣ s := dvd_of_natCast_pow_dvd hN hk hNs
   have hpr := not_dvd_of_isCoprime hrs hps
   have hw : (wSeq r s n : ZMod N) = (r : ZMod N) ^ (2 ^ (n - 1) - 1) :=
@@ -138,7 +144,8 @@ theorem unitPartChar_two_cSeq_of_even (hrs : IsCoprime r s) (hs : s ≠ 0) (hev 
 
 /-- At a prime `p ∣ r + s`, `v_p(c_n)` is even for odd `n`: `c_n` is a `p`-adic unit. -/
 theorem valChar_cSeq_two_mul_add_one_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0)
-    (hp : (p : ℤ) ∣ r + s) (k : ℕ) : valChar p (cSeq ((r : ℚ) / s) (2 * k + 1)) = 1 := by
+    (hp : (p : ℤ) ∣ r + s) (k : ℕ) :
+    valChar p (cSeq ((r : ℚ) / s) (2 * k + 1)) = 1 := by
   have hpr := not_dvd_of_isCoprime hrs.self_add_right hp
   have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
   rcases Nat.eq_zero_or_pos k with rfl | hk
@@ -177,7 +184,8 @@ theorem unitPartChar_cSeq_one_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0) {N
 `r w_{2j+1} ≡ -s^{2^{2j}} (mod r + s)`. -/
 theorem unitPartChar_cSeq_two_mul_add_one_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0) {N k : ℕ}
     (hN : N = p ^ k) (hk : k ≠ 0) (hNrs : (N : ℤ) ∣ r + s) (ψ : MulChar (ZMod N) ℤ) {j : ℕ}
-    (hj : 1 ≤ j) : unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j + 1)) = ψ (-1) := by
+    (hj : 1 ≤ j) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j + 1)) = ψ (-1) := by
   have hp := dvd_of_natCast_pow_dvd hN hk hNrs
   have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
   have hpr := not_dvd_of_isCoprime hrs.self_add_right hp
@@ -194,7 +202,8 @@ theorem unitPartChar_cSeq_two_mul_add_one_of_dvd_add (hrs : IsCoprime r s) (hs :
 `r ≡ -s`. -/
 theorem unitPartChar_cSeq_two_mul_of_dvd_add (hrs : IsCoprime r s) (hs : s ≠ 0) {N k : ℕ}
     (hN : N = p ^ k) (hk : k ≠ 0) (hNrs : (N : ℤ) ∣ r + s) (ψ : MulChar (ZMod N) ℤ) {j : ℕ}
-    (hj : 1 ≤ j) : unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j)) =
+    (hj : 1 ≤ j) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j)) =
       ψ (-1) * ψ s * unitPartChar p ψ ((r + s : ℤ) : ℚ) := by
   have hp := dvd_of_natCast_pow_dvd hN hk hNrs
   have hps := not_dvd_of_isCoprime hrs.symm.add_self_right hp
@@ -246,7 +255,8 @@ private lemma exists_sq_eq_neg_one (hrs : IsCoprime r s) {N k : ℕ} (hN : N = p
 sequence is `-a, a - 1, -a, a - 1, …` with `a² = -1`. -/
 theorem unitPartChar_cSeq_two_mul_add_one_of_dvd_sq_add_sq (hrs : IsCoprime r s) {N k : ℕ}
     (hN : N = p ^ k) (hk : k ≠ 0) (hdvd : (N : ℤ) ∣ r ^ 2 + s ^ 2) (ψ : MulChar (ZMod N) ℤ)
-    (j : ℕ) : unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j + 1)) = ψ (-(r * s)) := by
+    (j : ℕ) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) (2 * j + 1)) = ψ (-(r * s)) := by
   obtain ⟨σ, hσ, ha⟩ := exists_sq_eq_neg_one hrs hN hk hdvd
   have hu : IsUnit (cSeq ((r : ZMod N) * σ) (2 * j + 1)) := by
     rw [cSeq_two_mul_add_one_of_sq_eq_neg_one ha]
@@ -308,7 +318,8 @@ theorem unitPartChar_cSeq_one_of_dvd_wSeq_three (hrs : IsCoprime r s) {N k : ℕ
 `N`, `c̄_{3j+1} = a = -c̄_2²`. -/
 theorem unitPartChar_cSeq_three_mul_add_one_of_dvd_wSeq_three (hrs : IsCoprime r s) {N k : ℕ}
     (hN : N = p ^ k) (hk : k ≠ 0) (hNw : (N : ℤ) ∣ wSeq r s 3) (ψ : MulChar (ZMod N) ℤ) {j : ℕ}
-    (hj : 1 ≤ j) : unitPartChar p ψ (cSeq ((r : ℚ) / s) (3 * j + 1)) = ψ (-1) := by
+    (hj : 1 ≤ j) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) (3 * j + 1)) = ψ (-1) := by
   obtain ⟨σ, hσ, hc3, ha, hu, hsq, -⟩ := exists_inv_of_dvd_wSeq_three hrs hN hk hNw
   have h := cSeq_three_mul_add_one_of_sq_eq_zero hc3 hj
   rw [unitPartChar_cSeq hN hk ψ hσ (by lia) (by rw [h]; exact ha), h,
@@ -318,8 +329,8 @@ theorem unitPartChar_cSeq_three_mul_add_one_of_dvd_wSeq_three (hrs : IsCoprime r
 /-- At a power `N = p^k` (`k ≥ 1`) dividing `w_3`, `χ_ψ(c_{3j+2}) = ψ(-s(r + s))`: modulo `N`,
 `c̄_{3j+2} = c̄_2 = -(a + 1)⁻¹` and `a + 1 = (r + s) s⁻¹`. -/
 theorem unitPartChar_cSeq_three_mul_add_two_of_dvd_wSeq_three (hrs : IsCoprime r s) {N k : ℕ}
-    (hN : N = p ^ k) (hk : k ≠ 0) (hNw : (N : ℤ) ∣ wSeq r s 3) (ψ : MulChar (ZMod N) ℤ)
-    (j : ℕ) : unitPartChar p ψ (cSeq ((r : ℚ) / s) (3 * j + 2)) = ψ (-(s * (r + s))) := by
+    (hN : N = p ^ k) (hk : k ≠ 0) (hNw : (N : ℤ) ∣ wSeq r s 3) (ψ : MulChar (ZMod N) ℤ) (j : ℕ) :
+    unitPartChar p ψ (cSeq ((r : ℚ) / s) (3 * j + 2)) = ψ (-(s * (r + s))) := by
   obtain ⟨σ, hσ, hc3, -, hu, -, hrel⟩ := exists_inv_of_dvd_wSeq_three hrs hN hk hNw
   have h := cSeq_three_mul_add_two_of_sq_eq_zero hc3 j
   have hb : IsUnit ((r : ZMod N) * σ + 1) := isUnit_of_mul_isUnit_right (hrel ▸ isUnit_one.neg)
@@ -361,7 +372,8 @@ theorem valChar_cSeq_three_mul_of_dvd_wSeq_three (hrs : IsCoprime r s) (hs : s �
 /-- At a prime `p ∣ w_3`, `v_p(c_n)` is even for `n = 3j + 1`: `c_n` is a `p`-adic unit, as modulo
 `p`, `c̄_1 = -a` and `c̄_{3j+1} = a` for `j ≥ 1`. -/
 theorem valChar_cSeq_three_mul_add_one_of_dvd_wSeq_three (hrs : IsCoprime r s)
-    (hp : (p : ℤ) ∣ wSeq r s 3) (j : ℕ) : valChar p (cSeq ((r : ℚ) / s) (3 * j + 1)) = 1 := by
+    (hp : (p : ℤ) ∣ wSeq r s 3) (j : ℕ) :
+    valChar p (cSeq ((r : ℚ) / s) (3 * j + 1)) = 1 := by
   obtain ⟨σ, hσ, hc3, ha, -⟩ := exists_inv_of_dvd_wSeq_three hrs (pow_one p).symm one_ne_zero hp
   refine valChar_cSeq_of_isUnit (pow_one p).symm one_ne_zero hσ (by lia) ?_
   rcases Nat.eq_zero_or_pos j with rfl | hj
@@ -371,7 +383,8 @@ theorem valChar_cSeq_three_mul_add_one_of_dvd_wSeq_three (hrs : IsCoprime r s)
 /-- At a prime `p ∣ w_3`, `v_p(c_{3j+2})` is even: `c_{3j+2}` is a `p`-adic unit, as modulo `p`,
 `c̄_{3j+2} = c̄_2`. -/
 theorem valChar_cSeq_three_mul_add_two_of_dvd_wSeq_three (hrs : IsCoprime r s)
-    (hp : (p : ℤ) ∣ wSeq r s 3) (j : ℕ) : valChar p (cSeq ((r : ℚ) / s) (3 * j + 2)) = 1 := by
+    (hp : (p : ℤ) ∣ wSeq r s 3) (j : ℕ) :
+    valChar p (cSeq ((r : ℚ) / s) (3 * j + 2)) = 1 := by
   obtain ⟨σ, hσ, hc3, -, hu, -⟩ := exists_inv_of_dvd_wSeq_three hrs (pow_one p).symm one_ne_zero hp
   exact valChar_cSeq_of_isUnit (pow_one p).symm one_ne_zero hσ (by lia)
     (cSeq_three_mul_add_two_of_sq_eq_zero hc3 j ▸ hu)

@@ -65,8 +65,8 @@ theorem vSeq_modEq_add_two_mul (hr : Odd r) (hs : Odd s) {n : ℕ} (hn : 2 ≤ n
 
 /-- For even `r` and odd `s`, `w_m ≡ r + s (mod 8)` for `m ≥ 2`: `w_{m+1} ≡ r w_m² + s` and
 `(r + s)² ≡ 1 (mod 8)`. -/
-theorem intCast_wSeq_zmod_eight_of_even_left (hr : Even r) (hs : Odd s) {m : ℕ}
-    (hm : 2 ≤ m) : (wSeq r s m : ZMod 8) = r + s := by
+theorem intCast_wSeq_zmod_eight_of_even_left (hr : Even r) (hs : Odd s) {m : ℕ} (hm : 2 ≤ m) :
+    (wSeq r s m : ZMod 8) = r + s := by
   have hsq : ((r : ZMod 8) + s) ^ 2 = 1 :=
     mod_cast ZMod.intCast_sq_eight_eq_one_of_odd (hr.add_odd hs)
   induction m, hm using Nat.le_induction with
@@ -162,7 +162,8 @@ theorem cubic_pos_of_neg_lt (hs : 0 < s) (h : -s < r) :
 real root of `x³ + 2x² + 2x + 2`), `ε v_n > 0` for `n ≥ 2`. -/
 theorem mul_vSeq_pos (hs : 0 < s) (hr : r ≠ 0) {ε : ℤ}
     (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
-    {n : ℕ} (hn : 2 ≤ n) : 0 < ε * vSeq r s n := by
+    {n : ℕ} (hn : 2 ≤ n) :
+    0 < ε * vSeq r s n := by
   rcases hε with ⟨h, rfl⟩ | ⟨h, rfl⟩
   · simpa using vSeq_neg_of_le_neg_two_mul hs h (by lia : 1 ≤ n)
   rcases hr.lt_or_gt with hr | hr
@@ -176,17 +177,19 @@ def TwoAdicClass (r s ε : ℤ) : Prop :=
 
 /-- The classes (C1)–(C3) for `ε = 1` in terms of `(r, s) mod 4`: `(1, 1)` and `(1, 3)`;
 `(2, 1)` and `(0, 3)`; `(3, 0)` and `(3, 2)`. -/
-theorem twoAdicClass_one_iff : TwoAdicClass r s 1 ↔
-    r % 4 = 1 ∧ s % 4 = 1 ∨ r % 4 = 1 ∧ s % 4 = 3 ∨ r % 4 = 2 ∧ s % 4 = 1 ∨
-      r % 4 = 0 ∧ s % 4 = 3 ∨ r % 4 = 3 ∧ s % 4 = 0 ∨ r % 4 = 3 ∧ s % 4 = 2 := by
+theorem twoAdicClass_one_iff :
+    TwoAdicClass r s 1 ↔
+      r % 4 = 1 ∧ s % 4 = 1 ∨ r % 4 = 1 ∧ s % 4 = 3 ∨ r % 4 = 2 ∧ s % 4 = 1 ∨
+        r % 4 = 0 ∧ s % 4 = 3 ∨ r % 4 = 3 ∧ s % 4 = 0 ∨ r % 4 = 3 ∧ s % 4 = 2 := by
   simp only [TwoAdicClass, Int.odd_iff, Int.even_iff, Int.ModEq]
   lia
 
 /-- The classes (C1)–(C3) for `ε = -1` in terms of `(r, s) mod 4`: `(3, 1)` and `(3, 3)`;
 `(0, 1)` and `(2, 3)`; `(1, 0)` and `(1, 2)`. -/
-theorem twoAdicClass_neg_one_iff : TwoAdicClass r s (-1) ↔
-    r % 4 = 3 ∧ s % 4 = 1 ∨ r % 4 = 3 ∧ s % 4 = 3 ∨ r % 4 = 0 ∧ s % 4 = 1 ∨
-      r % 4 = 2 ∧ s % 4 = 3 ∨ r % 4 = 1 ∧ s % 4 = 0 ∨ r % 4 = 1 ∧ s % 4 = 2 := by
+theorem twoAdicClass_neg_one_iff :
+    TwoAdicClass r s (-1) ↔
+      r % 4 = 3 ∧ s % 4 = 1 ∨ r % 4 = 3 ∧ s % 4 = 3 ∨ r % 4 = 0 ∧ s % 4 = 1 ∨
+        r % 4 = 2 ∧ s % 4 = 3 ∨ r % 4 = 1 ∧ s % 4 = 0 ∨ r % 4 = 1 ∧ s % 4 = 2 := by
   simp only [TwoAdicClass, Int.odd_iff, Int.even_iff, Int.ModEq]
   lia
 
@@ -218,7 +221,8 @@ private lemma not_dvd_of_modEq_two_mul_pow {m t x : ℤ} (hmt : IsCoprime m t) {
 
 /-- An odd prime dividing `v_n` (`n ≥ 2`) does not divide `r`: `v_n ≡ 2 s^{2^n - 1} (mod r)`. -/
 theorem not_dvd_left_of_dvd_vSeq (hrs : IsCoprime r s) {n : ℕ} (hn : 2 ≤ n) {p : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hpv : (p : ℤ) ∣ vSeq r s n) : ¬(p : ℤ) ∣ r :=
+    (hp : p.Prime) (hp2 : p ≠ 2) (hpv : (p : ℤ) ∣ vSeq r s n) :
+    ¬(p : ℤ) ∣ r :=
   not_dvd_of_modEq_two_mul_pow hrs (vSeq_modEq_left r s hn) hp hp2 hpv
 
 /-- **The `2`-adic condition**: for `a = r/s ∈ 𝒜` with sign `ε` (`a ≤ -2` and `ε = -1`, or
@@ -252,7 +256,8 @@ theorem uSeq_pos (hs : 0 < s) {n : ℕ} (hn : 1 ≤ n)
 /-- For odd `s` and `r ≡ s (mod 4)` (`a ≡ 1 mod 4`), `u_n ≡ 6 (mod 8)` for odd `n ≥ 3`: modulo `8`,
 `u_n = c̄_n² - c̄_n + a + 1` with `c̄_n = a + 4` and `a = rs ∈ {1, 5}`. -/
 theorem uSeq_emod_eight_of_odd (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) {n : ℕ} (hn : 3 ≤ n)
-    (ho : Odd n) : uSeq r s n % 8 = 6 := by
+    (ho : Odd n) :
+    uSeq r s n % 8 = 6 := by
   obtain ⟨j, rfl⟩ := ho
   have hu := intCast_uSeq r (ZMod.intCast_mul_self_eight_eq_one_of_odd hs) (n := 2 * j + 1)
     (by lia)
@@ -265,7 +270,8 @@ theorem uSeq_emod_eight_of_odd (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) {n : ℕ} (h
 /-- For odd `s` and `r ≡ s (mod 4)` (`a ≡ 1 mod 4`), `r w_n ≡ 2 (mod 4)` for even `n ≥ 2`:
 modulo `8` it is `c̄_n = a + 1` with `a ∈ {1, 5}`. -/
 theorem intCast_mul_wSeq_zmod_four_of_even (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) {n : ℕ}
-    (hn : 2 ≤ n) (he : Even n) : ((r * wSeq r s n : ℤ) : ZMod 4) = 2 := by
+    (hn : 2 ≤ n) (he : Even n) :
+    ((r * wSeq r s n : ℤ) : ZMod 4) = 2 := by
   obtain ⟨j, rfl⟩ := he
   rw [← two_mul] at hn ⊢
   have h := intCast_mul_wSeq_zmod_eight r hs hn

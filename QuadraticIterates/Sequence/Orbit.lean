@@ -60,7 +60,8 @@ variable {R : Type*} [CommRing R] {a : R}
 /-- Periodicity propagates along the recursion: if `c_{n₀+k} = c_{n₀}` with `n₀ ≥ 1`, then
 `c_{m+k} = c_m` for all `m ≥ n₀`. -/
 theorem cSeq_add_eq_of_add_eq {n₀ k : ℕ} (hn₀ : 1 ≤ n₀) (h : cSeq a (n₀ + k) = cSeq a n₀) {m : ℕ}
-    (hm : n₀ ≤ m) : cSeq a (m + k) = cSeq a m := by
+    (hm : n₀ ≤ m) :
+    cSeq a (m + k) = cSeq a m := by
   induction m, hm using Nat.le_induction with
   | base => exact h
   | succ m hm ih => rw [Nat.add_right_comm, cSeq_succ a (by lia), cSeq_succ a (by lia), ih]
@@ -68,27 +69,31 @@ theorem cSeq_add_eq_of_add_eq {n₀ k : ℕ} (hn₀ : 1 ≤ n₀) (h : cSeq a (n
 /-- Iterated periodicity: if `c_{n₀+k} = c_{n₀}` with `n₀ ≥ 1`, then `c_{m+kj} = c_m` for all
 `m ≥ n₀` and all `j` (`QuadraticIterates.cSeq_add_eq_of_add_eq`). -/
 theorem cSeq_add_mul_eq_of_add_eq {n₀ k : ℕ} (hn₀ : 1 ≤ n₀) (h : cSeq a (n₀ + k) = cSeq a n₀)
-    {m : ℕ} (hm : n₀ ≤ m) (j : ℕ) : cSeq a (m + k * j) = cSeq a m := by
+    {m : ℕ} (hm : n₀ ≤ m) (j : ℕ) :
+    cSeq a (m + k * j) = cSeq a m := by
   induction j with
   | zero => rfl
   | succ j ih => rw [mul_add, mul_one, ← add_assoc, cSeq_add_eq_of_add_eq hn₀ h (by lia), ih]
 
 /-- The map `x ↦ x² + a` is even: if `c_j = -c_i` (`i, j ≥ 1`), then `c_{j+1} = c_{i+1}`. -/
 private lemma cSeq_succ_eq_of_eq_neg {i j : ℕ} (hi : 1 ≤ i) (hj : 1 ≤ j)
-    (h : cSeq a j = -cSeq a i) : cSeq a (j + 1) = cSeq a (i + 1) := by
+    (h : cSeq a j = -cSeq a i) :
+    cSeq a (j + 1) = cSeq a (i + 1) := by
   rw [cSeq_succ a hj, h, neg_sq, ← cSeq_succ a hi]
 
 /-- If `c_{n+1} = -c_n` (`n ≥ 1`), then `c_{n+1}` is a fixed point: `c_m = c_{n+1}` for all
 `m > n`, since `x ↦ x² + a` is even. -/
 theorem cSeq_eq_of_add_succ_eq_zero {n : ℕ} (hn : 1 ≤ n) (h : cSeq a n + cSeq a (n + 1) = 0)
-    {m : ℕ} (hm : n < m) : cSeq a m = cSeq a (n + 1) := by
+    {m : ℕ} (hm : n < m) :
+    cSeq a m = cSeq a (n + 1) := by
   obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hm
   simpa using cSeq_add_mul_eq_of_add_eq (by lia)
     (cSeq_succ_eq_of_eq_neg hn (by lia) (eq_neg_of_add_eq_zero_right h)) le_rfl j
 
 /-- If `c_{n+2} = -c_n` (`n ≥ 1`), the sequence is `2`-periodic from `n + 1` on. -/
 theorem cSeq_add_two_eq_of_add_two_eq_neg {n : ℕ} (hn : 1 ≤ n) (h : cSeq a (n + 2) = -cSeq a n)
-    {m : ℕ} (hm : n + 1 ≤ m) : cSeq a (m + 2) = cSeq a m :=
+    {m : ℕ} (hm : n + 1 ≤ m) :
+    cSeq a (m + 2) = cSeq a m :=
   cSeq_add_eq_of_add_eq (k := 2) (by lia) (cSeq_succ_eq_of_eq_neg hn (by lia) h) hm
 
 /-- `c_n + c_{n+2} = (c_n + c_{n+1}) (c_n² - c_n + a + 1)`: the identity
@@ -123,12 +128,14 @@ theorem cSeq_two_mul_of_sq_eq_neg_one (ha : a ^ 2 = -1) {j : ℕ} (hj : 1 ≤ j)
 /-- If `c_m² = 0` (`m ≥ 1`), the sequence is `m`-periodic from `n = 2` on: `c_{m+1} = c_m² + a = a`,
 so `c_{m+2} = a² + a = c_2`. -/
 theorem cSeq_add_eq_of_sq_eq_zero {m : ℕ} (hm : 1 ≤ m) (h : cSeq a m ^ 2 = 0) {n : ℕ}
-    (hn : 2 ≤ n) : cSeq a (n + m) = cSeq a n :=
+    (hn : 2 ≤ n) :
+    cSeq a (n + m) = cSeq a n :=
   cSeq_add_eq_of_add_eq (by norm_num) (by
     rw [add_comm, cSeq_succ a (by lia), cSeq_succ a hm, h, zero_add, cSeq_two]) hn
 
 theorem cSeq_add_mul_eq_of_sq_eq_zero {m : ℕ} (hm : 1 ≤ m) (h : cSeq a m ^ 2 = 0) {n : ℕ}
-    (hn : 2 ≤ n) (k : ℕ) : cSeq a (n + m * k) = cSeq a n :=
+    (hn : 2 ≤ n) (k : ℕ) :
+    cSeq a (n + m * k) = cSeq a n :=
   cSeq_add_mul_eq_of_add_eq (by norm_num) (cSeq_add_eq_of_sq_eq_zero hm h le_rfl) hn k
 
 /-- If `c_m² = 0` for some `m ≥ 2`, then `c_{mk} = c_m` for `k ≥ 1`. -/
@@ -160,7 +167,8 @@ theorem cSeq_eq_self_of_sq_eq_zero (h : a ^ 2 = 0) {k : ℕ} (hk : 2 ≤ k) : cS
 /-- If `m ≥ 1` is the first index with `c_m = 0`, and `a ≠ 0`, then `c_n = 0 ↔ m ∣ n` for `n ≥ 1`:
 the sequence is `m`-periodic from `n = 2` on, with `c_{m+1} = c_m² + a = a`. -/
 theorem cSeq_eq_zero_iff_dvd {m : ℕ} (hm : 1 ≤ m) (h : cSeq a m = 0) (ha : a ≠ 0)
-    (hmin : ∀ j ≥ 1, j < m → cSeq a j ≠ 0) {n : ℕ} (hn : 1 ≤ n) : cSeq a n = 0 ↔ m ∣ n := by
+    (hmin : ∀ j ≥ 1, j < m → cSeq a j ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
+    cSeq a n = 0 ↔ m ∣ n := by
   have hc : cSeq a m ^ 2 = 0 := by rw [h, zero_pow two_ne_zero]
   have hm2 : 2 ≤ m := by
     by_contra! h'

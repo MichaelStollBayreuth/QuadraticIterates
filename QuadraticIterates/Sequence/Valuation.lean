@@ -46,7 +46,8 @@ variable {p : ℕ} [Fact p.Prime]
 /-- If `v_p(a) < 0`, then `v_p(c_n) = 2^{n-1} v_p(a)` for `n ≥ 1`: `v_p(c_n²) < v_p(a)`, so the
 valuation doubles at each step. -/
 theorem padicValRat_cSeq_of_padicValRat_neg {a : ℚ} (ha : padicValRat p a < 0) {n : ℕ}
-    (hn : 1 ≤ n) : padicValRat p (cSeq a n) = 2 ^ (n - 1) * padicValRat p a := by
+    (hn : 1 ≤ n) :
+    padicValRat p (cSeq a n) = 2 ^ (n - 1) * padicValRat p a := by
   induction n, hn using Nat.le_induction with
   | base => simp
   | succ n hn ih =>
@@ -122,7 +123,8 @@ private lemma two_le_of_dvd_wSeq {m : ℕ} (hm : 1 ≤ m) (hpm : (p : ℤ) ∣ w
 periodic of exact period `m` (`QuadraticIterates.cSeq_eq_zero_iff_dvd`). -/
 theorem dvd_wSeq_iff (hpr : ¬(p : ℤ) ∣ r) (hps : ¬(p : ℤ) ∣ s) {m : ℕ} (hm : 1 ≤ m)
     (hpm : (p : ℤ) ∣ wSeq r s m) (hmin : ∀ j ≥ 1, j < m → ¬(p : ℤ) ∣ wSeq r s j) {n : ℕ}
-    (hn : 1 ≤ n) : (p : ℤ) ∣ wSeq r s n ↔ m ∣ n := by
+    (hn : 1 ≤ n) :
+    (p : ℤ) ∣ wSeq r s n ↔ m ∣ n := by
   obtain ⟨σ, hσ⟩ := (ZMod.isUnit_intCast_of_not_dvd (pow_one p).symm hps).exists_right_inv
   have hr0 : (r : ZMod p) ≠ 0 := mt (ZMod.intCast_zmod_eq_zero_iff_dvd r p).mp hpr
   have hs0 : (s : ZMod p) ≠ 0 := mt (ZMod.intCast_zmod_eq_zero_iff_dvd s p).mp hps
@@ -166,8 +168,8 @@ theorem padicValRat_cSeq_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) (hr : 
 if `m ∣ n`, and `0` otherwise (`QuadraticIterates.padicValInt_wSeq_eq_ite`). -/
 theorem padicValRat_cSeq_eq_ite (hrs : IsCoprime r s) (hs : s ≠ 0) (hpr : ¬(p : ℤ) ∣ r)
     (hps : ¬(p : ℤ) ∣ s) {m : ℕ} (hm : 1 ≤ m) (hpm : (p : ℤ) ∣ wSeq r s m)
-    (hmin : ∀ j ≥ 1, j < m → ¬(p : ℤ) ∣ wSeq r s j) (hw : wSeq r s m ≠ 0) {n : ℕ}
-    (hn : 1 ≤ n) : padicValRat p (cSeq ((r : ℚ) / s) n) =
+    (hmin : ∀ j ≥ 1, j < m → ¬(p : ℤ) ∣ wSeq r s j) (hw : wSeq r s m ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
+    padicValRat p (cSeq ((r : ℚ) / s) n) =
       if m ∣ n then (padicValInt p (wSeq r s m) : ℤ) else 0 := by
   have h := padicValInt_wSeq_eq_ite hrs hpr hps hm hpm hmin hw hn
   rw [padicValRat_cSeq_eq_padicValInt hs hps hn]

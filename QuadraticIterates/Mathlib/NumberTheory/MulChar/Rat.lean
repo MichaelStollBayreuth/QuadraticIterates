@@ -194,7 +194,8 @@ lemma unitPartChar_neg_one {N k : ℕ} (hN : N = p ^ k) (ψ : MulChar (ZMod N) �
     (dvd_neg.not.mpr (Nat.prime_iff_prime_int.mp Fact.out).not_dvd_one)
 
 lemma unitPartChar_intCast_pow_mul {N j : ℕ} (hN : N = p ^ j) (ψ : MulChar (ZMod N) ℤ) (k : ℕ)
-    {m : ℤ} (hm : ¬(p : ℤ) ∣ m) : unitPartChar p ψ (((p : ℤ) ^ k * m : ℤ) : ℚ) = ψ m := by
+    {m : ℤ} (hm : ¬(p : ℤ) ∣ m) :
+    unitPartChar p ψ (((p : ℤ) ^ k * m : ℤ) : ℚ) = ψ m := by
   simp [unitPartChar_natCast_self hN, unitPartChar_intCast hN hm]
 
 end unitPartChar

@@ -76,7 +76,8 @@ theorem nonempty_mulEquiv_of_pos_of_emod_four_eq_two (ha : 0 < a) (ha4 : a % 4 =
 /-- For `a < 0` with `a ≡ 0 mod 4` and `-a` not a square, `Ω_n ≅ [C₂]ⁿ` for all `n`: the class
 (C2), and `-a - 1 ≡ 3 mod 4`. This is case c) of the main result of Section 3 of [Stoll 1992]. -/
 theorem nonempty_mulEquiv_of_neg_of_emod_four_eq_zero (ha : a < 0) (ha4 : a % 4 = 0)
-    (hsq : ¬IsSquare (-a)) (n : ℕ) : Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
+    (hsq : ¬IsSquare (-a)) (n : ℕ) :
+    Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n) :=
   (forall_nonempty_mulEquiv_intCast_iff_of_twoAdicClass (.inl ⟨by lia, rfl⟩)
     (twoAdicClass_neg_one_iff.mpr (by lia))).mpr
     ⟨hsq, Int.not_isSquare_of_two_le_emod_four (by lia)⟩ n

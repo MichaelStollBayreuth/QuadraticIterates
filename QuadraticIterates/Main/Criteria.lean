@@ -185,7 +185,8 @@ private lemma unitPartChar_cSeq_of_eq_pow_mul (hrs : IsCoprime r s) (hs : s ≠ 
 
 /-- (Z1) If `r ≠ ±□`, then `val_p` is a `φ₀` for a prime `p` with `v_p(r)` odd. -/
 theorem hasCharPattern_neg_one_of_not_isSquare (hrs : IsCoprime r s) (hs : s ≠ 0)
-    (h : ¬IsSquare r) (h' : ¬IsSquare (-r)) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
+    (h : ¬IsSquare r) (h' : ¬IsSquare (-r)) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
   obtain ⟨p, _, hpr, hv⟩ := exists_prime_dvd_valChar_eq_neg_one h h'
   exact ⟨valChar p, fun n hn ↦ (valChar_cSeq_of_dvd_left hrs hs hpr hn).trans hv⟩
 
@@ -201,7 +202,8 @@ theorem hasCharPattern_neg_one_of_dvd_add_two_mul (hrs : IsCoprime r s)
 `χ_p` is a `φ₀`: modulo `p` the sequence alternates between `-a` and `a - 1`, `a² = -1`. -/
 theorem hasCharPattern_neg_one_of_dvd_sq_add_sq (hrs : IsCoprime r s) (hp2 : p ≠ 2)
     (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2) (h₁ : jacobiSym (-(r * s)) p = -1)
-    (h₂ : jacobiSym ((r - s) * s) p = -1) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
+    (h₂ : jacobiSym ((r - s) * s) p = -1) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
   have hN : p = p ^ 1 := (pow_one p).symm
   refine ⟨unitPartChar p (quadraticChar (ZMod p)), fun n hn ↦ ?_⟩
   obtain ⟨j, rfl | rfl⟩ := Nat.even_or_odd' n
@@ -216,7 +218,8 @@ theorem hasCharPattern_neg_one_of_dvd_sq_add_sq (hrs : IsCoprime r s) (hp2 : p �
 is a `φ₀`: `χ_p(c_n) = (-1 / p)^{[n = 1]} (ms / p)` with `(-1 / p) = 1`. -/
 theorem hasCharPattern_neg_one_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) {k : ℕ} {m : ℤ}
     (hp4 : p % 4 = 1) (hk : 0 < k) (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m)
-    (h : jacobiSym (m * s) p = -1) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
+    (h : jacobiSym (m * s) p = -1) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
   have hms : quadraticChar (ZMod p) (m * s) = -1 := by rw [← Int.cast_mul, quadraticChar_intCast, h]
   refine ⟨unitPartChar p (quadraticChar (ZMod p)), fun n hn ↦ ?_⟩
   rw [unitPartChar_cSeq_of_eq_pow_mul hrs hs (pow_one p).symm one_ne_zero hk hr hm _ hn,
@@ -238,7 +241,8 @@ theorem hasCharPattern_neg_one_of_dvd_left_two (hrs : IsCoprime r s) (hs : s ≠
 
 /-- **Criteria for `φ₀`**: each of (Z1)–(Z4) gives a character that is `-1` at every `c_n`. -/
 theorem hasCharPattern_neg_one_of_negAllCriterion (hrs : IsCoprime r s) (hs : s ≠ 0)
-    (h : NegAllCriterion r s) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
+    (h : NegAllCriterion r s) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
   cases h with
   | not_isSquare h h' => exact hasCharPattern_neg_one_of_not_isSquare hrs hs h h'
   | dvd_add_two_mul p hp hp8 hdvd =>
@@ -346,7 +350,8 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_two (hrs : IsCoprime r s) (hs 
 /-- **Criteria for `φ₁`**: each of (O1)–(O5) gives a character that is `-1` at `c_1` and `1` at
 all later terms. -/
 theorem hasCharPattern_mulSingle_one_of_negFirstCriterion (hrs : IsCoprime r s) (hs : 0 < s)
-    (h : NegFirstCriterion r s) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
+    (h : NegFirstCriterion r s) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
   cases h with
   | pos h => exact hasCharPattern_mulSingle_one_of_pos (div_pos (mod_cast h) (mod_cast hs))
   | modEq_four hs' h => exact hasCharPattern_mulSingle_one_of_modEq_four hrs hs' h
@@ -391,7 +396,8 @@ theorem hasCharPattern_neg_mulSingle_one_of_dvd_left_four (hrs : IsCoprime r s) 
 `τ` from `1` on. -/
 private lemma hasCharPattern_neg_mulSingle_one_of_parity {M : Type*} [CommMonoid M] {v : ℕ → M}
     (χ : MulChar M ℤ) (h₁ : χ (v 1) = 1) (hodd : ∀ j ≥ 1, χ (v (2 * j + 1)) = -1)
-    (heven : ∀ j ≥ 1, χ (v (2 * j)) = -1) : HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) :=
+    (heven : ∀ j ≥ 1, χ (v (2 * j)) = -1) :
+    HasCharPattern v 1 (-Pi.mulSingle 1 (-1)) :=
   hasCharPattern_neg_mulSingle_one_of_apply χ h₁ fun n hn ↦ by
     obtain ⟨j, rfl | rfl⟩ := Nat.even_or_odd' n
     exacts [heven j (by lia), hodd j (by lia)]
@@ -442,7 +448,8 @@ theorem hasCharPattern_neg_mulSingle_one_of_dvd_add_of_valChar (hrs : IsCoprime 
 theorem hasCharPattern_neg_mulSingle_one_of_dvd_add_of_not_isSquare (hrs : IsCoprime r s)
     (hs : s ≠ 0) {N j : ℕ} (hN : N = p ^ j) (hj : j ≠ 0) (hNrs : (N : ℤ) ∣ r + s)
     {ψ : MulChar (ZMod N) ℤ} (hψ : ψ (-1) = -1) (h : ¬IsSquare (r + s))
-    (h' : ¬IsSquare (-(r + s))) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-Pi.mulSingle 1 (-1)) := by
+    (h' : ¬IsSquare (-(r + s))) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-Pi.mulSingle 1 (-1)) := by
   have hp : (p : ℤ) ∣ r + s := (dvd_pow_self (p : ℤ) hj).trans (mod_cast hN ▸ hNrs)
   have hps : ¬(p : ℤ) ∣ s := Int.Prime.not_dvd_of_isCoprime Fact.out hrs.symm.add_self_right hp
   have hrs0 : ((r + s : ℤ) : ℚ) ≠ 0 := mod_cast fun h0 : r + s = 0 ↦ h (h0 ▸ .zero)
@@ -492,7 +499,8 @@ theorem hasCharPattern_neg_mulSingle_one_of_window (hrs : IsCoprime r s) (hs : 0
 theorem hasCharPattern_neg_mulSingle_one_of_window' (hrs : IsCoprime r s) (hs : 0 < s)
     (ha : r < -s) (h₃ : (r ^ 2 + r * s) ^ 2 + r * s ^ 3 < 0)
     (h₄ : 0 < ((r ^ 2 + r * s) ^ 2 + r * s ^ 3) ^ 2 + r * s ^ 7) (h : ¬IsSquare (r + s))
-    (h' : ¬IsSquare (-(r + s))) : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-Pi.mulSingle 1 (-1)) := by
+    (h' : ¬IsSquare (-(r + s))) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-Pi.mulSingle 1 (-1)) := by
   obtain ⟨q, _, hq, hv⟩ := exists_prime_dvd_valChar_eq_neg_one h h'
   have hs' : (0 : ℚ) < s := mod_cast hs
   refine hasCharPattern_neg_mulSingle_one_of_window hrs hs ha ?_ ?_ hq hv
@@ -581,8 +589,8 @@ theorem negFirstCriterion_or_negTailCriterion_of_prime_dvd (hr : r ≠ 0) {p : �
     (.dvd_left p k m hp hp4 hk hrm hm) (.dvd_left p k m hp hp4 hk hrm hm)
 
 /-- (O5) or (T2) at `2`: `4 ∣ r ≠ 0` with `s` odd. -/
-theorem negFirstCriterion_or_negTailCriterion_of_four_dvd (hr : r ≠ 0) (h4 : 4 ∣ r)
-    (hs : Odd s) : NegFirstCriterion r s ∨ NegTailCriterion r s := by
+theorem negFirstCriterion_or_negTailCriterion_of_four_dvd (hr : r ≠ 0) (h4 : 4 ∣ r) (hs : Odd s) :
+    NegFirstCriterion r s ∨ NegTailCriterion r s := by
   obtain ⟨k, m, hk, hrm, hm⟩ := Int.exists_pow_mul_of_dvd Nat.prime_two hr (by push_cast; lia)
   push_cast at hrm hm
   have hk2 : 2 ≤ k := Nat.lt_of_le_of_ne hk fun h ↦ by subst h; lia

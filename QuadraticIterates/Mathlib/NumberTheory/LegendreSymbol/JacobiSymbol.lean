@@ -36,7 +36,8 @@ namespace Int
 /-- **Lifting a square root**: if `z² ≡ x (mod m)` and `2z` is invertible modulo a divisor `n` of
 `m`, then `(z + t m)² ≡ x (mod m n)` for some `t`. -/
 theorem exists_add_mul_sq_modEq_mul {x z m n : ℤ} (hnm : n ∣ m) (hz : z ^ 2 ≡ x [ZMOD m])
-    (hcop : IsCoprime (2 * z) n) : ∃ t, (z + t * m) ^ 2 ≡ x [ZMOD m * n] := by
+    (hcop : IsCoprime (2 * z) n) :
+    ∃ t, (z + t * m) ^ 2 ≡ x [ZMOD m * n] := by
   obtain ⟨d, hd⟩ := hz.dvd
   obtain ⟨u, v, huv⟩ := hcop
   obtain ⟨e, rfl⟩ := hnm
@@ -46,7 +47,8 @@ theorem exists_add_mul_sq_modEq_mul {x z m n : ℤ} (hnm : n ∣ m) (hz : z ^ 2 
 /-- **Lifting a square root at `2`**: if `z` is odd, `4 ∣ m` and `z² ≡ x (mod 2m)`, then
 `(z + t m)² ≡ x (mod 4m)` for some `t`. -/
 theorem exists_add_mul_sq_modEq_four_mul {x z m : ℤ} (hz : Odd z) (hm : 4 ∣ m)
-    (h : z ^ 2 ≡ x [ZMOD 2 * m]) : ∃ t, (z + t * m) ^ 2 ≡ x [ZMOD 4 * m] := by
+    (h : z ^ 2 ≡ x [ZMOD 2 * m]) :
+    ∃ t, (z + t * m) ^ 2 ≡ x [ZMOD 4 * m] := by
   obtain ⟨d, hd⟩ := h.dvd
   obtain ⟨w, rfl⟩ := hz
   obtain ⟨e, rfl⟩ := hm
@@ -54,7 +56,8 @@ theorem exists_add_mul_sq_modEq_four_mul {x z m : ℤ} (hz : Odd z) (hm : 4 ∣ 
 
 /-- A square root of `x` modulo an odd prime `p`, prime to `p`, lifts to every power of `p`. -/
 theorem exists_sq_modEq_prime_pow {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {x y : ℤ}
-    (hy : ¬(p : ℤ) ∣ y) (h : y ^ 2 ≡ x [ZMOD p]) (k : ℕ) : ∃ z, z ^ 2 ≡ x [ZMOD p ^ k] := by
+    (hy : ¬(p : ℤ) ∣ y) (h : y ^ 2 ≡ x [ZMOD p]) (k : ℕ) :
+    ∃ z, z ^ 2 ≡ x [ZMOD p ^ k] := by
   have hp' := Nat.prime_iff_prime_int.mp hp
   have key (k : ℕ) : ∃ z, z ≡ y [ZMOD p] ∧ z ^ 2 ≡ x [ZMOD p ^ (k + 1)] := by
     induction k with
@@ -92,7 +95,8 @@ namespace ZMod
 /-- An integer that is a square modulo coprime `m` and `n` is a square modulo `m n`; this
 generalizes `ZMod.isSquare_neg_one_mul` from `-1` to any integer. -/
 theorem isSquare_intCast_mul {m n : ℕ} (hmn : m.Coprime n) {x : ℤ}
-    (hm : IsSquare (x : ZMod m)) (hn : IsSquare (x : ZMod n)) : IsSquare (x : ZMod (m * n)) := by
+    (hm : IsSquare (x : ZMod m)) (hn : IsSquare (x : ZMod n)) :
+    IsSquare (x : ZMod (m * n)) := by
   obtain ⟨a, ha⟩ := hm
   obtain ⟨b, hb⟩ := hn
   refine ⟨(chineseRemainder hmn).symm (a, b), (chineseRemainder hmn).injective ?_⟩
@@ -107,7 +111,8 @@ private lemma isSquare_intCast_of_modEq {x z : ℤ} {m : ℕ} (h : z ^ 2 ≡ x [
 /-- An integer with Jacobi symbol `1` modulo an odd prime `p` is a square modulo every power
 of `p`. -/
 theorem isSquare_intCast_prime_pow_of_jacobiSym_eq_one {p : ℕ} [Fact p.Prime] (hp2 : p ≠ 2)
-    {x : ℤ} (h : jacobiSym x p = 1) (k : ℕ) : IsSquare (x : ZMod (p ^ k)) := by
+    {x : ℤ} (h : jacobiSym x p = 1) (k : ℕ) :
+    IsSquare (x : ZMod (p ^ k)) := by
   obtain ⟨y, hy⟩ := ZMod.isSquare_of_jacobiSym_eq_one h
   obtain ⟨y, rfl⟩ := ZMod.intCast_surjective y
   have hx : (x : ZMod p) ≠ 0 := fun h0 ↦ by
@@ -124,7 +129,8 @@ theorem isSquare_intCast_two_pow_of_modEq {x : ℤ} (hx : x ≡ 1 [ZMOD 8]) (k :
   exact isSquare_intCast_of_modEq (by rwa [Nat.cast_pow, Nat.cast_ofNat])
 
 private lemma isSquare_intCast_two_pow {x : ℤ} {n : ℕ} (hn : 0 < n) (h4 : 4 ∣ 2 ^ n → x % 4 = 1)
-    (h8 : 8 ∣ 2 ^ n → x % 8 = 1) : IsSquare (x : ZMod (2 ^ n)) := by
+    (h8 : 8 ∣ 2 ^ n → x % 8 = 1) :
+    IsSquare (x : ZMod (2 ^ n)) := by
   rcases (by lia : n = 1 ∨ n = 2 ∨ 3 ≤ n) with rfl | rfl | hn3
   · rw [pow_one]
     exact FiniteField.isSquare_of_char_two (ZMod.ringChar_zmod_n 2) _
@@ -138,7 +144,8 @@ private lemma isSquare_intCast_two_pow {x : ℤ} {n : ℕ} (hn : 0 < n) (h4 : 4 
 and Hensel lifting at each prime power. -/
 theorem isSquare_intCast_of_forall {x : ℤ} {M : ℕ} (hM : M ≠ 0)
     (hp : ∀ p : ℕ, p.Prime → p ≠ 2 → p ∣ M → jacobiSym x p = 1) (h4 : 4 ∣ M → x % 4 = 1)
-    (h8 : 8 ∣ M → x % 8 = 1) : IsSquare (x : ZMod M) := by
+    (h8 : 8 ∣ M → x % 8 = 1) :
+    IsSquare (x : ZMod M) := by
   induction M using Nat.recOnPosPrimePosCoprime with
   | prime_pow p n hpp hn =>
     rcases eq_or_ne p 2 with rfl | hp2

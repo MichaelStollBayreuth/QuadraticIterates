@@ -74,7 +74,8 @@ statement. Proof: `c_n + c_{n+1} = q(c_n)` for `q(x) = x² + x + a`, `c_n` lies 
 and the convex `q` is negative at both endpoints, `q(a) = a (a + 2)` and
 `q(a² + a) = a (a³ + 2a² + 2a + 2)`. -/
 theorem cSeq_add_cSeq_succ_neg (ha : a < 0) (hα : 0 < a ^ 3 + 2 * a ^ 2 + 2 * a + 2) {n : ℕ}
-    (hn : 2 ≤ n) : cSeq a n + cSeq a (n + 1) < 0 := by
+    (hn : 2 ≤ n) :
+    cSeq a n + cSeq a (n + 1) < 0 := by
   have h₂ := neg_two_lt_of_pos hα
   have hl : 1 * (a * a) + 1 * a + a < 0 := by
     linear_combination mul_neg_of_neg_of_pos ha (by linarith : 0 < a + 2)
@@ -89,7 +90,8 @@ theorem cSeq_add_cSeq_succ_neg (ha : a < 0) (hα : 0 < a ^ 3 + 2 * a ^ 2 + 2 * a
 `x³ + 2x² + 2x + 2` (over `ℝ`, its only real root, `α ≈ -1.5437`) and `α < a < 0`, the sums
 `c_n + c_{n+1}`, `n ≥ 2`, are negative. -/
 theorem cSeq_add_cSeq_succ_neg_of_lt {α : R} (hα : α ^ 3 + 2 * α ^ 2 + 2 * α + 2 = 0) (h : α < a)
-    (ha : a < 0) {n : ℕ} (hn : 2 ≤ n) : cSeq a n + cSeq a (n + 1) < 0 := by
+    (ha : a < 0) {n : ℕ} (hn : 2 ≤ n) :
+    cSeq a n + cSeq a (n + 1) < 0 := by
   refine cSeq_add_cSeq_succ_neg ha ?_ hn
   have hpos : 0 < a ^ 2 + a * α + α ^ 2 + 2 * a + 2 * α + 2 := by
     linarith [sq_nonneg (2 * a + α + 2), sq_nonneg (3 * α + 2)]
@@ -136,12 +138,14 @@ private theorem cSeq_mem_Icc_and_mem_Icc (ha : a < -1) (h₃ : cSeq a 3 < 0) (h�
     exact ⟨⟨he₁, he₂⟩, le_cSeq a (by lia), by nlinarith [h₄.trans_le he₁]⟩
 
 theorem cSeq_mem_Icc_of_even (ha : a < -1) (h₃ : cSeq a 3 < 0) (h₄ : 0 < cSeq a 4) {n : ℕ}
-    (hn : 2 ≤ n) (he : Even n) : cSeq a n ∈ Set.Icc (cSeq a 4) (cSeq a 2) := by
+    (hn : 2 ≤ n) (he : Even n) :
+    cSeq a n ∈ Set.Icc (cSeq a 4) (cSeq a 2) := by
   obtain ⟨k, rfl⟩ := he
   simpa [two_mul] using (cSeq_mem_Icc_and_mem_Icc ha h₃ h₄ (k := k) (by lia)).1
 
 theorem cSeq_mem_Icc_of_odd (ha : a < -1) (h₃ : cSeq a 3 < 0) (h₄ : 0 < cSeq a 4) {n : ℕ}
-    (hn : 3 ≤ n) (ho : Odd n) : cSeq a n ∈ Set.Icc a (cSeq a 3) := by
+    (hn : 3 ≤ n) (ho : Odd n) :
+    cSeq a n ∈ Set.Icc a (cSeq a 3) := by
   obtain ⟨k, rfl⟩ := ho
   exact (cSeq_mem_Icc_and_mem_Icc ha h₃ h₄ (by lia)).2
 
@@ -163,7 +167,8 @@ theorem cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt (ha : -1 < a) {n : ℕ} (hn : 2 �
 /-- In the window `a < -1`, `c_3 < 0 < c_4`, `c_n² - c_n + a + 1 > 0` for odd `n ≥ 3`: there
 `c_n ≤ c_3 < -1`, and `a > -2`. -/
 theorem cSeq_sq_sub_cSeq_add_pos_of_odd (ha : a < -1) (h₃ : cSeq a 3 < 0) (h₄ : 0 < cSeq a 4)
-    {n : ℕ} (hn : 3 ≤ n) (ho : Odd n) : 0 < cSeq a n ^ 2 - cSeq a n + a + 1 := by
+    {n : ℕ} (hn : 3 ≤ n) (ho : Odd n) :
+    0 < cSeq a n ^ 2 - cSeq a n + a + 1 := by
   have hc := (cSeq_mem_Icc_of_odd ha h₃ h₄ hn ho).2.trans_lt (cSeq_three_lt_neg_one ha h₃ h₄)
   have ha₂ : -2 < a := lt_of_not_ge fun h ↦
     h₃.not_ge ((neg_nonneg.mpr (by linarith)).trans (neg_le_cSeq_of_le_neg_two h (by norm_num)))

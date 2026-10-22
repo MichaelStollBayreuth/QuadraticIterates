@@ -21,7 +21,8 @@ Auxiliary material for the formalization of the surjectivity of arboreal Galois 
 @[expose] public section
 
 theorem Int.Prime.not_dvd_of_isCoprime {p : ℕ} (hp : p.Prime) {x y : ℤ} (h : IsCoprime x y)
-    (hy : (p : ℤ) ∣ y) : ¬(p : ℤ) ∣ x :=
+    (hy : (p : ℤ) ∣ y) :
+    ¬(p : ℤ) ∣ x :=
   fun hx ↦ (Nat.prime_iff_prime_int.mp hp).not_isUnit (h.isUnit_of_dvd' hx hy)
 
 theorem Int.Prime.not_dvd_two {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) : ¬(p : ℤ) ∣ 2 :=

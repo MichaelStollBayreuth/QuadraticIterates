@@ -73,8 +73,9 @@ def uSeq (n : ℕ) : ℤ :=
 
 lemma vSeq_eq (n : ℕ) : vSeq r s n = wSeq r s (n + 1) + wSeq r s n * s ^ 2 ^ (n - 1) := rfl
 
-lemma uSeq_eq (n : ℕ) : uSeq r s n =
-    r ^ 2 * wSeq r s n ^ 2 - r * wSeq r s n * s ^ 2 ^ (n - 1) + (r + s) * s ^ (2 ^ n - 1) := rfl
+lemma uSeq_eq (n : ℕ) :
+    uSeq r s n =
+      r ^ 2 * wSeq r s n ^ 2 - r * wSeq r s n * s ^ 2 ^ (n - 1) + (r + s) * s ^ (2 ^ n - 1) := rfl
 
 @[simp] lemma vSeq_one : vSeq r s 1 = r := by simp [vSeq_eq]
 
@@ -125,7 +126,8 @@ variable {r} in
 /-- If `v_n` vanishes in a ring where `s` has an inverse `σ`, then `c̄_n + c̄_{n+1} = 0` for the
 sequence `c̄` of the parameter `r σ`. -/
 theorem cSeq_add_cSeq_succ_eq_zero_of_vSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n)
-    (hv : (vSeq r s n : S) = 0) : cSeq ((r : S) * σ) n + cSeq ((r : S) * σ) (n + 1) = 0 := by
+    (hv : (vSeq r s n : S) = 0) :
+    cSeq ((r : S) * σ) n + cSeq ((r : S) * σ) (n + 1) = 0 := by
   have h := intCast_mul_vSeq r hσ hn
   rw [hv, mul_zero, eq_comm] at h
   exact ((IsUnit.of_mul_eq_one σ hσ).pow _).mul_right_eq_zero.mp h

@@ -31,7 +31,8 @@ theorem exists_pow_mul_of_dvd {p : ℕ} (hp : p.Prime) {r : ℤ} (hr : r ≠ 0) 
 
 /-- The `p`-part of a square: for `p ∣ t ≠ 0`, `t² = p^(2j) u²` with `j > 0` and `p ∤ u`. -/
 theorem exists_sq_eq_pow_mul_of_dvd {p : ℕ} (hp : p.Prime) {t : ℤ} (ht : t ≠ 0)
-    (hpt : (p : ℤ) ∣ t) : ∃ j : ℕ, ∃ u : ℤ, 0 < j ∧ t ^ 2 = p ^ (2 * j) * u ^ 2 ∧ ¬(p : ℤ) ∣ u := by
+    (hpt : (p : ℤ) ∣ t) :
+    ∃ j : ℕ, ∃ u : ℤ, 0 < j ∧ t ^ 2 = p ^ (2 * j) * u ^ 2 ∧ ¬(p : ℤ) ∣ u := by
   obtain ⟨j, u, hj, rfl, hu⟩ := exists_pow_mul_of_dvd hp ht hpt
   exact ⟨j, u, hj, by rw [mul_pow, ← pow_mul, Nat.mul_comm], hu⟩
 
