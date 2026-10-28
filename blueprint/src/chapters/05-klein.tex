@@ -221,7 +221,9 @@ surjective \emph{if} we can also produce~$\phi_0$ and~$\phi_1$. This is equivale
 two of~$\phi_0$, $\phi_1$ and~$\tau$: if~$\phi_0$ and~$\phi_1$ are such characters, then
 $\{1, \phi_0, \phi_1, \phi_0\phi_1\}$ is a Klein four-group inside the character group of
 $\QQ^\times/\QQ^{\times 2}$, and~$\phi_0\phi_1$ is a~$\tau$ (Lemma~\ref{lem:klein}). We now collect
-sufficient conditions for each of them.
+sufficient conditions for each of them. For a quadratic character~$\psi$ on~$\QQ^\times$, we have
+$\psi(c_1) = \psi(-rs)$, $\psi(c_2) = \psi(r(r + s))$ and $\psi(c_1 c_2) = \psi(-s(r + s))$
+(Lemma~\ref{lem:sqclass}).
 
 \begin{proposition}[Criteria for~$\phi_0$]
   \label{prop:Z}
@@ -241,12 +243,14 @@ sufficient conditions for each of them.
     \item[(Z2)] A prime $p \equiv \pm 3 \bmod 8$ divides~$r + 2s$.
     \item[(Z3)] A prime $p \equiv 5 \bmod 8$ divides $r^2 + s^2$ with
           $\chi_p\bigl((r - s)s\bigr) = -1$.
-    \item[(Z4)] A prime $p \equiv 1 \bmod 4$ divides~$r$ with $\Leg{r_p s}{p} = -1$; or $8 \mid r$
-          and $r_2 s \equiv \pm 3 \bmod 8$.
+    \item[(Z4)] A prime $p \equiv 1 \bmod 4$ divides~$r$ with $\chi_p(-rs) = -1$; or $8 \mid r$
+          and $\chi_8(-rs) = -1$.
   \end{enumerate}
   \formalnote{An inductive proposition \lname{NegAllCriterion r s} with one constructor per item
   (two for (Z4)), stated with Mathlib's notions only: Legendre symbols as \lname{jacobiSym}
-  and~$p$-parts as $r = p^k m$ with $p \nmid m$. In (Z3), $p \nmid s$ follows from
+  and~$p$-parts as $r = p^k m$ with $p \nmid m$. In (Z4), $\chi_p(-rs) = -1$ is
+  $\Leg{r_p s}{p} = -1$, as $\chi_p(-1) = 1$, and $\chi_8(-rs) = -1$ is
+  $r_2 s \equiv \pm 3 \bmod 8$. In (Z3), $p \nmid s$ follows from
   $\Leg{(r - s)s}{p} = -1$, and $\Leg{-rs}{p} = -1$ is
   \lname{ZMod.quadraticChar\_eq\_neg\_one\_of\_sq\_eq\_neg\_one} (Euler's criterion).}
 \end{proposition}
@@ -258,7 +262,7 @@ sufficient conditions for each of them.
   modulo~$p$ to $(-a, a - 1, -a, a - 1, \dots)$ (Lemma~\ref{lem:pat-r2s2}); moreover
   $\chi_p(-a) = \chi_p(a) = (-1)^{(p-1)/4} = -1$ and $\chi_p(a - 1) = \chi_p((r - s)s) = -1$. So
   we can take~$\chi_p$. (Z4)
-  $\chi_p(c_1) = \Leg{-1}{p}\Leg{r_p s}{p}$ and $\chi_p(c_n) = \Leg{r_p s}{p}$ for $n \ge 2$, and
+  $\chi_p(c_1) = \chi_p(-1)\chi_p(rs)$ and $\chi_p(c_n) = \chi_p(rs)$ for $n \ge 2$, and
   similarly for~$\chi_8$ in the second case (Lemma~\ref{lem:pat-r}(2), (4)); so we can
   take~$\chi_p$, resp.\ $\chi_8$.
 \end{proof}
@@ -281,30 +285,35 @@ sufficient conditions for each of them.
   \begin{enumerate}
     \item[(O1)] $a > 0$.
     \item[(O2)] $a \equiv 1 \bmod 4$, i.e.\ $s$ is odd and $r \equiv s \bmod 4$.
-    \item[(O3)] An odd prime~$p$ divides~$s$ with $v_p(s)$ odd or $\Leg{-r s_p}{p} = -1$.
-    \item[(O4)] $v_2(s)$ is odd, or $v_2(s) = 2$ and $r s_2 \equiv 1 \bmod 4$, or $v_2(s) \ge 4$ is
-          even and $r s_2 \not\equiv -1 \bmod 8$.
-    \item[(O5)] A prime $p \equiv 3 \bmod 4$ divides~$r$ with $\Leg{r_p s}{p} = 1$; or $4 \mid r$
-          and $r_2 s \equiv 1 \bmod 4$.
+    \item[(O3)] For some prime~$p$ dividing~$s$, $-rs$ is not a square in~$\QQ_p$, and if $p = 2$
+          and $v_2(s) = 2$, then moreover $\chi_4(-rs) = -1$.
+    \item[(O4)] A prime $p \equiv 3 \bmod 4$ divides~$r$ with $\chi_p(-rs) = -1$; or $4 \mid r$
+          and $\chi_4(-rs) = -1$.
   \end{enumerate}
-  In particular, $a$ has~$\phi_1$ if~$s$ is not a square ((O3) or (O4)).
-  \formalnote{\lname{NegFirstCriterion r s}. In (O4), $\chi_4$ works whenever $4 \mid s$ and
-  $r s_2 \equiv 1 \bmod 4$, and~$\chi_8$ whenever $8 \mid s$ and $r s_2 \equiv \pm 3 \bmod 8$.}
+  In particular, by (O3), $a$ has~$\phi_1$ if~$s$ is not a square.
+  \formalnote{\lname{NegFirstCriterion r s}. (O3) has one constructor at an odd prime, with
+  $v_p(s)$ odd or $\Leg{-r s_p}{p} = -1$, and one at~$2$, with $v_2(s)$ odd, or $v_2(s) = 2$ and
+  $r s_2 \equiv 1 \bmod 4$, or $v_2(s) \ge 4$ even and $r s_2 \not\equiv -1 \bmod 8$: these are
+  the explicit forms of ``$-rs$ is not a square in~$\QQ_p$''. At~$2$, $\chi_4$ works whenever
+  $4 \mid s$ and $r s_2 \equiv 1 \bmod 4$, and~$\chi_8$ whenever $8 \mid s$ and
+  $r s_2 \equiv \pm 3 \bmod 8$. In (O4), $\chi_p(-rs) = -1$ is $\Leg{r_p s}{p} = 1$, as
+  $\chi_p(-1) = -1$, and $\chi_4(-rs) = -1$ is $r_2 s \equiv 1 \bmod 4$.}
 \end{proposition}
 \begin{proof}
   \leanok
   \uses{lem:sqclass}
   (O1) The sign (Lemma~\ref{lem:signs}). (O2) $\chi_4$ or~$\chi_4 \val_2$, by a consideration
-  modulo~$8$; note $\val_2(c_n) = (-1)^{n-1}$ (Lemma~\ref{lem:pat-dyadic}). (O3) In the first
-  case~$\val_p$; in the second~$\chi_p$, as $r w_n \equiv r^{2^{n-1}} \bmod p$
-  (Lemma~\ref{lem:pat-s}(1)). (O4) By Lemma~\ref{lem:pat-s}(2) the characters at~$2$ are trivial
-  on~$c_n$, $n \ge 3$, so it suffices to find one with value~$-1$ at~$c_1$ and~$1$ at~$c_2$; here
-  $c_1 \sim -rs$, $c_2 \sim r(r+s)$ (Lemma~\ref{lem:sqclass}), $r$ odd. If $v_2(s)$ is odd,
-  $\val_2$ works. If $v_2(s) = 2$, then $r + s \equiv r + 4 \bmod 8$, so
-  $\chi_4(c_2) = \chi_4(r^2) = 1$, and $\chi_4(c_1) = \chi_4(-r s_2) = -1$. If $v_2(s) \ge 4$, then
-  $r(r + s) \equiv 1 \bmod 8$, so every character at~$2$ is~$1$ at~$c_2$, and as~$-r s_2$ is
-  a~$2$-adic unit $\not\equiv 1 \bmod 8$ one of~$\chi_4$, $\chi_8$, $\chi_4\chi_8$ is~$-1$ at~$c_1$.
-  (O5) $\chi_p$, resp.\ $\chi_4$ (Lemma~\ref{lem:pat-r}(2), (3)); compare the proof of (Z4).
+  modulo~$8$; note $\val_2(c_n) = (-1)^{n-1}$ (Lemma~\ref{lem:pat-dyadic}). (O3) Note that
+  $r w_n \equiv r^{2^{n-1}} \bmod s$ for $n \ge 2$ (Lemma~\ref{lem:pat-s}(1)). If $v_p(s)$ is odd,
+  we can take~$\val_p$. If $v_p(s) \ge 2$ is even and~$p$ is odd, we can take~$\chi_p$: the
+  assumption on~$-rs$ gives $\chi_p(c_1) = -1$, and all~$c_n$ with $n \ge 2$ are~$p$-adic squares.
+  If $v_2(s) \ge 2$ is even, then by Lemma~\ref{lem:pat-s}(2) the characters at~$2$ are trivial
+  on~$c_n$ for $n \ge 3$; here $c_1 \sim -rs$, $c_2 \sim r(r+s)$ (Lemma~\ref{lem:sqclass}), $r$
+  odd. If $v_2(s) = 2$, then $r + s \equiv r + 4 \bmod 8$, so $\chi_4(c_2) = \chi_4(r^2) = 1$, and
+  $\chi_4(c_1) = \chi_4(-rs) = -1$ by the additional assumption. If $v_2(s) \ge 4$, then
+  $r(r + s) \equiv 1 \bmod 8$, so every character at~$2$ is~$1$ at~$c_2$, and as~$-rs$ is not a
+  square in~$\QQ_2$, one of~$\chi_4$, $\chi_8$, $\chi_4\chi_8$ is~$-1$ at~$c_1$. (O4) $\chi_p$,
+  resp.\ $\chi_4$ (Lemma~\ref{lem:pat-r}(2), (3)); compare the proof of (Z4).
 \end{proof}
 
 \begin{proposition}[Criteria for~$\tau$]
@@ -326,14 +335,16 @@ sufficient conditions for each of them.
   $a$ has~$\tau$ if one of the following holds.
   \begin{enumerate}
     \item[(T1)] $-1 < a < 0$.
-    \item[(T2)] A prime $p \equiv 3 \bmod 4$ divides~$r$ with $\Leg{r_p s}{p} = -1$; or $4 \mid r$
-          and $r_2 s \equiv 3 \bmod 4$.
-    \item[(T3)] A prime $p \equiv 3 \bmod 4$ divides~$r + s$ with $\Leg{s (r+s)_p}{p} = 1$; or
-          $4 \mid r + s$ and $s (r+s)_2 \equiv 1 \bmod 4$; or $|r + s|$ is not a square and
+    \item[(T2)] A prime $p \equiv 3 \bmod 4$ divides~$r$ with $\chi_p(-rs) = 1$; or $4 \mid r$
+          and $\chi_4(-rs) = 1$.
+    \item[(T3)] A prime $p \equiv 3 \bmod 4$ divides~$r + s$ with $\chi_p(-s(r + s)) = -1$; or
+          $4 \mid r + s$ and $\chi_4(-s(r + s)) = -1$; or $|r + s|$ is not a square and
           divisible by~$4$ or by a prime $p \equiv 3 \bmod 4$.
     \item[(T4)] $\alpha' < a < -1$ (that is, $c_3 < 0 < c_4$), and $|r + s|$ is not a square.
   \end{enumerate}
-  \formalnote{\lname{NegTailCriterion r s}; in (T4) the window is stated as $r < -s$ and
+  \formalnote{\lname{NegTailCriterion r s}. As $\chi_p(-1) = -1$, the conditions of (T2) and (T3)
+  are $\Leg{r_p s}{p} = -1$, $r_2 s \equiv 3 \bmod 4$, $\Leg{s (r+s)_p}{p} = 1$ and
+  $s (r+s)_2 \equiv 1 \bmod 4$. In (T4) the window is stated as $r < -s$ and
   $r w_3 < 0 < r w_4$, with $r w_3 = (r^2 + rs)^2 + rs^3$ and $r w_4 = (r w_3)^2 + rs^7$.}
 \end{proposition}
 \begin{proof}
@@ -350,7 +361,7 @@ sufficient conditions for each of them.
 \end{proof}
 
 We say that ``$a$ satisfies (Z)'', ``$a$ satisfies (O)'' and ``$a$ satisfies (T)'' when~$a$
-satisfies one of the conditions (Z1)--(Z4), one of (O1)--(O5), and one of (T1)--(T4),
+satisfies one of the conditions (Z1)--(Z4), one of (O1)--(O4), and one of (T1)--(T4),
 respectively.
 
 We note a useful consequence of (Z1), (Z2) and (O2).

@@ -24,7 +24,7 @@ For `a = r/s` in one of the `2`-adic classes (C1)–(C3) of `QuadraticIterates.T
 theorem `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria` hold as soon as
 `c_1, c_2` are 2-independent. Modulo squares `c_1 ∼ -rs`, `c_2 ∼ r(r + s)` and
 `c_1 c_2 ∼ -s(r + s)`; as a product of two squares is a square, for `r < 0` at most one of `-r`,
-`s`, `-(r + s)` is a square, and the other two give two of (Z1), (O3)/(O4) and the criterion (T1),
+`s`, `-(r + s)` is a square, and the other two give two of (Z1), (O3) and the criterion (T1),
 (T3) or (T4) for `τ`, while for `a > 0` (O1) holds and `r`, `r + s` are not both squares. In the
 classes `(r, s) ≡ (1, 1)` with `a > 0` and `(3, 3)` with `a ≤ -2` modulo `4`, (O2) holds, and (Z2)
 takes the place of (Z1) when `|r|` is a square. Hence the arboreal representation of `X² + a` is
@@ -68,8 +68,8 @@ theorem twoIndependent_fin_two_cSeq_iff :
   exact and_congr (isSquare_cSeq_one_iff hs).not <| and_congr (isSquare_cSeq_two_iff hs).not
     (isSquare_cSeq_one_mul_cSeq_two_iff hr hs).not
 
-/-- With `r < 0`, two of `-r`, `s`, `-(r + s)` are not squares; they give two of (Z1), (O3)/(O4)
-and the criterion for `τ` supplied by `hT`. -/
+/-- With `r < 0`, two of `-r`, `s`, `-(r + s)` are not squares; they give two of (Z1), (O3) and
+the criterion for `τ` supplied by `hT`. -/
 private lemma criteria_of_not_isSquare (hr : r < 0) (hs : 0 ≤ s)
     (hT : ¬IsSquare (-(r + s)) → NegTailCriterion r s) (h₁ : ¬IsSquare (-(r * s)))
     (h₂ : ¬IsSquare (r * (r + s))) (h₁₂ : ¬IsSquare (-(s * (r + s)))) :

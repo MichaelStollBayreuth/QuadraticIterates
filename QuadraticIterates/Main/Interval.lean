@@ -27,8 +27,8 @@ can be replaced by the shorter lists `QuadraticIterates.NegFirstCriterion'` and
 `QuadraticIterates.NegTailCriterion'`: (O1) and (T1) do not apply there, and (T4) applies only in
 the window `c_3 < 0 < c_4`, where
 `QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass` decides; for a
-square `s` (O3) and (O4) take a simpler form, and (T3) needs no condition on squares, since
-`|r + s| = □` forces (Z1) and (O3)/(O4). The list for `φ₀` is unchanged.
+square `s` (O3) takes a simpler form, and (T3) needs no condition on squares, since
+`|r + s| = □` forces (Z1) and (O3). The list for `φ₀` is unchanged.
 
 In the classes `(r, s) ≡ (1, 1)`, `(1, 3)`, `(3, 2) (mod 4)`, and in the parts of the classes
 `(2, 1)`, `(0, 3)`, `(3, 0)` given by congruences modulo `32` and, for `(0, 3)`, by `|r|` not
@@ -68,7 +68,7 @@ inductive NegFirstCriterion' (r s : ℤ) : Prop
       (h : jacobiSym (-r) p = -1)
   /-- `16 ∣ s` and `r ≡ 3 (mod 8)`. -/
   | dvd_right_sixteen (h : 16 ∣ s) (hr : r % 8 = 3)
-  /-- (O5) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
+  /-- (O4) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = 1)
 
@@ -98,7 +98,7 @@ private lemma negFirstCriterion_of_jacobiSym (hs : 0 < s) (hsq : IsSquare s) {p 
     (fun h ↦ hm ((Nat.prime_iff_prime_int.mp hp).dvd_of_dvd_pow h)) (.inr ?_)
   rw [← neg_mul, jacobiSym.mul_left, h, jacobiSym.sq_one_of_not_dvd hp hm, mul_one]
 
-/-- (O4) for `s = 4^j m` with `j ≥ 2`, `m ≡ 1 (mod 8)` and `r ≡ 3 (mod 8)`. -/
+/-- (O3) at `2` for `s = 4^j m` with `j ≥ 2`, `m ≡ 1 (mod 8)` and `r ≡ 3 (mod 8)`. -/
 private lemma negFirstCriterion_of_eq_four_pow_mul {j : ℕ} {m : ℤ} (hj : 2 ≤ j)
     (hs : s = 4 ^ j * m) (hm : m % 8 = 1) (hr : r % 8 = 3) :
     NegFirstCriterion r s := by
@@ -107,7 +107,7 @@ private lemma negFirstCriterion_of_eq_four_pow_mul {j : ℕ} {m : ℤ} (hj : 2 �
   rw [Int.mul_emod, hr, hm]
   decide
 
-/-- (O4) for a square `s` with `16 ∣ s` and `r ≡ 3 (mod 8)`: `s = 4^j m` with `m ≡ 1 (mod 8)`
+/-- (O3) at `2` for a square `s` with `16 ∣ s` and `r ≡ 3 (mod 8)`: `s = 4^j m` with `m ≡ 1 (mod 8)`
 and `j ≥ 2`. -/
 private lemma negFirstCriterion_of_sixteen_dvd (hs : 0 < s) (hsq : IsSquare s) (h16 : 16 ∣ s)
     (hr : r % 8 = 3) :
@@ -140,7 +140,7 @@ theorem negTailCriterion_of_negTailCriterion' (hrs : r + s < 0) (h' : ¬IsSquare
 
 /-- **The interval** `α < a < -1`: for `a = r/s` in a `2`-adic class with `ε = 1` and `c_1, c_2`
 2-independent, two of (Z), (O'), (T') give `Ω_n ≅ [C₂]ⁿ` for all `n`. If `|r + s|` is a square,
-then `|r|` and `s` are not, which gives (Z1) and (O3)/(O4) directly. -/
+then `|r|` and `s` are not, which gives (Z1) and (O3) directly. -/
 theorem nonempty_mulEquiv_of_lt_neg_one_of_criteria (hrs : IsCoprime r s) (hs : 0 < s)
     (hr : r < -s) (hα : 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3)
     (hc : TwoAdicClass r s 1)
@@ -159,7 +159,7 @@ theorem nonempty_mulEquiv_of_lt_neg_one_of_criteria (hrs : IsCoprime r s) (hs : 
   exact h.imp (And.imp_right hO) (.imp (And.imp_right hT) (And.imp hO hT))
 
 /-- In the classes `(1, 1)`, `(1, 3)` and `(3, 2)` modulo `4`, with `r < 0` and `r + s < 0`: (Z1)
-and (O2) or (O3)/(O4), as `|r| ≡ 3 (mod 4)`; (O3)/(O4) and (T3), as `s ≡ 2` and
+and (O2) or (O3), as `|r| ≡ 3 (mod 4)`; (O3) and (T3), as `s ≡ 2` and
 `|r + s| ≡ 3 (mod 4)`. -/
 private lemma criteria_of_emod_four (hs : 0 < s) (hr : r < 0) (hrs : r + s < 0)
     (h : r % 4 = 1 ∧ s % 2 = 1 ∨ r % 4 = 3 ∧ s % 4 = 2) :
@@ -176,8 +176,8 @@ private lemma criteria_of_emod_four (hs : 0 < s) (hr : r < 0) (hrs : r + s < 0)
       negTailCriterion_of_emod_four (not_isSquare_of_neg hrs)
         (Int.not_isSquare_of_two_le_emod_four (by lia)) (.inr (.inr ⟨hrs, by lia⟩))⟩)
 
-/-- In the class `(2, 1)`: (Z1), as `|r| ≡ 2 (mod 4)`; and for `r ≡ 2 (mod 8)` (O5) or (T2) at a
-prime `p ≡ 3 (mod 4)` dividing `|r|/2 ≡ 3 (mod 4)`, for `s ≡ 5 (mod 8)` (O3)/(O4). -/
+/-- In the class `(2, 1)`: (Z1), as `|r| ≡ 2 (mod 4)`; and for `r ≡ 2 (mod 8)` (O4) or (T2) at a
+prime `p ≡ 3 (mod 4)` dividing `|r|/2 ≡ 3 (mod 4)`, for `s ≡ 5 (mod 8)` (O3). -/
 private lemma criteria_of_emod_four_eq_two (hrs : IsCoprime r s) (hs : 0 < s) (hr : r < 0)
     (hr4 : r % 4 = 2) (h : r % 8 = 2 ∨ s % 8 = 5) :
     NegAllCriterion r s ∧ NegFirstCriterion r s ∨ NegAllCriterion r s ∧ NegTailCriterion r s ∨
@@ -193,7 +193,7 @@ private lemma criteria_of_emod_four_eq_two (hrs : IsCoprime r s) (hs : 0 < s) (h
   · exact .inl ⟨hZ, negFirstCriterion_of_not_isSquare_right hs.le
       (Int.not_isSquare_of_emod_eight_eq_five h)⟩
 
-/-- In the class `(0, 3)`: (O3)/(O4), as `s ≡ 3 (mod 4)`; and (Z1) if `|r|` is not a square in
+/-- In the class `(0, 3)`: (O3), as `s ≡ 3 (mod 4)`; and (Z1) if `|r|` is not a square in
 `ℚ₂`, (Z2) at a prime `p ≡ ±3 (mod 8)` dividing `(r + 2s)/2 ≡ ±3 (mod 8)` if
 `r + 2s ≡ ±6 (mod 16)`. -/
 private lemma criteria_of_emod_four_eq_three (hs : 0 < s) (hr : r < 0) (hs4 : s % 4 = 3)
@@ -212,7 +212,7 @@ private lemma criteria_of_emod_four_eq_three (hs : 0 < s) (hr : r < 0) (hs4 : s 
     exact .dvd_add_two_mul p hp hp8 (hpd.trans ⟨2, by lia⟩)
 
 /-- In the class `(3, 0)` with `r ≡ 3 (mod 8)` and `s ≢ 4 (mod 32)`: (Z1), as `|r| ≡ 5 (mod 8)`;
-and (O3)/(O4) if `s` is not a square, (O4) if `s = 4^j m` with `m ≡ 1 (mod 8)`, where `j ≥ 2`. -/
+and (O3) if `s` is not a square, (O3) at `2` if `s = 4^j m` with `m ≡ 1 (mod 8)`, where `j ≥ 2`. -/
 private lemma criteria_of_emod_eight_eq_three (hs : 0 < s) (hr : r < 0) (hr8 : r % 8 = 3)
     (hs4 : s % 4 = 0) (h32 : s % 32 ≠ 4) :
     NegAllCriterion r s ∧ NegFirstCriterion r s ∨ NegAllCriterion r s ∧ NegTailCriterion r s ∨

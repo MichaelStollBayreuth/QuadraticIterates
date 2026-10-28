@@ -38,7 +38,7 @@ they can be restated in a comparator challenge.
 ## Main definitions
 
 * `QuadraticIterates.NegAllCriterion r s`: (Z1)–(Z4), giving `φ₀`.
-* `QuadraticIterates.NegFirstCriterion r s`: (O1)–(O5), giving `φ₁`.
+* `QuadraticIterates.NegFirstCriterion r s`: (O1)–(O4), giving `φ₁`.
 * `QuadraticIterates.NegTailCriterion r s`: (T1)–(T4), giving `τ`.
 
 ## Main statements
@@ -50,7 +50,7 @@ they can be restated in a comparator challenge.
 * `QuadraticIterates.negFirstCriterion_of_not_isSquare_right`,
   `QuadraticIterates.negFirstCriterion_or_negTailCriterion_of_prime_dvd`,
   `QuadraticIterates.negFirstCriterion_or_negTailCriterion_of_four_dvd`,
-  `QuadraticIterates.negTailCriterion_of_emod_four`: (O3)/(O4) from a non-square `s`, (O5) or (T2)
+  `QuadraticIterates.negTailCriterion_of_emod_four`: (O3) from a non-square `s`, (O4) or (T2)
   from a prime `p ≡ 3 (mod 4)` or from `4` dividing `r`, and (T3) from the residue of `r + s`
   modulo `4`.
 * `QuadraticIterates.hasCharPattern_mulSingle_one_of_prime_dvd`: `φ₁` from `φ₀` and a prime
@@ -86,45 +86,51 @@ inductive NegAllCriterion (r s : ℤ) : Prop
   /-- (Z3) A prime `p ≡ 5 (mod 8)` divides `r² + s²`, and `((r - s)s / p) = -1`. -/
   | dvd_sq_add_sq (p : ℕ) (hp : p.Prime) (hp8 : p % 8 = 5) (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2)
       (h : jacobiSym ((r - s) * s) p = -1)
-  /-- (Z4) A prime `p ≡ 1 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(m s / p) = -1`. -/
+  /-- (Z4) A prime `p ≡ 1 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `χ_p(-rs) = -1`, that is,
+  `(ms / p) = -1`, as `(-1 / p) = 1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 1) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = -1)
-  /-- (Z4) `r = 2^k m` with `k ≥ 3` and `m s ≡ ±3 (mod 8)`. -/
+  /-- (Z4) `r = 2^k m` with `k ≥ 3` and `χ₈(-rs) = -1`, that is, `ms ≡ ±3 (mod 8)`. -/
   | dvd_left_two (k : ℕ) (m : ℤ) (hk : 3 ≤ k) (hr : r = 2 ^ k * m)
       (h : m * s % 8 = 3 ∨ m * s % 8 = 5)
 
-/-- Criteria (O1)–(O5) for `φ₁` (the pattern `(-1, 1, 1, …)`), for `a = r/s` with `s > 0`. -/
+/-- Criteria (O1)–(O4) for `φ₁` (the pattern `(-1, 1, 1, …)`), for `a = r/s` with `s > 0`. -/
 inductive NegFirstCriterion (r s : ℤ) : Prop
   /-- (O1) `a > 0`. -/
   | pos (h : 0 < r)
   /-- (O2) `a ≡ 1 mod 4`: `s` is odd and `r ≡ s (mod 4)`. -/
   | modEq_four (hs : Odd s) (h : r ≡ s [ZMOD 4])
-  /-- (O3) An odd prime `p` divides `s = p^k m` (`p ∤ m`) with `k` odd or `(-rm / p) = -1`. -/
+  /-- (O3) at an odd prime: `p` divides `s = p^k m` (`p ∤ m`), and `-rs` is not a square in
+  `ℚ_p`: `k` is odd or `(-rm / p) = -1`. -/
   | dvd_right (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp2 : p ≠ 2) (hk : 0 < k) (hs : s = p ^ k * m)
       (hm : ¬(p : ℤ) ∣ m) (h : Odd k ∨ jacobiSym (-(r * m)) p = -1)
-  /-- (O4) `s = 2^k m` with `m` odd, and `k` is odd, or `k = 2` and `rm ≡ 1 (mod 4)`, or `k ≥ 4`
-  is even and `rm ≢ -1 (mod 8)`. -/
+  /-- (O3) at `2`: `s = 2^k m` with `m` odd, and `-rs` is not a square in `ℚ₂`, with
+  `χ₄(-rs) = -1` if `k = 2`: `k` is odd, or `k = 2` and `rm ≡ 1 (mod 4)`, or `k ≥ 4` is even and
+  `rm ≢ -1 (mod 8)`. -/
   | dvd_right_two (k : ℕ) (m : ℤ) (hs : s = 2 ^ k * m) (hm : Odd m)
       (h : Odd k ∨ (k = 2 ∧ r * m % 4 = 1) ∨ (Even k ∧ 4 ≤ k ∧ r * m % 8 ≠ 7))
-  /-- (O5) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
+  /-- (O4) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `χ_p(-rs) = -1`, that is,
+  `(ms / p) = 1`, as `(-1 / p) = -1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = 1)
-  /-- (O5) `r = 2^k m` with `k ≥ 2` and `ms ≡ 1 (mod 4)`. -/
+  /-- (O4) `r = 2^k m` with `k ≥ 2` and `χ₄(-rs) = -1`, that is, `ms ≡ 1 (mod 4)`. -/
   | dvd_left_two (k : ℕ) (m : ℤ) (hk : 2 ≤ k) (hr : r = 2 ^ k * m) (h : m * s % 4 = 1)
 
 /-- Criteria (T1)–(T4) for `τ` (the pattern `(1, -1, -1, …)`), for `a = r/s` with `s > 0`. -/
 inductive NegTailCriterion (r s : ℤ) : Prop
   /-- (T1) `-1 < a < 0`. -/
   | neg_one_lt (h₁ : -s < r) (h₀ : r < 0)
-  /-- (T2) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = -1`. -/
+  /-- (T2) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `χ_p(-rs) = 1`, that is,
+  `(ms / p) = -1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = -1)
-  /-- (T2) `r = 2^k m` with `k ≥ 2` and `ms ≡ 3 (mod 4)`. -/
+  /-- (T2) `r = 2^k m` with `k ≥ 2` and `χ₄(-rs) = 1`, that is, `ms ≡ 3 (mod 4)`. -/
   | dvd_left_two (k : ℕ) (m : ℤ) (hk : 2 ≤ k) (hr : r = 2 ^ k * m) (h : m * s % 4 = 3)
-  /-- (T3) A prime `p ≡ 3 (mod 4)` divides `r + s = p^k m` (`p ∤ m`) with `(sm / p) = 1`. -/
+  /-- (T3) A prime `p ≡ 3 (mod 4)` divides `r + s = p^k m` (`p ∤ m`) with `χ_p(-s(r + s)) = -1`,
+  that is, `(sm / p) = 1`. -/
   | dvd_add (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
       (hrs : r + s = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (s * m) p = 1)
-  /-- (T3) `r + s = 2^k m` with `k ≥ 2` and `sm ≡ 1 (mod 4)`. -/
+  /-- (T3) `r + s = 2^k m` with `k ≥ 2` and `χ₄(-s(r + s)) = -1`, that is, `sm ≡ 1 (mod 4)`. -/
   | dvd_add_two (k : ℕ) (m : ℤ) (hk : 2 ≤ k) (hrs : r + s = 2 ^ k * m) (h : s * m % 4 = 1)
   /-- (T3) `r + s ≠ ±□`, and `r + s` is divisible by `4` or by a prime `p ≡ 3 (mod 4)`. -/
   | not_isSquare_add (h : ¬IsSquare (r + s)) (h' : ¬IsSquare (-(r + s)))
@@ -286,7 +292,7 @@ theorem hasCharPattern_neg_one_of_negAllCriterion (hrs : IsCoprime r s) (hs : s 
 
 /-! ### Criteria for `φ₁` -/
 
-/-- (O5) If a prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) and `(ms / p) = 1`, then `χ_p`
+/-- (O4) If a prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) and `(ms / p) = 1`, then `χ_p`
 is a `φ₁`: its pattern is `((-1 / p), 1, 1, …)`. -/
 theorem hasCharPattern_mulSingle_one_of_dvd_left (hrs : IsCoprime r s) (hs : s ≠ 0) {k : ℕ}
     {m : ℤ} (hp4 : p % 4 = 3) (hk : 0 < k) (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m)
@@ -297,7 +303,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_left (hrs : IsCoprime r s) (hs : s �
   rw [unitPartChar_cSeq_of_eq_pow_mul hrs hs (pow_one p).symm one_ne_zero hk hr hm _ hn,
     ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4, hms, mul_one]
 
-/-- (O5) If `r = 2^k m` with `k ≥ 2` and `ms ≡ 1 (mod 4)`, then `χ₄` is a `φ₁`. -/
+/-- (O4) If `r = 2^k m` with `k ≥ 2` and `ms ≡ 1 (mod 4)`, then `χ₄` is a `φ₁`. -/
 theorem hasCharPattern_mulSingle_one_of_dvd_left_four (hrs : IsCoprime r s) (hs : s ≠ 0)
     {k : ℕ} {m : ℤ} (hk : 2 ≤ k) (hr : r = 2 ^ k * m) (h : m * s % 4 = 1) :
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
@@ -322,7 +328,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_of_apply (hrs : IsCoprime r s)
   rw [mulChar_cSeq_one_eq_mul _ hs, unitPartChar_neg_one hN, unitPartChar_intCast hN hpr, hsm,
     unitPartChar_intCast_pow_mul hN ψ k hm, ← map_mul, ← map_mul, neg_one_mul, neg_mul, h]
 
-/-- (O3), (O4) If `s = p^k m` with `k` odd (`p ∤ m`), then `val_p` is a `φ₁`. -/
+/-- (O3) If `s = p^k m` with `k` odd (`p ∤ m`), then `val_p` is a `φ₁`. -/
 theorem hasCharPattern_mulSingle_one_of_dvd_right_of_odd (hrs : IsCoprime r s) (hs : s ≠ 0)
     {k : ℕ} {m : ℤ} (hk : Odd k) (hsm : s = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) :
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) := by
@@ -342,7 +348,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right (hrs : IsCoprime r s) (hs : s 
   hasCharPattern_mulSingle_one_of_dvd_right_of_apply hrs hs (pow_one p).symm one_ne_zero hk hsm hm
     (quadraticChar (ZMod p)) (by rw [← Int.cast_mul, ← Int.cast_neg, quadraticChar_intCast, h])
 
-/-- (O4) If `s = 2^k m` with `k ≥ 2` and `rm ≡ 1 (mod 4)`, then `χ₄` is a `φ₁`. -/
+/-- (O3) at `2`: if `s = 2^k m` with `k ≥ 2` and `rm ≡ 1 (mod 4)`, then `χ₄` is a `φ₁`. -/
 theorem hasCharPattern_mulSingle_one_of_dvd_right_four (hrs : IsCoprime r s) (hs : s ≠ 0)
     {k : ℕ} {m : ℤ} (hk : 2 ≤ k) (hsm : s = 2 ^ k * m) (h : r * m % 4 = 1) :
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) :=
@@ -350,7 +356,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_four (hrs : IsCoprime r s) (hs
     (mod_cast hsm) (by rintro ⟨t, rfl⟩; lia) ZMod.χ₄
     (by rw [← Int.cast_mul, ← Int.cast_neg, ZMod.χ₄_int_three_mod_four (by lia)])
 
-/-- (O4) If `s = 2^k m` with `k ≥ 3` and `rm ≡ ±3 (mod 8)`, then `χ₈` is a `φ₁`. -/
+/-- (O3) at `2`: if `s = 2^k m` with `k ≥ 3` and `rm ≡ ±3 (mod 8)`, then `χ₈` is a `φ₁`. -/
 theorem hasCharPattern_mulSingle_one_of_dvd_right_eight (hrs : IsCoprime r s) (hs : s ≠ 0)
     {k : ℕ} {m : ℤ} (hk : 3 ≤ k) (hsm : s = 2 ^ k * m) (h : r * m % 8 = 3 ∨ r * m % 8 = 5) :
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) :=
@@ -359,7 +365,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_eight (hrs : IsCoprime r s) (h
       rw [← Int.cast_mul, ← Int.cast_neg, ZMod.χ₈_int_eq_if_mod_eight]
       split_ifs <;> lia)
 
-/-- (O4): the three cases `k` odd (`val₂`), `rm ≡ 1 (mod 4)` (`χ₄`), `rm ≡ 3 (mod 8)` (`χ₈`). -/
+/-- (O3) at `2`: `k` odd (`val₂`), `rm ≡ 1 (mod 4)` (`χ₄`) or `rm ≡ 3 (mod 8)` (`χ₈`). -/
 theorem hasCharPattern_mulSingle_one_of_dvd_right_two (hrs : IsCoprime r s) (hs : s ≠ 0)
     {k : ℕ} {m : ℤ} (hsm : s = 2 ^ k * m) (hm : Odd m)
     (h : Odd k ∨ (k = 2 ∧ r * m % 4 = 1) ∨ (Even k ∧ 4 ≤ k ∧ r * m % 8 ≠ 7)) :
@@ -374,7 +380,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_two (hrs : IsCoprime r s) (hs 
     · exact hasCharPattern_mulSingle_one_of_dvd_right_eight hrs hs (by lia) hsm (.inl h')
     · exact hasCharPattern_mulSingle_one_of_dvd_right_four hrs hs (by lia) hsm h'
 
-/-- **Criteria for `φ₁`**: each of (O1)–(O5) gives a character that is `-1` at `c_1` and `1` at
+/-- **Criteria for `φ₁`**: each of (O1)–(O4) gives a character that is `-1` at `c_1` and `1` at
 all later terms. -/
 theorem hasCharPattern_mulSingle_one_of_negFirstCriterion (hrs : IsCoprime r s) (hs : 0 < s)
     (h : NegFirstCriterion r s) :
@@ -581,7 +587,7 @@ end Prime
 
 /-! ### Criteria from divisibility -/
 
-/-- A prime `p ≡ 3 (mod 4)` dividing `r ≠ 0` gives `φ₁` from `φ₀`: by (O5) or (T2), according to
+/-- A prime `p ≡ 3 (mod 4)` dividing `r ≠ 0` gives `φ₁` from `φ₀`: by (O4) or (T2), according to
 the Jacobi symbol `(ms/p)` for `r = p^k m`, and `φ₀ τ = φ₁`. -/
 theorem hasCharPattern_mulSingle_one_of_prime_dvd (hrs : IsCoprime r s) (hs : s ≠ 0)
     (hr : r ≠ 0) {p : ℕ} [Fact p.Prime] (hp4 : p % 4 = 3) (hpr : (p : ℤ) ∣ r)
@@ -596,7 +602,7 @@ theorem hasCharPattern_mulSingle_one_of_prime_dvd (hrs : IsCoprime r s) (hs : s 
   · exact hasCharPattern_mulSingle_of_neg_of_neg_mulSingle h₀
       (hasCharPattern_neg_mulSingle_one_of_dvd_left hrs hs hp4 hk hrm hm h)
 
-/-- (O3) or (O4): a positive non-square `s` has a prime with odd exponent. -/
+/-- (O3): a positive non-square `s` has a prime with odd exponent. -/
 theorem negFirstCriterion_of_not_isSquare_right (hs : 0 ≤ s) (h : ¬IsSquare s) :
     NegFirstCriterion r s := by
   obtain ⟨p, k, m, hp, hk, hsm, hm⟩ := Int.exists_prime_pow_mul_of_not_isSquare hs h
@@ -605,7 +611,7 @@ theorem negFirstCriterion_of_not_isSquare_right (hs : 0 ≤ s) (h : ¬IsSquare s
       (Int.not_even_iff_odd.mp fun he ↦ hm (mod_cast he.two_dvd)) (.inl hk)
   · exact .dvd_right p k m hp hp2 hk.pos hsm hm (.inl hk)
 
-/-- (O5) or (T2): a prime `p ≡ 3 (mod 4)` dividing `r ≠ 0` and not `s`. -/
+/-- (O4) or (T2): a prime `p ≡ 3 (mod 4)` dividing `r ≠ 0` and not `s`. -/
 theorem negFirstCriterion_or_negTailCriterion_of_prime_dvd (hr : r ≠ 0) {p : ℕ} (hp : p.Prime)
     (hp4 : p % 4 = 3) (hpr : (p : ℤ) ∣ r) (hps : ¬(p : ℤ) ∣ s) :
     NegFirstCriterion r s ∨ NegTailCriterion r s := by
@@ -615,7 +621,7 @@ theorem negFirstCriterion_or_negTailCriterion_of_prime_dvd (hr : r ≠ 0) {p : �
     (hp'.coprime_iff_not_dvd.mpr (hp'.not_dvd_mul hm hps)).symm)).imp
     (.dvd_left p k m hp hp4 hk hrm hm) (.dvd_left p k m hp hp4 hk hrm hm)
 
-/-- (O5) or (T2) at `2`: `4 ∣ r ≠ 0` with `s` odd. -/
+/-- (O4) or (T2) at `2`: `4 ∣ r ≠ 0` with `s` odd. -/
 theorem negFirstCriterion_or_negTailCriterion_of_four_dvd (hr : r ≠ 0) (h4 : 4 ∣ r) (hs : Odd s) :
     NegFirstCriterion r s ∨ NegTailCriterion r s := by
   obtain ⟨k, m, hk, hrm, hm⟩ := Int.exists_pow_mul_of_dvd Nat.prime_two hr (by push_cast; lia)

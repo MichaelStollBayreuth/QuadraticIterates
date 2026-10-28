@@ -278,7 +278,7 @@ private lemma negAllCriterion_or_negTailCriterion_of_eq_sq_of_two_mul_le (hs : 0
   · exact .inr (negTailCriterion_of_cert_sub hs hRs hR t
       (by rw [← ht]; exact (Int.modEq_sub R s).symm) hns hM h)
 
-/-- (O4) for `s = t²` with `t` even: `R ≡ 3 (mod 4)`, or `8 ∣ s` and `R ≡ 5 (mod 8)`. -/
+/-- (O3) at `2` for `s = t²` with `t` even: `R ≡ 3 (mod 4)`, or `8 ∣ s` and `R ≡ 5 (mod 8)`. -/
 private lemma negFirstCriterion_of_two_dvd_sq_right {t : ℤ} (ht : t ≠ 0) (h2t : 2 ∣ t)
     (h : R % 4 = 3 ∨ 8 ∣ t ^ 2 ∧ R % 8 = 5) :
     NegFirstCriterion (-R) (t ^ 2) := by
@@ -291,7 +291,7 @@ private lemma negFirstCriterion_of_two_dvd_sq_right {t : ℤ} (ht : t ≠ 0) (h2
     exacts [.inl ⟨rfl, by lia⟩, .inr ⟨even_two_mul j, by lia, by lia⟩]
   · exact .inr ⟨even_two_mul j, by lia, by lia⟩
 
-/-- The first certificate of Theorem R⁻ for `s = t²` gives (O3) or (O4): a prime `p ∣ t` with
+/-- The first certificate of Theorem R⁻ for `s = t²` gives (O3): a prime `p ∣ t` with
 `(R / p) = -1`, or `4 ∣ s` with `R ≡ 3 (mod 4)`, or `8 ∣ s` with `R ≡ 5 (mod 8)`. -/
 private lemma negFirstCriterion_of_eq_sq_right_of_cert {t : ℤ} (hRs : IsCoprime R (t ^ 2))
     (ht0 : t ≠ 0) {M : ℕ} (hM : (M : ℤ) ∣ t ^ 2) (h : ¬IsSquare (R : ZMod M)) :
@@ -311,7 +311,7 @@ private lemma negFirstCriterion_of_eq_sq_right_of_cert {t : ℤ} (hRs : IsCoprim
     exact negFirstCriterion_of_two_dvd_sq_right ht0 h2t
       ((by lia : R % 4 = 3 ∨ R % 8 = 5).imp_right (⟨h8, ·⟩))
 
-/-- The second certificate of Theorem R⁻ for `s = t²` gives (O5) or (T2): a prime `p ∣ R` with
+/-- The second certificate of Theorem R⁻ for `s = t²` gives (O4) or (T2): a prime `p ∣ R` with
 `(-s / p) = -1` is `≡ 3 (mod 4)`, as `s` is a square. -/
 private lemma negFirstCriterion_or_negTailCriterion_of_eq_sq_right_of_cert (hRs : IsCoprime R s)
     (hR0 : R ≠ 0) {t : ℤ} (ht : s = t ^ 2) {M : ℕ} (hM : (M : ℤ) ∣ R)
@@ -331,7 +331,7 @@ private lemma negFirstCriterion_or_negTailCriterion_of_eq_sq_right_of_cert (hRs 
   · exact negFirstCriterion_or_negTailCriterion_of_four_dvd (neg_ne_zero.mpr hR0)
       ((by norm_num : (4 : ℤ) ∣ 8).trans h8).neg_right (Int.odd_iff.mpr (by lia))
 
-/-- For `s = t²`, the certificates of Theorem R⁻ give `φ₁` ((O3), (O4), (O5)) or a `τ`. -/
+/-- For `s = t²`, the certificates of Theorem R⁻ give `φ₁` ((O3), (O4)) or a `τ`. -/
 private lemma negFirstCriterion_or_negTailCriterion_of_eq_sq_right (hs : 0 < s)
     (hRs : IsCoprime R s) (hR : 2 * s ≤ R) {t : ℤ} (ht : s = t ^ 2)
     (hcert : (∃ M : ℕ, (M : ℤ) ∣ s ∧ ¬IsSquare (R : ZMod M)) ∨

@@ -73,23 +73,24 @@ inductive NegAllCriterion (r s : ℤ) : Prop
   | dvd_left_two (k : ℕ) (m : ℤ) (hk : 3 ≤ k) (hr : r = 2 ^ k * m)
       (h : m * s % 8 = 3 ∨ m * s % 8 = 5)
 
-/-- Criteria (O1)–(O5) for `φ₁` (the pattern `(-1, 1, 1, …)`), for `a = r/s` with `s > 0`. -/
+/-- Criteria (O1)–(O4) for `φ₁` (the pattern `(-1, 1, 1, …)`), for `a = r/s` with `s > 0`. -/
 inductive NegFirstCriterion (r s : ℤ) : Prop
   /-- (O1) `a > 0`. -/
   | pos (h : 0 < r)
   /-- (O2) `a ≡ 1 mod 4`: `s` is odd and `r ≡ s (mod 4)`. -/
   | modEq_four (hs : Odd s) (h : r ≡ s [ZMOD 4])
-  /-- (O3) An odd prime `p` divides `s = p^k m` (`p ∤ m`) with `k` odd or `(-rm / p) = -1`. -/
+  /-- (O3) at an odd prime: `p` divides `s = p^k m` (`p ∤ m`), and `-rs` is not a square in
+  `ℚ_p`: `k` is odd or `(-rm / p) = -1`. -/
   | dvd_right (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp2 : p ≠ 2) (hk : 0 < k) (hs : s = p ^ k * m)
       (hm : ¬(p : ℤ) ∣ m) (h : Odd k ∨ jacobiSym (-(r * m)) p = -1)
-  /-- (O4) `s = 2^k m` with `m` odd, and `k` is odd, or `k = 2` and `rm ≡ 1 (mod 4)`, or `k ≥ 4`
-  is even and `rm ≢ -1 (mod 8)`. -/
+  /-- (O3) at `2`: `s = 2^k m` with `m` odd, and `k` is odd, or `k = 2` and `rm ≡ 1 (mod 4)`, or
+  `k ≥ 4` is even and `rm ≢ -1 (mod 8)`. -/
   | dvd_right_two (k : ℕ) (m : ℤ) (hs : s = 2 ^ k * m) (hm : Odd m)
       (h : Odd k ∨ (k = 2 ∧ r * m % 4 = 1) ∨ (Even k ∧ 4 ≤ k ∧ r * m % 8 ≠ 7))
-  /-- (O5) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
+  /-- (O4) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = 1)
-  /-- (O5) `r = 2^k m` with `k ≥ 2` and `ms ≡ 1 (mod 4)`. -/
+  /-- (O4) `r = 2^k m` with `k ≥ 2` and `ms ≡ 1 (mod 4)`. -/
   | dvd_left_two (k : ℕ) (m : ℤ) (hk : 2 ≤ k) (hr : r = 2 ^ k * m) (h : m * s % 4 = 1)
 
 /-- Criteria (T1)–(T4) for `τ` (the pattern `(1, -1, -1, …)`), for `a = r/s` with `s > 0`. -/
@@ -130,7 +131,7 @@ inductive NegFirstCriterion' (r s : ℤ) : Prop
       (h : jacobiSym (-r) p = -1)
   /-- `16 ∣ s` and `r ≡ 3 (mod 8)`. -/
   | dvd_right_sixteen (h : 16 ∣ s) (hr : r % 8 = 3)
-  /-- (O5) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
+  /-- (O4) A prime `p ≡ 3 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(ms / p) = 1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 3) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = 1)
 
