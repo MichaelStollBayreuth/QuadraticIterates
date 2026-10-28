@@ -9,6 +9,7 @@ public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 import QuadraticIterates.Mathlib.Data.ZMod
+import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 
 /-!
 # Quadratic characters of `ℚ`
@@ -133,6 +134,13 @@ lemma valChar_neg_one : valChar p (-1) = 1 :=
 lemma valChar_intCast_pow_mul (k : ℕ) {m : ℤ} (hm : ¬(p : ℤ) ∣ m) :
     valChar p (((p : ℤ) ^ k * m : ℤ) : ℚ) = (-1) ^ k := by
   simp [valChar_natCast_self, valChar_intCast_of_not_dvd hm]
+
+lemma valChar_apply {x : ℚ} (hx : x ≠ 0) : valChar p x = (-1) ^ (padicValRat p x).natAbs := by
+  have h := (valChar p).apply_div (x.num : ℚ) (x.den : ℚ)
+  rw [Rat.num_div_den, ← Int.cast_natCast] at h
+  rw [h, valChar_intCast (Rat.num_ne_zero.mpr hx), valChar_intCast (by simp), padicValRat_def,
+    padicValInt.of_nat, ← pow_add]
+  rcases Rat.num_or_den_zero_padicVal x (Fact.out : p.Prime) with h | h <;> simp [h]
 
 end valChar
 

@@ -15,6 +15,7 @@ public import QuadraticIterates.Main.Further
 public import QuadraticIterates.Main.Integers
 public import QuadraticIterates.Main.Interval
 public import QuadraticIterates.Main.LevelTwo
+public import QuadraticIterates.Main.SquareProducts
 public import QuadraticIterates.Main.SquarefreeCertificates
 public import QuadraticIterates.Main.Theorem
 public import QuadraticIterates.Main.TwoAdic
@@ -40,11 +41,14 @@ public import QuadraticIterates.Mathlib.GroupTheory.Card
 public import QuadraticIterates.Mathlib.GroupTheory.PGroup
 public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
 public import QuadraticIterates.Mathlib.LinearAlgebra.Dual.Lemmas
+public import QuadraticIterates.Mathlib.LinearAlgebra.LinearIndependent.Lemmas
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
+public import QuadraticIterates.Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
+public import QuadraticIterates.Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import QuadraticIterates.Mathlib.RingTheory.Coprime.Basic
 public import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 public import QuadraticIterates.Mathlib.RingTheory.Multiplicity
@@ -53,6 +57,7 @@ public import QuadraticIterates.Patterns.Dyadic
 public import QuadraticIterates.Patterns.Primes
 public import QuadraticIterates.Patterns.Reflection
 public import QuadraticIterates.Patterns.Sign
+public import QuadraticIterates.Sequence.MoebiusQuotient
 public import QuadraticIterates.Sequence.Orbit
 public import QuadraticIterates.Sequence.Signs
 public import QuadraticIterates.Sequence.SquareClasses

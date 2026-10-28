@@ -29,6 +29,7 @@ value exactly at the multiples of some `m ≥ 1`; or `2^{n-1} v_p(a)` with `v_p(
 * `QuadraticIterates.cSeq_ne_zero`, `QuadraticIterates.exists_cSeq_eq_zero_iff`: the vanishing
   terms.
 * `QuadraticIterates.padicValRat_cSeq_trichotomy`: the three shapes of `n ↦ v_p(c_n)`.
+* `QuadraticIterates.padicValRat_cSeq_of_padicValRat_pos`: `v_p(c_n) = v_p(a)` if `v_p(a) > 0`.
 * `QuadraticIterates.padicValRat_cSeq_of_padicValRat_neg`,
   `QuadraticIterates.padicValRat_cSeq_of_dvd_left`, `QuadraticIterates.padicValRat_cSeq_eq_ite`:
   the three cases.
@@ -224,5 +225,17 @@ theorem padicValRat_cSeq_trichotomy {a : ℚ} (h₀ : a ≠ 0) (h₁ : a ≠ -1)
       mod_cast (Rat.num_div_den a).symm⟩
   have hs : s ≠ 0 := fun h ↦ hps (h ▸ dvd_zero _)
   exact (padicValRat_cSeq_of_not_dvd hrs hs hps h₀ h₁).imp_right .inl
+
+/-- If `v_p(a) > 0`, then `v_p(c_n) = v_p(a)` for all `n ≥ 1`. -/
+theorem padicValRat_cSeq_of_padicValRat_pos {a : ℚ} (h₀ : a ≠ 0) (h₁ : a ≠ -1)
+    (ha : 0 < padicValRat p a) {n : ℕ} (hn : 1 ≤ n) :
+    padicValRat p (cSeq a n) = padicValRat p a := by
+  have h1 : padicValRat p (cSeq a 1) = padicValRat p a := by rw [cSeq_one, padicValRat.neg]
+  rcases padicValRat_cSeq_trichotomy (p := p) h₀ h₁ with h | ⟨m, -, e, -, h⟩ | ⟨e, he, h⟩
+  · lia [h 1 le_rfl]
+  · have hm : m ∣ 1 := by by_contra hm; have := h 1 le_rfl; simp only [hm] at this; lia
+    rw [h n hn, ← h1, h 1 le_rfl]
+    simp [hm, hm.trans (one_dvd n)]
+  · lia [h 1 le_rfl]
 
 end QuadraticIterates

@@ -27,6 +27,8 @@ of `c_n² - c_n + a + 1` for `a ≤ -2`, for `a > -1`, and at the odd `n ≥ 3` 
 * `QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_le_neg_two`,
   `QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt`,
   `QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_odd`: `c_n² - c_n + a + 1 > 0`.
+* `QuadraticIterates.ne_zero_of_cSeq_two_pos`, `QuadraticIterates.ne_neg_one_of_cSeq_two_pos`:
+  `c_2 > 0` excludes `a ∈ {0, -1}`.
 -/
 
 @[expose] public section
@@ -173,6 +175,22 @@ theorem cSeq_sq_sub_cSeq_add_pos_of_odd (ha : a < -1) (h₃ : cSeq a 3 < 0) (h�
   have ha₂ : -2 < a := lt_of_not_ge fun h ↦
     h₃.not_ge ((neg_nonneg.mpr (by linarith)).trans (neg_le_cSeq_of_le_neg_two h (by norm_num)))
   linarith [sq_nonneg (cSeq a n)]
+
+end
+
+section
+
+variable {R : Type*} [CommRing R] [Preorder R] {a : R}
+
+/-- `c_2 = a² + a > 0` excludes `a = 0`. -/
+theorem ne_zero_of_cSeq_two_pos (h : 0 < cSeq a 2) : a ≠ 0 := by
+  rintro rfl
+  simp [show cSeq (0 : R) 2 = cSeq 0 1 ^ 2 + 0 from cSeq_succ 0 le_rfl] at h
+
+/-- `c_2 = a² + a > 0` excludes `a = -1`. -/
+theorem ne_neg_one_of_cSeq_two_pos (h : 0 < cSeq a 2) : a ≠ -1 := by
+  rintro rfl
+  simp [show cSeq (-1 : R) 2 = cSeq (-1) 1 ^ 2 + -1 from cSeq_succ (-1) le_rfl] at h
 
 end
 

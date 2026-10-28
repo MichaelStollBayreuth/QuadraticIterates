@@ -2,8 +2,9 @@
 \label{chap:further}
 
 Formalized results beyond those of the paper: the further criteria mentioned at the end of
-Section~5 of the paper, refinements of the main theorem and numerical remarks on it, and the
-even levels for $a \equiv 1 \bmod 4$. As before, $a = r/s$ with~$r$, $s$ coprime and $s \ge 1$.
+Section~5 of the paper, an exact characterization of~$\phi_0$ through the Möbius quotients
+of~$(c_n)$, refinements of the main theorem and numerical remarks on it, and the even levels for
+$a \equiv 1 \bmod 4$. As before, $a = r/s$ with~$r$, $s$ coprime and $s \ge 1$.
 
 \section{Further criteria for \texorpdfstring{$\phi_1$ and~$\tau$}{phi\_1 and tau}}
 \label{sec:further}
@@ -208,6 +209,347 @@ of~$w_3$).
   (Lemma~\ref{lem:pat-s}(2); $c_2 \sim r(r+s)$, $c_1 c_2 \sim -(r+s)s$).
 \end{remark}
 
+
+\section{The Möbius quotients and~\texorpdfstring{$\phi_0$}{phi\_0}}
+\label{sec:moebius}
+
+The criteria (Z1)--(Z4) are sufficient conditions for~$\phi_0$. This section characterizes~$\phi_0$
+exactly, through the Möbius quotients of~$(c_n)$. For $n \ge 1$ let
+\[ b_n = \prod_{d \mid n} c_d^{\mu(n/d)}\,, \qquad\text{so that}\qquad c_n = \prod_{d \mid n} b_d\,; \]
+thus $b_1 = c_1 = -a$ and $b_2 = c_2/c_1 = -(a + 1)$. For squarefree~$n$, this~$b_n$ is the
+negative of the polynomial~$b_n$ of Remark~\ref{rem:square-products}, evaluated at~$a$; for the
+other~$n$ the two agree. As a polynomial in~$a$, $b_d$ has degree
+$\sum_{e \mid d} \mu(d/e)\, 2^{e-1} \equiv \mu(d) \bmod 2$, which is odd exactly for
+squarefree~$d$.
+
+\begin{definition}[The Möbius quotients]
+  \label{def:bseq}
+  \uses{def:cseq}
+  \lean{QuadraticIterates.bSeq, QuadraticIterates.prod_divisors_bSeq,
+    QuadraticIterates.bSeq_ne_zero, QuadraticIterates.bSeq_one}
+  \leanok
+  For~$a$ in a field with $c_n \ne 0$ for all $n \ge 1$, $b_n = \prod_{d \mid n} c_d^{\mu(n/d)}$.
+  Then $c_n = \prod_{d \mid n} b_d$ for $n \ge 1$, and $b_1 = -a$.
+\end{definition}
+
+\begin{lemma}[The Möbius function modulo~$2$]
+  \label{lem:moebius-two}
+  \lean{ArithmeticFunction.intCast_moebius_zmod_two,
+    ArithmeticFunction.even_card_filter_squarefree_divisors}
+  \leanok
+  $\mu(d) \equiv [d \text{ squarefree}] \bmod 2$, and every $n \ne 1$ has an even number of
+  squarefree divisors.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The first holds as $\mu(d) \in \{\pm 1\}$ exactly for squarefree~$d$; the second as the number
+  is $\sum_{d \mid n} \mu(d) = 0$ modulo~$2$.
+\end{proof}
+
+\begin{lemma}[Valuations of the~$b_d$]
+  \label{lem:bseq-val}
+  \uses{def:bseq, lem:vp}
+  \lean{QuadraticIterates.padicValRat_bSeq, QuadraticIterates.padicValRat_bSeq_eq_zero,
+    QuadraticIterates.padicValRat_bSeq_eq_ite,
+    QuadraticIterates.padicValRat_bSeq_modEq_of_padicValRat_neg, padicValRat.prod}
+  \leanok
+  Let $a \in \QQ \setminus \{-1, 0\}$ and let~$p$ be a prime. In the three cases of
+  Lemma~\ref{lem:vp}, respectively:
+  \begin{enumerate}
+    \item $v_p(b_d) = 0$ for all $d \ge 1$;
+    \item $v_p(b_{m_p}) = e_p$, and $v_p(b_d) = 0$ for $d \ne m_p$;
+    \item $v_p(b_d) \equiv \mu(d)\, e_p \bmod 2$ for all $d \ge 1$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  \leanok
+  By Möbius inversion of $n \mapsto v_p(c_n)$. In case~(2), $n \mapsto e_p [m_p \mid n]$ is the
+  divisor sum of $d \mapsto e_p [d = m_p]$. In case~(3), $v_p(c_e) = 2^{e-1} e_p$ is even
+  for $e \ge 2$, so modulo~$2$ only the factor $c_1^{\mu(d)}$ of~$b_d$ counts.
+\end{proof}
+
+So a prime not dividing~$s$ divides at most one~$b_d$: the~$b_d$ are coprime away from~$s$.
+
+\begin{definition}[The set~$D$]
+  \label{def:bseq-D}
+  \uses{lem:bseq-val}
+  \lean{QuadraticIterates.bSeqSquareIndices, QuadraticIterates.mem_bSeqSquareIndices,
+    QuadraticIterates.mem_bSeqSquareIndices_iff_isSquare}
+  \leanok
+  Let~$D$ be the set of $d \ge 1$ such that $v_p(b_d)$ is even for all primes $p \nmid s$.
+  Equivalently, $|b_d|\, s^{[d \text{ squarefree}]}$ is a square, or $|B_d(r, s)|$ is a square,
+  where~$B_d$ is the homogenization of~$b_d$. Thus $1 \in D$ if and only if~$|r|$ is a square,
+  and $2 \in D$ if and only if~$|r + s|$ is a square.
+  \formalnote{The homogenization~$B_d$ is not formalized, nor are the cases $d = 1, 2$;
+  \lname{mem\_bSeqSquareIndices\_iff\_isSquare} is the form with
+  $|b_d|\, s^{[d \text{ squarefree}]}$.}
+\end{definition}
+\begin{proof}
+  \leanok
+  \uses{lem:moebius-two}
+  At a prime $p \mid s$, $v_p(b_d) \equiv \mu(d)\, v_p(a) \bmod 2$ by Lemma~\ref{lem:bseq-val},
+  $v_p(s) = -v_p(a)$ and $\mu(d) \equiv [d \text{ squarefree}] \bmod 2$
+  (Lemma~\ref{lem:moebius-two}), so
+  $v_p(|b_d|\, s^{[d \text{ squarefree}]})$ is always even.
+\end{proof}
+
+\begin{theorem}[Square products of the~$b_d$]
+  \label{thm:square-products}
+  \uses{lem:bseq-val, def:bseq-D}
+  \lean{QuadraticIterates.isSquare_prod_bSeq_iff}
+  \leanok
+  Let $a \in \QQ \setminus \{-1, 0\}$ and let~$T$ be a finite set of positive integers. Then
+  $\prod_{d \in T} b_d$ is a square if and only if
+  \begin{enumerate}
+    \item $T \subseteq D$,
+    \item $\prod_{d \in T} b_d > 0$, and
+    \item $s$ is a square, or~$T$ contains an even number of squarefree~$d$.
+  \end{enumerate}
+\end{theorem}
+\begin{proof}
+  \leanok
+  \uses{lem:moebius-two}
+  A rational number is a square if and only if it is nonnegative and all its valuations are even.
+  At a prime $p \nmid s$, Lemma~\ref{lem:bseq-val} makes $v_p(\prod_{d \in T} b_d)$ either~$0$
+  or~$e_p$, the latter exactly when $m_p \in T$; this gives~(1). At a prime $p \mid s$, it
+  gives $v_p(\prod_{d \in T} b_d) \equiv e_p \cdot \#\{d \in T : d \text{ squarefree}\}
+  \bmod 2$, with $e_p = -v_p(s)$; this gives~(3).
+\end{proof}
+
+\begin{lemma}[Patterns and square products]
+  \label{lem:sq-patterns}
+  \uses{lem:dual, def:pattern}
+  \lean{QuadraticIterates.hasCharPattern_one_iff_forall_isSquare,
+    QuadraticIterates.HasCharPattern.prod_eq_one_of_isSquare,
+    Module.exists_dual_forall_apply_eq_iff, LinearMap.exists_comp_eq_of_ker_le}
+  \leanok
+  Let $(v_n)_{n \ge 1}$ be a sequence of nonzero elements of a field and let~$\eps$ be a sign
+  pattern. Then~$\eps$ is realized from~$1$ along~$(v_n)$ if and only if
+  $\prod_{n \in S} \eps_n = 1$ for every finite set~$S$ of positive integers such that
+  $\prod_{n \in S} v_n$ is a square.
+\end{lemma}
+\begin{proof}
+  \leanok
+  A character takes the value~$1$ at a nonzero square. Conversely, the linear relations among the
+  classes~$[v_n]$ in the square classes are the square products, so the values $0$ at~$[v_n]$
+  for $\eps_n = 1$ and~$1$ for $\eps_n = -1$ respect them. Hence they come from a linear form
+  on the span of the~$[v_n]$, which extends to all square classes (a linear map of vector spaces
+  factors through any linear map whose kernel lies in its own). Lemma~\ref{lem:dual} turns the
+  linear form into a character.
+\end{proof}
+
+\begin{lemma}[Möbius transfer of patterns]
+  \label{lem:transfer}
+  \uses{def:pattern, def:twoindep, prop:crit-converse}
+  \lean{QuadraticIterates.hasCharPattern_one_iff_of_prod_divisors,
+    QuadraticIterates.twoIndependent_iff_of_prod_divisors}
+  \leanok
+  Let $(u_n)_{n \ge 1}$ be nonzero elements of a field, $v_n = \prod_{d \mid n} u_d$, and let
+  $\beta$, $\eps$ be sign patterns with $\eps_n = \prod_{d \mid n} \beta_d$ for all $n \ge 1$.
+  Then a character realizes~$\eps$ along~$(v_n)$ if and only if it realizes~$\beta$
+  along~$(u_n)$. In particular, $(v_n)$ is~$2$-independent if and only if~$(u_n)$ is.
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{prop:crit}
+  Both $d \mapsto \chi(u_d)$ and~$\beta$ have the divisor sums $n \mapsto \eps_n$ in the group
+  $\{\pm 1\}$, and Möbius inversion is unique. Every sign pattern is the divisor product of its
+  Möbius transform, and a sequence is~$2$-independent if and only if every sign pattern is
+  realized along it.
+\end{proof}
+
+\begin{lemma}[$\phi_0$, $\phi_1$ and~$\tau$ along~$(b_d)$]
+  \label{lem:transfer-patterns}
+  \uses{lem:transfer, def:bseq, def:phi0tau}
+  \lean{QuadraticIterates.hasCharPattern_neg_one_iff_bSeq,
+    QuadraticIterates.hasCharPattern_mulSingle_one_iff_bSeq,
+    QuadraticIterates.hasCharPattern_neg_mulSingle_one_iff_bSeq}
+  \leanok
+  Let $a \in \QQ \setminus \{-1, 0\}$. Along~$(b_d)$, the patterns~$\phi_0$, $\phi_1$ and~$\tau$
+  of~$(c_n)$ are: $-1$ exactly at $d = 1$; $-1$ exactly at the squarefree~$d$; and $-1$ exactly
+  at the squarefree $d > 1$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{lem:moebius-two, lem:vp}
+  By Lemma~\ref{lem:transfer}: the divisor products of these patterns are $(-1, -1, \dots)$,
+  $(-1, 1, 1, \dots)$ and $(1, -1, -1, \dots)$, since every $n > 1$ has an even number of
+  squarefree divisors (Lemma~\ref{lem:moebius-two}).
+\end{proof}
+
+\begin{corollary}[$\phi_0$ through square products]
+  \label{cor:phi0-exact}
+  \uses{thm:square-products, lem:sq-patterns, lem:transfer-patterns, def:phi0tau}
+  \lean{QuadraticIterates.hasCharPattern_neg_one_iff_forall_not_isSquare,
+    QuadraticIterates.not_hasCharPattern_neg_one_iff_exists_finset}
+  \leanok
+  Let $a \in \QQ \setminus \{-1, 0\}$. Then~$a$ has~$\phi_0$ if and only if no product
+  $\prod_{d \in T} b_d$ with $1 \in T$ is a square, that is, if and only if no finite set
+  $T \ni 1$ satisfies~(1)--(3) of Theorem~\ref{thm:square-products}. In particular, if~$a$
+  lacks~$\phi_0$, then~$|r|$ is a square (this is~(Z1)), and if moreover~$s$ is not a square,
+  then $|B_d(r, s)|$ is a square for some squarefree $d \ge 2$.
+  \formalnote{The last two statements are read off from
+  \lname{not\_hasCharPattern\_neg\_one\_iff\_exists\_finset} and not stated separately.}
+\end{corollary}
+\begin{proof}
+  \leanok
+  The pattern $({-}{-}{-}\cdots)$ along~$(c_n)$ is the pattern $({-}{+}{+}\cdots)$
+  along~$(b_d)$ (Lemma~\ref{lem:transfer-patterns}), and the latter multiplies to~$-1$ along~$T$ exactly
+  when $1 \in T$. Now apply Lemma~\ref{lem:sq-patterns} to~$(b_d)$ and
+  Theorem~\ref{thm:square-products}. If~$s$ is not a square, (3) requires a second squarefree
+  element of~$T$.
+\end{proof}
+
+\begin{lemma}[Squarefree indices and signs]
+  \label{lem:bseq-sign}
+  \uses{def:bseq}
+  \lean{QuadraticIterates.isSquare_bSeq_mul_prod_of_squarefree,
+    QuadraticIterates.isSquare_bSeq_one_mul_bSeq_iff,
+    QuadraticIterates.bSeq_pos_of_not_squarefree, QuadraticIterates.mul_bSeq_pos_of_squarefree,
+    QuadraticIterates.ne_zero_of_cSeq_two_pos, QuadraticIterates.ne_neg_one_of_cSeq_two_pos}
+  \leanok
+  \begin{enumerate}
+    \item For squarefree~$d$, $b_d \prod_{e \mid d} c_e$ is a square; so
+          $b_1 b_d \sim \prod_{1 < e \mid d} c_e$.
+    \item If $c_n > 0$ for all $n \ge 2$, then $b_d > 0$ for every~$d$ that is not squarefree,
+          and~$b_d$ has the sign of~$c_1$ for squarefree~$d$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  \leanok
+  (1) All exponents $\mu(d/e)$ are~$\pm 1$, and $x^{-1} \sim x$. (2) The only factor of~$b_d$
+  that can be negative is $c_1^{\mu(d)}$, which is~$1$ unless~$d$ is squarefree; for squarefree~$d$
+  use~(1).
+\end{proof}
+
+\begin{corollary}[$\phi_0$ when $c_n > 0$ for $n \ge 2$]
+  \label{cor:phi0-pos}
+  \uses{cor:phi0-exact, lem:bseq-sign, lem:signs}
+  \lean{QuadraticIterates.hasCharPattern_neg_one_iff_of_forall_pos}
+  \leanok
+  Assume that $c_n > 0$ for all $n \ge 2$; by Lemma~\ref{lem:signs}, this holds for $a > 0$ and
+  for $a \le -2$. Then~$a$ has~$\phi_0$ if and only if~$c_1$ is not a square and, for no
+  squarefree $d > 1$, the product $\prod_{1 < e \mid d} c_e$ is a square. For a prime~$d = p$
+  this product is~$c_p$, and for $d = 6$ it is~$c_2 c_3 c_6$.
+\end{corollary}
+\begin{proof}
+  \leanok
+  The conditions are necessary: by Lemma~\ref{lem:bseq-sign}(1) they are the cases $T = \{1\}$
+  and $T = \{1, d\}$ of Corollary~\ref{cor:phi0-exact}. Conversely, let $T \ni 1$
+  satisfy~(1)--(3) of Theorem~\ref{thm:square-products}. If~$T$ contains a squarefree $d \ne 1$,
+  then $\{1, d\}$ satisfies~(1)--(3), since $b_1 b_d > 0$ by Lemma~\ref{lem:bseq-sign}(2), so
+  $\prod_{1 < e \mid d} c_e \sim b_1 b_d$ is a square. Otherwise $b_d > 0$ for all
+  $d \in T \setminus \{1\}$, so $b_1 > 0$ by~(2), and~$T$ has exactly one squarefree element,
+  so~$s$ is a square by~(3); then $\{1\}$ satisfies~(1)--(3), and $c_1 = b_1$ is a square.
+\end{proof}
+
+\begin{corollary}[$\phi_0$ for $-1 < a < 0$]
+  \label{cor:phi0-neg1}
+  \uses{lem:vp, lem:signs, def:chars, def:phi0tau}
+  \lean{QuadraticIterates.hasCharPattern_neg_one_iff_of_neg_one_lt_of_neg,
+    QuadraticIterates.padicValRat_cSeq_of_padicValRat_pos, Rat.valChar_apply}
+  \leanok
+  If $-1 < a < 0$, then~$a$ has~$\phi_0$ if and only if~$-a$ is not a square.
+\end{corollary}
+\begin{proof}
+  \leanok
+  \uses{lem:klein, lem:sq-patterns}
+  If $c_1 = -a$ is a square, no character is~$-1$ at it (Lemma~\ref{lem:sq-patterns}). Otherwise
+  some prime~$q$ has $v_q(a)$ odd. If $v_q(a) > 0$, then $v_q(c_n) = v_q(a)$ for all~$n$,
+  and~$\val_q$ is a~$\phi_0$. If $v_q(a) < 0$, then $v_q(c_n) = 2^{n-1} v_q(a)$, so~$\val_q$ is
+  a~$\phi_1$, and with $\tau = \sgn$ (Lemma~\ref{lem:signs}(2)) it gives~$\phi_0$
+  (Lemma~\ref{lem:klein}).
+\end{proof}
+
+\begin{corollary}[The realizable patterns along~$(b_d)$]
+  \label{cor:patterns}
+  \uses{thm:square-products, lem:sq-patterns, def:bseq-D}
+  \lean{QuadraticIterates.hasCharPattern_bSeq_iff}
+  \leanok
+  Let $a \in \QQ \setminus \{-1, 0\}$. A sign pattern~$\beta$ is realized from~$1$ along~$(b_d)$
+  if and only if there are signs $u, v \in \{\pm 1\}$, with $v = 1$ if~$s$ is a square, such that
+  \[ \beta_d = u^{[b_d < 0]}\, v^{[d \text{ squarefree}]} \qquad\text{for all } d \in D\,. \]
+  So on~$D$, $\beta$ agrees with one of the four patterns $1$, $\sigma$, $\pi'$, $\sigma\pi'$,
+  where $\sigma_d = \sgn b_d$, and $\pi'_d = (-1)^{[d \text{ squarefree}]}$ if~$s$ is not a square,
+  $\pi' = 1$ otherwise; off~$D$, $\beta$ is arbitrary. With Lemma~\ref{lem:transfer} this decides
+  every sign pattern along~$(c_n)$.
+\end{corollary}
+\begin{proof}
+  \leanok
+  For $d \in D$, $|b_d|\, s^{[d \text{ squarefree}]}$ is a square (Definition~\ref{def:bseq-D}),
+  so $b_d \sim \sgn(b_d)\, s^{[d \text{ squarefree}]}$; a character~$\chi$ realizing~$\beta$ gives
+  $u = \chi(-1)$ and $v = \chi(s)$, and $v = 1$ if~$s$ is a square. Conversely, along a square
+  product $\prod_{d \in T} b_d$ the pattern multiplies to
+  $u^{\#\{d \in T : b_d < 0\}}\, v^{\#\{d \in T : d \text{ squarefree}\}} = 1$ by~(2) and~(3) of
+  Theorem~\ref{thm:square-products}, and Lemma~\ref{lem:sq-patterns} applies.
+\end{proof}
+
+\begin{remark}[Consequences of Corollary~\ref{cor:patterns}]
+  \label{rem:patterns}
+  The following are not formalized. Every realizable pattern is realized by a product of~$\sgn$,
+  of~$\val_q$ for one prime~$q$ with $v_q(s)$ odd, and of characters~$\val_p$ with $p \nmid s$
+  (for the values off~$D$); the criteria with Legendre symbols of Chapter~\ref{chap:klein}
+  certify properties of~$D$ without computing it. If a pattern is not realized, a square product
+  of at most three of the~$b_d$ witnesses this. With Lemma~\ref{lem:transfer-patterns}: $a$
+  has~$\phi_1$ if and only if~$s$ is not a square, or~$D$ contains no squarefree~$d$, or
+  $b_d < 0 \iff d$ is squarefree for all $d \in D$.
+\end{remark}
+
+\begin{corollary}[$2$-independence through~$D$]
+  \label{cor:independence}
+  \uses{thm:square-products, lem:transfer, def:bseq-D, def:twoindep}
+  \lean{QuadraticIterates.twoIndependent_cSeq_iff,
+    QuadraticIterates.twoIndependent_cSeq_iff_linearIndependent,
+    QuadraticIterates.encard_bSeqSquareIndices_le_two, linearIndependent_zmod_two_iff}
+  \leanok
+  Let $a \in \QQ \setminus \{-1, 0\}$. Then $(c_n)_{n \ge 1}$ is~$2$-independent (that is,
+  $\rho_a$ is surjective, Proposition~\ref{prop:criterion}) if and only if no nonempty finite
+  $T \subseteq D$ satisfies~(2) and~(3) of Theorem~\ref{thm:square-products}, if and only if the
+  vectors $([b_d < 0], [d \text{ squarefree and } s \ne \sq]) \in \FF_2^2$, $d \in D$, are
+  linearly independent. In particular, $D$ then has at most two elements.
+\end{corollary}
+\begin{proof}
+  \leanok
+  $(c_n)$ is~$2$-independent if and only if~$(b_d)$ is (Lemma~\ref{lem:transfer}), that is, if
+  and only if no nonempty product of the~$b_d$ is a square; apply
+  Theorem~\ref{thm:square-products}. Over~$\FF_2$, a family is linearly independent if and only if
+  no nonempty finite subfamily sums to~$0$, and the sum of the vectors over~$T$ vanishes if and
+  only if~(2) and~(3) hold.
+\end{proof}
+
+\begin{corollary}[$\phi_0$ when $|r|$ is a square and~$s$ is not]
+  \label{cor:phi0-open}
+  \uses{cor:patterns, lem:transfer-patterns}
+  \lean{QuadraticIterates.hasCharPattern_neg_one_iff_of_neg_of_not_isSquare_den}
+  \leanok
+  Let $a < 0$, $a \ne -1$, with~$|r|$ a square (that is, $1 \in D$) and~$s$ not a square. Then~$a$
+  has~$\phi_0$ if and only if $D \setminus \{1\}$ contains no squarefree~$d$, or $b_d < 0$ holds
+  exactly for the squarefree $d \in D \setminus \{1\}$.
+\end{corollary}
+\begin{proof}
+  \leanok
+  Apply Corollary~\ref{cor:patterns} to the pattern $({-}{+}{+}\cdots)$ of~$\phi_0$ along~$(b_d)$
+  (Lemma~\ref{lem:transfer-patterns}). At $d = 1$, $b_1 = -a > 0$ forces $v = -1$; then $u = 1$
+  gives the first alternative and $u = -1$ the second.
+\end{proof}
+
+\begin{remark}[The interval $\alpha < a < \alpha'$]
+  \label{rem:phi0-interval}
+  Here~$\phi_0$ is what Conjecture~\ref{conj:main} needs. If $(c_1, c_2)$
+  is~$2$-independent and~$|r|$ is a square (otherwise~(Z1) applies), then~$s$ is not a square
+  and $2 \notin D$, and Corollary~\ref{cor:phi0-open} applies: $a$ lacks~$\phi_0$ if and only
+  if~$D$ contains a squarefree $d \ge 3$ and some $d' \ge 3$ (possibly $d' = d$) such that
+  $b_{d'} < 0$ is not equivalent to~$d'$ being squarefree. In this interval $b_3$, $b_4$, $b_5$
+  and~$b_7$ are negative, while~$b_6$ changes sign at the period-$6$ centre $-1.47601\ldots$ and
+  is positive for $\alpha < a < -1.47601\ldots$; so $6 \in D$ alone would suffice there, while
+  $3 \in D$ needs a partner such as $4 \in D$. Among the
+  $12001$ values $a = -k^2/s$ in the interval with $k \le 80$ and~$s$ not a square, none
+  has~$|B_d(r, s)|$ a square for $d \in \{3, 5, 6, 7\}$. This is no finiteness phenomenon: for
+  $r = -k^2$, $|B_3(r, s)|$ is a square if and only if $-1/a = s/k^2$ is the abscissa of a rational
+  point on $y^2 = x^3 - x^2 + 2x - 1$ (the elliptic curve 368e1, of rank~$1$), for instance
+  $a = -29144976961/20153523281 \approx -1.446$. There $b_3 < 0$, so $T = \{1, 3\}$ fails~(2),
+  and this~$a$ has~$\phi_0$ as far as~$c_1, \dots, c_6$ can tell.
+\end{remark}
 
 \section{Refinements of the main theorem}
 

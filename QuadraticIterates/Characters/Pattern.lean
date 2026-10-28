@@ -25,6 +25,8 @@ for the pattern `Pi.mulSingle n (-1)` (`-1` at `n`, `1` after `n`), `φ₀` for 
 
 ## Main statements
 
+* `QuadraticIterates.HasCharPattern.prod_eq_one_of_isSquare`: a realized pattern multiplies to `1`
+  along every square product.
 * `QuadraticIterates.hasCharPattern_neg_mulSingle_of_neg_of_mulSingle` and its two siblings: any
   two of the patterns `-1`, `Pi.mulSingle k (-1)` and `-Pi.mulSingle k (-1)` give the third.
 * `QuadraticIterates.hasCharPattern_mulSingle_one_of_apply`,
@@ -73,6 +75,19 @@ theorem ne_zero {M₀ : Type*} [CommMonoidWithZero M₀] [Nontrivial M₀] {u : 
     u m ≠ 0 := fun hu ↦ hε <| by
   obtain ⟨χ, hχ⟩ := h
   rw [← hχ m hm, hu, MulChar.map_zero]
+
+/-- A realized sign pattern multiplies to `1` along every finite set of indices with a square
+product: a square is never `-1` under a character. -/
+theorem prod_eq_one_of_isSquare (h : HasCharPattern v n ε) (hε : ∀ m ≥ n, ε m = 1 ∨ ε m = -1)
+    {S : Finset ℕ} (hS : ∀ m ∈ S, n ≤ m) (hsq : IsSquare (∏ m ∈ S, v m)) :
+    ∏ m ∈ S, ε m = 1 := by
+  obtain ⟨χ, hχ⟩ := h
+  have hprod : χ (∏ m ∈ S, v m) = ∏ m ∈ S, ε m := by
+    rw [map_prod]
+    exact Finset.prod_congr rfl fun m hm ↦ hχ m (hS m hm)
+  refine (Finset.prod_induction ε (fun x ↦ x = 1 ∨ x = -1) (fun x y hx hy ↦ ?_) (.inl rfl)
+    fun m hm ↦ hε m (hS m hm)).resolve_right (hprod ▸ χ.apply_ne_neg_one_of_isSquare hsq)
+  rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;> simp
 
 end HasCharPattern
 
