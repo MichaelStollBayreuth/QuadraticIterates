@@ -315,7 +315,7 @@ theorem nonempty_mulEquiv_of_eq_neg_sq_add_add_one (huv : IsCoprime u v) (hu : 0
   · obtain ⟨p, hp, hp4, hpu, hprs⟩ := exists_prime_dvd_uSeq_neg_sq_add_add huv hu hv h2 h hm he
     have := Fact.mk hp
     exact hasCharPattern_mulSingle_of_prime_dvd_uSeq hrs hodd h4 h₀ (by lia) hp4 hpu hprs
-  · refine hasCharPattern_mulSingle_of_odd hrs (pow_pos hv 2) hodd h4 (.inl ?_) h₀
+  · refine hasCharPattern_mulSingle_of_odd hrs (pow_pos hv 2) hodd h4 (.inl ?_)
       (by lia [Nat.odd_iff.mp ho]) ho
     rw [div_le_iff₀ (by positivity)]
     exact_mod_cast (by linear_combination h2 : -(u ^ 2 + u * v + v ^ 2) ≤ -2 * v ^ 2)

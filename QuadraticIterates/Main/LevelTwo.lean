@@ -13,7 +13,6 @@ import QuadraticIterates.Galois.Criterion
 import QuadraticIterates.Main.Theorem
 import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 import QuadraticIterates.Mathlib.Algebra.Ring.Parity
-import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 import QuadraticIterates.Sequence.SquareClasses
 
@@ -69,12 +68,6 @@ theorem twoIndependent_fin_two_cSeq_iff :
   exact and_congr (isSquare_cSeq_one_iff hs).not <| and_congr (isSquare_cSeq_two_iff hs).not
     (isSquare_cSeq_one_mul_cSeq_two_iff hr hs).not
 
-/-- (Z2) for `r + 2s ≡ ±3 (mod 8)`. -/
-private lemma negAllCriterion_of_emod_eight (h : (r + 2 * s) % 8 = 3 ∨ (r + 2 * s) % 8 = 5) :
-    NegAllCriterion r s :=
-  let ⟨p, hp, hp8, hpd⟩ := Int.exists_prime_dvd_of_emod_eight_eq_three_or_five h
-  .dvd_add_two_mul p hp hp8 hpd
-
 /-- With `r < 0`, two of `-r`, `s`, `-(r + s)` are not squares; they give two of (Z1), (O3)/(O4)
 and the criterion for `τ` supplied by `hT`. -/
 private lemma criteria_of_not_isSquare (hr : r < 0) (hs : 0 ≤ s)
@@ -91,17 +84,11 @@ private lemma criteria_of_not_isSquare (hr : r < 0) (hs : 0 ≤ s)
   · exact .inr (.inl ⟨hZ hr', hT fun h ↦ h₁₂ (mul_neg s (r + s) ▸ hs'.mul h)⟩)
   · exact .inl ⟨hZ hr', hO hs'⟩
 
-/-- For `a ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`): (O2), and (Z1), or (Z2) if `|r|` is a square:
-`r = t²` gives `r ≡ 1` and `r + 2s ≡ 3 (mod 8)`, `r = -t²` gives `r ≡ 7` and `r + 2s ≡ 5`. -/
+/-- For `a ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`): (Z1) or (Z2)
+(`QuadraticIterates.negAllCriterion_of_modEq_four`), and (O2). -/
 private lemma criteria_of_modEq_four (hs : s % 2 = 1) (h4 : r % 4 = s % 4) :
-    NegAllCriterion r s ∧ NegFirstCriterion r s := by
-  refine ⟨?_, .modEq_four (Int.odd_iff.mpr hs) (by rw [Int.ModEq]; lia)⟩
-  by_cases hsq : IsSquare r ∨ IsSquare (-r)
-  · refine negAllCriterion_of_emod_eight ?_
-    obtain ⟨t, ht⟩ | ⟨t, ht⟩ := hsq <;>
-    lia [Int.sq_emod_eight_eq_one_of_odd (x := t) (Int.odd_iff.mpr (by lia [Int.sq_emod_four t]))]
-  · push Not at hsq
-    exact .not_isSquare hsq.1 hsq.2
+    NegAllCriterion r s ∧ NegFirstCriterion r s :=
+  ⟨negAllCriterion_of_modEq_four (Int.odd_iff.mpr hs) h4, .modEq_four (Int.odd_iff.mpr hs) h4⟩
 
 /-- For `a > 0`: (O1), and (Z1) if `r ≠ □`; for `r = t²`, (T3) in the classes `(1, 3)` and
 `(0, 3)`; the class `(1, 1)` is `QuadraticIterates.criteria_of_modEq_four`. -/

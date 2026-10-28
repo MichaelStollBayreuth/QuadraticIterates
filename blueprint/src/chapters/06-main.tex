@@ -54,8 +54,8 @@ result.
 
 \begin{theorem}[Main theorem]
   \label{thm:main}
-  \uses{lem:twoadic, prop:tfae, lem:klein, prop:Z, prop:O, prop:T, lem:level2, lem:squares2,
-    lem:prime3, lem:window, prop:criterion}
+  \uses{lem:twoadic, prop:tfae, lem:klein, prop:Z, prop:O, prop:T, lem:mod4, lem:level2,
+    lem:squares2, lem:prime3, lem:window, prop:criterion}
   \lean{QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass,
     QuadraticIterates.forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass,
     QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_not_isSquare,
@@ -129,16 +129,14 @@ result.
     \item $a > 0$. (O1) holds, and~$r$ and~$r + s$ are positive and not both squares. In the
           classes $(1,3)$, $(2,1)$, $(0,3)$ and $(3,0)$, $r + s \equiv 0$ or~$3 \bmod 4$, so this
           gives (Z1) or (T3). In the class $(3,2)$, $r \equiv 3 \bmod 4$ is not a square: (Z1).
-          In the class $(1,1)$, (Z1) holds unless $r = m^2$; then $r \equiv 1 \bmod 8$ and
-          $r + 2s \equiv 3 \bmod 8$, so (Z2) holds (Lemma~\ref{lem:prime3}).
+          In the class $(1,1)$, we have $a \equiv 1 \bmod 4$, and Lemma~\ref{lem:mod4} applies.
     \item $-1 < a < 0$. (T1) holds, and~$|r|$ or~$s$ is not a square, giving (Z1) or
           (O3)/(O4).
     \item $\alpha' < a < -1$. At most one of~$|r|$, $s$ and $|r + s|$ is a square; the other two
           give two of (Z1), (O3)/(O4) and (T4).
     \item $a \le -2$. At most one of~$|r|$, $s$ and $|r + s|$ is a square. In all classes except
           $(3,3)$ and $(1,2)$ we obtain at least two of (Z1), (O3)/(O4) and (T3). In the class
-          $(3,3)$, (O2) holds, and (Z1) unless $r = -m^2$; then $r \equiv 7$ and
-          $r + 2s \equiv 5 \bmod 8$, and (Z2) holds. In the class $(1,2)$, $|r| \equiv 3$ and
+          $(3,3)$, we have $a \equiv 1 \bmod 4$, and Lemma~\ref{lem:mod4} applies. In the class $(1,2)$, $|r| \equiv 3$ and
           $s \equiv 2 \bmod 4$ are not squares: (Z1) and (O4).
   \end{itemize}
   As $\alpha' > \alpha$ (shown with $X = r^2 + rs$ and $Y = X^2 + rs^3$: in the window,

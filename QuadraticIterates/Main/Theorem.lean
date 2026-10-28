@@ -35,8 +35,8 @@ and `QuadraticIterates.NegTailCriterion` supply the two patterns.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`: the main theorem.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_uSeq`: period two with `val₂` for
   `a ≡ 1 mod 4`.
-* `QuadraticIterates.hasCharPattern_mulSingle_of_odd`: for `a ≡ 1 mod 4`, `φ₀` gives `φ_n` at
-  every odd level `n ≥ 3`.
+* `QuadraticIterates.hasCharPattern_mulSingle_of_odd`: `a ≡ 1 mod 4` has `φ_n` at every odd level
+  `n ≥ 3`.
 
 ## Notation
 
@@ -153,13 +153,14 @@ theorem hasCharPattern_mulSingle_of_prime_dvd_uSeq (hrs : IsCoprime r s) (hs : O
     fun m hm ↦ valChar_two_cSeq_succ_of_modEq_four hrs hs h4 (by lia)
 
 /-- **Odd levels** for `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`) with `a ≤ -2`, or `a > -1`,
-or `a < -1` and `c_3 < 0 < c_4`: `φ₀` gives `φ_n` for every odd `n ≥ 3`. Here `u_n > 0`, a prime
-`p ≡ 3 (mod 4)` divides `u_n` and not `r + s`, and `val₂` alternates. -/
+or `a < -1` and `c_3 < 0 < c_4`: `a` has `φ_n` for every odd `n ≥ 3`. Here `u_n > 0`, a prime
+`p ≡ 3 (mod 4)` divides `u_n` and not `r + s`, `val₂` alternates, and `a` has `φ₀`
+(`QuadraticIterates.hasCharPattern_neg_one_of_modEq_four`). -/
 theorem hasCharPattern_mulSingle_of_odd (hrs : IsCoprime r s) (hs : 0 < s) (hodd : Odd s)
     (h4 : r ≡ s [ZMOD 4])
     (ha : (r : ℚ) / s ≤ -2 ∨ -1 < (r : ℚ) / s ∨
       (r : ℚ) / s < -1 ∧ cSeq ((r : ℚ) / s) 3 < 0 ∧ 0 < cSeq ((r : ℚ) / s) 4)
-    (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ} (hn : 3 ≤ n) (ho : Odd n) :
+    {n : ℕ} (hn : 3 ≤ n) (ho : Odd n) :
     HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
   have hpos : 0 < uSeq r s n := uSeq_pos hs (by lia) <| by
     rcases ha with ha | ha | ⟨ha, h₃, h₄⟩
@@ -168,6 +169,7 @@ theorem hasCharPattern_mulSingle_of_odd (hrs : IsCoprime r s) (hs : 0 < s) (hodd
       cSeq_sq_sub_cSeq_add_pos_of_odd ha h₃ h₄ hn ho]
   obtain ⟨p, hp, hp4, hpu, hprs⟩ := exists_prime_dvd_uSeq_of_odd hrs hodd h4 hn ho hpos
   have := Fact.mk hp
-  exact hasCharPattern_mulSingle_of_prime_dvd_uSeq hrs hodd h4 h₀ (by lia) hp4 hpu hprs
+  exact hasCharPattern_mulSingle_of_prime_dvd_uSeq hrs hodd h4
+    (hasCharPattern_neg_one_of_modEq_four hrs hodd h4) (by lia) hp4 hpu hprs
 
 end QuadraticIterates

@@ -10,6 +10,7 @@ public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Mathlib.NumberTheory.MulChar.Rat
 
+import QuadraticIterates.Mathlib.Algebra.Ring.Int.Parity
 import QuadraticIterates.Mathlib.Data.Nat.Factorization.Basic
 import QuadraticIterates.Mathlib.Data.Nat.Prime.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
@@ -54,6 +55,10 @@ they can be restated in a comparator challenge.
   modulo `4`.
 * `QuadraticIterates.hasCharPattern_mulSingle_one_of_prime_dvd`: `φ₁` from `φ₀` and a prime
   `p ≡ 3 (mod 4)` dividing `r`.
+* `QuadraticIterates.negAllCriterion_of_modEq_four`,
+  `QuadraticIterates.hasCharPattern_neg_one_of_modEq_four`: `a ≡ 1 mod 4` has `φ₀`, by (Z1)
+  or (Z2); with `QuadraticIterates.hasCharPattern_mulSingle_one_of_modEq_four` ((O2)) it has `φ₀`
+  and `φ₁`.
 
 ## Notation
 
@@ -629,5 +634,28 @@ theorem negTailCriterion_of_emod_four (h : ¬IsSquare (r + s)) (h' : ¬IsSquare 
   · obtain ⟨p, hp, hp4, hpd⟩ := Int.exists_prime_dvd_of_emod_four_eq_three (x := -(r + s))
       (by lia) (by lia)
     exact ⟨p, hp, hp4, dvd_neg.mp hpd⟩
+
+/-- For `a = r/s ≡ 1 mod 4` (`s` odd, `r ≡ s (mod 4)`), (Z1) holds, or (Z2) if `|r|` is a square:
+`r = t²` gives `r ≡ 1` and `r + 2s ≡ 3 (mod 8)`, `r = -t²` gives `r ≡ 7` and `r + 2s ≡ 5`. -/
+theorem negAllCriterion_of_modEq_four (hs : Odd s) (h4 : r ≡ s [ZMOD 4]) : NegAllCriterion r s := by
+  rw [Int.ModEq] at h4
+  have hs2 := Int.odd_iff.mp hs
+  by_cases hsq : IsSquare r ∨ IsSquare (-r)
+  · obtain ⟨p, hp, hp8, hpd⟩ := Int.exists_prime_dvd_of_emod_eight_eq_three_or_five
+      (x := r + 2 * s) <| by
+        obtain ⟨t, ht⟩ | ⟨t, ht⟩ := hsq <;> lia [Int.sq_emod_eight_eq_one_of_odd (x := t)
+          (Int.odd_iff.mpr (by lia [Int.sq_emod_four t]))]
+    exact .dvd_add_two_mul p hp hp8 hpd
+  · push Not at hsq
+    exact .not_isSquare hsq.1 hsq.2
+
+/-- **`a ≡ 1 mod 4` has `φ₀`**, for `a = r/s` with `s` odd and `r ≡ s (mod 4)`
+(`QuadraticIterates.negAllCriterion_of_modEq_four`); it has `φ₁` by
+`QuadraticIterates.hasCharPattern_mulSingle_one_of_modEq_four`. -/
+theorem hasCharPattern_neg_one_of_modEq_four (hrs : IsCoprime r s) (hs : Odd s)
+    (h4 : r ≡ s [ZMOD 4]) :
+    HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) :=
+  hasCharPattern_neg_one_of_negAllCriterion hrs (by rintro rfl; simp at hs)
+    (negAllCriterion_of_modEq_four hs h4)
 
 end QuadraticIterates

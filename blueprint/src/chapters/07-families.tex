@@ -51,7 +51,7 @@ $c_{n+2k} \equiv -c_n$ for all $k \ge 1$ by induction.
 \begin{lemma}[Odd levels]
   \label{lem:odd}
   \uses{lem:period2, lem:pat-dyadic, lem:jump2, lem:reduction, lem:signs, lem:window, lem:prime3,
-    lem:pat-rs}
+    lem:pat-rs, lem:mod4}
   \lean{QuadraticIterates.hasCharPattern_mulSingle_of_odd,
     QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_uSeq,
     QuadraticIterates.exists_prime_dvd_uSeq_of_odd, QuadraticIterates.uSeq_emod_eight_of_odd,
@@ -60,8 +60,7 @@ $c_{n+2k} \equiv -c_n$ for all $k \ge 1$ by induction.
     QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_neg_one_lt,
     QuadraticIterates.cSeq_sq_sub_cSeq_add_pos_of_odd}
   \leanok
-  Let $a \equiv 1 \bmod 4$ with $a \le -2$. If~$a$ has~$\phi_0$, then~$a$ has~$\phi_n$ for every
-  odd $n \ge 3$.
+  Let $a \equiv 1 \bmod 4$ with $a \le -2$. Then~$a$ has~$\phi_n$ for every odd $n \ge 3$.
   \formalnote{More generally for $a \equiv 1 \bmod 4$ with $a \le -2$, or $a > -1$, or $a < -1$ and
   $c_3 < 0 < c_4$; the condition $a \equiv 1 \bmod 4$ is stated as~$s$ odd and
   $r \equiv s \bmod 4$. \lname{hasCharPattern\_mulSingle\_of\_prime\_dvd\_uSeq} is
@@ -78,7 +77,8 @@ $c_{n+2k} \equiv -c_n$ for all $k \ge 1$ by induction.
   divides~$u_n$ (Lemma~\ref{lem:prime3}). It does not divide~$r + s$: otherwise, in~$\ZZ/p\ZZ$,
   $\bar a = -1$ and $(\bar c_m)_{m \ge 1} = (1, 0, -1, 0, -1, \dots)$, so
   $\bar c_n^2 - \bar c_n + \bar a + 1 = 2 \ne 0$. Lemma~\ref{lem:period2}, with the alternating
-  character~$\val_2$ (Lemma~\ref{lem:pat-dyadic}), gives~$\phi_n$.
+  character~$\val_2$ (Lemma~\ref{lem:pat-dyadic}) and with~$\phi_0$ from Lemma~\ref{lem:mod4},
+  gives~$\phi_n$.
 \end{proof}
 
 \begin{theorem}[Two quadratic families]

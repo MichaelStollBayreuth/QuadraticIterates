@@ -353,4 +353,27 @@ We say that ``$a$ satisfies (Z)'', ``$a$ satisfies (O)'' and ``$a$ satisfies (T)
 satisfies one of the conditions (Z1)--(Z4), one of (O1)--(O5), and one of (T1)--(T4),
 respectively.
 
+We note a useful consequence of (Z1), (Z2) and (O2).
+
+\begin{lemma}[$a \equiv 1 \bmod 4$]
+  \label{lem:mod4}
+  \uses{prop:Z, prop:O, lem:prime3}
+  \lean{QuadraticIterates.negAllCriterion_of_modEq_four,
+    QuadraticIterates.hasCharPattern_neg_one_of_modEq_four,
+    QuadraticIterates.hasCharPattern_mulSingle_one_of_modEq_four}
+  \leanok
+  If $a \equiv 1 \bmod 4$, then~$a$ has~$\phi_0$ and~$\phi_1$.
+  \formalnote{The condition $a \equiv 1 \bmod 4$ is stated as~$s$ odd and $r \equiv s \bmod 4$.
+  \lname{negAllCriterion\_of\_modEq\_four} gives (Z1) or (Z2),
+  \lname{hasCharPattern\_neg\_one\_of\_modEq\_four} the character~$\phi_0$, and
+  \lname{hasCharPattern\_mulSingle\_one\_of\_modEq\_four} is (O2).}
+\end{lemma}
+\begin{proof}
+  \leanok
+  We have that~$s$ is odd and $r \equiv s \bmod 4$. By assumption, (O2) holds. If~$|r|$ is not
+  a square, then (Z1) holds. Otherwise, $r = \pm t^2$ with~$t$ odd, so $r \equiv \pm 1 \bmod 8$
+  and $s \equiv \pm 1 \bmod 4$ (with the same sign); then $r + 2s \equiv \pm 3 \bmod 8$, so (Z2)
+  holds (Lemma~\ref{lem:prime3}).
+\end{proof}
+
 One can extend these criteria to cover some further cases; see Section~\ref{sec:further}.
