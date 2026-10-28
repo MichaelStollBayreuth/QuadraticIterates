@@ -10,8 +10,8 @@ public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Galois.TwoIndependent
 
 import Mathlib.Algebra.Field.ZMod
-import Mathlib.LinearAlgebra.Dual.Lemmas
 import QuadraticIterates.Galois.Criterion
+import QuadraticIterates.Mathlib.LinearAlgebra.Dual.Lemmas
 import QuadraticIterates.Mathlib.NumberTheory.MulChar.Basic
 
 /-!
@@ -32,13 +32,14 @@ parameters `a ∈ ℚ` whose arboreal Galois representation is surjective.
 
 * `QuadraticIterates.twoIndependent_of_forall_hasCharPattern`: characters `φ_n` for all `n ≥ 1`
   make a sequence 2-independent.
-* `QuadraticIterates.hasCharPattern_of_twoIndependent`: the converse, in a field.
+* `QuadraticIterates.hasCharPattern_one_of_twoIndependent`: in a field, a 2-independent sequence
+  realizes every sign pattern; `QuadraticIterates.hasCharPattern_of_twoIndependent`, the converse,
+  is a special case.
 * `QuadraticIterates.tfae_forall_nonempty_mulEquiv`: for `a ∈ ℚ`, the Galois groups `Ω_n` of the
   iterates of `X² + a` satisfy `Ω_n ≅ [C₂]ⁿ` for all `n` iff `(c_n)_{n ≥ 1}` is 2-independent iff
   `a` has `φ_n` for every `n ≥ 1`.
-* `QuadraticIterates.forall_nonempty_mulEquiv_of_forall_exists_mulChar`: `φ₀` and `φ₁` (the
-  patterns `-1` and `Pi.mulSingle 1 (-1)`) and, for every `n ≥ 2`, a character that changes sign
-  after `c_n` give `Ω_n ≅ [C₂]ⁿ` for all `n`.
+* `QuadraticIterates.hasCharPattern_one_of_forall_nonempty_mulEquiv`: if `Ω_n ≅ [C₂]ⁿ` for all `n`,
+  then every sign pattern along `(c_n)_{n ≥ 1}` is the pattern of a character.
 -/
 
 @[expose] public section
@@ -83,27 +84,30 @@ theorem twoIndependent_of_forall_hasCharPattern {M : Type*} [CommMonoid M] {v : 
   rw [map_prod, Finset.prod_congr rfl fun i hi ↦ hχ (i + 1) (by simpa using S.min'_le i hi)]
   simp [Pi.mulSingle_apply, Finset.min'_mem]
 
+/-- A 2-independent sequence `v 1, v 2, …` in a field realizes every sign pattern from `1` on:
+the classes of its terms in `Kˣ/(Kˣ)²` are linearly independent, so a linear form takes
+prescribed values on them (`Module.exists_dual_forall_apply_eq`), and
+`QuadraticIterates.mulCharOfDual` turns it into a character. -/
+theorem hasCharPattern_one_of_twoIndependent {K : Type*} [Field K] {v : ℕ → K}
+    (h : TwoIndependent fun m ↦ v (m + 1)) {ε : ℕ → ℤ} (hε : ∀ m ≥ 1, ε m = 1 ∨ ε m = -1) :
+    HasCharPattern v 1 ε := by
+  classical
+  obtain ⟨f, hf⟩ := Module.exists_dual_forall_apply_eq
+    (linearIndepOn_univ_iff.mpr ((twoIndependent_iff_linearIndependent _).mp h))
+    fun m ↦ if ε (m + 1) = 1 then 0 else 1
+  refine ⟨mulCharOfDual f, fun m hm ↦ ?_⟩
+  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le' hm
+  rw [mulCharOfDual_apply f (h.ne_zero j), hf j trivial]
+  rcases hε (j + 1) hm with h1 | h1 <;> simp [h1]
+
 /-- The converse of `QuadraticIterates.twoIndependent_of_forall_hasCharPattern`: if `v 1, v 2, …`
 are 2-independent, then for every `n ≥ 1` some character is `-1` at `v n` and `1` at all later
-terms. The class of `v n` lies outside the span of the classes of the later terms, and a linear
-form separating it gives the character (`QuadraticIterates.mulCharOfDual`). -/
+terms (`QuadraticIterates.hasCharPattern_one_of_twoIndependent`). -/
 theorem hasCharPattern_of_twoIndependent {K : Type*} [Field K] {v : ℕ → K}
     (h : TwoIndependent fun m ↦ v (m + 1)) {n : ℕ} (hn : 1 ≤ n) :
-    HasCharPattern v n (Pi.mulSingle n (-1)) := by
-  classical
-  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
-  obtain ⟨f, hf, hfV⟩ := Submodule.exists_dual_map_eq_bot_of_notMem
-    (((twoIndependent_iff_linearIndependent _).mp h).notMem_span_image
-      (s := {m | k < m}) (x := k) (by simp)) inferInstance
-  refine ⟨mulCharOfDual f, fun m hm ↦ ?_⟩
-  obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le' (hn.trans hm)
-  rw [mulCharOfDual_apply f (h.ne_zero j)]
-  rcases hm.eq_or_lt with hm | hm
-  · obtain rfl : k = j := by lia
-    simp [hf]
-  · have hj : f (sqClass (v (j + 1))) = 0 :=
-      LinearMap.le_ker_iff_map.mpr hfV (Submodule.subset_span ⟨j, (by lia : k < j), rfl⟩)
-    simp [hj, Pi.mulSingle_eq_of_ne hm.ne']
+    HasCharPattern v n (Pi.mulSingle n (-1)) :=
+  (hasCharPattern_one_of_twoIndependent h fun m _ ↦ by
+    rcases eq_or_ne m n with rfl | hm <;> simp [*]).mono hn
 
 /-- **The criterion with characters**: for `a ∈ ℚ`, the arboreal Galois representation of `X² + a`
 is surjective (`Ω_n ≅ [C₂]ⁿ` for the Galois groups `Ω_n` of all iterates) iff `(c_n)_{n ≥ 1}` is
@@ -117,6 +121,15 @@ theorem tfae_forall_nonempty_mulEquiv (a : ℚ) :
   tfae_have 3 → 2 := twoIndependent_of_forall_hasCharPattern
   tfae_have 2 → 3 := fun h _ hn ↦ hasCharPattern_of_twoIndependent h hn
   tfae_finish
+
+/-- **Prescribed signs**: if the Galois groups `Ω_n` of the iterates of `X² + a` satisfy
+`Ω_n ≅ [C₂]ⁿ` for all `n`, then every sign pattern along `c_1, c_2, …` is the pattern of a
+character (`QuadraticIterates.hasCharPattern_one_of_twoIndependent`). -/
+theorem hasCharPattern_one_of_forall_nonempty_mulEquiv {a : ℚ}
+    (h : ∀ n, Nonempty (GaloisGroup a n ≃* WreathPower n)) {ε : ℕ → ℤ}
+    (hε : ∀ m ≥ 1, ε m = 1 ∨ ε m = -1) :
+    HasCharPattern (cSeq a) 1 ε :=
+  hasCharPattern_one_of_twoIndependent ((forall_nonempty_mulEquiv_iff_twoIndependent a).mp h) hε
 
 /-- If `a ∈ ℚ` has `φ_n` for every `n ≥ 1` (a character that is `-1` at `c_n` and `1` at all
 later terms), then the Galois groups `Ω_n` of the iterates of `X² + a` satisfy `Ω_n ≅ [C₂]ⁿ` for
@@ -134,19 +147,5 @@ theorem forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern {a :
     (h : ∀ n ≥ 2, HasCharPattern (cSeq a) n (Pi.mulSingle n (-1))) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) :=
   forall_nonempty_mulEquiv_of_forall_hasCharPattern (fun n hn ↦ hn.eq_or_lt.elim (· ▸ h₁) (h n)) n
-
-/-- If `a ∈ ℚ` has `φ₀` and `φ₁` (the patterns `-1` and `Pi.mulSingle 1 (-1)` along `c_n` from
-`1` on), and for every `n ≥ 2` some character `ψ` with `ψ(c_n) ≠ 0` takes the value `-ψ(c_n)` at
-all later terms, then the Galois groups `Ω_n` of the iterates of `X² + a` satisfy
-`Ω_n ≅ [C₂]ⁿ` for all `n`: `ψ` or `φ₀ ψ` is `-1` at `c_n` and `1` at all later terms
-(`QuadraticIterates.hasCharPattern_mulSingle_of_neg_of_forall_lt`). -/
-theorem forall_nonempty_mulEquiv_of_forall_exists_mulChar {a : ℚ}
-    (h₀ : HasCharPattern (cSeq a) 1 (-1)) (h₁ : HasCharPattern (cSeq a) 1 (Pi.mulSingle 1 (-1)))
-    (h : ∀ n ≥ 2, ∃ ψ : MulChar ℚ ℤ, ψ (cSeq a n) ≠ 0 ∧ ∀ m > n, ψ (cSeq a m) = -ψ (cSeq a n))
-    (n : ℕ) :
-    Nonempty (GaloisGroup a n ≃* WreathPower n) := by
-  refine forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern h₁ (fun n hn ↦ ?_) n
-  obtain ⟨ψ, hψ, hψn⟩ := h n hn
-  exact hasCharPattern_mulSingle_of_neg_of_forall_lt (h₀.mono (by lia)) hψ hψn
 
 end QuadraticIterates

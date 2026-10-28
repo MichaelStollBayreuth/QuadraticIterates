@@ -39,6 +39,7 @@ public import QuadraticIterates.Mathlib.FieldTheory.PolynomialGaloisGroup
 public import QuadraticIterates.Mathlib.GroupTheory.Card
 public import QuadraticIterates.Mathlib.GroupTheory.PGroup
 public import QuadraticIterates.Mathlib.GroupTheory.RegularWreathProduct
+public import QuadraticIterates.Mathlib.LinearAlgebra.Dual.Lemmas
 public import QuadraticIterates.Mathlib.LinearAlgebra.Pi
 public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.Basic
 public import QuadraticIterates.Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol

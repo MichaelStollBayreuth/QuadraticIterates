@@ -41,10 +41,12 @@ status:
     1.2, 1.4-1.6, and part 1 of the Theorem of Section 1 in an unconditional form: for every
     rational a, Ω_n ≅ [C₂]ⁿ if and only if c_1, …, c_n are 2-independent in ℚ*/(ℚ*)²), of its
     reformulation by quadratic characters (all levels are maximal if and only if, for every
-    n ≥ 1, some character ℚ* → {±1} takes the value -1 at c_n and 1 at all c_m, m > n), and of
+    n ≥ 1, some character ℚ* → {±1} takes the value -1 at c_n and 1 at all c_m, m > n; then every
+    sign pattern along (c_n) is the pattern of a character), and of
     a criterion for rational parameters a = r/s built on it (QuadraticIterates/Main/): if
     a ≤ -2 or a³ + 2a² + 2a + 2 > 0, the pair (r, s) lies in one of three 2-adic classes, and
-    two of three explicit lists of conditions on r and s hold, then Ω_n ≅ [C₂]ⁿ for all n. Outside
+    two of three explicit lists of conditions on r and s hold, then Ω_n ≅ [C₂]ⁿ for all n; in these
+    classes, all levels are maximal if and only if a has the characters φ₀ and φ₁. Outside
     the interval α < a ≤ α′ ≈ -1.3107 the criterion is sharp: in these 2-adic classes all levels
     are maximal if and only if c_1, c_2 are 2-independent, i.e. Ω_2 ≅ [C₂]²
     (QuadraticIterates/Main/LevelTwo.lean); on α < a < -1 shorter lists of criteria suffice,
@@ -67,7 +69,7 @@ status:
     and Lemmas 1.1, 2.1, 2.2), Corollary 1.3, the lemmas of Li's papers about b_n, and the
     index-2 statement of Li 2020. Supporting theory (multiquadratic extensions, iterated wreath
     products, even polynomials, ℤ-valued characters on ℚ*, prime factors in residue classes) is
-    developed in Mathlib generality in 30 files under QuadraticIterates/Mathlib/ as upstreaming
+    developed in Mathlib generality in 31 files under QuadraticIterates/Mathlib/ as upstreaming
     candidates. A LaTeX blueprint with a dependency graph and the generated API documentation
     are published at https://michaelstollbayreuth.github.io/QuadraticIterates/ .
   sorry_count: 0
@@ -91,6 +93,12 @@ status:
     sorry_count: 0
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.forall_nonempty_mulEquiv_iff_hasCharPattern_of_twoAdicClass"
+    file: "QuadraticIterates/Main/Theorem.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
     literature_dependencies: []
   - declaration: "QuadraticIterates.forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass"
     file: "QuadraticIterates/Main/LevelTwo.lean"

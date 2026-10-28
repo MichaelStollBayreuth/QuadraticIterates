@@ -30,6 +30,8 @@ and `QuadraticIterates.NegTailCriterion` supply the two patterns.
   `φ₀` gives `φ_n` for every `n ≥ 2`.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern`: the main theorem,
   abstract form.
+* `QuadraticIterates.forall_nonempty_mulEquiv_iff_hasCharPattern_of_twoAdicClass`: the main theorem
+  as a characterization: in the `2`-adic classes, all levels are maximal iff `a` has `φ₀` and `φ₁`.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`: the main theorem.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_uSeq`: period two with `val₂` for
   `a ≡ 1 mod 4`.
@@ -101,6 +103,24 @@ theorem nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern (hrs : IsCoprime r s
     Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) :=
   forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern h₁
     (fun _ ↦ hasCharPattern_mulSingle_of_twoAdicClass hrs hs hε hc h₀) n
+
+/-- **The main theorem as a characterization**: for `a = r/s ∈ 𝒜` with sign `ε` (`a ≤ -2` and
+`ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and `ε = 1`) in one of the `2`-adic classes (C1)–(C3), the
+Galois groups `Ω_n` of the iterates of `X² + a` satisfy `Ω_n ≅ [C₂]ⁿ` for all `n` if and only if
+`a` has `φ₀` and `φ₁` (the patterns `-1` and `Pi.mulSingle 1 (-1)` along `c_n` from `1` on).
+Surjectivity gives every sign pattern
+(`QuadraticIterates.hasCharPattern_one_of_forall_nonempty_mulEquiv`). -/
+theorem forall_nonempty_mulEquiv_iff_hasCharPattern_of_twoAdicClass (hrs : IsCoprime r s)
+    (hs : 0 < s) {ε : ℤ}
+    (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
+    (hc : TwoAdicClass r s ε) :
+    (∀ n, Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n)) ↔
+      HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) ∧
+        HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)) :=
+  ⟨fun h ↦ ⟨hasCharPattern_one_of_forall_nonempty_mulEquiv h fun _ _ ↦ .inr rfl,
+      hasCharPattern_one_of_forall_nonempty_mulEquiv h fun m _ ↦ by
+        rcases eq_or_ne m 1 with rfl | hm <;> simp [*]⟩,
+    fun ⟨h₀, h₁⟩ ↦ nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern hrs hs hε hc h₀ h₁⟩
 
 /-- **The main theorem** for rational parameters: let `a = r/s` with `r, s` coprime, `s > 0`, and
 either `a ≤ -2` and `ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and `ε = 1`. If `(r, s, ε)` is in one of

@@ -51,23 +51,25 @@ and proves the criterion for~$2$-independence that the patterns give.
 \begin{lemma}[Characters from linear forms]
   \label{lem:dual}
   \uses{def:qchar, def:twoindep}
-  \lean{QuadraticIterates.mulCharOfDual, QuadraticIterates.mulCharOfDual_apply}
+  \lean{QuadraticIterates.mulCharOfDual, QuadraticIterates.mulCharOfDual_apply,
+    Module.exists_dual_forall_apply_eq}
   \leanok
   Let $f \colon \QQ^\times/\QQ^{\times 2} \to \FF_2$ be~$\FF_2$-linear. Then
   $x \mapsto (-1)^{f([x])}$ on~$\QQ^\times$, $0 \mapsto 0$, is a quadratic character.
-  If~$V$ is a subspace of $\QQ^\times/\QQ^{\times 2}$ and $[x] \notin V$, there is such an~$f$
-  with $f([x]) = 1$ and $f(V) = 0$.
+  If the classes~$[x_i]$ of a family of nonzero numbers are linearly independent, then~$f$ can be
+  chosen with prescribed values $f([x_i])$.
   \formalnote{For any field~$K$ in place of~$\QQ$, with \lname{SquareClasses K} and
   \lname{sqClass}: \lname{mulCharOfDual (f : Module.Dual (ZMod 2) (SquareClasses K)) :
-  MulChar K ℤ}; the separation is Mathlib's
-  \lname{Submodule.exists\_dual\_map\_eq\_bot\_of\_notMem} (every module over a field is free).}
+  MulChar K ℤ}. The prescribed values are \lname{Module.exists\_dual\_forall\_apply\_eq}, for a
+  family linearly independent on a set, in the generality of Mathlib's
+  \lname{Module.exists\_dual\_forall\_apply\_eq\_one} (all values~$1$).}
 \end{lemma}
 \begin{proof}
   \leanok
   \uses{lem:descent}
   The map is the composition of the class map, $f$, and the isomorphism
-  $\FF_2 \cong \{\pm 1\}$; vector spaces over a field have enough linear forms to separate a
-  vector from a subspace.
+  $\FF_2 \cong \{\pm 1\}$. A linearly independent family is a basis of its span, a linear form
+  on the span can be prescribed on a basis, and it extends to the whole space.
 \end{proof}
 
 \begin{proposition}[Independence from patterns]
@@ -90,21 +92,22 @@ and proves the criterion for~$2$-independence that the patterns give.
 \begin{proposition}[Patterns from independence]
   \label{prop:crit-converse}
   \uses{lem:dual, def:pattern}
-  \lean{QuadraticIterates.hasCharPattern_of_twoIndependent}
+  \lean{QuadraticIterates.hasCharPattern_one_of_twoIndependent,
+    QuadraticIterates.hasCharPattern_of_twoIndependent}
   \leanok
-  If $(v_m)_{m \ge 1}$ is~$2$-independent, then for every $n \ge 1$ the pattern~$-1$ at~$n$,
-  $+1$ after~$n$ is realized from~$n$.
-  \formalnote{For a sequence in a field. The classes of $v_1, v_2, \dots$ are linearly
-  independent (\lname{twoIndependent\_iff\_linearIndependent} holds for families indexed by any
-  type), and \lname{LinearIndependent.notMem\_span\_image} shows that~$[v_n]$ does not lie in the
-  span of the~$[v_m]$ with $m > n$.}
+  If $(v_m)_{m \ge 1}$ is~$2$-independent, then every sign pattern $(\delta_m)_{m \ge 1}$ is
+  realized from~$1$: some character~$\chi$ has $\chi(v_m) = \delta_m$ for all $m \ge 1$. In
+  particular, for every $n \ge 1$ the pattern~$-1$ at~$n$, $+1$ after~$n$ is realized from~$n$.
+  \formalnote{For a sequence in a field, with the signs given as a function $\NN \to \ZZ$ whose
+  values from~$1$ on are~$\pm 1$. The classes of $v_1, v_2, \dots$ are linearly independent
+  (\lname{twoIndependent\_iff\_linearIndependent} holds for families indexed by any type).}
 \end{proposition}
 \begin{proof}
   \leanok
   \uses{lem:dual, def:twoindep}
-  All~$v_m$ are nonzero. If~$[v_n]$ lay in the span of the~$[v_m]$, $m > n$, then~$v_n$ times a
-  finite product of later terms would be a square, contradicting~$2$-independence. So
-  Lemma~\ref{lem:dual} gives~$f$ with $f([v_n]) = 1$ and $f([v_m]) = 0$ for $m > n$, and the
+  All~$v_m$ are nonzero, and~$2$-independence says that their classes in
+  $\QQ^\times/\QQ^{\times 2}$ are linearly independent over~$\FF_2$. Lemma~\ref{lem:dual}
+  gives~$f$ with $f([v_m]) = 0$ if $\delta_m = 1$ and $f([v_m]) = 1$ if $\delta_m = -1$, and the
   character $(-1)^f$ realizes the pattern.
 \end{proof}
 
@@ -197,13 +200,17 @@ $a \in \QQ \setminus \{-1, 0\}$.
   \label{prop:tfae}
   \uses{prop:criterion, prop:crit, prop:crit-converse, def:phin}
   \lean{QuadraticIterates.tfae_forall_nonempty_mulEquiv,
+    QuadraticIterates.hasCharPattern_one_of_forall_nonempty_mulEquiv,
     QuadraticIterates.forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern,
     QuadraticIterates.forall_nonempty_mulEquiv_of_forall_hasCharPattern}
   \leanok
   Let $a \in \QQ \setminus \{-1, 0\}$. Then~$\rho_a$ is surjective if and only if~$a$
-  has~$\phi_n$ for all $n \ge 1$.
-  \formalnote{For any $a \in \QQ$, as the equivalence of $\Om_n \cong \Ct{n}$ for all~$n$,
-  the~$2$-independence of $(c_n)_{n \ge 1}$, and~$\phi_n$ for all $n \ge 1$.}
+  has~$\phi_n$ for all $n \ge 1$. If~$\rho_a$ is surjective, then for every sequence
+  $(\delta_n)_{n \ge 1}$ of signs, there is a character $\chi \colon \QQ^\times \to \{\pm 1\}$
+  such that $\chi(c_n) = \delta_n$ for all $n \ge 1$.
+  \formalnote{For any $a \in \QQ$: the first statement as the equivalence of $\Om_n \cong \Ct{n}$
+  for all~$n$, the~$2$-independence of $(c_n)_{n \ge 1}$, and~$\phi_n$ for all $n \ge 1$; the
+  second with the signs given as a function $\NN \to \ZZ$.}
 \end{proposition}
 \begin{proof}
   \leanok
@@ -211,9 +218,10 @@ $a \in \QQ \setminus \{-1, 0\}$.
   By Proposition~\ref{prop:criterion}, $\rho_a$ is surjective if and only if $(c_n)_{n \ge 1}$
   is~$2$-independent. If~$a$ has~$\phi_n$ for all~$n$, the family is~$2$-independent by
   Proposition~\ref{prop:crit}: for a finite nonempty~$S$ with $n = \min S$,
-  $\phi_n(\prod_{k \in S} c_k) = -1$. Conversely, $2$-independence means that the class of~$c_n$ in
-  $\QQ^\times/\QQ^{\times 2}$ does not lie in the span $V_{>n}$ of the classes of the later terms,
-  and a character separating it from $V_{>n}$ is a~$\phi_n$ (Proposition~\ref{prop:crit-converse}).
+  $\phi_n(\prod_{k \in S} c_k) = -1$. Conversely, if~$\rho_a$ is surjective, then the classes of
+  the~$c_n$ in $\QQ^\times/\QQ^{\times 2}$ are linearly independent over~$\FF_2$, so every
+  sequence of signs is realized by a character (Proposition~\ref{prop:crit-converse}). In
+  particular, $a$ has~$\phi_n$ for every $n \ge 1$.
 \end{proof}
 
 \begin{remark}[Primitive prime divisors]
@@ -251,6 +259,7 @@ To construct the characters~$\phi_n$, two further kinds of characters are useful
   from~$1$; there are no further definitions.}
 \end{definition}
 
+By Proposition~\ref{prop:tfae}, $a$ has~$\phi_0$, $\phi_1$ and~$\tau$ when~$\rho_a$ is surjective.
 When~$a$ has two of~$\phi_0$, $\phi_1$ and~$\tau$, it has the third: the product of the two
 characters will do (Lemma~\ref{lem:klein}). Similarly:
 
@@ -295,29 +304,8 @@ Here is a slightly more involved way of obtaining~$\phi_n$.
   Lemma~\ref{lem:jump} applies.
 \end{proof}
 
-We obtain the following criterion.
-
-\begin{corollary}[The criterion with~$\phi_0$, $\phi_1$, $\tau$]
-  \label{cor:crit-phi}
-  \uses{prop:tfae, lem:jump, lem:klein}
-  \lean{QuadraticIterates.forall_nonempty_mulEquiv_of_forall_exists_mulChar}
-  \leanok
-  Let $a \in \QQ \setminus \{-1, 0\}$. If
-  \begin{enumerate}
-    \item[(i)] $a$ has two of~$\phi_0$, $\phi_1$ and~$\tau$, and
-    \item[(ii)] for all $n \ge 2$, there exists a character $\psi \colon \QQ^\times \to \{\pm 1\}$
-          such that $\psi(c_{n+m}) = -\psi(c_n)$ for all $m \ge 1$,
-  \end{enumerate}
-  then~$\rho_a$ is surjective.
-  \formalnote{For any $a \in \QQ$, with (i) as~$\phi_0$ and~$\phi_1$ (the other pairs give them
-  by Lemma~\ref{lem:klein}) and $\psi(c_n) \ne 0$ in (ii).}
-\end{corollary}
-\begin{proof}
-  \leanok
-  By Lemma~\ref{lem:klein}, $a$ has~$\phi_0$ and~$\phi_1$, and Lemma~\ref{lem:jump} gives~$\phi_n$
-  for $n \ge 2$; apply Proposition~\ref{prop:tfae}.
-\end{proof}
-
-The second condition leads to the ``half'' of the rational numbers mentioned in the
-introduction (Lemma~\ref{lem:twoadic}). Chapter~\ref{chap:klein} gives sufficient conditions
-for~$\phi_0$, $\phi_1$ and~$\tau$; combining these gives the main result (Theorem~\ref{thm:main}).
+In Chapter~\ref{chap:phin}, Lemma~\ref{lem:jump} shows that, for the ``half'' of the rational
+numbers mentioned in the introduction, $a$ has~$\phi_n$ for all $n \ge 2$, provided that~$a$
+has~$\phi_0$ (Lemma~\ref{lem:twoadic}). Chapter~\ref{chap:klein} gives sufficient conditions
+for~$\phi_0$, $\phi_1$ and~$\tau$. Combining these with Proposition~\ref{prop:tfae} gives the
+main result (Theorem~\ref{thm:main}).

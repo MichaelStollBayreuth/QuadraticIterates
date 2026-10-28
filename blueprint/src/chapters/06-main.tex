@@ -61,10 +61,12 @@ result.
     QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_not_isSquare,
     QuadraticIterates.nonempty_mulEquiv_of_lt_neg_one_of_emod,
     QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria,
+    QuadraticIterates.forall_nonempty_mulEquiv_iff_hasCharPattern_of_twoAdicClass,
     QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern}
   \leanok
   Assume that $a \in \cA$ and $(r, s)$ satisfies one of the conditions (C1)--(C3) in
-  Lemma~\ref{lem:twoadic}.
+  Lemma~\ref{lem:twoadic}. Then~$\rho_a$ is surjective if and only if~$a$ has~$\phi_0$
+  and~$\phi_1$. Moreover, the following hold.
   \begin{enumerate}
     \item If $a > \alpha'$ (so $\eps_a = 1$) or $a \le -2$ (so $\eps_a = -1$), then the following
           are equivalent.
@@ -84,10 +86,12 @@ result.
             \item[(d)] $(r, s) \equiv (3, 0) \bmod 4$, $r \equiv 3 \bmod 8$ and
                   $s \not\equiv 4 \bmod 32$.
             \item[(e)] $a$ satisfies at least two of (Z), (O) and (T).
-            \item[(f)] $a$ has~$\phi_0$ and~$\phi_1$.
           \end{enumerate}
   \end{enumerate}
-  \formalnote{Six theorems. In part (1),
+  \formalnote{Seven theorems. The first statement is
+  \lname{forall\_nonempty\_mulEquiv\_iff\_hasCharPattern\_of\_twoAdicClass}, and its
+  direction~``$\Leftarrow$'' is \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_hasCharPattern},
+  both for all $a \in \cA$. In part (1),
   \lname{forall\_nonempty\_mulEquiv\_iff\_twoIndependent\_of\_twoAdicClass} is the equivalence of
   (i) and (ii), \lname{forall\_nonempty\_mulEquiv\_iff\_not\_isSquare\_of\_twoAdicClass} that of
   (i) and (iii), and \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_not\_isSquare} is
@@ -97,28 +101,30 @@ result.
   $a \in (\alpha, -1)$, as one disjunction of congruences, each of which implies one of
   (C1)--(C3), with $(1, 1)$ and $(1, 3)$ stated as $r \equiv 1 \bmod 4$ and~$s$ odd, and
   $|r| \notin \QQ_2^{\times 2}$ stated as $-r \ne 4^j m$ for all $j \ge 0$ and all
-  $m \equiv 1 \bmod 8$. (2)(e) is \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_criteria} and
-  (2)(f) is \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_hasCharPattern}, both for all
-  $a \in \cA$, with the definitions \lname{NegAllCriterion}, \lname{NegFirstCriterion},
+  $m \equiv 1 \bmod 8$. (2)(e) is \lname{nonempty\_mulEquiv\_of\_twoAdicClass\_of\_criteria}, for
+  all $a \in \cA$, with the definitions \lname{NegAllCriterion}, \lname{NegFirstCriterion},
   \lname{NegTailCriterion} and \lname{TwoAdicClass}, which use Mathlib's notions only.}
 \end{theorem}
 \begin{proof}
   \leanok
-  The equivalence of (ii) and (iii) is Lemma~\ref{lem:level2}, and (i) implies (ii) by
-  Proposition~\ref{prop:criterion}. So it suffices to show in all cases that the given
-  conditions imply that~$\rho_a$ is surjective. By Lemma~\ref{lem:twoadic} and
-  Proposition~\ref{prop:tfae}, it suffices that~$a$ has~$\phi_0$ and~$\phi_1$, which follows from
-  two of~$\phi_0$, $\phi_1$ and~$\tau$ (Lemma~\ref{lem:klein}). This deals with (2)(f) and, by
-  Propositions~\ref{prop:Z}, \ref{prop:O} and~\ref{prop:T}, with (2)(e); in the other cases we
-  show that (2)(e) holds. Recall that (Z1) holds if~$|r|$ is not a square, (O3) or (O4) if~$s$ is
-  not a square, and (T3) if $|r + s|$ is not a square and $|r + s| \equiv 0$ or~$3 \bmod 4$
-  (Lemma~\ref{lem:prime3}). Also~$r$, $s$ and~$r + s$ are coprime in pairs. In terms of
-  $(r, s) \bmod 4$, the classes (C1)--(C3) are, for $\eps = -1$: $(3,1)$, $(3,3)$; $(0,1)$,
-  $(2,3)$; $(1,0)$, $(1,2)$; and for $\eps = 1$: $(1,1)$, $(1,3)$; $(2,1)$, $(0,3)$; $(3,0)$,
-  $(3,2)$.
+  If~$\rho_a$ is surjective, then~$a$ has~$\phi_0$ and~$\phi_1$ by Proposition~\ref{prop:tfae}.
+  Conversely, if~$a$ has~$\phi_0$ and~$\phi_1$, then~$a$ has~$\phi_n$ for all $n \ge 2$ by
+  Lemma~\ref{lem:twoadic}, so~$\rho_a$ is surjective by Proposition~\ref{prop:tfae}.
 
-  (1) Assume (iii). When $r + s < 0$, at most one of~$|r|$, $s$, $|r + s|$ is a square, since
-  the products of two of them are $-rs$, $r(r+s)$ and $-s(r+s)$.
+  In (1), the equivalence of (ii) and (iii) is Lemma~\ref{lem:level2}, and (i) implies (ii) by
+  Proposition~\ref{prop:criterion}. So it suffices to show that~$a$ has~$\phi_0$ and~$\phi_1$
+  under (iii) in (1) and in each of the cases in (2). Since this follows from two of~$\phi_0$,
+  $\phi_1$ and~$\tau$ (Lemma~\ref{lem:klein}), Propositions~\ref{prop:Z}, \ref{prop:O}
+  and~\ref{prop:T} deal with (2)(e); in the other cases we show that (2)(e) holds. Recall that
+  (Z1) holds if~$|r|$ is not a square, (O3) or (O4) if~$s$ is not a square, and (T3) if
+  $|r + s|$ is not a square and $|r + s| \equiv 0$ or~$3 \bmod 4$ (Lemma~\ref{lem:prime3}). Also,
+  when $a < -1$, so that $r < 0$ and $r + s < 0$, (iii) implies that at most one of~$|r|$, $s$
+  and~$|r + s|$ is a square, since the products of two of them are then $-rs$, $r(r+s)$
+  and~$-s(r+s)$. In terms of $(r, s) \bmod 4$, the classes (C1)--(C3) are, for $\eps = -1$:
+  $(3,1)$, $(3,3)$; $(0,1)$, $(2,3)$; $(1,0)$, $(1,2)$; and for $\eps = 1$: $(1,1)$, $(1,3)$;
+  $(2,1)$, $(0,3)$; $(3,0)$, $(3,2)$.
+
+  (1) Assume (iii).
   \begin{itemize}
     \item $a > 0$. (O1) holds, and~$r$ and~$r + s$ are positive and not both squares. In the
           classes $(1,3)$, $(2,1)$, $(0,3)$ and $(3,0)$, $r + s \equiv 0$ or~$3 \bmod 4$, so this
@@ -160,8 +166,8 @@ result.
 \end{proof}
 
 Since~$\phi_0$ is available when~$|r|$ is not a square and~$\phi_1$ when~$s$ is not a square
-(from~$\val_p$ with a prime dividing~$r$, resp.\ $s$, with odd multiplicity), case (2)(f) holds
-outside a subset of relative density zero within the set of $a \in \QQ$ with
+(from~$\val_p$ with a prime dividing~$r$, resp.\ $s$, with odd multiplicity), $\rho_a$ is
+surjective outside a subset of relative density zero within the set of $a \in \QQ$ with
 $\alpha < a < \alpha'$ that satisfy one of (C1)--(C3). Even where (Z), (O) and (T) do not
 suffice to show that~$a$ has~$\phi_0$ and~$\phi_1$, suitable characters can be searched for among
 the~$\chi_p$ for various~$p$ and their products. In all cases checked, either $(c_1, c_2)$
@@ -173,6 +179,12 @@ observations suggest the following strengthening of Theorem~\ref{thm:main}.
   Let $a \in \cA$ satisfy one of (C1)--(C3). Then~$\rho_a$ is surjective as soon as~$\rho_a^2$
   is.
 \end{conjecture}
+
+By Proposition~\ref{prop:criterion}, $\rho_a^2$ is surjective if and only if $(c_1, c_2)$
+is~$2$-independent. So the conjecture holds when $a > \alpha'$ or $a \le -2$, by
+Theorem~\ref{thm:main}(1), and for $\alpha < a < \alpha'$ it is equivalent, by the first
+statement of Theorem~\ref{thm:main}, to the statement that~$a$ has~$\phi_0$ and~$\phi_1$
+whenever $(c_1, c_2)$ is~$2$-independent.
 
 Figure~\ref{fig:coverage} shows which rational numbers~$a$, represented as pairs $(s, r)$ in the
 plane, have~$\rho_a$ surjective and are covered by Theorem~\ref{thm:main} (full circles) or by
