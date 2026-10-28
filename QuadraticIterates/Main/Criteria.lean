@@ -342,8 +342,7 @@ theorem hasCharPattern_mulSingle_one_of_dvd_right_two (hrs : IsCoprime r s) (hs 
   · exact hasCharPattern_mulSingle_one_of_dvd_right_four hrs hs le_rfl hsm h
   · have hr : Odd r := Int.isCoprime_two_right.mp
       (hrs.of_isCoprime_of_dvd_right (hsm ▸ (dvd_pow_self 2 (by lia)).mul_right m))
-    have h2 := Int.odd_iff.mp (hr.mul hm)
-    rcases (by lia : r * m % 8 = 3 ∨ r * m % 4 = 1) with h' | h'
+    rcases (by lia [Int.odd_iff.mp (hr.mul hm)] : r * m % 8 = 3 ∨ r * m % 4 = 1) with h' | h'
     · exact hasCharPattern_mulSingle_one_of_dvd_right_eight hrs hs (by lia) hsm (.inl h')
     · exact hasCharPattern_mulSingle_one_of_dvd_right_four hrs hs (by lia) hsm h'
 

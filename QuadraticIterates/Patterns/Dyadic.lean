@@ -95,9 +95,9 @@ theorem unitPartChar_two_χ₄_cSeq_two_mul_add_one_of_modEq_four (hs : Odd s)
   have hs0 : s ≠ 0 := by rintro rfl; simp at hs
   have h := intCast_mul_wSeq_zmod_eight r hs (n := 2 * j + 1) (by lia)
   rw [cSeq_two_mul_add_one_zmod_eight (intCast_mul_zmod_eight_of_modEq_four hs h4) hj] at h
-  have h8 := (ZMod.intCast_eq_intCast_iff' _ (r * s + 4) 8).mp (mod_cast h)
   rw [mulChar_cSeq_of_two_le _ hs0 (by lia), ← Int.cast_mul]
-  exact unitPartChar_two_χ₄_of_emod_four_eq_one (by lia [mul_emod_four_of_modEq_four hs h4])
+  exact unitPartChar_two_χ₄_of_emod_four_eq_one (by lia [mul_emod_four_of_modEq_four hs h4,
+    (ZMod.intCast_eq_intCast_iff' _ (r * s + 4) 8).mp (mod_cast h)])
 
 /-- For odd `s` and `r ≡ s (mod 4)`, `χ₄(c_{2j}) = χ₈(rs)` for `j ≥ 1`: `r w_{2j} ≡ rs + 1
 (mod 8)`, which is `2` or `6`. -/

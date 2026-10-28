@@ -113,6 +113,7 @@ lemma map_gammaSeq {S : Type*} [CommSemiring S] (φ : R →+* S) (ε : R) (n : �
   | case2 => simp [gammaSeq]
   | case3 n ih => simp [gammaSeq, ← ih, eval_map_apply]
 
+variable {g} in
 /-- If `γ_{n₀+2} = γ_{n₀}` (`n₀ ≥ 1`), then the sequence is `2`-periodic from index `n₀` on:
 `γ_n = γ_{n₀}` for `n ≡ n₀ mod 2` and `γ_n = γ_{n₀+1}` otherwise, for all `n ≥ n₀`. -/
 theorem gammaSeq_eq_ite_even_of_add_two_eq {ε : R} {n₀ : ℕ} (hn₀ : 1 ≤ n₀)

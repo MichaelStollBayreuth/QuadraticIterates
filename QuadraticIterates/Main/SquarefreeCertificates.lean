@@ -259,7 +259,6 @@ private lemma negAllCriterion_or_negTailCriterion_of_eq_sq_of_cert (hRs : IsCopr
   · exact negAllCriterion_or_negTailCriterion_of_two_dvd_sq ht0
       (Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 4).trans h4)) (.inl hs4)
   · have h2t := Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 8).trans h8)
-    have : ¬(2 : ℤ) ∣ s := fun h2s ↦ h2 ⟨dvd_pow h2t two_ne_zero, h2s⟩
     exact negAllCriterion_or_negTailCriterion_of_two_dvd_sq ht0 h2t
       ((by lia : -s % 4 = 3 ∨ -s % 8 = 5).imp_right (⟨h8, ·⟩))
 
@@ -309,7 +308,6 @@ private lemma negFirstCriterion_of_eq_sq_right_of_cert {t : ℤ} (hRs : IsCoprim
   · exact negFirstCriterion_of_two_dvd_sq_right ht0
       (Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 4).trans h4)) (.inl hR4)
   · have h2t := Int.prime_two.dvd_of_dvd_pow ((by norm_num : (2 : ℤ) ∣ 8).trans h8)
-    have : ¬(2 : ℤ) ∣ R := fun h2R ↦ h2 ⟨h2R, dvd_pow h2t two_ne_zero⟩
     exact negFirstCriterion_of_two_dvd_sq_right ht0 h2t
       ((by lia : R % 4 = 3 ∨ R % 8 = 5).imp_right (⟨h8, ·⟩))
 

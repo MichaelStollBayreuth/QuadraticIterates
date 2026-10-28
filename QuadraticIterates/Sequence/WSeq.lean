@@ -103,10 +103,9 @@ theorem intCast_mul_wSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
 theorem intCast_mul_vSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
     (r : S) * vSeq r s n =
       (s : S) ^ 2 ^ n * (cSeq ((r : S) * σ) n + cSeq ((r : S) * σ) (n + 1)) := by
-  have h₂ := intCast_mul_wSeq r hσ (n := n + 1) (by lia)
-  rw [Nat.add_sub_cancel] at h₂
   simp only [vSeq_eq, Int.cast_add, Int.cast_mul, Int.cast_pow]
-  grobner [intCast_mul_wSeq r hσ hn, sq_pow_two_pow_pred (s : S) hn]
+  grobner [intCast_mul_wSeq r hσ (n := n + 1) (by lia), intCast_mul_wSeq r hσ hn,
+    sq_pow_two_pow_pred (s : S) hn]
 
 theorem intCast_uSeq (hσ : (s : S) * σ = 1) {n : ℕ} (hn : 1 ≤ n) :
     (uSeq r s n : S) =
