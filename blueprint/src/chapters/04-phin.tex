@@ -204,13 +204,13 @@ $s^{2^{n-1}}$ and its numerator is divisible by~$r$ (Lemma~\ref{lem:vp}), so
 $c_n = r w_n / s^{2^{n-1}}$ with the integers $w_1 = -1$, $w_{n+1} = r w_n^2 + s^{2^n - 1}$ of
 Definition~\ref{def:wseq} (Lemma~\ref{lem:reduction}): $w_2 = r + s$,
 $w_3 = r^3 + 2r^2 s + r s^2 + s^3$, \dots. Since~$r$ and~$s$ are coprime, $w_n$ is coprime
-to~$r$ and~$s$, which also implies that~$w_{n+1}$ and~$w_n$ are coprime; $w_n$ is a binary form of
-degree $2^{n-1} - 1$ in~$r$ and~$s$ with integral coefficients, the homogenization of the
+to~$r$ and~$s$, which also implies that~$w_{n+1}$ and~$w_n$ are coprime; considered as a polynomial in~$r$
+and~$s$, $w_n$ is a binary form of degree $2^{n-1} - 1$ with integral coefficients, the homogenization of the
 polynomial $c_n/a \in \ZZ[a]$. The numerator of $c_{n+1} + c_n$ is~$r$ times
 \[ v_n = r w_n^2 + w_n s^{2^{n-1}} + s^{2^n - 1} = w_{n+1} + w_n s^{2^{n-1}}, \]
-with $v_1 = r$ and $v_2 = r^3 + 2r^2 s + 2rs^2 + 2s^3$. For $a > \alpha$ and
-$a \notin \{-1, 0\}$ this is positive when $n \ge 2$ (by Lemma~\ref{lem:sumsign} when $a < 0$,
-obviously when $a > 0$); on the other hand, $v_n$ is negative when $a \le -2$. Since~$w_{n+1}$
+with $v_1 = r$ and $v_2 = r^3 + 2r^2 s + 2rs^2 + 2s^3$. For $a > \alpha$ the number~$v_n$ is
+positive when $n \ge 2$ (by Lemma~\ref{lem:sumsign} when $a < 0$, obviously when $a \ge 0$); on
+the other hand, $v_n$ is negative when $a \le -2$. Since~$w_{n+1}$
 and~$w_n$ are coprime, $v_n$ is coprime to~$w_n$, and since~$w_{n+1}$ is coprime to~$s$, so
 is~$v_n$; it follows that~$v_n$ is coprime to~$w_{n+1}$ as well (Lemma~\ref{lem:wseq-res}).
 
@@ -219,7 +219,7 @@ is~$v_n$; it follows that~$v_n$ is coprime to~$w_{n+1}$ as well (Lemma~\ref{lem:
   \uses{def:alpha}
   \leanok
   We set
-  \[ \cA = \{a \in \QQ : \text{$a \le -2$, or $a > \alpha$ and $a \notin \{-1, 0\}$}\}. \]
+  \[ \cA = \{a \in \QQ \setminus \{-1, 0\} : \text{$a \le -2$ or $a > \alpha$}\}. \]
   \formalnote{No definition: the theorems take the two cases as hypotheses, $r \le -2s$ or
   $r^3 + 2r^2 s + 2rs^2 + 2s^3 > 0$, the latter being $a > \alpha$ as the cubic is increasing.
   The exclusion of $a = -1, 0$ is not needed where~$\phi_0$ is assumed: $\phi_0$ forces
@@ -235,7 +235,10 @@ is~$v_n$; it follows that~$v_n$ is coprime to~$w_{n+1}$ as well (Lemma~\ref{lem:
   $r^3 + 2r^2 s + 2rs^2 + 2s^3 > 0$ and $\eps = 1$.}
 \end{definition}
 
-Then the sign of~$v_n$ for $n \ge 2$ is exactly~$\eps_a$ (\lname{mul\_vSeq\_pos}).
+Then the sign of~$v_n$ for $n \ge 2$ is exactly~$\eps_a$ (\lname{mul\_vSeq\_pos}, which also
+covers $a = 0$ and $a = -1$). Note that $v_2 = s^3(a^3 + 2a^2 + 2a + 2)$, which changes sign
+at~$\alpha$, so we lose control over this sign when~$a$ passes~$\alpha$ from above. This is the
+reason why the interval~$(-2, \alpha)$ is excluded from the results.
 
 \begin{lemma}[The~$2$-adic condition]
   \label{lem:twoadic}

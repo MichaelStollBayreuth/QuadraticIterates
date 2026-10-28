@@ -99,11 +99,8 @@ $c_{n+2k} \equiv -c_n$ for all $k \ge 1$ by induction.
   \end{enumerate}
   \formalnote{Two theorems, with $j, k \in \ZZ$ as parameters (named~$u$, $v$ there) and the
   parameter written as $-(u/v)(u/v + 1)$, resp.\ $-((u/v)^2 + u/v + 1)$. In (1), $a \le -2$ is
-  stated as $k < j$ (in these classes $\ell \ne 1$), in (2) as $k^2 \le j(j + k)$. The formal
-  proof of (1) needs no bound on~$W$: $F_2 = jW + V > 0$ as $w_n < 0$, and $F_1 > 0$ as
-  $F_1 F_2 = -v_n > 0$. In (2) it treats only the class $(1, 1)$, with~$k$ of either sign: the
-  substitution $(j, k) \mapsto (j + k, -k)$, i.e.\ $\ell \mapsto -1 - \ell$, leaves~$a$, $r$
-  and~$s$ unchanged and maps the class $(2, 3)$ to $(1, 1)$.}
+  stated as $k < j$ (in these classes $\ell \ne 1$), in (2) as $k^2 \le j(j + k)$. As in the
+  proof, (2) treats the class $(1, 1)$, with~$k$ of either sign.}
 \end{theorem}
 \begin{proof}
   \leanok
@@ -118,9 +115,9 @@ $c_{n+2k} \equiv -c_n$ for all $k \ge 1$ by induction.
   prime $p \equiv 3 \bmod 4$. Let $n \ge 2$, $W = -w_n$ and $V = k^{2^n - 1}$. Then
   \[ -v_n = F_1 F_2 \qquad \text{with} \qquad F_1 = (j + k) W - V \quad \text{and} \quad
      F_2 = j W + V \]
-  (expand, with $s = k^2$). Since $c_n \ge -a$ (Lemma~\ref{lem:signs}) and
-  $c_n = r w_n / k^{2^n}$, $W \ge k^{2^n - 2}$, so $F_1 \ge j k^{2^n - 2} > 0$ and $F_2 > 0$. We
-  have $s \equiv 1 \bmod 8$, so $w_{m+1} \equiv r w_m^2 + 1$, and as $r \equiv 2 \bmod 4$
+  (expand, with $s = k^2$). Since $r < 0$ and $c_n = r w_n / k^{2^n} > 0$
+  (Lemma~\ref{lem:signs}), we have $W > 0$, so $F_2 > 0$; then also $F_1 > 0$, as
+  $F_1 F_2 = -v_n > 0$. We have $s \equiv 1 \bmod 8$, so $w_{m+1} \equiv r w_m^2 + 1$, and as $r \equiv 2 \bmod 4$
   and~$w_m$ is odd, $w_m \equiv r + 1 \bmod 8$ for $m \ge 2$; thus $W \equiv j(j + k) - 1$ and
   $V \equiv k \bmod 8$. This gives $F_1 \equiv 6 \bmod 8$ when $(j, k) \equiv (2, 1) \bmod 4$
   and $F_2 \equiv 6 \bmod 8$ when $(j, k) \equiv (3, 3) \bmod 4$. In both cases a prime
@@ -135,20 +132,20 @@ $c_{n+2k} \equiv -c_n$ for all $k \ge 1$ by induction.
      H_n = r w_n + j V = k^{2^n}(c_n + \ell), \]
   both positive as $c_n \ge -a = \ell^2 + \ell + 1$. By Lemma~\ref{lem:strongcong},
   $w_n = (r + s) T$ with $T \equiv s^{2^{n-1} - 2} \bmod (r + s)$, so~$j$ and~$j + k$ divide~$w_n$.
-  Set $K = H_n / j = -r(j + k) T + V$ when $(j, k) \equiv (1, 1) \bmod 4$, and
-  $K = G_n / (j + k) = -r j T - V$ when $(j, k) \equiv (2, 3) \bmod 4$; in both cases the divisor
-  is odd and $K > 0$. Then:
+  Replacing $(j, k)$ by $(j + k, -k)$, that is, $\ell$ by $-1 - \ell$, leaves~$a$, and hence~$r$,
+  $s$, $w_n$ and~$T$, unchanged; it interchanges~$j$ and~$j + k$ and changes the sign of~$V$, so
+  it interchanges~$G_n$ and~$H_n$, and it maps the class $(2, 3)$ to the class
+  $(1, 1) \bmod 4$. The following argument uses that $j > 0$, but not the sign of~$k$; since
+  $j + k > 0$, we can therefore assume that $(j, k) \equiv (1, 1) \bmod 4$. We set
+  $K = H_n / j = -r(j + k) T + V > 0$. Then:
   \begin{itemize}
     \item $K \equiv 3 \bmod 4$. In~$\ZZ/4\ZZ$, $\bar a = 1$, so $\bar c_n = 2$ for even~$n$, and
           $r w_n = s^{2^{n-1}} \bar c_n = 2$ (Lemma~\ref{lem:reduction}); also $V \equiv k \bmod 4$.
-          In the first case $jK = H_n \equiv 2 + jk$, so $K \equiv 2 + k \equiv 3$; in the second
-          $(j + k)K = G_n \equiv 2 - (j + k)k$, so $K \equiv 2 - k \equiv 3 \bmod 4$.
+          So $jK = H_n \equiv 2 + jk$, hence $K \equiv 2 + k \equiv 3 \bmod 4$.
     \item $K$ is prime to~$r + s$. $K$ is odd. Let~$q$ be an odd prime dividing
           $r + s = -j(j + k)$; then $q \nmid k$, $r \equiv -k^2$ and
-          $r T \equiv -k^{2^n - 2} \bmod q$. In the first case $K \equiv (j + k)k^{2^n - 2} + V$,
-          which is~$2V$ if $q \mid j$ and~$V$ if $q \mid j + k$; in the second case
-          $K \equiv j k^{2^n - 2} - V$, which is~$-V$ if $q \mid j$ and~$-2V$ if $q \mid j + k$.
-          The claim follows, as~$q$ does not divide~$2V$.
+          $r T \equiv -k^{2^n - 2} \bmod q$. So $K \equiv (j + k)k^{2^n - 2} + V$, which is~$2V$
+          if $q \mid j$ and~$V$ if $q \mid j + k$. The claim follows, as~$q$ does not divide~$2V$.
   \end{itemize}
   So a prime $p \equiv 3 \bmod 4$ divides~$K$, hence~$u_n$, and $p \nmid r + s$
   (Lemma~\ref{lem:prime3}). Lemma~\ref{lem:period2} with~$\val_2$ and~$\phi_0$ gives~$\phi_n$.

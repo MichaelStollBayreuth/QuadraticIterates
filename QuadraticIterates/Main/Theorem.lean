@@ -73,8 +73,7 @@ theorem hasCharPattern_mulSingle_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 <
     (hc : TwoAdicClass r s ε) (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ}
     (hn : 2 ≤ n) :
     HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
-  have hr0 : r ≠ 0 := fun h ↦ h₀.ne_zero le_rfl (by simp) (by simp [h])
-  obtain ⟨p, hp, hp4, hpv, -⟩ := exists_prime_dvd_vSeq_of_twoAdicClass hrs hs hr0 hε hc hn
+  obtain ⟨p, hp, hp4, hpv, -⟩ := exists_prime_dvd_vSeq_of_twoAdicClass hrs hs hε hc hn
   exact hasCharPattern_mulSingle_of_prime_dvd_vSeq hrs h₀ hn hp hp4 hpv
 
 /-- **The main theorem, abstract form**: for `a = r/s ∈ 𝒜` with sign `ε` (`a ≤ -2` and `ε = -1`,

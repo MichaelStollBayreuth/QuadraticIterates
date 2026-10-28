@@ -159,15 +159,20 @@ theorem cubic_pos_of_neg_lt (hs : 0 < s) (h : -s < r) :
     (by lia [sq_nonneg (2 * r + s), pow_pos hs 2] : 0 < r ^ 2 + r * s + s ^ 2), pow_pos hs 3]
 
 /-- For `a = r/s ∈ 𝒜` with its sign `ε` (`a ≤ -2` and `ε = -1`, or `a > α` and `ε = 1`, `α` the
-real root of `x³ + 2x² + 2x + 2`), `ε v_n > 0` for `n ≥ 2`. -/
-theorem mul_vSeq_pos (hs : 0 < s) (hr : r ≠ 0) {ε : ℤ}
+real root of `x³ + 2x² + 2x + 2`), `ε v_n > 0` for `n ≥ 2`; also at `a = 0`, where
+`v_n = 2 s^{2^n - 1}` (`QuadraticIterates.vSeq_modEq_left` modulo `0`). -/
+theorem mul_vSeq_pos (hs : 0 < s) {ε : ℤ}
     (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
     {n : ℕ} (hn : 2 ≤ n) :
     0 < ε * vSeq r s n := by
   rcases hε with ⟨h, rfl⟩ | ⟨h, rfl⟩
   · simpa using vSeq_neg_of_le_neg_two_mul hs h (by lia : 1 ≤ n)
-  rcases hr.lt_or_gt with hr | hr
+  rcases lt_trichotomy r 0 with hr | rfl | hr
   · simpa using vSeq_pos_of_neg hs hr h hn
+  · have h0 := vSeq_modEq_left 0 s hn
+    rw [Int.ModEq, Int.emod_zero, Int.emod_zero] at h0
+    rw [one_mul, h0]
+    positivity
   · simpa using vSeq_pos_of_pos hs hr hn
 
 /-- The `2`-adic classes (C1)–(C3) of the main theorem for `a = r/s` with sign `ε`: `s` odd and
@@ -229,12 +234,11 @@ theorem not_dvd_left_of_dvd_vSeq (hrs : IsCoprime r s) {n : ℕ} (hn : 2 ≤ n) 
 `a³ + 2a² + 2a + 2 > 0` and `ε = 1`) in one of the classes (C1)–(C3), every `v_n`, `n ≥ 2`, has a
 prime factor `p ≡ 3 (mod 4)` not dividing `r`: `ε v_n > 0` is `≡ 3 (mod 4)` or `≡ 6 (mod 8)`, and
 `v_n ≡ 2 s^{2^n - 1} (mod r)`. -/
-theorem exists_prime_dvd_vSeq_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s) (hr0 : r ≠ 0)
-    {ε : ℤ}
+theorem exists_prime_dvd_vSeq_of_twoAdicClass (hrs : IsCoprime r s) (hs : 0 < s) {ε : ℤ}
     (hε : r ≤ -2 * s ∧ ε = -1 ∨ 0 < r ^ 3 + 2 * r ^ 2 * s + 2 * r * s ^ 2 + 2 * s ^ 3 ∧ ε = 1)
     (hc : TwoAdicClass r s ε) {n : ℕ} (hn : 2 ≤ n) :
     ∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ vSeq r s n ∧ ¬(p : ℤ) ∣ r := by
-  have hpos := mul_vSeq_pos hs hr0 hε hn
+  have hpos := mul_vSeq_pos hs hε hn
   have hε1 : ε = 1 ∨ ε = -1 := hε.symm.imp And.right And.right
   obtain ⟨p, hp, hp4, hpd⟩ := (emod_of_twoAdicClass hrs hε1 hc hn).elim
     (Int.exists_prime_dvd_of_emod_four_eq_three hpos)
