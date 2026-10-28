@@ -370,8 +370,7 @@ We note a useful consequence of (Z1), (Z2) and (O2).
   \label{lem:mod4}
   \uses{prop:Z, prop:O, lem:prime3}
   \lean{QuadraticIterates.negAllCriterion_of_modEq_four,
-    QuadraticIterates.hasCharPattern_neg_one_of_modEq_four,
-    QuadraticIterates.hasCharPattern_mulSingle_one_of_modEq_four}
+    QuadraticIterates.hasCharPattern_neg_one_of_modEq_four}
   \leanok
   If $a \equiv 1 \bmod 4$, then~$a$ has~$\phi_0$ and~$\phi_1$.
   \formalnote{The condition $a \equiv 1 \bmod 4$ is stated as~$s$ odd and $r \equiv s \bmod 4$.
@@ -381,6 +380,7 @@ We note a useful consequence of (Z1), (Z2) and (O2).
 \end{lemma}
 \begin{proof}
   \leanok
+  \uses{lem:squares2}
   We have that~$s$ is odd and $r \equiv s \bmod 4$. By assumption, (O2) holds. If~$|r|$ is not
   a square, then (Z1) holds. Otherwise, $r = \pm t^2$ with~$t$ odd, so $r \equiv \pm 1 \bmod 8$
   and $s \equiv \pm 1 \bmod 4$ (with the same sign); then $r + 2s \equiv \pm 3 \bmod 8$, so (Z2)
