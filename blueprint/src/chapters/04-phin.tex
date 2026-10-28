@@ -172,11 +172,11 @@ a character changing sign after~$c_n$.
     QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq,
     QuadraticIterates.unitPartChar_cSeq_ne_zero_of_dvd_vSeq}
   \leanok
-  Let $n \ge 1$, and let either $p \equiv 3 \bmod 4$ be a prime and $\chi = \chi_p$, or $p = 2$
-  and $\chi = \chi_4$, $N = p$ resp.\ $N = 4$. If $N \mid v_n$ and $p \nmid r$, then
-  $\chi(c_m) = -\chi(c_n) \ne 0$ for all $m > n$. Consequently, if~$a$ has~$\phi_0$, it
-  has~$\phi_n$ (Lemma~\ref{lem:jump}). For $n \ge 2$ and odd~$p$, $p \nmid r$ is automatic
-  (Lemma~\ref{lem:wseq-res}).
+  Let $n \ge 1$, and let $p \equiv 3 \bmod 4$ be a prime. If $p \mid v_n$ and $p \nmid r$, then
+  $\chi_p(c_m) = -\chi_p(c_n) \ne 0$ for all $m > n$. Consequently, if~$a$ has~$\phi_0$, it
+  has~$\phi_n$ (Lemma~\ref{lem:jump}). For $n \ge 2$, $p \nmid r$ is automatic
+  (Lemma~\ref{lem:wseq-res}). The analogue at~$2$, with~$\chi_4$ and $4 \mid v_n$, never applies:
+  $v_n$ is odd when~$r$ is odd, and $v_n \equiv 2 \bmod 4$ when~$r$ is even.
   \formalnote{For a character~$\psi$ modulo any power $N = p^k$, $k \ge 1$, with $N \mid v_n$
   and $p \nmid r$: $\chi_\psi(c_m) = \psi(-1)\chi_\psi(c_n)$ for $m > n$
   (\lname{unitPartChar\_cSeq\_of\_dvd\_vSeq}); for $\psi(-1) = -1$ the statement gives~$\phi_n$
@@ -185,24 +185,10 @@ a character changing sign after~$c_n$.
 \begin{proof}
   \leanok
   $v_n$ is prime to~$s$, so $p \nmid s$; by Lemma~\ref{lem:reduction},
-  $\bar c_n + \bar c_{n+1} = 0$ in~$\ZZ/N\ZZ$, and Lemma~\ref{lem:orbit}(1) gives
+  $\bar c_n + \bar c_{n+1} = 0$ in~$\ZZ/p\ZZ$, and Lemma~\ref{lem:orbit}(1) gives
   $\bar c_m = \bar c_{n+1} = -\bar c_n$ for $m > n$. These are units: otherwise~$p$
   divides~$\bar c_n$, hence $\bar c_{n+1}$, hence $\bar c_{n+1} - \bar c_n^2 = \bar a$,
   contradicting $p \nmid r$. Lemma~\ref{lem:localeval} and $\psi(-1) = -1$ finish the proof.
-\end{proof}
-
-\begin{proposition}[Surjectivity by reflection]
-  \label{prop:crit-reflection}
-  \uses{lem:reflection, prop:tfae}
-  \lean{QuadraticIterates.forall_nonempty_mulEquiv_of_forall_dvd_vSeq}
-  \leanok
-  Suppose that~$a$ has~$\phi_0$ and~$\phi_1$, and that for every $n \ge 2$ the number~$v_n$
-  is divisible by a prime $p \equiv 3 \bmod 4$ not dividing~$r$, or by~$4$ with~$r$ odd.
-  Then~$\rho_a$ is surjective.
-\end{proposition}
-\begin{proof}
-  \leanok
-  Lemma~\ref{lem:reflection} gives~$\phi_n$ for $n \ge 2$; apply Proposition~\ref{prop:tfae}.
 \end{proof}
 
 \section{\texorpdfstring{$\phi_n$}{phi\_n} from a prime \texorpdfstring{$p \equiv 3 \bmod 4$}{p = 3
@@ -255,20 +241,27 @@ Then the sign of~$v_n$ for $n \ge 2$ is exactly~$\eps_a$ (\lname{mul\_vSeq\_pos}
   \label{lem:twoadic}
   \uses{def:calA, def:eps, lem:reduction, lem:wseq-res, lem:signs, lem:sumsign, lem:prime3,
     lem:reflection}
-  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass, QuadraticIterates.TwoAdicClass,
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_vSeq,
+    QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass, QuadraticIterates.TwoAdicClass,
     QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass, QuadraticIterates.mul_vSeq_pos,
     QuadraticIterates.vSeq_modEq_add_two_mul, QuadraticIterates.vSeq_modEq_two_mul_add,
     QuadraticIterates.vSeq_modEq_of_even, QuadraticIterates.twoAdicClass_one_iff,
     QuadraticIterates.twoAdicClass_neg_one_iff}
   \leanok
-  Let $a = r/s \in \cA$ and assume that~$a$ has~$\phi_0$. Then~$a$ has~$\phi_n$ for all
-  $n \ge 2$ in the following cases.
+  Let $a = r/s \in \cA$ and assume that~$a$ has~$\phi_0$.
   \begin{enumerate}
-    \item[(C1)] $s$ is odd and $r + 2s \equiv -\eps_a \bmod 4$.
-    \item[(C2)] $s$ is odd and $r + s \equiv -\eps_a \bmod 4$.
-    \item[(C3)] $s$ is even and $r \equiv -\eps_a \bmod 4$.
+    \item Fix $n \ge 2$. Then~$a$ has~$\phi_n$ if~$v_n$ has a prime divisor $p \equiv 3 \bmod 4$
+          (so in particular when the odd part of~$|v_n|$ is $\equiv 3 \bmod 4$).
+    \item In each of the following cases, $a$ has~$\phi_n$ for all $n \ge 2$.
+          \begin{enumerate}
+            \item[(C1)] $s$ is odd and $r + 2s \equiv -\eps_a \bmod 4$ (equivalently,
+                  $r \equiv \eps_a \bmod 4$).
+            \item[(C2)] $s$ is odd and $r + s \equiv -\eps_a \bmod 4$.
+            \item[(C3)] $s$ is even and $r \equiv -\eps_a \bmod 4$.
+          \end{enumerate}
   \end{enumerate}
-  \formalnote{The condition is \lname{TwoAdicClass r s ε}; the conclusion is
+  \formalnote{(1) is \lname{hasCharPattern\_mulSingle\_of\_prime\_dvd\_vSeq}, for every
+  $a \in \QQ$. In (2), the condition is \lname{TwoAdicClass r s ε}; the conclusion is
   \lname{hasCharPattern\_mulSingle\_of\_twoAdicClass}, through
   \lname{exists\_prime\_dvd\_vSeq\_of\_twoAdicClass}: for every $n \ge 2$ a prime
   $p \equiv 3 \bmod 4$ with $p \nmid r$ divides~$v_n$. \lname{twoAdicClass\_one\_iff} and
@@ -280,13 +273,16 @@ Then the sign of~$v_n$ for $n \ge 2$ is exactly~$\eps_a$ (\lname{mul\_vSeq\_pos}
 \begin{proof}
   \leanok
   \uses{lem:orbit}
-  We show that $v_n = w_{n+1} + w_n s^{2^{n-1}}$ has a prime divisor $p \equiv 3 \bmod 4$ in all
-  cases considered. Then $p \nmid w_n, w_{n+1}, s$, and also $p \nmid r$, as
+  (1) Let $p \equiv 3 \bmod 4$ be a prime divisor of $v_n = w_{n+1} + w_n s^{2^{n-1}}$. Then
+  $p \nmid w_n, w_{n+1}, s$, and also $p \nmid r$, as
   $w_m \equiv s^{2^{m-1} - 1} \bmod r$ for $m \ge 2$ gives $v_n \equiv 2 s^{2^n - 1} \bmod r$.
   So~$c_n$ and~$c_{n+1}$ are~$p$-adic units with $c_{n+1} \equiv -c_n \bmod p$, an easy induction
   shows $c_m \equiv c_{n+1} \bmod p$ for all $m > n$, and since $\chi_p(-1) = -1$,
   $\chi_p(c_m) = -\chi_p(c_n)$ for all $m > n$. If $\chi_p(c_n) = -1$ we take $\phi_n = \chi_p$,
   otherwise $\phi_n = \phi_0 \chi_p$ (Lemma~\ref{lem:reflection}).
+
+  (2) We show that in each case the odd part of~$|v_n|$ is $\equiv 3 \bmod 4$ for all $n \ge 2$;
+  then~$v_n$ has a prime divisor $p \equiv 3 \bmod 4$ (Lemma~\ref{lem:prime3}), and (1) applies.
 
   \emph{Sign.} $c_n + c_{n+1} = r v_n / s^{2^n}$. For $a > 0$, $r > 0$ and $c_n, c_{n+1} > 0$; for
   $\alpha < a < 0$, $r < 0$ and $c_n + c_{n+1} < 0$ (Lemma~\ref{lem:sumsign}); for $a \le -2$,
@@ -300,8 +296,7 @@ Then the sign of~$v_n$ for $n \ge 2$ is exactly~$\eps_a$ (\lname{mul\_vSeq\_pos}
   $w_m \equiv r + s \bmod 8$ for $m \ge 2$, so $v_n \equiv 2(r + s) \bmod 8$ and
   $|v_n| \equiv \eps \cdot 2(r + s) \equiv 6 \bmod 8$ under (C2). If~$s$ is even, then
   $v_m \equiv w_{m+1} \bmod 4$ for $m \ge 2$ and $w_m \equiv r \bmod 4$ for $m \ge 3$, so
-  $|v_n| \equiv 3 \bmod 4$ under (C3). (In (C1) $r$ is necessarily odd, in (C2) even.) In each
-  case Lemma~\ref{lem:prime3} gives the prime~$p$.
+  $|v_n| \equiv 3 \bmod 4$ under (C3). (In (C1) $r$ is necessarily odd, in (C2) even.)
 \end{proof}
 
 For each possible sign~$\eps_a$, the three cases cover six of the twelve possible primitive

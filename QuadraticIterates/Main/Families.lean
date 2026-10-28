@@ -147,11 +147,11 @@ theorem nonempty_mulEquiv_of_eq_neg_mul_add_one (huv : IsCoprime u v) (hv : 0 < 
       (Int.not_isSquare_of_two_le_emod_four (by lia)))
   obtain ⟨p, hp, hp4, hpr⟩ := exists_prime_dvd_neg_mul_add hv hvu h
   have := Fact.mk hp
-  refine forall_nonempty_mulEquiv_of_forall_dvd_vSeq hrs h₀
+  refine forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern
     (hasCharPattern_mulSingle_one_of_prime_dvd hrs (pow_pos hv 2).ne' (by lia) hp4 hpr h₀)
-    (fun n hn ↦ .inl ?_) n
+    (fun n hn ↦ ?_) n
   obtain ⟨q, hq, hq4, hqv⟩ := exists_prime_dvd_vSeq_neg_mul_add hv hvu h hn
-  exact ⟨q, hq, hq4, hqv, not_dvd_left_of_dvd_vSeq hrs hn hq (by lia) hqv⟩
+  exact hasCharPattern_mulSingle_of_prime_dvd_vSeq hrs h₀ hn hq hq4 hqv
 
 end NegMulAddOne
 

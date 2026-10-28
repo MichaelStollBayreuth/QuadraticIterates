@@ -25,7 +25,8 @@ and `QuadraticIterates.NegTailCriterion` supply the two patterns.
 
 ## Main statements
 
-* `QuadraticIterates.forall_nonempty_mulEquiv_of_forall_dvd_vSeq`: reflection at every level.
+* `QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_vSeq`: a prime `p ≡ 3 (mod 4)`
+  dividing `v_n`, `n ≥ 2`, gives `φ_n` from `φ₀`.
 * `QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass`: in the `2`-adic classes,
   `φ₀` gives `φ_n` for every `n ≥ 2`.
 * `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_hasCharPattern`: the main theorem,
@@ -51,10 +52,10 @@ namespace QuadraticIterates
 
 variable {r s : ℤ}
 
-/-- Reflection at a prime `p ≡ 3 (mod 4)` dividing `v_n`, `n ≥ 2`: `φ₀` gives `φ_n` through `χ_p`
-(`QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`); `p ∤ r` is automatic
+/-- **Reflection** at a prime `p ≡ 3 (mod 4)` dividing `v_n`, `n ≥ 2`: `φ₀` gives `φ_n` through
+`χ_p` (`QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq`); `p ∤ r` is automatic
 (`QuadraticIterates.not_dvd_left_of_dvd_vSeq`). -/
-private lemma hasCharPattern_mulSingle_of_prime_dvd_vSeq (hrs : IsCoprime r s)
+theorem hasCharPattern_mulSingle_of_prime_dvd_vSeq (hrs : IsCoprime r s)
     (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1)) {n : ℕ} (hn : 2 ≤ n) {p : ℕ}
     (hp : p.Prime) (hp4 : p % 4 = 3) (hpv : (p : ℤ) ∣ vSeq r s n) :
     HasCharPattern (cSeq ((r : ℚ) / s)) n (Pi.mulSingle n (-1)) := by
@@ -62,21 +63,6 @@ private lemma hasCharPattern_mulSingle_of_prime_dvd_vSeq (hrs : IsCoprime r s)
   exact hasCharPattern_mulSingle_of_dvd_vSeq hrs (pow_one p).symm one_ne_zero
     (ZMod.quadraticChar_neg_one_of_mod_four_eq_three hp4) (by lia) (by simpa using hpv)
     (not_dvd_left_of_dvd_vSeq hrs hn hp (by lia) hpv) (h₀.mono (by lia))
-
-/-- **Reflection at every level**: if `a = r/s` has `φ₀` and `φ₁`, and for every `n ≥ 2` the
-integer `v_n` is divisible by a prime `p ≡ 3 (mod 4)` not dividing `r`, or by `4` with `r` odd, then
-`Ω_n ≅ [C₂]ⁿ` for all `n`. -/
-theorem forall_nonempty_mulEquiv_of_forall_dvd_vSeq (hrs : IsCoprime r s)
-    (h₀ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1))
-    (h₁ : HasCharPattern (cSeq ((r : ℚ) / s)) 1 (Pi.mulSingle 1 (-1)))
-    (h : ∀ n ≥ 2, (∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ (p : ℤ) ∣ vSeq r s n ∧ ¬(p : ℤ) ∣ r) ∨
-      (4 ∣ vSeq r s n ∧ ¬2 ∣ r)) (n : ℕ) :
-    Nonempty (GaloisGroup ((r : ℚ) / s) n ≃* WreathPower n) := by
-  refine forall_nonempty_mulEquiv_of_hasCharPattern_of_forall_hasCharPattern h₁ (fun n hn ↦ ?_) n
-  rcases h n hn with ⟨p, hp, hp4, hpv, -⟩ | ⟨h4, hr⟩
-  · exact hasCharPattern_mulSingle_of_prime_dvd_vSeq hrs h₀ hn hp hp4 hpv
-  · exact hasCharPattern_mulSingle_of_dvd_vSeq (p := 2) hrs (N := 4) rfl two_ne_zero
-      (show ZMod.χ₄ (-1) = -1 by decide) (by lia) (mod_cast h4) (mod_cast hr) (h₀.mono (by lia))
 
 /-- For `a = r/s ∈ 𝒜` with sign `ε` (`a ≤ -2` and `ε = -1`, or `a³ + 2a² + 2a + 2 > 0` and
 `ε = 1`) in one of the `2`-adic classes (C1)–(C3), `φ₀` gives `φ_n` for every `n ≥ 2`: a prime
