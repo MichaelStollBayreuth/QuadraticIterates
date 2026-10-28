@@ -63,9 +63,9 @@ inductive NegAllCriterion (r s : ℤ) : Prop
   /-- (Z2) A prime `p ≡ ±3 (mod 8)` divides `r + 2s`. -/
   | dvd_add_two_mul (p : ℕ) (hp : p.Prime) (hp8 : p % 8 = 3 ∨ p % 8 = 5)
       (hdvd : (p : ℤ) ∣ r + 2 * s)
-  /-- (Z3) An odd prime `p` divides `r² + s²`, and `(-rs / p) = ((r - s)s / p) = -1`. -/
-  | dvd_sq_add_sq (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2)
-      (h₁ : jacobiSym (-(r * s)) p = -1) (h₂ : jacobiSym ((r - s) * s) p = -1)
+  /-- (Z3) A prime `p ≡ 5 (mod 8)` divides `r² + s²`, and `((r - s)s / p) = -1`. -/
+  | dvd_sq_add_sq (p : ℕ) (hp : p.Prime) (hp8 : p % 8 = 5) (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2)
+      (h : jacobiSym ((r - s) * s) p = -1)
   /-- (Z4) A prime `p ≡ 1 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(m s / p) = -1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 1) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = -1)

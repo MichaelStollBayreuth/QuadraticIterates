@@ -174,7 +174,8 @@ a square.
 
 \begin{remark}
   As~$\bar a$ has order~$4$ in $(\ZZ/p\ZZ)^\times$, $p \equiv 1 \bmod 4$, and
-  $\Leg{-rs}{p} = \Leg{\bar a}{p} = -1$ if and only if $p \equiv 5 \bmod 8$.
+  $\Leg{-rs}{p} = \Leg{\bar a}{p} = -1$ if and only if $p \equiv 5 \bmod 8$. The direction used
+  for (Z3) is \lname{ZMod.quadraticChar\_eq\_neg\_one\_of\_sq\_eq\_neg\_one}.
 \end{remark}
 
 We write $a \equiv m \bmod N$ when~$N$ divides the numerator of~$a - m$; for $a \equiv 1 \bmod 4$
@@ -230,6 +231,7 @@ sufficient conditions for each of them.
     QuadraticIterates.hasCharPattern_neg_one_of_not_isSquare,
     QuadraticIterates.hasCharPattern_neg_one_of_dvd_add_two_mul,
     QuadraticIterates.hasCharPattern_neg_one_of_dvd_sq_add_sq,
+    ZMod.quadraticChar_eq_neg_one_of_sq_eq_neg_one,
     QuadraticIterates.hasCharPattern_neg_one_of_dvd_left,
     QuadraticIterates.hasCharPattern_neg_one_of_dvd_left_two}
   \leanok
@@ -237,20 +239,25 @@ sufficient conditions for each of them.
   \begin{enumerate}
     \item[(Z1)] $|r|$ is not a square.
     \item[(Z2)] A prime $p \equiv \pm 3 \bmod 8$ divides~$r + 2s$.
-    \item[(Z3)] An odd prime~$p$ divides $r^2 + s^2$, and $\Leg{-rs}{p} = \Leg{(r - s)s}{p} = -1$.
+    \item[(Z3)] A prime $p \equiv 5 \bmod 8$ divides $r^2 + s^2$ with
+          $\chi_p\bigl((r - s)s\bigr) = -1$.
     \item[(Z4)] A prime $p \equiv 1 \bmod 4$ divides~$r$ with $\Leg{r_p s}{p} = -1$; or $8 \mid r$
           and $r_2 s \equiv \pm 3 \bmod 8$.
   \end{enumerate}
   \formalnote{An inductive proposition \lname{NegAllCriterion r s} with one constructor per item
   (two for (Z4)), stated with Mathlib's notions only: Legendre symbols as \lname{jacobiSym}
-  and~$p$-parts as $r = p^k m$ with $p \nmid m$.}
+  and~$p$-parts as $r = p^k m$ with $p \nmid m$. In (Z3), $p \nmid s$ follows from
+  $\Leg{(r - s)s}{p} = -1$, and $\Leg{-rs}{p} = -1$ is
+  \lname{ZMod.quadraticChar\_eq\_neg\_one\_of\_sq\_eq\_neg\_one} (Euler's criterion).}
 \end{proposition}
 \begin{proof}
   \leanok
   (Z1) $v_p(c_n) = v_p(r)$ for all~$n$, so~$\val_p$ for a prime with $v_p(r)$ odd is a suitable
   character (Lemma~\ref{lem:pat-r}(1)). (Z2) $c_n \equiv 2 \bmod p$ for all~$n$, so we can
-  take~$\chi_p$ (Lemma~\ref{lem:pat-r2s}). (Z3) The sequence $(c_n)_{n \ge 1}$ reduces modulo~$p$ to
-  $(-a, a - 1, -a, a - 1, \dots)$, so we can take~$\chi_p$ (Lemma~\ref{lem:pat-r2s2}). (Z4)
+  take~$\chi_p$ (Lemma~\ref{lem:pat-r2s}). (Z3) Here $a^2 \equiv -1 \bmod p$, so the sequence $(c_n)_{n \ge 1}$ reduces
+  modulo~$p$ to $(-a, a - 1, -a, a - 1, \dots)$ (Lemma~\ref{lem:pat-r2s2}); moreover
+  $\chi_p(-a) = \chi_p(a) = (-1)^{(p-1)/4} = -1$ and $\chi_p(a - 1) = \chi_p((r - s)s) = -1$. So
+  we can take~$\chi_p$. (Z4)
   $\chi_p(c_1) = \Leg{-1}{p}\Leg{r_p s}{p}$ and $\chi_p(c_n) = \Leg{r_p s}{p}$ for $n \ge 2$, and
   similarly for~$\chi_8$ in the second case (Lemma~\ref{lem:pat-r}(2), (4)); so we can
   take~$\chi_p$, resp.\ $\chi_8$.

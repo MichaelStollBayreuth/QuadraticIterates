@@ -78,9 +78,9 @@ inductive NegAllCriterion (r s : ℤ) : Prop
   /-- (Z2) A prime `p ≡ ±3 (mod 8)` divides `r + 2s`. -/
   | dvd_add_two_mul (p : ℕ) (hp : p.Prime) (hp8 : p % 8 = 3 ∨ p % 8 = 5)
       (hdvd : (p : ℤ) ∣ r + 2 * s)
-  /-- (Z3) An odd prime `p` divides `r² + s²`, and `(-rs / p) = ((r - s)s / p) = -1`. -/
-  | dvd_sq_add_sq (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2)
-      (h₁ : jacobiSym (-(r * s)) p = -1) (h₂ : jacobiSym ((r - s) * s) p = -1)
+  /-- (Z3) A prime `p ≡ 5 (mod 8)` divides `r² + s²`, and `((r - s)s / p) = -1`. -/
+  | dvd_sq_add_sq (p : ℕ) (hp : p.Prime) (hp8 : p % 8 = 5) (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2)
+      (h : jacobiSym ((r - s) * s) p = -1)
   /-- (Z4) A prime `p ≡ 1 (mod 4)` divides `r = p^k m` (`p ∤ m`) with `(m s / p) = -1`. -/
   | dvd_left (p k : ℕ) (m : ℤ) (hp : p.Prime) (hp4 : p % 4 = 1) (hk : 0 < k)
       (hr : r = p ^ k * m) (hm : ¬(p : ℤ) ∣ m) (h : jacobiSym (m * s) p = -1)
@@ -198,12 +198,35 @@ theorem hasCharPattern_neg_one_of_dvd_add_two_mul (hrs : IsCoprime r s)
   ⟨unitPartChar p (quadraticChar (ZMod p)), fun n hn ↦ (unitPartChar_cSeq_of_dvd_add_two_mul hrs
     (pow_one p).symm one_ne_zero (by lia) hdvd _ hn).trans (quadraticChar_two hp8)⟩
 
-/-- (Z3) If an odd prime `p` divides `r² + s²` and `(-rs / p) = ((r - s)s / p) = -1`, then
-`χ_p` is a `φ₀`: modulo `p` the sequence alternates between `-a` and `a - 1`, `a² = -1`. -/
-theorem hasCharPattern_neg_one_of_dvd_sq_add_sq (hrs : IsCoprime r s) (hp2 : p ≠ 2)
-    (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2) (h₁ : jacobiSym (-(r * s)) p = -1)
-    (h₂ : jacobiSym ((r - s) * s) p = -1) :
+/-- At a prime `p ≡ 5 (mod 8)` dividing `r² + s²` but not `s`, `(-rs / p) = -1`: modulo `p`,
+`-rs = -(r/s) s²`, and `r/s` is a square root of `-1`
+(`ZMod.quadraticChar_eq_neg_one_of_sq_eq_neg_one`). -/
+private lemma jacobiSym_neg_mul_of_dvd_sq_add_sq (hp8 : p % 8 = 5)
+    (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2) (hs : ¬(p : ℤ) ∣ s) : jacobiSym (-(r * s)) p = -1 := by
+  have hs0 : (s : ZMod p) ≠ 0 := by rwa [Ne, ZMod.intCast_zmod_eq_zero_iff_dvd]
+  have ht : ((r : ZMod p) / s) ^ 2 = -1 := by
+    have := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hdvd
+    push_cast at this
+    field_simp
+    linear_combination this
+  rw [← jacobiSym.legendreSym.to_jacobiSym, legendreSym, Int.cast_neg, Int.cast_mul,
+    show -((r : ZMod p) * s) = -1 * (r / s) * s ^ 2 by field, map_mul, map_mul,
+    quadraticChar_sq_one' hs0, ZMod.quadraticChar_eq_neg_one_of_sq_eq_neg_one hp8 ht,
+    ZMod.quadraticChar_neg_one_of_mod_four_eq_one (by lia)]
+  rfl
+
+/-- (Z3) If a prime `p ≡ 5 (mod 8)` divides `r² + s²` and `((r - s)s / p) = -1`, then `χ_p` is a
+`φ₀`: modulo `p` the sequence alternates between `-a` and `a - 1`, `a² = -1`, and
+`(-a / p) = -1`. -/
+theorem hasCharPattern_neg_one_of_dvd_sq_add_sq (hrs : IsCoprime r s) (hp8 : p % 8 = 5)
+    (hdvd : (p : ℤ) ∣ r ^ 2 + s ^ 2) (h₂ : jacobiSym ((r - s) * s) p = -1) :
     HasCharPattern (cSeq ((r : ℚ) / s)) 1 (-1) := by
+  have hs : ¬(p : ℤ) ∣ s := fun hps ↦ by
+    rw [← jacobiSym.legendreSym.to_jacobiSym, (legendreSym.eq_zero_iff p _).mpr (by
+      simp [(ZMod.intCast_zmod_eq_zero_iff_dvd s p).mpr hps])] at h₂
+    exact absurd h₂ (by decide)
+  have h₁ := jacobiSym_neg_mul_of_dvd_sq_add_sq hp8 hdvd hs
+  have hp2 : p ≠ 2 := by lia
   have hN : p = p ^ 1 := (pow_one p).symm
   refine ⟨unitPartChar p (quadraticChar (ZMod p)), fun n hn ↦ ?_⟩
   obtain ⟨j, rfl | rfl⟩ := Nat.even_or_odd' n
@@ -248,9 +271,9 @@ theorem hasCharPattern_neg_one_of_negAllCriterion (hrs : IsCoprime r s) (hs : s 
   | dvd_add_two_mul p hp hp8 hdvd =>
     have := Fact.mk hp
     exact hasCharPattern_neg_one_of_dvd_add_two_mul hrs hp8 hdvd
-  | dvd_sq_add_sq p hp hp2 hdvd h₁ h₂ =>
+  | dvd_sq_add_sq p hp hp8 hdvd h =>
     have := Fact.mk hp
-    exact hasCharPattern_neg_one_of_dvd_sq_add_sq hrs hp2 hdvd h₁ h₂
+    exact hasCharPattern_neg_one_of_dvd_sq_add_sq hrs hp8 hdvd h
   | dvd_left p k m hp hp4 hk hr hm h =>
     have := Fact.mk hp
     exact hasCharPattern_neg_one_of_dvd_left hrs hs hp4 hk hr hm h
