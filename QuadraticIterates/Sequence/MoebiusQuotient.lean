@@ -8,6 +8,7 @@ module
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import QuadraticIterates.Galois.Iterates
+public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Data.Nat.Factorization.Defs
@@ -49,33 +50,49 @@ namespace QuadraticIterates
 open Finset
 open scoped ArithmeticFunction.Moebius
 
+section Domain
+
+variable {R : Type*} [CommRing R] [IsDomain R] {a : R}
+
+variable (a) in
+/-- The **Möbius quotients** `b_n = ∏_{d ∣ n} c_d^{μ(n/d)}` of the sequence `(c_n)` of `X² + a`,
+as elements of the coefficient ring: the Möbius product itself over a field
+(`QuadraticIterates.bSeq_eq_prod`), and for `a ∈ ℤ` the integers `b_n` of Lemma 1.1 b) of the 1992
+paper, its preimage in `ℤ` (`QuadraticIterates.intCast_bSeq`). Then `c_n = ∏_{d ∣ n} b_d`
+(`QuadraticIterates.prod_divisors_bSeq`). As polynomials in `a` they are, up to sign, the Gleason
+polynomials; for `a ∈ ℚ`, the `b_d` with distinct indices have no common prime away from the
+denominator of `a` (`QuadraticIterates.padicValRat_bSeq_eq_ite`). -/
+noncomputable def bSeq (n : ℕ) : R := moebiusFactorR (cSeq a) n
+
+variable (a) in
+theorem bSeq_eq_moebiusFactorR (n : ℕ) : bSeq a n = moebiusFactorR (cSeq a) n := rfl
+
+@[simp] theorem bSeq_one : bSeq a 1 = -a := by simp [bSeq_eq_moebiusFactorR]
+
+end Domain
+
 section Field
 
 variable {K : Type*} [Field K] {a : K}
 
-/-- The **Möbius quotients** `b_n = ∏_{d ∣ n} c_d^{μ(n/d)}` of the sequence `(c_n)` of `X² + a`,
-so that `c_n = ∏_{d ∣ n} b_d` (`QuadraticIterates.prod_divisors_bSeq`). As polynomials in `a`
-they are, up to sign, the Gleason polynomials; for `a ∈ ℚ`, the `b_d` with distinct indices have no
-common prime away from the denominator of `a` (`QuadraticIterates.padicValRat_bSeq_eq_ite`). -/
-noncomputable def bSeq (a : K) (n : ℕ) : K :=
-  ∏ x ∈ n.divisorsAntidiagonal, cSeq a x.2 ^ μ x.1
+variable (a) in
+theorem bSeq_eq_prod (n : ℕ) : bSeq a n = ∏ x ∈ n.divisorsAntidiagonal, cSeq a x.2 ^ μ x.1 :=
+  moebiusFactorR_eq_prod (cSeq a) n
 
 theorem bSeq_ne_zero (hc : ∀ n ≥ 1, cSeq a n ≠ 0) (n : ℕ) : bSeq a n ≠ 0 :=
-  prod_ne_zero_iff.mpr fun _ hx ↦ zpow_ne_zero _ <|
+  bSeq_eq_prod a n ▸ prod_ne_zero_iff.mpr fun _ hx ↦ zpow_ne_zero _ <|
     hc _ (Nat.pos_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx))
 
 theorem prod_divisors_bSeq (hc : ∀ n ≥ 1, cSeq a n ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
     ∏ d ∈ n.divisors, bSeq a d = cSeq a n :=
   (ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_nonzero (fun n _ ↦ bSeq_ne_zero hc n)
-    hc).mpr (fun _ _ ↦ rfl) n hn
-
-@[simp] theorem bSeq_one : bSeq a 1 = -a := by simp [bSeq]
+    hc).mpr (fun n _ ↦ (bSeq_eq_prod a n).symm) n hn
 
 /-- For squarefree `d`, `b_d` and `∏_{e ∣ d} c_e` have the same square class: all exponents
 `μ(d/e)` are `±1`. -/
 theorem isSquare_bSeq_mul_prod_of_squarefree {d : ℕ} (hd : Squarefree d) :
     IsSquare (bSeq a d * ∏ e ∈ d.divisors, cSeq a e) := by
-  rw [bSeq, ← Nat.prod_divisorsAntidiagonal' fun _ e ↦ cSeq a e, ← prod_mul_distrib]
+  rw [bSeq_eq_prod, ← Nat.prod_divisorsAntidiagonal' fun _ e ↦ cSeq a e, ← prod_mul_distrib]
   refine isSquare_prod _ fun x hx ↦ ?_
   rw [ArithmeticFunction.moebius_apply_of_squarefree
     (hd.squarefree_of_dvd (Nat.fst_mem_divisors_of_mem_antidiagonal hx |> Nat.dvd_of_mem_divisors))]
@@ -112,6 +129,7 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {a : K}
 factor of `b_d` that can be negative, `c_1^{μ(d)}`, is `1`. -/
 theorem bSeq_pos_of_not_squarefree (h : ∀ n ≥ 2, 0 < cSeq a n) {d : ℕ} (hd : ¬Squarefree d) :
     0 < bSeq a d := by
+  rw [bSeq_eq_prod]
   refine prod_pos fun x hx ↦ ?_
   have hx2 := Nat.pos_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx)
   rcases eq_or_ne x.2 1 with h1 | h1
@@ -145,7 +163,7 @@ variable {p : ℕ} [Fact p.Prime] {a : ℚ}
 theorem padicValRat_bSeq (h₀ : a ≠ 0) (h₁ : a ≠ -1) (n : ℕ) :
     padicValRat p (bSeq a n) =
       ∑ x ∈ n.divisorsAntidiagonal, μ x.1 * padicValRat p (cSeq a x.2) := by
-  rw [bSeq, padicValRat.prod fun x hx ↦ zpow_ne_zero _ <| cSeq_ne_zero h₀ h₁ <|
+  rw [bSeq_eq_prod, padicValRat.prod fun x hx ↦ zpow_ne_zero _ <| cSeq_ne_zero h₀ h₁ <|
     Nat.pos_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx)]
   simp only [padicValRat.zpow]
 

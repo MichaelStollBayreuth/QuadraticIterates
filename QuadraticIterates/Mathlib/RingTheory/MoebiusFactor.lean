@@ -164,6 +164,13 @@ noncomputable def moebiusFactorR (c : ℕ → R) (n : ℕ) : R :=
   rw [moebiusFactorR, moebiusFactorK_one,
     Function.leftInverse_invFun (FaithfulSMul.algebraMap_injective R (FractionRing R))]
 
+/-- Over a field, the `R`-valued Möbius factor is the Möbius product itself. -/
+theorem moebiusFactorR_eq_prod {F : Type*} [Field F] (c : ℕ → F) (n : ℕ) :
+    moebiusFactorR c n = ∏ x ∈ n.divisorsAntidiagonal, c x.2 ^ μ x.1 := by
+  rw [moebiusFactorR, moebiusFactorK_eq_prod]
+  simp_rw [← map_zpow₀, ← map_prod]
+  exact Function.leftInverse_invFun (FaithfulSMul.algebraMap_injective F (FractionRing F)) _
+
 variable [IsFractionRing R K] [UniqueFactorizationMonoid R] [NormalizedGCDMonoid R]
 
 /-- The denominator product of a nowhere-zero strong divisibility sequence divides the numerator
