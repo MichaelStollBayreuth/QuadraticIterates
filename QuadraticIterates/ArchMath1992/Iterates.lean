@@ -5,12 +5,11 @@ Authors: Michael Stoll
 -/
 module
 
-public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Galois.TwoIndependent
 
+import QuadraticIterates.ArchMath1992.Sequences
 import QuadraticIterates.Galois.Irreducibility
-import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Sequence.Valuation
 

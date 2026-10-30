@@ -8,7 +8,6 @@ module
 public import QuadraticIterates.Li.Residues
 
 import QuadraticIterates.Mathlib.Algebra.Squares
-import QuadraticIterates.Mathlib.Data.Int.Order.Units
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
 /-!
@@ -112,9 +111,8 @@ private lemma neg_of_eq_neg_mul : a < 0 := ha ▸ neg_lt_zero.mpr (by positivity
 private lemma even_of_eq_neg_mul : Even a := ⟨-((2 * k + 1) * (4 * k + 3)), by rw [ha]; ring⟩
 
 private lemma neg_emod_four_eq_two_of_eq_neg_mul : -a % 4 = 2 := by
-  rw [ha, neg_neg, show (4 * (k : ℤ) + 2) * (4 * k + 3) = 2 + 4 * (4 * k ^ 2 + 5 * k + 1) by ring,
-    Int.add_mul_emod_self_left]
-  decide
+  subst ha
+  lia
 
 private lemma not_isSquare_neg_of_eq_neg_mul : ¬IsSquare (-a : ℚ) :=
   mod_cast Int.not_isSquare_of_emod_four_eq_two (neg_emod_four_eq_two_of_eq_neg_mul ha)
@@ -253,9 +251,8 @@ include ha
 private lemma neg_of_eq_neg_mul_add_one : a < 0 := ha ▸ neg_lt_zero.mpr (by positivity)
 
 private lemma emod_four_eq_one_of_eq_neg_mul_add_one : a % 4 = 1 := by
-  rw [ha, show -((4 * (k : ℤ) + 1) * (4 * k + 2) + 1) = 1 + 4 * (-(4 * k ^ 2 + 3 * k + 1)) by ring,
-    Int.add_mul_emod_self_left]
-  decide
+  subst ha
+  lia
 
 /-- The factorization `y + g(g(y)) = (α y + A) (α² y³ - A α y² - (α + B) y + B)` for
 `g = α X² - 1`, `A = 4k + 1`, `B = 4k + 2`, `α = AB + 1`. -/

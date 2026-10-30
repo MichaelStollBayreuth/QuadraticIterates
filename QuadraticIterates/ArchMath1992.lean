@@ -78,6 +78,6 @@ irreducibility of `f_n` and `c_{n+1} ≠ 0`, without the paper's maximality hypo
 
 All declarations live in the `QuadraticIterates` namespace. The paper-specific part is split over
 `QuadraticIterates/ArchMath1992/`: `Sequences` (the `γ`- and `β`-sequences over general rings and
-over `ℤ`), `Iterates` (the integer sequence `c`, irreducibility, `normPoly`, 2-independence of
-integers) and `Main`.
+over `ℤ`), `Iterates` (the integer sequence `c`, irreducibility, `QuadraticIterates.normPoly`,
+2-independence of integers) and `Main`.
 -/

@@ -8,13 +8,11 @@ module
 public import QuadraticIterates.EvenPoly
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 
-import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.Units
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.BigOperators
-import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
+import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
@@ -114,7 +112,7 @@ in the mod-4 step is `4 = 0`, which gives `g(2) = g(0)` by evenness.) -/
 theorem gammaSeq_eq_ite_even (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0 = 1)
     (h1 : g.eval 1 = 2) : ∀ n ≥ 1, gammaSeq g 1 n = if Even n then 2 else 1 := by
   have h20 : g.eval 2 = 1 :=
-    (hg.eval_congr (by rw [show (2 : R) ^ 2 = 4 by norm_num, h4, zero_pow two_ne_zero])).trans h0
+    (hg.eval_congr (by norm_num; exact h4)).trans h0
   intro n hn
   induction n, hn using Nat.le_induction with
   | base => simp [h0]
@@ -278,7 +276,7 @@ theorem gammaSeq_mul_eq_two_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤
   induction l, hl using Nat.le_induction with
   | base => rfl
   | succ l hl ih =>
-    rw [show (l + 1) * k = l * k + k by ring, gammaSeq_add g ε (one_le_mul (by lia) hk), ih, hfix]
+    rw [add_one_mul l k, gammaSeq_add g ε (one_le_mul (by lia) hk), ih, hfix]
 
 /-- If `γ_k + γ_{2k} = 0` and `γ_{2k}` is a unit, then `∏_{t ∈ S} γ_{kt}` is a unit for every set
 `S` of positive indices (over any ring, for even `g`): every factor is `±γ_{2k}`. -/
@@ -287,7 +285,7 @@ theorem isUnit_prod_gammaSeq_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 �
     {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit (∏ t ∈ S, gammaSeq g ε (k * t)) := by
   refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
   rcases eq_or_ne t 1 with rfl | h1
-  · rw [mul_one, show gammaSeq g ε k = -gammaSeq g ε (2 * k) by linear_combination hzero]
+  · rw [mul_one, eq_neg_of_add_eq_zero_left hzero]
     exact hu.neg
   · rw [mul_comm, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia [hS t ht])]
     exact hu

@@ -6,6 +6,7 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Sequence.MoebiusQuotient
 
 import QuadraticIterates.Galois.Criterion

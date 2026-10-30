@@ -19,10 +19,10 @@ import QuadraticIterates.Mathlib.RingTheory.Multiplicity
 /-!
 # Theorems R⁺ and R⁻ from the main theorem
 
-Theorems R⁺ (`a = r/s > -1`) and R⁻ (`a = -R/s ≤ -2`) of the author's earlier working notes,
-formalized on the `main` branch, assume `a` in one of their `2`-adic classes and one of four
-*squarefree-level certificates*: a modulus `M` dividing `s`, `r + 2s` (resp. `R`) or `r + s`
-(resp. `R - s`) modulo which `r`, `-s` or `±s` is not a square, or a residue condition modulo `8`.
+Theorems R⁺ (`a = r/s > -1`) and R⁻ (`a = -R/s ≤ -2`) of the author's earlier working notes
+assume `a` in one of their `2`-adic classes and one of four *squarefree-level certificates*: a
+modulus `M` dividing `s`, `r + 2s` (resp. `R`) or `r + s` (resp. `R - s`) modulo which `r`, `-s`
+or `±s` is not a square, or a residue condition modulo `8`.
 This file checks that these hypotheses imply those of the main theorem
 `QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria`: the `2`-adic classes are
 `QuadraticIterates.TwoAdicClass`, and the certificates, reduced to a prime or to `4` or `8` by
