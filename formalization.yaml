@@ -72,13 +72,17 @@ status:
     extending Li's at denominator 1 (Families.lean). The theorems R⁺ and R⁻ for rational
     parameters of the author's earlier notes are rederived from the main theorem
     (QuadraticIterates/Main/SquarefreeCertificates.lean, a consistency check outside the
-    blueprint). Not formalized on this branch:
-    the paper's second criterion via the Möbius quotients b_n (part 2 of the Section 1 theorem
-    and Lemmas 1.1, 2.1, 2.2), Corollary 1.3, the lemmas of Li's papers about b_n, and the
-    index-2 statement of Li 2020. Supporting theory (multiquadratic extensions, iterated wreath
-    products, even polynomials, ℤ-valued characters on ℚ*, prime factors in residue classes) is
-    developed in Mathlib generality in 34 files under QuadraticIterates/Mathlib/ as upstreaming
-    candidates. A LaTeX blueprint with a dependency graph and the generated API documentation
+    blueprint). The paper and the two papers of Li are formalized a second time along their own
+    proofs, through the Möbius quotients b_n (QuadraticIterates/ArchMath1992/ and
+    QuadraticIterates/Li/, Part II of the blueprint): Lemma 1.1 (the b_n are pairwise coprime
+    integers with c_n = ∏_{d | n} b_d), Corollary 1.3, the Theorem of Section 1 with its part 2,
+    Lemmas 2.1 and 2.2, the main result of Section 3, and the lemmas and theorems of Li; this
+    route shares the Galois side with the first one. Not formalized: the index-2 statement of
+    Li 2020, and Lemma 3.5 of Li 2021, which the proof does not need. Supporting theory
+    (multiquadratic extensions, iterated wreath products, even polynomials, Möbius quotients of
+    strong divisibility sequences, ℤ-valued characters on ℚ*, prime factors in residue classes)
+    is developed in Mathlib generality in 42 files under QuadraticIterates/Mathlib/ as
+    upstreaming candidates. A LaTeX blueprint with a dependency graph and the generated API documentation
     are published at https://michaelstollbayreuth.github.io/QuadraticIterates/ .
   sorry_count: 0
   sorry_in_definitions: 0
@@ -192,6 +196,54 @@ status:
     axioms: ["propext", "Classical.choice", "Quot.sound"]
     comparator_config: "comparator/challenges.json"
     literature_dependencies: []
+  - declaration: "QuadraticIterates.section1_tfae"
+    file: "QuadraticIterates/ArchMath1992/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.section1_of_not_isSquare_abs_bSeq"
+    file: "QuadraticIterates/ArchMath1992/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.section3_main"
+    file: "QuadraticIterates/ArchMath1992/Main.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges-1992.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul"
+    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges-1992.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2021_theorem_3_3"
+    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2021_theorem_3_9"
+    file: "QuadraticIterates/Li/ArchMath2021.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges-1992.json"
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2020_theorem_3_4"
+    file: "QuadraticIterates/Li/ArchMath2020.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: ""
+    literature_dependencies: []
+  - declaration: "QuadraticIterates.li2020_theorem_3_5"
+    file: "QuadraticIterates/Li/ArchMath2020.lean"
+    sorry_count: 0
+    axioms: ["propext", "Classical.choice", "Quot.sound"]
+    comparator_config: "comparator/challenges-1992.json"
+    literature_dependencies: []
 
 # how it was produced.
 automation:
@@ -300,7 +352,15 @@ automation:
         a = -16/7), proved the corrected exact criterion and its consequences, checked them
         against brute force with PARI/GP, and formalized them in Appendix B, together with the
         structure theorem behind them (which sign patterns are realized, and when (c_n) is
-        2-independent) that answered a further question of the author.
+        2-independent) that answered a further question of the author. When the author decided
+        to bring the two branches together (2026-10-30), the agent planned the integration,
+        which the author approved with his decisions on the open points, and carried it out
+        step by step through the verification chain: the formalization of the original papers
+        was re-based onto the shared Galois side (one b_n for both routes, the Möbius factor
+        of (c_n) over an integral domain), with the mirror material it needs restored, a second
+        comparator configuration certifying the integer challenges along it, and the two
+        blueprints merged as the two parts of one document after an audit of its dependency
+        graph.
   spend_usd: "subscription-based usage (no metered API spend)"
   notes: >
     Two-phase process: a discarded fully autonomous first version, then an author-directed
@@ -309,9 +369,10 @@ automation:
 # fidelity
 fidelity:
   divergences: >
-    The aim of this branch is not to reproduce the proofs of the three papers, but to give
-    different, simpler proofs of their main results and to extend them to further cases and to
-    rational parameters; the deviations listed here follow from that. The Galois side (splitting
+    There are two formalizations, which share the Galois side. The first does not reproduce the
+    proofs of the three papers, but gives different, simpler proofs of their main results and
+    extends them to further cases and to rational parameters; the deviations listed here up to
+    the theorems R⁺ and R⁻ follow from that. The Galois side (splitting
     fields, Lemmas 1.4-1.6, part 1 of the Section 1 theorem) is formalized for a rational
     parameter a. Part 1 of the Section 1 theorem, (a) ⟺ (b), needs no
     hypothesis on a: maximality of Ω_n forces f_1, …, f_n to be irreducible. Lemma 1.6
@@ -324,9 +385,15 @@ fidelity:
     3.5 (2020) are the case v = 1 of rational families, not proved by his method. The rational
     main theorem needs no exclusion of a = -1, 0, which its hypotheses rule out. The theorems R⁺
     and R⁻ for rational parameters of the author's working notes are rederived here from the
-    rational main theorem: their hypotheses imply its hypotheses. The index-2 statement of the 2020 paper and the b_n-based
-    lemmas of all three papers are not formalized on this branch; the main branch formalizes the
-    b_n route.
+    rational main theorem: their hypotheses imply its hypotheses. The second formalization
+    follows the proofs of the three papers through the Möbius quotients b_n, with the
+    paper-counterpart statements as in the papers up to the cast of the integer a to ℚ in the
+    Galois groups. The integer b_n there is the Möbius factor of (c_n) over ℤ, the same
+    definition as the rational one of the first route at another ring; Lemma 1.1 b) obtains
+    integrality from the strong divisibility of (c_n) instead of the periodicity argument; part
+    1 of the Section 1 theorem is the shared criterion; Li's Theorem 3.3 (2021) is also proved
+    for a = -(4k+2)(4k+3), by his argument with a residue modulo 8 in place of one modulo 4. The
+    index-2 statement of the 2020 paper is not formalized.
 
 # review status
 review:
@@ -344,20 +411,24 @@ alignment:
       lean: "splittingField_succ_eq_sup_adjoin, relfinrank_succ_le"
       module: "QuadraticIterates.Galois.Tower"
       status: "proved"
-    - source: "Lemma 1.1 a), b)"
-      lean: ""
-      module: ""
-      status: "not formalized"
-      note: "the b_n route of the paper is not followed on this branch; the shape of the valuations v_p(c_n) behind b) is padicValRat_cSeq_trichotomy (QuadraticIterates.Sequence.Valuation), and the Möbius quotients b_n themselves are bSeq, whose valuations padicValRat_bSeq_eq_ite and padicValRat_bSeq_modEq_of_padicValRat_neg (QuadraticIterates.Sequence.MoebiusQuotient) contain b) for rational a"
+    - source: "Lemma 1.1 a)"
+      lean: "cSeq_pos"
+      module: "QuadraticIterates.ArchMath1992.Iterates"
+      status: "proved"
+    - source: "Lemma 1.1 b)"
+      lean: "intCast_bSeq, cSeq_eq_prod_bSeq, isCoprime_bSeq, bSeq_ne_zero_of_not_isSquare_neg"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
+      note: "integrality from the strong divisibility of (c_n); for rational a, the shape of the valuations v_p(c_n) is padicValRat_cSeq_trichotomy (QuadraticIterates.Sequence.Valuation), and the valuations of the b_n are padicValRat_bSeq_eq_ite and padicValRat_bSeq_modEq_of_padicValRat_neg (QuadraticIterates.Sequence.MoebiusQuotient)"
     - source: "Lemma 1.2"
       lean: "irreducible_iteratedPoly_of_not_isSquare_cSeq"
       module: "QuadraticIterates.Galois.Irreducibility"
       status: "proved"
     - source: "Corollary 1.3"
-      lean: ""
-      module: ""
-      status: "not formalized"
-      note: "the rational statements need irreducibility only through maximality (irreducible_iteratedPoly_of_nonempty_mulEquiv)"
+      lean: "irreducible_iteratedPoly"
+      module: "QuadraticIterates.ArchMath1992.Iterates"
+      status: "proved"
+      note: "the rational statements of the first route need irreducibility only through maximality (irreducible_iteratedPoly_of_nonempty_mulEquiv)"
     - source: "Odoni's embedding theorem"
       lean: "exists_injective_monoidHom_wreathPower"
       module: "QuadraticIterates.Galois.Tower"
@@ -380,42 +451,104 @@ alignment:
       lean: "nonempty_mulEquiv_iff_twoIndependent, nonempty_mulEquiv_iff_twoIndependent_of_irreducible"
       module: "QuadraticIterates.Galois.Criterion"
       status: "proved"
-      note: "(a) ⟺ (b) for every rational a; (c), about the b_n, is not formalized on this branch"
+      note: "(a) ⟺ (b) for every rational a"
+    - source: "Theorem (Section 1), part 1, with (c)"
+      lean: "section1_tfae"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
     - source: "Theorem (Section 1), part 2"
-      lean: ""
-      module: ""
-      status: "not formalized"
-      note: "replaced by the character criterion forall_nonempty_mulEquiv_of_forall_hasCharPattern (QuadraticIterates.Characters.Criterion)"
-    - source: "Lemmas 2.1 and 2.2"
-      lean: ""
-      module: ""
-      status: "not formalized"
-      note: "the b_n route is not formalized on this branch"
+      lean: "section1_of_not_isSquare_abs_bSeq"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
+      note: "the first route replaces it by the character criterion forall_nonempty_mulEquiv_of_forall_hasCharPattern (QuadraticIterates.Characters.Criterion)"
+    - source: "Lemma 2.1"
+      lean: "not_isSquare_betaSeq"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Lemma 2.2"
+      lean: "not_isSquare_betaSeq_of_pos"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
     - source: "Section 3, main result"
       lean: "nonempty_mulEquiv_of_pos_of_emod_four_eq_one, nonempty_mulEquiv_of_pos_of_emod_four_eq_two, nonempty_mulEquiv_of_neg_of_emod_four_eq_zero"
       module: "QuadraticIterates.Main.Integers"
       status: "proved"
       note: "one theorem per case, for all n (the paper has n >= 1); the case s = 1 of the level-two criterion forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass"
-    - source: "Li 2021, Lemmas 2.1, 2.2, 3.1, 3.4-3.6, Corollary 2.4, Proposition 2.5"
+    - source: "Section 3, main result, along the paper's proof"
+      lean: "section3_main"
+      module: "QuadraticIterates.ArchMath1992.Main"
+      status: "proved"
+    - source: "Li 2021, Lemma 2.1 (Stoll's criterion at one index)"
+      lean: "not_isSquare_betaSeq_of_dvd_add_two_mul"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Li 2021, Lemma 2.2"
+      lean: "not_isSquare_abs_bSeq_of_squarefree"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+      note: "case (3) is a ≡ 1 mod 4 (misprinted as 3 mod 4 in the paper)"
+    - source: "Li 2021, Corollary 2.4"
+      lean: "not_isSquare_betaSeq_of_dvd_add_succ"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Li 2021, Proposition 2.5"
+      lean: "not_isSquare_betaSeq_of_even_of_dvd_add_two, not_isSquare_betaSeq_of_odd_of_dvd_add_two"
+      module: "QuadraticIterates.ArchMath1992.Sequences"
+      status: "proved"
+    - source: "Li 2021, Lemma 3.1"
+      lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+      note: "stated for a = -(4k+2)(4k+3); Li's lemma is the case of even k"
+    - source: "Li 2021, Lemma 3.4"
+      lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2021, Lemma 3.5"
       lean: ""
       module: ""
       status: "not formalized"
-      note: "the b_n route is not formalized on this branch"
+      note: "not needed for Theorem 3.9 (Lemma 3.6 covers n / rad n = 2)"
+    - source: "Li 2021, Lemma 3.6"
+      lean: "not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
     - source: "Li 2021, Theorem 3.3"
       lean: "nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two"
       module: "QuadraticIterates.Main.Families"
       status: "proved"
       note: "for a = -l(l+1) with any positive integer l = 2 mod 4, not only l = 8k+2 (a = -(8k+2)(8k+3)), and for all n; the case v = 1 of nonempty_mulEquiv_of_eq_neg_mul_add_one"
+    - source: "Li 2021, Theorem 3.3, along Li's proof"
+      lean: "li2021_theorem_3_3"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2021, Theorem 3.3 for a = -(4k+2)(4k+3), all k, along Li's proof"
+      lean: "nonempty_mulEquiv_of_eq_neg_mul, not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+      note: "Li's argument with the residue of γ_k₀ modulo 8 in place of the one modulo 4"
     - source: "Li 2021, Theorem 3.9"
       lean: "nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one"
       module: "QuadraticIterates.Main.Families"
       status: "proved"
       note: "stated as a = -(l^2+l+1) with a positive integer l = 1 mod 4 (l = 4k+1), for all n; the case v = 1 of nonempty_mulEquiv_of_eq_neg_sq_add_add_one"
-    - source: "Li 2020, Lemmas 3.1-3.3 and Theorem 3.4"
-      lean: ""
-      module: ""
-      status: "not formalized"
-      note: "the b_n route is not formalized on this branch"
+    - source: "Li 2021, Theorem 3.9, along Li's proof"
+      lean: "li2021_theorem_3_9"
+      module: "QuadraticIterates.Li.ArchMath2021"
+      status: "proved"
+    - source: "Li 2020, Lemma 3.1"
+      lean: "not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
+    - source: "Li 2020, Lemmas 3.2 and 3.3"
+      lean: "not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
+      note: "one statement for odd and even squarefree n, proved modulo γ_2"
+    - source: "Li 2020, Theorem 3.4"
+      lean: "li2020_theorem_3_4"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
     - source: "Theorem R⁺ (rational a = r/s > -1; author's working notes, not in the papers)"
       lean: "nonempty_mulEquiv_of_neg_lt_of_certificate, criteria_of_neg_lt_of_certificate"
       module: "QuadraticIterates.Main.SquarefreeCertificates"
@@ -431,6 +564,11 @@ alignment:
       module: "QuadraticIterates.Main.Integers"
       status: "proved"
       note: "for all n (the paper has n >= 1); the case s = 1 of the level-two criterion forall_nonempty_mulEquiv_iff_not_isSquare_of_twoAdicClass; the index-2 statement in the exceptional case is not formalized"
+    - source: "Li 2020, Theorem 3.5, along Li's proof"
+      lean: "li2020_theorem_3_5"
+      module: "QuadraticIterates.Li.ArchMath2020"
+      status: "proved"
+      note: "the index-2 statement in the exceptional case is not formalized"
 
 # acknowledgements
 acknowledgements: ""

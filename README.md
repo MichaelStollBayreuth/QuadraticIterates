@@ -9,7 +9,8 @@
 A formalization in [Lean 4](https://lean-lang.org), based on
 [Mathlib](https://github.com/leanprover-community/mathlib4), of a criterion for the arboreal
 Galois representation of `f = X² + a`, `a ∈ ℚ`, to be surjective, and of the known results for
-integer `a`, which follow from it.
+integer `a`, which follow from it — once along new, simpler proofs that extend them to rational
+parameters, and once along the proofs of the original papers.
 
 Let `f_n` be the `n`-th iterate of `f`, let `K_n` be the splitting field of `f_n` over `ℚ`, and let
 `Ω_n = Gal(K_n/ℚ)`, which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`. By the
@@ -24,9 +25,9 @@ criterion of
 embedding theorem, and without the paper's assumption that the iterates are irreducible:
 maximality of `Ω_n` forces `f_1, …, f_n` to be irreducible.
 
-The aim of this branch is not to reproduce the proofs of the paper and its successors, but to give
-different, simpler proofs of their main results and to extend them to further cases and to rational
-parameters. Instead of passing from the `c_n` to their Möbius quotients `b_n`, as those proofs do,
+The first formalization (Part I of the [blueprint](#blueprint)) does not reproduce the proofs of
+the paper and its successors, but gives different, simpler proofs of their main results and
+extends them to further cases and to rational parameters. Instead of passing from the `c_n` to their Möbius quotients `b_n`, as those proofs do,
 the formalization works with quadratic characters: every level is maximal if and only if, for
 every `n ≥ 1`, some character `χ : ℚ* → {±1}` has `χ(c_n) = −1` and `χ(c_m) = 1` for all `m > n`.
 Such characters (the sign, the parities of `p`-adic valuations, and characters induced by Dirichlet
@@ -66,9 +67,16 @@ which `a = r/s` the criterion and the two families cover, coloured by 2-adic cla
 marks the uncovered `a` with `c_1, …, c_6` 2-dependent; [`plots/coverage.py`](plots/coverage.py)
 generates it.
 
-There is no `sorry`, and no axiom beyond the three of Mathlib. The paper's own proofs, through
-the `b_n` (part 2 of its Section 1 theorem, Lemmas 1.1, 2.1 and 2.2), and those of Li are
-formalized on the `main` branch of this repository.
+The second formalization (Part II of the blueprint) follows the paper and the two papers of Li
+along their own proofs, through the Möbius quotients `b_n` of the sequence `c_n`: for an integer
+`a` such that `−a` is not a square, the `b_n` are pairwise coprime integers with
+`c_n = ∏_{d ∣ n} b_d`, so `Ω_n ≅ [C₂]ⁿ` for every `n` as soon as none of `|b_2|, |b_3|, …` is a
+square (`section1_of_not_isSquare_abs_bSeq`); the paper and Li show this for the values of `a`
+above by congruences for the `b_n` (`section3_main`, `nonempty_mulEquiv_of_eq_neg_mul`,
+`li2021_theorem_3_9`, `li2020_theorem_3_5`). The two formalizations share the Galois-theoretic
+foundation: the iterates, Odoni's embedding, the degree criterion and the criterion itself.
+
+There is no `sorry`, and no axiom beyond the three of Mathlib.
 
 ## Contents
 
@@ -89,25 +97,35 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
   families and the integer parameters;
 - [`EvenPoly.lean`](QuadraticIterates/EvenPoly.lean): even polynomials and their iteration
   sequences, of which `c_n` is one;
+- [`ArchMath1992`](QuadraticIterates/ArchMath1992) (with
+  [`ArchMath1992.lean`](QuadraticIterates/ArchMath1992.lean)): the paper along its own proofs —
+  `Sequences` (the iteration sequences of even polynomials and their Möbius quotients `β_n`, over
+  general rings and over `ℤ`), `Iterates` (the sequence `c_n` for integer `a`, the irreducibility
+  of the iterates, the rescaled polynomial) and `Main` (the integers `b_n`, the theorem of
+  Section 1 and the main result of Section 3);
+- [`Li`](QuadraticIterates/Li) (with [`Li.lean`](QuadraticIterates/Li.lean)): the results of Li
+  along his proofs — `Residues` (the residues of the rescaled sequence for `a < 0`),
+  `ArchMath2021` and `ArchMath2020` (the theorems of the two papers);
 - [`QuadraticIterates/Mathlib`](QuadraticIterates/Mathlib): auxiliary declarations missing from
   the current version of Mathlib, stated in their natural generality and following Mathlib's
   directory structure; these are candidates for upstreaming.
 
 [`formalization.yaml`](formalization.yaml) is the project's self-report in the
 [mathlib-initiative](https://github.com/mathlib-initiative/formalization.yaml) format; it
-includes a table aligning each result of the three papers with the declaration that formalizes
-it, or recording that it is not formalized on this branch.
+includes a table aligning each result of the three papers with the declarations that formalize
+it, along both routes.
 [`comparator/`](comparator) holds a [comparator](https://github.com/leanprover/comparator)
 harness for the main result of Section 3 (one challenge per case), for the theorems of Li (the
 first one in its strengthened form), and for the criterion for rational parameters and its three
 corollaries, whose challenges reproduce the definitions of the 2-adic classes and lists of
-conditions.
+conditions. A second configuration proves the six challenges about integer `a` along the proofs
+of the original papers.
 
 ## Blueprint
 
 [`blueprint/`](blueprint) contains a [leanblueprint](https://github.com/PatrickMassot/leanblueprint)
-blueprint that develops the mathematics of this branch, with statements and proofs, and links each
-item to the declarations that formalize it. Its chapters 1–7 are the sections of the paper
+blueprint in two parts that develops the mathematics, with statements and proofs, and links each
+item to the declarations that formalize it. In Part I, chapters 1–7 are the sections of the paper
 M. Stoll, *When do all iterates of x² + a have maximal Galois group?* (preprint,
 [`paper/arboreal-surjective.pdf`](paper/arboreal-surjective.pdf)), with the paper's numbering of
 the statements: the introduction with the criterion of the 1992 paper, quadratic characters, sign
@@ -116,8 +134,12 @@ lists of criteria, the main result with its integer corollary, and the two quadr
 Each chapter opens with the supporting statements that the formalization needs beyond the
 paper's, numbered with letters. Appendix A proves the criterion of the 1992 paper, appendix B
 collects further formalized results (further criteria, refinements of the main theorem), and
-appendix C the auxiliary theory. Every definition and theorem is formalized, so the dependency
-graph is entirely green.
+appendix C the auxiliary theory. Part II reproduces the 1992 paper and the results of Li: its
+chapters II.1–II.3 are the three sections of the paper, with the paper's numbering behind the
+prefix II (Facts II.1.0, Lemma II.1.1, …, Lemma II.2.2), chapter II.4 collects the further
+auxiliary theory and chapter II.5 the results of Li; the Galois-theoretic statements of the
+paper's Section 1 are quoted from appendix A. Every definition and theorem is formalized, so the
+dependency graph, which covers both parts, is entirely green.
 
 To build it, install [leanblueprint](https://github.com/PatrickMassot/leanblueprint) and a TeX
 distribution, then run in the root directory of this repository
