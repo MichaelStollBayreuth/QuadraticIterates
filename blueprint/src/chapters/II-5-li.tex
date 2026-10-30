@@ -4,7 +4,7 @@
 
 This chapter formalizes the results of Li \cite{li2020, li2021} that extend
 Theorem~\ref{thm:section3} to further values of $a$. Li's two papers use the notation of
-Chapter~2 with the rescaled polynomial of Definition~\ref{def:normpoly}:
+Chapter~\ref{chap:paper-even} with the rescaled polynomial of Definition~\ref{def:normpoly}:
 $g = |a| X^2 + \sgn(a)$, $\gamma_1 = 1$, $\gamma_{n+1} = g(\gamma_n)$, so that
 $\gamma_n = |c_n|/|a|$ and $\beta_n = |b_n|$ for $n \ge 2$. (In \cite{li2020} the polynomial is
 written $x^2 - a$ with $a > 0$; below, $a$ always denotes the coefficient of $f = X^2 + a$, so the
@@ -19,7 +19,7 @@ the same argument (see Lemma~\ref{lem:li-A-nonsqfree}).
   \label{thm:li-A}
   \lean{QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul, QuadraticIterates.li2021_theorem_3_3, QuadraticIterates.nonempty_mulEquiv_of_forall_not_isSquare_abs_bSeq}
   \leanok
-  \uses{def:galois, def:wreath}
+  \uses{def:galois, def:wreath, def:bseq}
   Let $a = -(4k+2)(4k+3)$ with $k \ge 0$. Then $\Om_n \cong \Ct{n}$ for all $n \ge 1$.
   Theorem~3.3 of \cite{li2021} is the case of even $k$, $a = -(8k+2)(8k+3)$.
 \end{theorem}
@@ -50,7 +50,7 @@ the same argument (see Lemma~\ref{lem:li-A-nonsqfree}).
 \end{theorem}
 \begin{proof}
   \leanok
-  \uses{lem:li-sqfree, lem:li-B-odd, lem:li-B-even, thm:section1, def:normpoly}
+  \uses{thm:li-A, lem:li-sqfree, lem:li-B-odd, lem:li-B-even, thm:section1, def:normpoly}
   $-a = (4k+1)(4k+2) + 1 \equiv 3 \bmod 4$ is not a square, and $a \equiv 1 \bmod 4$. For
   $n \ge 2$: if $n$ is squarefree, Lemma~\ref{lem:li-sqfree}~(3); if not and $4 \nmid n$,
   Lemma~\ref{lem:li-B-odd}; if $4 \dvd n$, then $n/\rad(n)$ is even and Lemma~\ref{lem:li-B-even}
@@ -81,7 +81,7 @@ the same argument (see Lemma~\ref{lem:li-A-nonsqfree}).
   and \lname{TwoIndependent.not\_isSquare}. \cite{li2020} also shows that in the exceptional case
   $-a - 1 = m^2$ the index of $\Om_n$ in $\Ct{n}$ is exactly $2$ for all $n \ge 2$; this needs an
   analysis of the Kummer tower when the base is not maximal, which the present infrastructure
-  (Lemma~\ref{lem:1.5} assumes $\Om_n \cong \Ct{n}$) does not provide, and it is not formalized.}
+  (Lemma~\ref{lem:squares} assumes $\Om_n \cong \Ct{n}$) does not provide, and it is not formalized.}
 \end{proof}
 
 The first two theorems cover $a = -6, -110, -342, \dots$ and $a = -3, -31, -91, \dots$; the third
@@ -89,8 +89,8 @@ covers $a = -13, -21, -29, \dots$ and identifies the failures $a = -5, -17, -37,
 $b_2 = -a - 1$ is a square). All three are proved, as Theorem~\ref{thm:section3} is, by showing
 that no $|b_n|$ with $n \ge 2$ (resp.\ $n \ge 3$) is a square and invoking part~2) of
 Theorem~\ref{thm:section1}; what changes is how the non-squareness of $\beta_n$ is established.
-The three theorems are also part of the comparator setup of the repository, one challenge
-statement each.
+The three theorems are also comparator challenges of the repository, and its second configuration
+proves them along the proofs given here.
 
 \emph{Numerical check.} All congruences and identities below were verified in PARI/GP for the
 first members of each family and $n \le 13$ before the formalization, and the lists of $n$ with
@@ -99,7 +99,8 @@ and $\{2\}$ for $a = -5, -17, -37$. The check exposed a misprint in \cite{li2021
 third case must read $a \equiv 1 \bmod 4$, not $3 \bmod 4$ (the case $a \equiv 3 \bmod 4$ is the
 one of \cite{li2020}, and $a = -5$ is a counterexample to the printed statement).
 
-\section{The criterion of Lemma 2.1, one index at a time}
+\section{\texorpdfstring{The criterion of Lemma~\ref{lem:2.1}, one index at a time}{The criterion of
+  Lemma II.2.1, one index at a time}}
 
 The proof of Lemma~\ref{lem:2.1} has three layers, which the formalization keeps apart because
 Li's arguments reuse the two lower ones with different inputs: the arithmetic of the Möbius
@@ -122,7 +123,7 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
 
 \begin{lemma}[Balanced classes]
   \label{lem:li-classes}
-  \lean{Finset.prod_eq_neg_prod_of_forall_card_filter_eq, Finset.card_filter_eq_one_eq_card_filter_eq_neg_one_of_sum_eq_zero}
+  \lean{Finset.prod_eq_neg_prod_of_forall_card_filter_eq}
   \leanok
   Let $R$ be a commutative ring, $S_+$ and $S_-$ disjoint finite sets with $a \in S_+ \cup S_-$,
   $x \colon S_+ \cup S_- \to R$, $w \colon I \to R$ and $\kappa \colon S_+ \cup S_- \to I$ a
@@ -173,7 +174,7 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
   \label{lem:li-PQ}
   \lean{QuadraticIterates.not_isSquare_betaSeq_of_prod_eq_neg_prod}
   \leanok
-  \uses{def:gammaseq, lem:moebiussign, lem:zmodsquare}
+  \uses{def:betaseq, lem:moebiussign, lem:zmodsquare}
   Let $n \ge 1$, $n' := \rad(n)$, $k := n/n'$, and put $P := \prod_{t \in S_+} \gamma_{kt}$,
   $Q := \prod_{t \in S_-} \gamma_{kt}$. Suppose $P = c P'$ and $Q = c Q'$ with an integer
   $c \ne 0$, and let $m$ be a modulus with $-1$ not a square mod $m$ such that
@@ -181,6 +182,7 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
 \end{lemma}
 \begin{proof}
   \leanok
+  \uses{lem:moebiusfactor}
   $\beta_n = \prod_{d \dvd n} \gamma_d^{\mu(n/d)} = P/Q = P'/Q'$ by
   Lemma~\ref{lem:moebiussign} (\lname{prod\_pow\_moebius\_eq\_div}), and a quotient of two
   integers with $P' \equiv -Q'$, $Q'$ a unit, is not a rational square when $-1$ is not a square
@@ -192,16 +194,18 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
 
 \begin{lemma}[\cite{li2021}, Lemma 2.1: Stoll's criterion at one index]
   \label{lem:li-crit}
-  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_two_mul, QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod, QuadraticIterates.isUnit_prod_gammaSeq_mul}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_two_mul,
+    QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod, QuadraticIterates.isUnit_prod_gammaSeq_mul,
+    QuadraticIterates.gammaSeq_mul_eq_two_mul}
   \leanok
-  \uses{def:gammaseq}
+  \uses{def:betaseq}
   Let $n \ge 2$, $k := n/\rad(n)$, and let $m$ be a modulus with $m \dvd \gamma_k + \gamma_{2k}$,
   $m$ coprime to $\gamma_k$, and $-1$ not a square mod $m$. Then $\beta_n$ is not a square in
   $\QQ$.
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:li-classes, lem:li-PQ, lem:moebiussign}
+  \uses{lem:li-classes, lem:li-parity, lem:li-PQ, lem:moebiussign}
   Exactly the proof of Lemma~\ref{lem:2.1}: mod $m$, $\gamma_{tk} \equiv \gamma_{2k}$ for all
   $t \ge 2$ (\lname{gammaSeq\_mul\_eq\_two\_mul}) and $\gamma_k \equiv -\gamma_{2k}$, so
   Lemma~\ref{lem:li-classes} with a single class gives $P \equiv -Q$
@@ -214,16 +218,18 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
 
 \begin{lemma}[\cite{li2021}, Corollary 2.4]
   \label{lem:li-succ}
-  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_succ, QuadraticIterates.not_isSquare_abs_bSeq_of_dvd_add_succ}
+  \lean{QuadraticIterates.not_isSquare_betaSeq_of_dvd_add_succ,
+    QuadraticIterates.not_isSquare_abs_bSeq_of_dvd_add_succ, QuadraticIterates.gammaSeq_add_succ_dvd,
+    QuadraticIterates.isCoprime_gammaSeq_add_succ, QuadraticIterates.gammaSeq_add_succ_dvd_sub}
   \leanok
-  \uses{def:gammaseq}
+  \uses{def:betaseq, def:bseq, def:normpoly}
   Let $g(0)$ be a unit, $n \ge 2$, $k := n/\rad(n)$, and $m$ a modulus with
   $m \dvd \gamma_k + \gamma_{k+1}$ and $-1$ not a square mod $m$. Then $\beta_n$ is not a square
   in $\QQ$.
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:li-crit}
+  \uses{lem:li-crit, lem:1.1}
   $\gamma_k + \gamma_{k+1}$ divides $\gamma_k + \gamma_{2k}$ (\lname{gammaSeq\_add\_succ\_dvd})
   and is coprime to $\gamma_k$ (\lname{isCoprime\_gammaSeq\_add\_succ}); both properties pass to
   the divisor $m$, and Lemma~\ref{lem:li-crit} applies.
@@ -261,13 +267,13 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
   \label{lem:li-even}
   \lean{QuadraticIterates.not_isSquare_betaSeq_of_even_of_dvd_add_two, QuadraticIterates.not_isSquare_abs_bSeq_of_even_of_dvd_add_two, isCoprime_of_isCoprime_gcd_of_dvd_add, IsRelPrime.of_gcd_right_of_dvd_add}
   \leanok
-  \uses{def:gammaseq}
+  \uses{def:betaseq, def:bseq, def:normpoly}
   Let $n \ge 2$ with $k = n/\rad(n)$ even, and $m$ a modulus with $m \dvd \gamma_k + \gamma_{k+2}$,
   $m$ coprime to $\gamma_2$, and $-1$ not a square mod $m$. Then $\beta_n$ is not a square.
 \end{proposition}
 \begin{proof}
   \leanok
-  \uses{lem:li-period, lem:li-crit, lem:strongdvd}
+  \uses{lem:li-period, lem:li-crit, lem:strongdvd, lem:1.1, lem:2.1}
   Mod $m$, Lemma~\ref{lem:li-period} gives $\gamma_{2k} \equiv -\gamma_k$ ($2k \equiv k \bmod 2$),
   so $m \dvd \gamma_k + \gamma_{2k}$. Strong divisibility (\lname{gammaSeq\_associated\_gcd},
   $\gcd(k, k+2) = 2$) gives $\gcd(\gamma_k, \gamma_{k+2}) = \gamma_2$; a common divisor of $m$
@@ -280,14 +286,14 @@ $S_\pm := \{t \dvd n' : \mu(n'/t) = \pm 1\}$ (Lemma~\ref{lem:moebiussign}).
   \label{lem:li-odd}
   \lean{QuadraticIterates.not_isSquare_betaSeq_of_odd_of_dvd_add_two, QuadraticIterates.not_isSquare_abs_bSeq_of_odd_of_dvd_add_two, QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod_of_odd, QuadraticIterates.isUnit_prod_gammaSeq_mul_of_odd, QuadraticIterates.isCoprime_gammaSeq_of_odd_of_dvd_add_two}
   \leanok
-  \uses{def:gammaseq}
+  \uses{def:betaseq, def:bseq, def:normpoly}
   Let $g(0)$ be a unit, $n \ge 2$ with $k = n/\rad(n)$ odd and $k > 1$, and $m$ a modulus with
   $m \dvd \gamma_k + \gamma_{k+2}$, $m$ coprime to $\gamma_{k+1}$, and $-1$ not a square mod $m$.
   Then $\beta_n$ is not a square.
 \end{proposition}
 \begin{proof}
   \leanok
-  \uses{lem:li-period, lem:li-parity, lem:li-classes, lem:li-PQ, lem:strongdvd}
+  \uses{lem:li-even, lem:li-period, lem:li-parity, lem:li-classes, lem:li-PQ, lem:strongdvd, lem:1.1, lem:2.1}
   Since $k$ is odd and $> 1$, $n' = \rad(n)$ is neither $1$ nor $2$ (an odd prime factor of $k$
   divides $n'$). Mod $m$, by Lemma~\ref{lem:li-period}, $\gamma_{kt} \equiv -\gamma_k$ for odd
   $t \ge 3$ and $\gamma_{kt} \equiv \gamma_{k+1}$ for even $t$. Both values are units mod $m$:
@@ -316,12 +322,13 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-modsq}
   \lean{QuadraticIterates.gammaSeq_two_sq_dvd_sub_ite_even, QuadraticIterates.gammaSeq_two_dvd_of_even}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:gammaseq}
   For every even $g$ with $g(0)^2 = 1$ and $\gamma_1 = 1$, and all $n \ge 2$:
   $\gamma_n \equiv \gamma_2$ for even $n$ and $\gamma_n \equiv g(0) \bmod \gamma_2^2$ for odd $n$.
 \end{lemma}
 \begin{proof}
   \leanok
+  \uses{thm:valshape}
   By induction. If $\gamma_n \equiv \gamma_2$ then $\gamma_2 \dvd \gamma_n$, so
   $\gamma_{n+1} = g(\gamma_n) \equiv g(0)$ because $\gamma_n^2 \dvd g(\gamma_n) - g(0)$
   (\lname{sq\_dvd\_gammaSeq\_succ\_sub}); if $\gamma_n \equiv g(0)$ then
@@ -341,6 +348,7 @@ of Lemma~\ref{lem:li-period}.
 \end{lemma}
 \begin{proof}
   \leanok
+  \uses{lem:2.2}
   In $\ZZ/8\ZZ$, $\gamma_2 = g(1) = -a - 1$ is odd, so $\gamma_2^2 = 1$ and $g(\gamma_2) = g(1)$:
   a fixed point (\lname{gammaSeq\_eq\_eval\_one}).
 \end{proof}
@@ -411,7 +419,7 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-sqfree}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree, QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_pos_of_emod_eight_eq_four, QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_eight_eq_two, QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_one}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:normpoly, def:bseq}
   Let $n > 1$ be squarefree. Then $|b_n|$ is not a square as soon as $-1$ is not a square modulo
   $\gamma_1 + \gamma_2 = |a| + \sgn(a) + 1$; this holds in each of the cases
   (1) $a > 0$, $a \equiv 4 \bmod 8$; (2) $a < 0$, $a \equiv 2 \bmod 8$; (3) $a < 0$,
@@ -419,7 +427,7 @@ of Lemma~\ref{lem:li-period}.
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:li-succ}
+  \uses{lem:li-succ, lem:1.1}
   Here $k = 1$, so Lemma~\ref{lem:li-succ} with $m := \gamma_1 + \gamma_2 = 1 + g(1)$ applies as
   soon as $-1$ is not a square mod $m$: $m = a + 2 \equiv 6 \bmod 8$ in case (1), $m = -a \equiv
   6 \bmod 8$ in case (2), and $m = -a \equiv 3 \bmod 4$ in case (3)
@@ -436,7 +444,7 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-A-sqfree}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_eq_neg_mul}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:normpoly, def:bseq}
   Let $a = -(4k+2)(4k+3)$ and let $n > 1$ be squarefree. Then $|b_n|$ is not a square.
 \end{lemma}
 \begin{proof}
@@ -453,7 +461,7 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-A-nonsqfree}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_eq_neg_mul}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:normpoly, def:bseq}
   Let $a = -(4k+2)(4k+3)$ and let $n \ge 1$ be not squarefree. Then $|b_n|$ is not a square.
 \end{lemma}
 \begin{proof}
@@ -479,7 +487,7 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-B-odd}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_one, Nat.even_div_radical_iff_four_dvd, Nat.two_le_div_radical_of_not_squarefree, Nat.squarefree_iff_radical_eq_self}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:normpoly, def:bseq}
   Let $a < 0$, $a \equiv 1 \bmod 4$, and let $n \ge 1$ be not squarefree with $4 \nmid n$. Then
   $|b_n|$ is not a square.
 \end{lemma}
@@ -496,7 +504,7 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-B-even}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_even_div_radical_of_eq_neg_mul_add_one}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:normpoly, def:bseq}
   Let $a = -\bigl((4k+1)(4k+2) + 1\bigr)$, $A := 4k+1$, $B := 4k+2$, $\alpha := -a = AB + 1$, and
   let $n \ge 1$ be such that $k_0 := n/\rad(n)$ is even. Then $|b_n|$ is not a square.
 \end{lemma}
@@ -542,7 +550,7 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-C-nonsqfree}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:normpoly, def:bseq}
   Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n \ge 1$ be not squarefree. Then $|b_n|$ is not a
   square.
 \end{lemma}
@@ -557,7 +565,7 @@ of Lemma~\ref{lem:li-period}.
   \label{lem:li-C-sqfree}
   \lean{QuadraticIterates.not_isSquare_abs_bSeq_of_squarefree_of_neg_of_emod_four_eq_three, QuadraticIterates.not_isSquare_betaSeq_of_squarefree_of_not_isSquare_neg_one}
   \leanok
-  \uses{def:normpoly}
+  \uses{def:normpoly, def:betaseq, def:bseq}
   Let $a < 0$, $a \equiv 3 \bmod 4$, and let $n > 2$ be squarefree. Then $|b_n|$ is not a square.
 \end{lemma}
 \begin{proof}
@@ -572,9 +580,9 @@ of Lemma~\ref{lem:li-period}.
   and $P'$, $Q'$ the products of the $\gamma_t$ ($t$ odd) and $u_t$ ($t$ even).
   Lemma~\ref{lem:li-classes} with the classes ``odd'' ($w = -1$) and ``even'' ($w = 1$) gives
   $P' \equiv -Q'$ with $Q' \equiv \pm 1$; Lemma~\ref{lem:li-PQ} with $c = m^N$.
-  \formalnote{Li treats odd $n$ (all divisors odd; his Lemma~3.2, modulo $4$) and even $n$
-  (Lemma~3.3, modulo a power of $\gamma_2$) separately; modulo $\gamma_2$ the argument is the
-  same for both, which is why the two lemmas are one declaration. The general statement
-  (\lname{not\_isSquare\_betaSeq\_of\_squarefree\_of\_not\_isSquare\_neg\_one}) holds for every
+  \formalnote{Li treats odd~$n$, all of whose divisors are odd, modulo~$4$ (his Lemma~3.2) and
+  even~$n$ modulo a power of~$\gamma_2$ (his Lemma~3.3) separately; modulo~$\gamma_2$ the
+  argument is the same for both, which is why the two lemmas are one declaration. The general
+  statement (\lname{not\_isSquare\_betaSeq\_of\_squarefree\_of\_not\_isSquare\_neg\_one}) holds for every
   even $g$ with $g(0) = -1$ and $\gamma_1 = 1$, with the modulus $\gamma_2$.}
 \end{proof}

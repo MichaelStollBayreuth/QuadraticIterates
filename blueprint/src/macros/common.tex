@@ -1,16 +1,39 @@
 % Macros and settings used by both the pdf and the web version.
 
-% Theorem-like environments (numbered within chapters). These are the environments that
-% appear in the dependency graph.
+% Theorem-like environments, numbered within chapters. The nodes of the dependency graph are those
+% listed in the `thms` option of web.tex; remarks, the question and the conjecture are not nodes.
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{facts}[theorem]{Facts}
+\newtheorem{conjecture}[theorem]{Conjecture}
+% Statements of the 1992 paper that Part I formalizes in its own form (Appendix A). Part II
+% states them with their numbers and points to their nodes in Part I; they are not nodes.
+\newtheorem{sharedfacts}[theorem]{Facts}
+\newtheorem{sharedlemma}[theorem]{Lemma}
 
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
+\newtheorem{question}[theorem]{Question}
+
+% Chapters 1--7 are the sections of the paper, and their statements carry the paper's numbers.
+% The supporting statements of a chapter, which the paper does not state, come first, in a
+% section opened by \supporting, and are numbered with letters (Lemma 5.A, ...); \paperitems
+% then restarts the arabic numbering.
+\newcommand{\supporting}{\renewcommand{\thetheorem}{\thechapter.\Alph{theorem}}}
+\newcommand{\paperitems}{%
+  \setcounter{theorem}{0}\renewcommand{\thetheorem}{\thechapter.\arabic{theorem}}}
+
+% Parts are numbered I and II (plasTeX numbers them in arabic by default).
+\renewcommand{\thepart}{\Roman{part}}
+
+% Part II follows the papers of 1992 and of Li. Its chapters are numbered II.1, II.2, ..., so
+% that the statements of the 1992 paper keep their numbers behind the prefix: Lemma II.1.4 is
+% Lemma 1.4 of that paper. \secondpart also undoes the effect of \appendix on the chapter names.
+\newcommand{\secondpart}{%
+  \setcounter{chapter}{0}\renewcommand{\thechapter}{II.\arabic{chapter}}\restorechapters}
 
 % Notation of the paper.
 \newcommand{\QQ}{\mathbb{Q}}
@@ -24,8 +47,13 @@
 \newcommand{\Hom}{\operatorname{Hom}}
 \newcommand{\ord}{\operatorname{ord}}
 \newcommand{\sgn}{\operatorname{sign}}
-\newcommand{\rad}{\operatorname{rad}}
 \newcommand{\dvd}{\mathrel{\mid}}
+\newcommand{\rad}{\operatorname{rad}}
+\newcommand{\val}{\operatorname{val}}
+\newcommand{\Leg}[2]{\left(\frac{#1}{#2}\right)}
+\newcommand{\sq}{\square}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\eps}{\varepsilon}
 
 % Marks a place where the formal statement deviates from the paper.
 \newcommand{\formalnote}[1]{\par\smallskip\noindent\textit{Formalization:} #1\par\smallskip}

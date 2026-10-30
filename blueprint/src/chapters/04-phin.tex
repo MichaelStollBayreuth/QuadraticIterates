@@ -1,0 +1,312 @@
+\chapter{\texorpdfstring{$\phi_n$ for $n \ge 2$}{phi\_n for n >= 2}}
+\label{chap:phin}
+
+From now on, $a = r/s$ with $r, s \in \ZZ$, $s > 0$ and $\gcd(r, s) = 1$.
+
+\section{Preliminaries}
+\supporting
+
+The integer sequences~$w_n$, $v_n$, $u_n$, their reduction modulo integers prime to~$s$, the
+orbits of $x \mapsto x^2 + \bar a$ in a ring, and the reflection that turns a prime of~$v_n$ into
+a character changing sign after~$c_n$.
+
+\begin{definition}[$w_n$, $v_n$, $u_n$]
+  \label{def:wseq}
+  \uses{def:cseq}
+  \lean{QuadraticIterates.wSeq, QuadraticIterates.wSeq_zero, QuadraticIterates.wSeq_one,
+    QuadraticIterates.wSeq_succ, QuadraticIterates.wSeq_two, QuadraticIterates.vSeq,
+    QuadraticIterates.vSeq_one, QuadraticIterates.uSeq, QuadraticIterates.vSeq_eq,
+    QuadraticIterates.uSeq_eq}
+  \leanok
+  Let $w_1 = -1$ and $w_{n+1} = r w_n^2 + s^{2^n - 1}$ for $n \ge 1$, and for $n \ge 1$
+  \[ v_n = w_{n+1} + w_n s^{2^{n-1}}, \qquad
+     u_n = r^2 w_n^2 - r w_n s^{2^{n-1}} + (r + s) s^{2^n - 1}. \]
+  So $w_2 = r + s$, $w_3 = r(r+s)^2 + s^3$, and~$w_n$ is a binary form of degree $2^{n-1} - 1$
+  in~$r$, $s$.
+  \formalnote{\lname{wSeq r s : ℕ → ℤ} (junk value $w_0 = 0$), \lname{vSeq r s n},
+  \lname{uSeq r s n}.}
+\end{definition}
+
+\begin{lemma}[Reduction]
+  \label{lem:reduction}
+  \uses{def:wseq}
+  \lean{QuadraticIterates.intCast_mul_wSeq, QuadraticIterates.intCast_mul_vSeq,
+    QuadraticIterates.intCast_uSeq, QuadraticIterates.cSeq_div_eq}
+  \leanok
+  Let~$S$ be a commutative ring and $\sigma \in S$ with $s \sigma = 1$ in~$S$, and let
+  $(\bar c_n)$ be the sequence of the parameter $\bar a = r\sigma \in S$. Then for $n \ge 1$
+  \[ r w_n = s^{2^{n-1}} \bar c_n, \qquad r v_n = s^{2^n} (\bar c_n + \bar c_{n+1}), \qquad
+     u_n = s^{2^n} (\bar c_n^2 - \bar c_n + \bar a + 1) \]
+  in~$S$. For $S = \QQ$ this is $c_n = r w_n / s^{2^{n-1}}$, $c_n + c_{n+1} = r v_n / s^{2^n}$
+  and $c_n^2 - c_n + a + 1 = u_n / s^{2^n}$; with Lemma~\ref{lem:orbit}(3),
+  $c_n + c_{n+2} = r v_n u_n / s^{2^{n+1}}$.
+  \formalnote{\lname{cSeq\_div\_eq} is $c_n = r w_n / s^{2^{n-1}}$ over~$\QQ$; the other
+  identities over~$\QQ$ are the general ones with $S = \QQ$, $\sigma = 1/s$. Used with $S = \QQ$
+  and $S = \ZZ/N\ZZ$ for~$N$ prime to~$s$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  Induction on~$n$: $r w_1 = -r = s \cdot (-\bar a)$, and
+  $r w_{n+1} = (r w_n)^2 + r s^{2^n - 1} = s^{2^n}\bar c_n^2 + s^{2^n} \bar a$. The other two
+  identities follow by expanding, using $(r + s)\sigma = \bar a + 1$.
+\end{proof}
+
+\begin{lemma}[Coprimality and residues]
+  \label{lem:wseq-res}
+  \uses{def:wseq}
+  \lean{QuadraticIterates.isCoprime_wSeq_left, QuadraticIterates.isCoprime_wSeq_right,
+    QuadraticIterates.isCoprime_vSeq_right, QuadraticIterates.isCoprime_uSeq_right,
+    QuadraticIterates.wSeq_modEq_left, QuadraticIterates.wSeq_modEq_right,
+    QuadraticIterates.vSeq_modEq_left, QuadraticIterates.odd_wSeq_of_even,
+    QuadraticIterates.intCast_wSeq_zmod_eight_of_even,
+    QuadraticIterates.intCast_wSeq_succ_zmod_eight_of_odd}
+  \leanok
+  For $n \ge 1$, $w_n$ is prime to~$r$ and to~$s$, and~$v_n$, $u_n$ are prime to~$s$. Moreover:
+  \begin{enumerate}
+    \item $w_n \equiv s^{2^{n-1} - 1} \bmod r$ and $w_n \equiv r^{2^{n-1}-1} \bmod s$ for
+          $n \ge 2$; $v_1 = r$, and $v_n \equiv 2 s^{2^n - 1} \bmod r$ for $n \ge 2$, so an odd
+          prime dividing~$v_n$, $n \ge 2$, does not divide~$r$;
+    \item if~$s$ is even, then~$w_n$ is odd and $w_n \equiv r \bmod 8$ for $n \ge 3$;
+    \item if~$s$ is odd, then $w_{n+1} \equiv r w_n^2 + s \bmod 8$ for $n \ge 1$.
+  \end{enumerate}
+  \formalnote{The congruences modulo~$r$ and~$s$ are stated with \lname{Int.ModEq}, those
+  modulo~$8$ in \lname{ZMod 8}; for even~$s$, $r$ is odd as~$r$ and~$s$ are coprime.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  $w_{n+1} \equiv s^{2^n - 1} \bmod r$ and $w_{n+1} \equiv r w_n^2 \bmod s$ for $n \ge 1$, with
+  $w_1 = -1$; so $v_n \equiv s^{2^n - 1} + s^{2^{n-1} - 1} s^{2^{n-1}} \bmod r$ for $n \ge 2$,
+  $v_n \equiv w_{n+1} \bmod s$, and $u_n \equiv r^2 w_n^2 \bmod s$. For even~$s$ and $n \ge 2$,
+  $8 \mid s^{2^n - 1}$, so $w_{n+1} \equiv r w_n^2 \equiv r \bmod 8$, $w_n$ being odd. For
+  odd~$s$, $s^2 \equiv 1 \bmod 8$ and~$2^n - 1$ is odd.
+\end{proof}
+
+\begin{lemma}[Periodicity modulo~$w_m^2$]
+  \label{lem:wseq-mul}
+  \uses{lem:rigid, lem:reduction, lem:wseq-res}
+  \lean{QuadraticIterates.wSeq_mul_modEq, QuadraticIterates.exists_wSeq_mul_eq,
+    ZMod.intCast_eq_intCast_iff_modEq, ZMod.intCast_self_natAbs}
+  \leanok
+  For $m \ge 2$ and $k \ge 1$, $w_{mk} \equiv w_m s^{2^{mk-1} - 2^{m-1}} \bmod w_m^2$. So
+  $w_{mk} = w_m T$ with $T \equiv s^{2^{mk-1} - 2^{m-1}} \bmod w_m$, and~$T$ is prime to every
+  prime divisor of~$w_m$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  In $S = \ZZ/w_m^2\ZZ$, $r$ and~$s$ are units (Lemma~\ref{lem:wseq-res}), and
+  $\bar c_m = r w_m \sigma^{2^{m-1}}$ by Lemma~\ref{lem:reduction}, so $\bar c_m^2 = 0$. By
+  Lemma~\ref{lem:rigid}, $\bar c_{mk} = \bar c_m$, so
+  $r w_{mk} = s^{2^{mk-1}} \bar c_m = s^{2^{mk-1} - 2^{m-1}} r w_m$ in~$S$.
+\end{proof}
+
+\begin{lemma}[Fixed points and two-cycles]
+  \label{lem:orbit}
+  \uses{def:cseq, lem:rigid}
+  \lean{QuadraticIterates.cSeq_eq_of_add_succ_eq_zero,
+    QuadraticIterates.cSeq_add_two_eq_of_add_two_eq_neg, QuadraticIterates.cSeq_add_cSeq_add_two,
+    QuadraticIterates.cSeq_add_two_zmod_eight, QuadraticIterates.cSeq_add_cSeq_succ_zmod_eight}
+  \leanok
+  Let $(\bar c_n)$ be the sequence of a parameter~$\bar a$ in a commutative ring, and $n \ge 1$.
+  \begin{enumerate}
+    \item If $\bar c_{n+1} = -\bar c_n$, then $\bar c_m = \bar c_{n+1}$ for all $m > n$.
+    \item If $\bar c_{n+2} = -\bar c_n$, then $\bar c_{n+2k+1} = \bar c_{n+1}$ for $k \ge 0$ and
+          $\bar c_{n+2k} = -\bar c_n$ for $k \ge 1$.
+    \item $\bar c_n + \bar c_{n+2} = (\bar c_n + \bar c_{n+1})(\bar c_n^2 - \bar c_n + \bar a + 1)$.
+    \item In~$\ZZ/8\ZZ$, $\bar c_{m+2} = \bar c_m$ for all~$\bar a$ and $m \ge 2$, and
+          $\bar c_m + \bar c_{m+1} = -1$ for $m \ge 2$ if~$\bar a$ is odd.
+  \end{enumerate}
+  \formalnote{(2) is stated as $\bar c_{m+2} = \bar c_m$ for $m \ge n + 1$; (1) and (2) are
+  instances of \lname{cSeq\_add\_eq\_of\_add\_eq} (Lemma~\ref{lem:rigid}): periodicity from~$n_0$
+  on propagates along the recursion.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  (1) $\bar c_{n+2} = f(-\bar c_n) = f(\bar c_n) = \bar c_{n+1}$, so $\bar c_{n+1}$ is a fixed
+  point. (2) $\bar c_{n+3} = f(-\bar c_n) = \bar c_{n+1}$, so the sequence is~$2$-periodic
+  from~$n+1$ on. (3) is the identity $f(f(x)) + x = (x^2 + x + a)(x^2 - x + a + 1)$ at
+  $x = \bar c_n$. (4) As~$\bar c_{m+1}$ is determined by~$\bar c_m$, it suffices that
+  $\bar c_4 = \bar c_2$, which is a check of the eight values of~$\bar a$. For odd~$\bar a$,
+  $\bar a^2 = 1$, so $\bar c_2 = 1 + \bar a$, $\bar c_3 = 2 + 3\bar a$ and
+  $\bar c_2 + \bar c_3 = 3 + 4\bar a = -1$.
+\end{proof}
+
+\begin{lemma}[Local evaluation]
+  \label{lem:localeval}
+  \uses{lem:reduction, def:chars}
+  \lean{QuadraticIterates.unitPartChar_cSeq, QuadraticIterates.valChar_cSeq_of_isUnit,
+    ZMod.not_isUnit_intCast_of_dvd}
+  \leanok
+  Let~$p$ be a prime not dividing~$s$, $N$ a power of~$p$, $\psi$ a character modulo~$N$ as in
+  Definition~\ref{def:chars}, and $(\bar c_n)$ the sequence of $\bar a = r s^{-1}$ in~$\ZZ/N\ZZ$.
+  If $n \ge 1$ and~$\bar c_n$ is a unit, then $\chi_\psi(c_n) = \psi(\bar c_n)$, and
+  $v_p(c_n)$ is even.
+  \formalnote{For $N = p^k$ with $k \ge 1$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  $c_n = r w_n / s^{2^{n-1}}$ with $p \nmid r w_n$ (as~$\bar c_n$ is a unit,
+  Lemma~\ref{lem:reduction}), so $\chi_\psi(c_n) = \psi(r w_n)\,\psi(s)^{2^{n-1}} =
+  \psi(s^{2^{n-1}} \bar c_n)\,\psi(s)^{2^{n-1}} = \psi(\bar c_n)$.
+\end{proof}
+
+\begin{lemma}[Prime divisors in residue classes]
+  \label{lem:prime3}
+  \lean{Nat.exists_prime_dvd_of_mod_four_eq_three, Nat.exists_prime_dvd_of_mod_eight_eq_six,
+    Nat.exists_prime_dvd_of_mod_eight_eq_three_or_five}
+  \leanok
+  Let $m > 0$. If $m \equiv 3 \bmod 4$ or $m \equiv 6 \bmod 8$, then a prime $p \equiv 3 \bmod 4$
+  divides~$m$. If $m \equiv \pm 3 \bmod 8$, then a prime $p \equiv \pm 3 \bmod 8$ divides~$m$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The residues~$\{1\}$ modulo~$4$ and~$\{\pm 1\}$ modulo~$8$ are closed under multiplication, so
+  a product of primes in them stays in them; for $m \equiv 6 \bmod 8$ apply the first statement
+  to~$m/2$.
+\end{proof}
+
+\begin{lemma}[Reflection]
+  \label{lem:reflection}
+  \uses{lem:reduction, lem:orbit, lem:localeval, lem:wseq-res, lem:jump}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_dvd_vSeq,
+    QuadraticIterates.cSeq_add_cSeq_succ_eq_zero_of_vSeq,
+    QuadraticIterates.unitPartChar_cSeq_of_dvd_vSeq,
+    QuadraticIterates.unitPartChar_cSeq_ne_zero_of_dvd_vSeq}
+  \leanok
+  Let $n \ge 1$, and let $p \equiv 3 \bmod 4$ be a prime. If $p \mid v_n$ and $p \nmid r$, then
+  $\chi_p(c_m) = -\chi_p(c_n) \ne 0$ for all $m > n$. Consequently, if~$a$ has~$\phi_0$, it
+  has~$\phi_n$ (Lemma~\ref{lem:jump}). For $n \ge 2$, $p \nmid r$ is automatic
+  (Lemma~\ref{lem:wseq-res}). The analogue at~$2$, with~$\chi_4$ and $4 \mid v_n$, never applies:
+  $v_n$ is odd when~$r$ is odd, and $v_n \equiv 2 \bmod 4$ when~$r$ is even.
+  \formalnote{For a character~$\psi$ modulo any power $N = p^k$, $k \ge 1$, with $N \mid v_n$
+  and $p \nmid r$: $\chi_\psi(c_m) = \psi(-1)\chi_\psi(c_n)$ for $m > n$
+  (\lname{unitPartChar\_cSeq\_of\_dvd\_vSeq}); for $\psi(-1) = -1$ the statement gives~$\phi_n$
+  from~$\phi_0$ directly.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  $v_n$ is prime to~$s$, so $p \nmid s$; by Lemma~\ref{lem:reduction},
+  $\bar c_n + \bar c_{n+1} = 0$ in~$\ZZ/p\ZZ$, and Lemma~\ref{lem:orbit}(1) gives
+  $\bar c_m = \bar c_{n+1} = -\bar c_n$ for $m > n$. These are units: otherwise~$p$
+  divides~$\bar c_n$, hence $\bar c_{n+1}$, hence $\bar c_{n+1} - \bar c_n^2 = \bar a$,
+  contradicting $p \nmid r$. Lemma~\ref{lem:localeval} and $\psi(-1) = -1$ finish the proof.
+\end{proof}
+
+\section{\texorpdfstring{$\phi_n$}{phi\_n} from a prime \texorpdfstring{$p \equiv 3 \bmod 4$}{p = 3
+mod 4}} \paperitems
+
+In this section we show that under suitable conditions ($r$ and~$s$ satisfy some congruence
+conditions modulo~$4$, and~$a$ is not in a ``bad'' interval), $a$ has~$\phi_n$ for all
+$n \ge 2$, assuming that it also has~$\phi_0$; the latter is needed to apply
+Lemma~\ref{lem:jump}.
+
+The first step is to write~$c_n$ as a fraction in lowest terms. The denominator of~$c_n$ is
+$s^{2^{n-1}}$ and its numerator is divisible by~$r$ (Lemma~\ref{lem:vp}), so
+$c_n = r w_n / s^{2^{n-1}}$ with the integers $w_1 = -1$, $w_{n+1} = r w_n^2 + s^{2^n - 1}$ of
+Definition~\ref{def:wseq} (Lemma~\ref{lem:reduction}): $w_2 = r + s$,
+$w_3 = r^3 + 2r^2 s + r s^2 + s^3$, \dots. Since~$r$ and~$s$ are coprime, $w_n$ is coprime
+to~$r$ and~$s$, which also implies that~$w_{n+1}$ and~$w_n$ are coprime; considered as a polynomial in~$r$
+and~$s$, $w_n$ is a binary form of degree $2^{n-1} - 1$ with integral coefficients, the homogenization of the
+polynomial $c_n/a \in \ZZ[a]$. The numerator of $c_{n+1} + c_n$ is~$r$ times
+\[ v_n = r w_n^2 + w_n s^{2^{n-1}} + s^{2^n - 1} = w_{n+1} + w_n s^{2^{n-1}}, \]
+with $v_1 = r$ and $v_2 = r^3 + 2r^2 s + 2rs^2 + 2s^3$. For $a > \alpha$ the number~$v_n$ is
+positive when $n \ge 2$ (by Lemma~\ref{lem:sumsign} when $a < 0$, obviously when $a \ge 0$); on
+the other hand, $v_n$ is negative when $a \le -2$. Since~$w_{n+1}$
+and~$w_n$ are coprime, $v_n$ is coprime to~$w_n$, and since~$w_{n+1}$ is coprime to~$s$, so
+is~$v_n$; it follows that~$v_n$ is coprime to~$w_{n+1}$ as well (Lemma~\ref{lem:wseq-res}).
+
+\begin{definition}[The admissible region]
+  \label{def:calA}
+  \uses{def:alpha}
+  \leanok
+  We set
+  \[ \cA = \{a \in \QQ \setminus \{-1, 0\} : \text{$a \le -2$ or $a > \alpha$}\}. \]
+  \formalnote{No definition: the theorems take the two cases as hypotheses, $r \le -2s$ or
+  $r^3 + 2r^2 s + 2rs^2 + 2s^3 > 0$, the latter being $a > \alpha$ as the cubic is increasing.
+  The exclusion of $a = -1, 0$ is not needed where~$\phi_0$ is assumed: $\phi_0$ forces
+  $c_1 = -a \ne 0$ and $c_2 = a(a + 1) \ne 0$.}
+\end{definition}
+
+\begin{definition}[The sign~$\eps_a$]
+  \label{def:eps}
+  \uses{def:calA}
+  \leanok
+  For $a \in \cA$ we set $\eps = \eps_a = 1$ if $a > \alpha$ and $\eps_a = -1$ if $a \le -2$.
+  \formalnote{An integer~$\eps$ that comes with the case: $r \le -2s$ and $\eps = -1$, or
+  $r^3 + 2r^2 s + 2rs^2 + 2s^3 > 0$ and $\eps = 1$.}
+\end{definition}
+
+Then the sign of~$v_n$ for $n \ge 2$ is exactly~$\eps_a$ (\lname{mul\_vSeq\_pos}, which also
+covers $a = 0$ and $a = -1$). Note that $v_2 = s^3(a^3 + 2a^2 + 2a + 2)$, which changes sign
+at~$\alpha$, so we lose control over this sign when~$a$ passes~$\alpha$ from above. This is the
+reason why the interval~$(-2, \alpha)$ is excluded from the results.
+
+\begin{lemma}[The~$2$-adic condition]
+  \label{lem:twoadic}
+  \uses{def:calA, def:eps, lem:reduction, lem:wseq-res, lem:signs, lem:sumsign, lem:prime3,
+    lem:reflection}
+  \lean{QuadraticIterates.hasCharPattern_mulSingle_of_prime_dvd_vSeq,
+    QuadraticIterates.hasCharPattern_mulSingle_of_twoAdicClass, QuadraticIterates.TwoAdicClass,
+    QuadraticIterates.exists_prime_dvd_vSeq_of_twoAdicClass, QuadraticIterates.mul_vSeq_pos,
+    QuadraticIterates.vSeq_modEq_add_two_mul, QuadraticIterates.vSeq_modEq_two_mul_add,
+    QuadraticIterates.vSeq_modEq_of_even, QuadraticIterates.twoAdicClass_one_iff,
+    QuadraticIterates.twoAdicClass_neg_one_iff}
+  \leanok
+  Let $a = r/s \in \cA$ and assume that~$a$ has~$\phi_0$.
+  \begin{enumerate}
+    \item Fix $n \ge 2$. Then~$a$ has~$\phi_n$ if~$v_n$ has a prime divisor $p \equiv 3 \bmod 4$
+          (so in particular when the odd part of~$|v_n|$ is $\equiv 3 \bmod 4$).
+    \item In each of the following cases, $a$ has~$\phi_n$ for all $n \ge 2$.
+          \begin{enumerate}
+            \item[(C1)] $s$ is odd and $r + 2s \equiv -\eps_a \bmod 4$ (equivalently,
+                  $r \equiv \eps_a \bmod 4$).
+            \item[(C2)] $s$ is odd and $r + s \equiv -\eps_a \bmod 4$.
+            \item[(C3)] $s$ is even and $r \equiv -\eps_a \bmod 4$.
+          \end{enumerate}
+  \end{enumerate}
+  \formalnote{(1) is \lname{hasCharPattern\_mulSingle\_of\_prime\_dvd\_vSeq}, for every
+  $a \in \QQ$. In (2), the condition is \lname{TwoAdicClass r s ε}; the conclusion is
+  \lname{hasCharPattern\_mulSingle\_of\_twoAdicClass}, through
+  \lname{exists\_prime\_dvd\_vSeq\_of\_twoAdicClass}: for every $n \ge 2$ a prime
+  $p \equiv 3 \bmod 4$ with $p \nmid r$ divides~$v_n$. \lname{twoAdicClass\_one\_iff} and
+  \lname{twoAdicClass\_neg\_one\_iff} list the classes by $(r, s) \bmod 4$. The residue under
+  (C1) is obtained modulo~$8$: as $s^{-1} \equiv s$, Lemma~\ref{lem:reduction} gives
+  $r v_n \equiv \bar c_n + \bar c_{n+1} \bmod 8$ for the parameter $\bar a = rs$, which is~$-1$ by
+  Lemma~\ref{lem:orbit}~(4); so $v_n \equiv -r \equiv r + 2s \bmod 4$.}
+\end{lemma}
+\begin{proof}
+  \leanok
+  \uses{lem:orbit}
+  (1) Let $p \equiv 3 \bmod 4$ be a prime divisor of $v_n = w_{n+1} + w_n s^{2^{n-1}}$. Then
+  $p \nmid w_n, w_{n+1}, s$, and also $p \nmid r$, as
+  $w_m \equiv s^{2^{m-1} - 1} \bmod r$ for $m \ge 2$ gives $v_n \equiv 2 s^{2^n - 1} \bmod r$.
+  So~$c_n$ and~$c_{n+1}$ are~$p$-adic units with $c_{n+1} \equiv -c_n \bmod p$, an easy induction
+  shows $c_m \equiv c_{n+1} \bmod p$ for all $m > n$, and since $\chi_p(-1) = -1$,
+  $\chi_p(c_m) = -\chi_p(c_n)$ for all $m > n$. If $\chi_p(c_n) = -1$ we take $\phi_n = \chi_p$,
+  otherwise $\phi_n = \phi_0 \chi_p$ (Lemma~\ref{lem:reflection}).
+
+  (2) We show that in each case the odd part of~$|v_n|$ is $\equiv 3 \bmod 4$ for all $n \ge 2$;
+  then~$v_n$ has a prime divisor $p \equiv 3 \bmod 4$ (Lemma~\ref{lem:prime3}), and (1) applies.
+
+  \emph{Sign.} $c_n + c_{n+1} = r v_n / s^{2^n}$. For $a > 0$, $r > 0$ and $c_n, c_{n+1} > 0$; for
+  $\alpha < a < 0$, $r < 0$ and $c_n + c_{n+1} < 0$ (Lemma~\ref{lem:sumsign}); for $a \le -2$,
+  $r < 0$ and $c_n, c_{n+1} > 0$ (Lemma~\ref{lem:signs}). So $\eps v_n = |v_n| > 0$.
+
+  \emph{Residues.} If~$s$ is odd, then $s^{2^{m-1}} \equiv 1 \bmod 8$ for $m \ge 2$, so
+  $v_n \equiv w_{n+1} + w_n \bmod 8$, and $w_{m+1} \equiv r w_m^2 + s \bmod 8$
+  (Lemma~\ref{lem:wseq-res}). If moreover~$r$ is odd, then $w_{2m} \equiv r + s$ and
+  $w_{2m+1} \equiv s \bmod 4$ for $m \ge 1$, so $v_n \equiv r + 2s \bmod 4$ and
+  $|v_n| \equiv \eps(r + 2s) \equiv 3 \bmod 4$ under (C1). If~$r$ is even, then
+  $w_m \equiv r + s \bmod 8$ for $m \ge 2$, so $v_n \equiv 2(r + s) \bmod 8$ and
+  $|v_n| \equiv \eps \cdot 2(r + s) \equiv 6 \bmod 8$ under (C2). If~$s$ is even, then
+  $v_m \equiv w_{m+1} \bmod 4$ for $m \ge 2$ and $w_m \equiv r \bmod 4$ for $m \ge 3$, so
+  $|v_n| \equiv 3 \bmod 4$ under (C3). (In (C1) $r$ is necessarily odd, in (C2) even.)
+\end{proof}
+
+For each possible sign~$\eps_a$, the three cases cover six of the twelve possible primitive
+residue classes modulo~$4$ of the pairs $(r, s)$; in this sense Lemma~\ref{lem:twoadic} applies
+to half of the rational numbers in~$\cA$. When $(r, s)$ does not fall into one of these
+classes, the argument breaks down: then $|v_n| \equiv 1 \bmod 4$ or $|v_n| \equiv 2 \bmod 8$,
+which does not force a prime divisor $p \equiv 3 \bmod 4$. Such prime divisors may still exist;
+in some cases~$v_n$ (or a related number) splits into a product whose factors can be shown to
+have suitable prime divisors, but this gives a much thinner set, parameterized by a quadratic
+expression (Chapter~\ref{chap:families}).

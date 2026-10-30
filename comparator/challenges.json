@@ -1,12 +1,16 @@
 {
     "challenge_module": "Challenge",
     "solution_module": "Solution",
-    "theorem_names": ["challenge_section3_main_pos_emod_four_eq_one",
-                      "challenge_section3_main_pos_emod_four_eq_two",
-                      "challenge_section3_main_neg_emod_four_eq_zero",
-                      "challenge_nonempty_mulEquiv_of_eq_neg_mul",
-                      "challenge_li2021_theorem_3_9",
-                      "challenge_li2020_theorem_3_5"],
+    "theorem_names": ["challenge_nonempty_mulEquiv_of_pos_of_emod_four_eq_one",
+                      "challenge_nonempty_mulEquiv_of_pos_of_emod_four_eq_two",
+                      "challenge_nonempty_mulEquiv_of_neg_of_emod_four_eq_zero",
+                      "challenge_nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two",
+                      "challenge_nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one",
+                      "challenge_forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three",
+                      "challenge_nonempty_mulEquiv_of_twoAdicClass_of_criteria",
+                      "challenge_forall_nonempty_mulEquiv_iff_twoIndependent_of_twoAdicClass",
+                      "challenge_nonempty_mulEquiv_of_lt_neg_one_of_criteria",
+                      "challenge_nonempty_mulEquiv_of_lt_neg_one_of_emod"],
     "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
     "enable_nanoda": false
 }

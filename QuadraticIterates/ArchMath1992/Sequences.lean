@@ -5,17 +5,14 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.Polynomial.Expand
+public import QuadraticIterates.EvenPoly
 public import QuadraticIterates.Mathlib.RingTheory.MoebiusFactor
 
-import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.ZMod.Units
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.BigOperators
-import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
-import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
+import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.ZMod
 import QuadraticIterates.Mathlib.RingTheory.PrincipalIdealDomain
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
@@ -23,7 +20,8 @@ import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 /-!
 # The iteration sequence of a polynomial and its Möbius factors
 
-For `g ∈ R[X]` and a sign `ε`, the sequence `γ_1 = ε · g(0)`, `γ_{n+1} = g(γ_n)` and its Möbius
+For `g ∈ R[X]` and a sign `ε`, the sequence `γ_1 = ε · g(0)`, `γ_{n+1} = g(γ_n)`
+(`QuadraticIterates.gammaSeq`, for even polynomials `QuadraticIterates.EvenPoly`) and its Möbius
 factors `β_n = ∏_{d ∣ n} γ_d^{μ(n/d)}`. The results are stated at the generality each one needs:
 over a `CommSemiring` for the recursion, over a `CommRing` for the congruences, over a GCD domain
 for strong divisibility, over a UFD for the valuation shape and the integrality of `β`, and
@@ -31,11 +29,8 @@ finally over `ℤ` for Lemmas 2.1 and 2.2 of the paper.
 
 ## Main statements
 
-* `QuadraticIterates.EvenPoly`: `g` is even, i.e. `g ∈ R[X²]`; over a domain of characteristic `≠ 2`
-  this is `g(-X) = g` (`QuadraticIterates.evenPoly_iff_comp_neg_X`).
-* `QuadraticIterates.gammaSeq`, `QuadraticIterates.betaSeq`: the sequences `γ` and `β`.
-  `QuadraticIterates.map_gammaSeq` says that `γ` commutes with ring homomorphisms, which is how the
-  congruences of this file are computed in `ZMod m`.
+* `QuadraticIterates.betaSeq`: the sequence `β`. The congruences of this file are computed in
+  `ZMod m`, since `γ` commutes with ring homomorphisms (`QuadraticIterates.map_gammaSeq`).
 * `QuadraticIterates.gammaSeq_associated_gcd`: strong divisibility of `γ` for even `g` and `ε² = 1`.
 * `QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq`,
   `QuadraticIterates.gammaSeq_eq_ite_even_of_add_two_eq_zero`,
@@ -77,23 +72,6 @@ section EvenPoly
 
 variable {R : Type*} [CommSemiring R]
 
-/-- `g` is an even polynomial (`g ∈ R[X²]`): `g = Polynomial.expand R 2 h` for some `h`. -/
-def EvenPoly (g : R[X]) : Prop := ∃ h : R[X], g = expand R 2 h
-
-namespace EvenPoly
-
-variable {g : R[X]}
-
-theorem eval_congr (hg : EvenPoly g) {x y : R} (h : x ^ 2 = y ^ 2) : g.eval x = g.eval y := by
-  obtain ⟨h', rfl⟩ := hg
-  rw [expand_eval, expand_eval, h]
-
-theorem map {S : Type*} [CommSemiring S] (hg : EvenPoly g) (φ : R →+* S) : EvenPoly (g.map φ) := by
-  obtain ⟨h, rfl⟩ := hg
-  exact ⟨h.map φ, by rw [map_expand]⟩
-
-end EvenPoly
-
 lemma evenPoly_X_sq_add_C (a : R) : EvenPoly (X ^ 2 + C a) :=
   ⟨X + C a, by rw [map_add, expand_X, expand_C]⟩
 
@@ -102,50 +80,7 @@ lemma evenPoly_C_mul_X_sq_add_C (b c : R) : EvenPoly (C b * X ^ 2 + C c) :=
 
 end EvenPoly
 
-section EvenPoly
-
-variable {R : Type*} [CommRing R] {g : R[X]}
-
-namespace EvenPoly
-
-theorem eval_neg (hg : EvenPoly g) (y : R) : g.eval (-y) = g.eval y := hg.eval_congr (neg_sq y)
-
-/-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
-lemma iterate_eval_neg (hg : EvenPoly g) {k : ℕ} (hk : 1 ≤ k) (y : R) :
-    (g.eval ·)^[k] (-y) = (g.eval ·)^[k] y := by
-  obtain ⟨k', rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
-  rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
-
-lemma dvd_eval_sub (hg : EvenPoly g) {N a b : R} (h : N ∣ a ^ 2 - b ^ 2) :
-    N ∣ g.eval a - g.eval b := by
-  obtain ⟨h', rfl⟩ := hg
-  rw [expand_eval, expand_eval]
-  exact h.trans (sub_dvd_eval_sub (a ^ 2) (b ^ 2) h')
-
-lemma comp_neg_X (hg : EvenPoly g) : g.comp (-X) = g := by
-  obtain ⟨h, rfl⟩ := hg
-  exact expand_two_comp_neg_X h
-
-end EvenPoly
-
-/-- Over a domain of characteristic `≠ 2`, `g` lies in `R[X²]` (`QuadraticIterates.EvenPoly g`) iff
-it is invariant under `X ↦ -X`; the forward implication, `QuadraticIterates.EvenPoly.comp_neg_X`,
-holds over every commutative ring. -/
-lemma evenPoly_iff_comp_neg_X [NoZeroDivisors R] [NeZero (2 : R)] :
-    EvenPoly g ↔ g.comp (-X) = g :=
-  ⟨EvenPoly.comp_neg_X, fun h ↦ ⟨contract 2 g, eq_expand_two_contract_of_comp_neg_X_eq h⟩⟩
-
-end EvenPoly
-
 /-! ### The sequences `γ` and `β` -/
-
-/-- The iteration sequence `γ_n` of `g ∈ R[X]` with sign choice `ε`: `γ_1 = ε · g(0)`, `γ_{n+1} =
-g(γ_n)`; the value at index `0` is `0` (chosen so that over `ℤ`, `γ` is a strong divisibility
-sequence). -/
-def gammaSeq {R : Type*} [CommSemiring R] (g : R[X]) (ε : R) : ℕ → R
-  | 0 => 0
-  | 1 => ε * g.eval 0
-  | n + 2 => g.eval (gammaSeq g ε (n + 1))
 
 /-- The Möbius factors `β_n = ∏_{d ∣ n} γ_d^{μ(n/d)}` of the `γ`-sequence, as elements of the
 coefficient ring: the unique preimage of the fraction-field Möbius product under
@@ -162,31 +97,6 @@ section
 
 variable {R : Type*} [CommSemiring R] (g : R[X])
 
-@[simp] lemma gammaSeq_zero (ε : R) : gammaSeq g ε 0 = 0 := rfl
-
-@[simp] lemma gammaSeq_one (ε : R) : gammaSeq g ε 1 = ε * g.eval 0 := rfl
-
-lemma gammaSeq_succ (ε : R) {n : ℕ} (hn : 1 ≤ n) :
-    gammaSeq g ε (n + 1) = g.eval (gammaSeq g ε n) := by
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hn)
-  rfl
-
-lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
-    gammaSeq g ε (m + n) = (g.eval ·)^[n] (gammaSeq g ε m) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [← add_assoc, gammaSeq_succ g ε (by lia), ih, Function.iterate_succ_apply']
-
-lemma map_gammaSeq {S : Type*} [CommSemiring S] (φ : R →+* S) (ε : R) (n : ℕ) :
-    φ (gammaSeq g ε n) = gammaSeq (g.map φ) (φ ε) n := by
-  induction n with
-  | zero => simp
-  | succ m ih =>
-    rcases Nat.eq_zero_or_pos m with rfl | hm
-    · simp [eval_zero_map]
-    · rw [gammaSeq_succ g ε hm, gammaSeq_succ (g.map φ) (φ ε) hm, ← ih, eval_map_apply]
-
 /-- The recursion `γ_{n+1} = g(γ_n)` for the `ε = 1` sequence, valid at every index (including `0`,
 since `γ_0 = 0` and `γ_1 = g(0)`). -/
 lemma gammaSeq_one_succ (n : ℕ) : gammaSeq g 1 (n + 1) = g.eval (gammaSeq g 1 n) := by
@@ -202,7 +112,7 @@ in the mod-4 step is `4 = 0`, which gives `g(2) = g(0)` by evenness.) -/
 theorem gammaSeq_eq_ite_even (hg : EvenPoly g) (h4 : (4 : R) = 0) (h0 : g.eval 0 = 1)
     (h1 : g.eval 1 = 2) : ∀ n ≥ 1, gammaSeq g 1 n = if Even n then 2 else 1 := by
   have h20 : g.eval 2 = 1 :=
-    (hg.eval_congr (by rw [show (2 : R) ^ 2 = 4 by norm_num, h4, zero_pow two_ne_zero])).trans h0
+    (hg.eval_congr (by norm_num; exact h4)).trans h0
   intro n hn
   induction n, hn using Nat.le_induction with
   | base => simp [h0]
@@ -347,7 +257,7 @@ lemma gammaSeq_period_of_dvd_succ_sub_eval_zero (hg : EvenPoly g) {ε : R} (hε 
     {m : ℕ} {q : R} (hq : q ∣ gammaSeq g ε (m + 1) - g.eval 0) :
     ∀ n ≥ 2, q ∣ gammaSeq g ε (n + m) - gammaSeq g ε n := by
   refine gammaSeq_period one_le_two ?_
-  rw [show 2 + m = m + 1 + 1 by ring, gammaSeq_succ g ε (by lia), show (2 : ℕ) = 1 + 1 from rfl,
+  rw [add_comm, ← one_add_one_eq_two, ← add_assoc, gammaSeq_succ g ε (by lia),
     gammaSeq_succ g ε le_rfl]
   refine hg.dvd_eval_sub ?_
   have h1 : gammaSeq g ε 1 ^ 2 = g.eval 0 ^ 2 := by rw [gammaSeq_one, mul_pow, hε, one_mul]
@@ -366,7 +276,7 @@ theorem gammaSeq_mul_eq_two_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 ≤
   induction l, hl using Nat.le_induction with
   | base => rfl
   | succ l hl ih =>
-    rw [show (l + 1) * k = l * k + k by ring, gammaSeq_add g ε (one_le_mul (by lia) hk), ih, hfix]
+    rw [add_one_mul l k, gammaSeq_add g ε (one_le_mul (by lia) hk), ih, hfix]
 
 /-- If `γ_k + γ_{2k} = 0` and `γ_{2k}` is a unit, then `∏_{t ∈ S} γ_{kt}` is a unit for every set
 `S` of positive indices (over any ring, for even `g`): every factor is `±γ_{2k}`. -/
@@ -375,7 +285,7 @@ theorem isUnit_prod_gammaSeq_mul (hg : EvenPoly g) {ε : R} {k : ℕ} (hk : 1 �
     {S : Finset ℕ} (hS : ∀ t ∈ S, 1 ≤ t) : IsUnit (∏ t ∈ S, gammaSeq g ε (k * t)) := by
   refine IsUnit.prod_iff.mpr fun t ht ↦ ?_
   rcases eq_or_ne t 1 with rfl | h1
-  · rw [mul_one, show gammaSeq g ε k = -gammaSeq g ε (2 * k) by linear_combination hzero]
+  · rw [mul_one, eq_neg_of_add_eq_zero_left hzero]
     exact hu.neg
   · rw [mul_comm, gammaSeq_mul_eq_two_mul hg hk hzero t (by lia [hS t ht])]
     exact hu
@@ -400,20 +310,6 @@ theorem prod_gammaSeq_mul_eq_neg_prod (hg : EvenPoly g) {ε : R} {k : ℕ} (hk :
   have := Nat.pos_of_mem_divisors (hunion ▸ ht)
   rw [mul_comm]
   exact gammaSeq_mul_eq_two_mul hg hk hzero t (by lia)
-
-/-- If `γ_{n₀+2} = γ_{n₀}` (`n₀ ≥ 1`), then the sequence is `2`-periodic from index `n₀` on:
-`γ_n = γ_{n₀}` for `n ≡ n₀ mod 2` and `γ_n = γ_{n₀+1}` otherwise, for all `n ≥ n₀`. -/
-theorem gammaSeq_eq_ite_even_of_add_two_eq (g : R[X]) {ε : R} {n₀ : ℕ} (hn₀ : 1 ≤ n₀)
-    (h : gammaSeq g ε (n₀ + 2) = gammaSeq g ε n₀) :
-    ∀ n ≥ n₀,
-      gammaSeq g ε n = if Even (n + n₀) then gammaSeq g ε n₀ else gammaSeq g ε (n₀ + 1) := by
-  have h1 : g.eval (gammaSeq g ε n₀) = gammaSeq g ε (n₀ + 1) := (gammaSeq_succ g ε hn₀).symm
-  have h2 : g.eval (gammaSeq g ε (n₀ + 1)) = gammaSeq g ε n₀ := by
-    rw [← h, gammaSeq_succ g ε (n := n₀ + 1) (by lia)]
-  intro n hn
-  induction n, hn using Nat.le_induction with
-  | base => grind [Nat.even_add_one]
-  | succ n hn ih => grind [gammaSeq_succ g ε (by lia : 1 ≤ n), Nat.even_add_one]
 
 /-- **2-periodicity.** If `γ_k + γ_{k+2} = 0` (`k ≥ 1`), then the sequence is `2`-periodic from
 index `k + 1` on: `γ_r = -γ_k` for `r ≡ k mod 2` and `γ_r = γ_{k+1}` otherwise, for all
@@ -444,7 +340,7 @@ theorem gammaSeq_eq_ite_even_of_eval_one_eq_zero (hg : EvenPoly g) {ε : R} (h0 
     rw [gammaSeq_succ g ε (by lia), h3, h2]
     exact (hg.eval_congr (by rw [h0, one_pow])).trans hg1
   intro n hn
-  rw [gammaSeq_eq_ite_even_of_add_two_eq g one_le_two h4 n hn, h2, h3]
+  rw [gammaSeq_eq_ite_even_of_add_two_eq one_le_two h4 n hn, h2, h3]
   simp [Nat.even_add]
 
 /-- For odd `k` with `γ_k + γ_{k+2} = 0`, the value `γ_{kt}` for `t ≥ 2` depends only on the parity
@@ -594,13 +490,7 @@ section
 open ArithmeticFunction UniqueFactorizationMonoid
 open scoped Finset
 
-variable (g : ℤ[X])
-
-lemma intCast_gammaSeq (ε : ℤ) (S : Type*) [CommRing S] (i : ℕ) : ((gammaSeq g ε i : ℤ) : S)
-    = gammaSeq (g.map (Int.castRingHom S)) (ε : S) i :=
-  map_gammaSeq g (Int.castRingHom S) ε i
-
-variable {g}
+variable {g : ℤ[X]}
 
 /-- **Strong divisibility** over `ℤ`, for even `g` and `ε = ±1`:
 `gcd (γ_m) (γ_n) = |γ_{gcd m n}|`. -/

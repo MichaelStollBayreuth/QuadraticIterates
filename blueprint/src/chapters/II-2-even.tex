@@ -1,4 +1,5 @@
 \chapter{Iteration sequences associated to even integer polynomials}
+\label{chap:paper-even}
 
 % The counter is set so that the two lemmas below carry the numbers 2.1, 2.2 of the paper.
 \setcounter{theorem}{-1}
@@ -7,39 +8,30 @@ In this section, let $g \in \ZZ[X^2]$ be an even polynomial with integer coeffic
 $\gamma_1 := \pm g(0)$, and for $n \ge 1$, $\gamma_{n+1} := g(\gamma_n)$. Assume that all
 $\gamma_n \ne 0$ and set $\beta_n := \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$ for $n \ge 1$.
 
-\begin{definition}[The sequences $\gamma$ and $\beta$]
-  \label{def:gammaseq}
-  \lean{QuadraticIterates.EvenPoly, QuadraticIterates.evenPoly_iff_comp_neg_X,
-    QuadraticIterates.EvenPoly.eval_neg, QuadraticIterates.EvenPoly.eval_congr,
-    QuadraticIterates.EvenPoly.dvd_eval_sub, QuadraticIterates.EvenPoly.map,
-    QuadraticIterates.EvenPoly.iterate_eval_neg,
-    QuadraticIterates.gammaSeq, QuadraticIterates.gammaSeq_zero,
-    QuadraticIterates.gammaSeq_one, QuadraticIterates.gammaSeq_succ,
-    QuadraticIterates.gammaSeq_add, QuadraticIterates.map_gammaSeq,
-    QuadraticIterates.intCast_gammaSeq, QuadraticIterates.betaSeq,
-    QuadraticIterates.betaSeq_eq_moebiusFactorR, QuadraticIterates.intCast_betaSeq}
+\begin{definition}[The sequence~$\beta$]
+  \label{def:betaseq}
+  \uses{def:gammaseq, lem:moebiusfactor}
+  \lean{QuadraticIterates.betaSeq, QuadraticIterates.betaSeq_eq_moebiusFactorR,
+    QuadraticIterates.intCast_betaSeq}
   \leanok
-  $\gamma_1 = \varepsilon\,g(0)$ with $\varepsilon = \pm 1$, $\gamma_{n+1} = g(\gamma_n)$ for
-  $n \ge 1$, and $\beta_n = \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$.
-  \formalnote{Being even is defined as membership in $R[X^2]$, i.e.\ $g = h(X^2)$ for some $h$;
-  over a domain of characteristic $\ne 2$ this is equivalent to $g(-X) = g$
-  (\lname{evenPoly\_iff\_comp\_neg\_X}), and both forms are used. As with $c$, the sequence
-  $\gamma$ is total with junk value $\gamma_0 = 0$, and $\beta_n$ is an element of the
-  coefficient ring, defined as the preimage of the Möbius product in the fraction field. The
-  sequences are set up over an arbitrary commutative semiring, and each result below is stated
-  over the weakest structure that carries it: a commutative ring for the congruences, a GCD
-  domain for strong divisibility, a UFD for the valuation shape, and $\ZZ$ for Lemmas~2.1
-  and~2.2. Since the whole construction commutes with ring homomorphisms
-  (\lname{map\_gammaSeq}), congruences mod $m$ are proved by computing in $\ZZ/m\ZZ$, and $c$ is
-  literally the case $g = X^2 + a$, $\varepsilon = -1$.}
+  $\beta_n = \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$, where $\gamma_1 = \varepsilon\,g(0)$ and
+  $\gamma_{n+1} = g(\gamma_n)$ for $n \ge 1$ (Definition~\ref{def:gammaseq}).
+  \formalnote{As~$b_n$ (Definition~\ref{def:bseq}), $\beta_n$ is an element of the coefficient
+  ring, the preimage of the Möbius product in the fraction field. The sequences are set up over an
+  arbitrary commutative semiring, and each result below is stated over the weakest structure that
+  carries it: a commutative ring for the congruences, a GCD domain for strong divisibility, a UFD
+  for the valuation shape, and~$\ZZ$ for Lemmas~\ref{lem:2.1} and~\ref{lem:2.2}. Since the whole
+  construction commutes with ring homomorphisms (\lname{map\_gammaSeq},
+  \lname{intCast\_gammaSeq}), congruences mod~$m$ are proved by computing in~$\ZZ/m\ZZ$; the
+  computations use that an even polynomial and its iterates are even functions
+  (\lname{EvenPoly.iterate\_eval\_neg}) and that $g(x) - g(y)$ is divisible by $x^2 - y^2$
+  (\lname{EvenPoly.dvd\_eval\_sub}).}
 \end{definition}
 
 \begin{lemma}
   \label{lem:2.1}
-  \uses{def:gammaseq}
-  \lean{QuadraticIterates.not_isSquare_betaSeq, QuadraticIterates.gammaSeq_mul_eq_two_mul,
-    QuadraticIterates.prod_gammaSeq_mul_eq_neg_prod,
-    QuadraticIterates.isUnit_prod_gammaSeq_mul, QuadraticIterates.gammaSeq_gcd,
+  \uses{def:betaseq}
+  \lean{QuadraticIterates.not_isSquare_betaSeq, QuadraticIterates.gammaSeq_gcd,
     QuadraticIterates.gammaSeq_associated_gcd, QuadraticIterates.gammaSeq_associated_one,
     QuadraticIterates.gammaSeq_eq_gammaSeq_one}
   \leanok
@@ -49,7 +41,7 @@ $\gamma_n \ne 0$ and set $\beta_n := \prod_{d \dvd n} \gamma_d^{\mu(n/d)}$ for $
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{def:bseq, lem:moebiussign, lem:strongdvd, lem:zmodsquare}
+  \uses{lem:li-crit, thm:valshape, lem:moebiussign, lem:strongdvd, lem:zmodsquare}
   Let $n > 1$ have prime decomposition $n = p_1^{e_1} \cdots p_r^{e_r}$, where $r \ge 1$, the
   $p_j$ are distinct primes, and all $e_j \ge 1$. Set $n' := p_1 \cdots p_r > 1$ and
   $k := n/n'$. Put $\alpha := \gamma_{2k}$. Let $m$ be such that
@@ -81,14 +73,12 @@ We will now give a handier criterion for the assumptions of Lemma~\ref{lem:2.1} 
 
 \begin{lemma}
   \label{lem:2.2}
-  \uses{def:gammaseq, lem:2.1}
+  \uses{def:betaseq, lem:2.1}
   \lean{QuadraticIterates.not_isSquare_betaSeq_of_pos,
     QuadraticIterates.not_isSquare_betaSeq_of_pos_of_not_isSquare_neg_one,
     QuadraticIterates.not_isSquare_betaSeq_of_pos_of_eval_one_emod_four_eq_two,
     QuadraticIterates.not_isSquare_betaSeq_of_pos_of_eval_one_emod_four_eq_three,
     QuadraticIterates.gammaSeq_one_eq_one_of_pos,
-    QuadraticIterates.gammaSeq_add_succ_dvd, QuadraticIterates.isCoprime_gammaSeq_add_succ,
-    QuadraticIterates.gammaSeq_add_succ_dvd_sub,
     QuadraticIterates.gammaSeq_add_succ_zmod_four_eq_three,
     QuadraticIterates.gammaSeq_add_succ_zmod_eight_eq_six,
     QuadraticIterates.gammaSeq_eq_ite_even, QuadraticIterates.gammaSeq_add_succ_eq_three,
@@ -104,7 +94,7 @@ We will now give a handier criterion for the assumptions of Lemma~\ref{lem:2.1} 
 \end{lemma}
 \begin{proof}
   \leanok
-  \uses{lem:zmodsquare}
+  \uses{lem:li-succ, lem:zmodsquare}
   Notice first that since $\gamma_n + \gamma_{n+1} \dvd \gamma_n + \gamma_{2n}$ (same argument as
   in the proof of Lemma~\ref{lem:2.1}, applied $(n-1)$ times), and $\gamma_n$ and
   $\gamma_{n+1}$ are coprime (since $\gamma_{n+1} = g(\gamma_n) \equiv g(0) = \pm 1
@@ -128,4 +118,5 @@ We will now give a handier criterion for the assumptions of Lemma~\ref{lem:2.1} 
   separate observation that $4 \dvd \gamma_1 + \gamma_2$ and that $-1$ is not a square mod $4$.}
 \end{proof}
 
-In the next section, we will apply this result to the Galois groups of Chapter~1.
+In the next section, we will apply this result to the Galois groups of
+Chapter~\ref{chap:paper-criterion}.

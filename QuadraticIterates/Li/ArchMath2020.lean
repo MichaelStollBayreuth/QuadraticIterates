@@ -7,7 +7,6 @@ module
 
 public import QuadraticIterates.Li.Residues
 
-import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Int.Order.Units
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
@@ -51,9 +50,8 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_neg_of_emod_four_eq_three (ha
   have h4 := gammaSeq_normPoly_add_succ_emod_four_eq_three ha ha4 hk₀2
   obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le
     (a := γ[a] (n / radical n) + γ[a] (n / radical n + 1)) (by
-      have := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
-      have := gammaSeq_normPoly_pos ha' (n / radical n + 1) (by lia)
-      lia)
+      lia [gammaSeq_normPoly_pos ha' (n / radical n) (by lia),
+        gammaSeq_normPoly_pos ha' (n / radical n + 1) (by lia)])
   exact not_isSquare_abs_bSeq_of_dvd_add_succ ha' (hk₀2.trans (Nat.div_le_self n _))
     (Nat.div_mul_cancel radical_dvd_self).symm (dvd_of_eq hm.symm)
     (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by lia))
@@ -87,7 +85,8 @@ theorem li2020_theorem_3_5 (ha : a < 0) (ha4 : a % 4 = 3) (hsq : ¬IsSquare (-a)
   have ha' : ¬IsSquare (-a : ℚ) := mod_cast hsq
   refine ⟨fun h hsq2 ↦ ?_, fun h n _ ↦ section1_of_not_isSquare_abs_bSeq ha' n fun k hk _ ↦ ?_⟩
   · have hind := ((section1_tfae ha' 2).out 1 3).mp (h 2 one_le_two)
-    exact hind.not_isSquare 1 (by simpa [bSeq_two ha'] using Rat.isSquare_intCast_iff.mpr hsq2)
+    refine hind.not_isSquare 1 ?_
+    simpa [← intCast_bSeq ha' one_le_two, bSeq_two ha'] using Rat.isSquare_intCast_iff.mpr hsq2
   · rcases eq_or_ne k 2 with rfl | hk2
     · have : a ≠ -1 := fun h ↦ hsq ⟨1, by rw [h]; norm_num⟩
       rwa [bSeq_two ha', abs_of_pos (by lia)]

@@ -6,9 +6,10 @@ Authors: Michael Stoll
 module
 
 public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.ArchMath1992.Sequences
+public import QuadraticIterates.Sequence.MoebiusQuotient
 
-import QuadraticIterates.ArchMath1992.DegreeCriterion
-import QuadraticIterates.ArchMath1992.Irreducibility
+import QuadraticIterates.Galois.Criterion
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Data.Int.Order.Units
 import QuadraticIterates.Mathlib.LinearAlgebra.Dimension.OrzechProperty
@@ -56,21 +57,28 @@ variable {a : ℤ}
 lemma factorization_cSeq_shape (ha : ¬IsSquare (-a : ℚ)) :
     ∀ q : ℤ, Prime q → normalize q = q →
       ∃ m ≥ 1, ∃ E : ℕ, ∀ k ≥ 1, factorization (cSeq a k) q = if m ∣ k then E else 0 :=
-  fun _ ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq (cSeq_ne_zero ha)
+  fun _ ↦ factorization_gammaSeq_shape (evenPoly_X_sq_add_C a) neg_one_sq
+    (cSeq_ne_zero_of_not_isSquare_neg ha)
+
+private lemma intCast_bSeq_eq_moebiusFactorK (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
+    ((bSeq a n : ℤ) : ℚ) = moebiusFactorK (cSeq a) n :=
+  algebraMap_moebiusFactorR (cSeq_ne_zero_of_not_isSquare_neg ha) (cSeq_associated_gcd a) hn
 
 /-- Lemma 1.1 b): the Möbius product `∏_{ed = n} c_d^{μ(e)}` is the integer `b_n`, since `c` is a
 strong divisibility sequence. -/
 lemma intCast_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
-    (bSeq a n : ℚ) = moebiusFactorK (cSeq a) n :=
-  algebraMap_moebiusFactorR (cSeq_ne_zero ha) (cSeq_associated_gcd a) hn
+    ((bSeq a n : ℤ) : ℚ) = bSeq (a : ℚ) n := by
+  rw [intCast_bSeq_eq_moebiusFactorK ha hn, moebiusFactorK_eq_prod, bSeq_eq_prod]
+  simp [intCast_cSeq]
 
-lemma bSeq_ne_zero (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) : bSeq a n ≠ 0 :=
-  moebiusFactorR_ne_zero (cSeq_ne_zero ha) (cSeq_associated_gcd a) hn
+lemma bSeq_ne_zero_of_not_isSquare_neg (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
+    bSeq a n ≠ 0 :=
+  moebiusFactorR_ne_zero (cSeq_ne_zero_of_not_isSquare_neg ha) (cSeq_associated_gcd a) hn
 
 /-- Möbius inversion for the integer factors (Lemma 1.1 b): `c_n = ∏_{d ∣ n} b_d`. -/
 lemma cSeq_eq_prod_bSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 1 ≤ n) :
     cSeq a n = ∏ d ∈ n.divisors, bSeq a d :=
-  prod_moebiusFactorR (cSeq_ne_zero ha) (cSeq_associated_gcd a) hn
+  prod_moebiusFactorR (cSeq_ne_zero_of_not_isSquare_neg ha) (cSeq_associated_gcd a) hn
 
 /-- `b_2 = -a - 1`, from `c_2 = b_1 b_2` with `c_2 = a² + a` and `b_1 = -a`. -/
 lemma bSeq_two (ha : ¬IsSquare (-a : ℚ)) : bSeq a 2 = -a - 1 := by
@@ -83,45 +91,31 @@ lemma bSeq_two (ha : ¬IsSquare (-a : ℚ)) : bSeq a 2 = -a - 1 := by
 each prime is supported on a single index, so no prime divides two distinct factors. -/
 lemma isCoprime_bSeq (ha : ¬IsSquare (-a : ℚ)) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n)
     (hmn : m ≠ n) : IsCoprime (bSeq a m) (bSeq a n) :=
-  (moebiusFactorR_isRelPrime (cSeq_ne_zero ha) (cSeq_associated_gcd a)
+  (moebiusFactorR_isRelPrime (cSeq_ne_zero_of_not_isSquare_neg ha) (cSeq_associated_gcd a)
     (factorization_cSeq_shape ha) hm hn hmn).isCoprime
 
 /-! ### Theorem (Section 1) -/
 
-/-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. By induction on `n`:
-`Ω_{n+1} ≅ [C₂]^{n+1}` iff `Ω_n ≅ [C₂]ⁿ` and `[K_{n+1} : K_n] = 2^{2^n}`
-(`QuadraticIterates.nonempty_mulEquiv_succ_iff`, Lemma 1.4), the degree condition says that
-`c_{n+1}` is not a square in `K_n` (`QuadraticIterates.relfinrank_succ_eq_two_pow_iff`, Lemma 1.6),
-and given `Ω_n ≅ [C₂]ⁿ` this means that `c_1, …, c_{n+1}` are 2-independent
-(`QuadraticIterates.not_isSquare_algebraMap_iff_twoIndependent_snoc`, Lemma 1.5). -/
+/-- Section 1, `(a) ↔ (b)`: `Ω_n ≅ [C₂]ⁿ` iff `c_1, …, c_n` are 2-independent. Every `f_k` is
+irreducible (Corollary 1.3), and then the criterion follows by induction on `n` from Lemmas 1.4–1.6
+(`QuadraticIterates.nonempty_mulEquiv_iff_twoIndependent_of_irreducible`). -/
 theorem section1_a_iff_b (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
     Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
-      TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) := by
-  induction n with
-  | zero =>
-    exact ⟨fun _ S ⟨i, _⟩ ↦ i.elim0, fun _ ↦ (nonempty_mulEquiv_iff_finrank_eq a 0).mpr (by simp)⟩
-  | succ n ih =>
-    rw [← Fin.snoc_init_self (fun i : Fin (n + 1) ↦ (cSeq a ((i : ℕ) + 1) : ℚ)),
-      nonempty_mulEquiv_succ_iff a n]
-    refine ⟨fun ⟨hiso, hrel⟩ ↦ ?_, fun h ↦ ?_⟩
-    · exact (not_isSquare_algebraMap_iff_twoIndependent_snoc hiso (ih.mp hiso)).mp
-        ((relfinrank_succ_eq_two_pow_iff ha n).mp hrel)
-    · have hiso : Nonempty (GaloisGroup a n ≃* WreathPower n) := ih.mpr h.of_snoc
-      exact ⟨hiso, (relfinrank_succ_eq_two_pow_iff ha n).mpr
-        ((not_isSquare_algebraMap_iff_twoIndependent_snoc hiso h.of_snoc).mpr h)⟩
+      TwoIndependent (fun i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)) :=
+  nonempty_mulEquiv_iff_twoIndependent_of_irreducible fun k _ ↦ irreducible_iteratedPoly ha k
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `c_m` is the sum of the classes of the `b_d` over `d ∣ m`. -/
 lemma sqClass_cSeq_eq_sum_divisors (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
     sqClass (cSeq a m : ℚ) = ∑ d ∈ m.divisors, sqClass (bSeq a d : ℚ) := by
-  rw [cSeq_eq_prod_bSeq ha hm, Int.cast_prod]
-  exact sqClass_prod fun d hd ↦ mod_cast bSeq_ne_zero ha (Nat.pos_of_mem_divisors hd)
+  rw [← prod_divisors_bSeq (cSeq_intCast_ne_zero_of_not_isSquare_neg ha) hm]
+  exact sqClass_prod fun d _ ↦ bSeq_ne_zero (cSeq_intCast_ne_zero_of_not_isSquare_neg ha) d
 
 /-- In `ℚˣ/(ℚˣ)²`, the class of `b_m` is the Möbius-weighted sum of the classes of the `c_d`. -/
-lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) {m : ℕ} (hm : 1 ≤ m) :
+lemma sqClass_bSeq_eq_sum_divisorsAntidiagonal (ha : ¬IsSquare (-a : ℚ)) (m : ℕ) :
     sqClass (bSeq a m : ℚ) = ∑ x ∈ m.divisorsAntidiagonal, (μ x.1) • sqClass (cSeq a x.2 : ℚ) := by
-  simp only [intCast_bSeq ha hm, moebiusFactorK_eq_prod, eq_intCast]
+  rw [bSeq_eq_prod]
   exact sqClass_prod_zpow _ fun x hx ↦
-    mod_cast ne_zero_of_mem_divisorsAntidiagonal (cSeq_ne_zero ha) hx
+    ne_zero_of_mem_divisorsAntidiagonal (cSeq_intCast_ne_zero_of_not_isSquare_neg ha) hx
 
 /-- `F d` is a value of `fun i : Fin n ↦ F (i + 1)` whenever `d ∣ i + 1` for some `i : Fin n`. -/
 private lemma mem_range_of_dvd {α : Type*} (F : ℕ → α) {n : ℕ} {i : Fin n} {d : ℕ}
@@ -141,7 +135,7 @@ theorem section1_b_iff_c (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
   · rw [SetLike.mem_coe, sqClass_cSeq_eq_sum_divisors ha i.1.succ_pos]
     exact Submodule.sum_mem _ fun d hd ↦ Submodule.subset_span
       (mem_range_of_dvd (fun k ↦ sqClass (bSeq a k : ℚ)) (Nat.dvd_of_mem_divisors hd))
-  · rw [SetLike.mem_coe, sqClass_bSeq_eq_sum_divisorsAntidiagonal ha i.1.succ_pos]
+  · rw [SetLike.mem_coe, sqClass_bSeq_eq_sum_divisorsAntidiagonal ha]
     exact Submodule.sum_mem _ fun x hx ↦ zsmul_mem (Submodule.subset_span
       (mem_range_of_dvd (fun k ↦ sqClass (cSeq a k : ℚ))
         (Nat.dvd_of_mem_divisors (Nat.snd_mem_divisors_of_mem_antidiagonal hx)))) _
@@ -164,10 +158,12 @@ theorem section1_of_not_isSquare_abs_bSeq (ha : ¬IsSquare (-a : ℚ)) (n : ℕ)
     Nonempty (GaloisGroup a n ≃* WreathPower n) := by
   have hzero (i : Fin n) (hi : IsSquare (-bSeq a ((i : ℕ) + 1))) : (i : ℕ) = 0 :=
     Nat.eq_zero_of_not_pos fun hi0 ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inr hi))
-  refine ((section1_tfae ha n).out 3 1).mp ((twoIndependent_intCast_iff _).mpr
-    ((twoIndependent_iff_of_pairwise_isCoprime fun i j hij ↦
-      isCoprime_bSeq ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)).mpr
-        ⟨fun i ↦ ?_, fun i hi j hj ↦ Fin.ext ((hzero i hi).trans (hzero j hj).symm)⟩))
+  have hcop : Pairwise fun i j : Fin n ↦ IsCoprime (bSeq a ((i : ℕ) + 1)) (bSeq a ((j : ℕ) + 1)) :=
+    fun i j hij ↦ isCoprime_bSeq ha i.1.succ_pos j.1.succ_pos (by simpa [Fin.ext_iff] using hij)
+  refine ((section1_tfae ha n).out 3 1).mp ?_
+  simp only [← intCast_bSeq ha (Nat.le_add_left 1 _)]
+  refine (twoIndependent_intCast_iff _).mpr ((twoIndependent_iff_of_pairwise_isCoprime hcop).mpr
+    ⟨fun i ↦ ?_, fun i hi j hj ↦ Fin.ext ((hzero i hi).trans (hzero j hj).symm)⟩)
   rcases eq_or_ne (i : ℕ) 0 with hi | hi
   · rwa [hi, zero_add, bSeq_one, ← Rat.isSquare_intCast_iff, Int.cast_neg]
   · exact fun hsq ↦ h _ (by lia) i.2 (isSquare_abs_iff.mpr (.inl hsq))
@@ -218,7 +214,7 @@ theorem abs_cSeq_eq_gammaSeq_mul_abs (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
 /-- The `γ`-sequence of `normPoly a` is positive, as `c_n ≠ 0` for `n ≥ 1`. -/
 lemma gammaSeq_normPoly_pos (ha : ¬IsSquare (-a : ℚ)) : ∀ n ≥ 1, 0 < γ[a] n := fun n hn ↦
   (mul_pos_iff_of_pos_right (abs_pos.mpr (ne_zero_of_not_isSquare_neg ha))).mp
-    (abs_cSeq_eq_gammaSeq_mul_abs ha n ▸ abs_pos.mpr (cSeq_ne_zero ha n hn))
+    (abs_cSeq_eq_gammaSeq_mul_abs ha n ▸ abs_pos.mpr (cSeq_ne_zero_of_not_isSquare_neg ha n hn))
 
 /-- `|b_n| = β_n` for `n ≥ 2`, `β` the `β`-sequence of the rescaled polynomial `normPoly a`: both
 are Möbius products, of `|c_d| = γ_d · |a|` and of `γ_d`, and the factors `|a|` cancel because the
@@ -226,7 +222,8 @@ exponents `μ(n/d)` sum to zero. -/
 theorem abs_bSeq_eq_betaSeq (ha : ¬IsSquare (-a : ℚ)) {n : ℕ} (hn : 2 ≤ n) :
     |bSeq a n| = betaSeq (normPoly a) a.sign n := by
   have ha0 := ne_zero_of_not_isSquare_neg ha
-  rw [← Int.cast_inj (α := ℚ), Int.cast_abs, intCast_bSeq ha (by lia), abs_moebiusFactorK,
+  rw [← Int.cast_inj (α := ℚ), Int.cast_abs, intCast_bSeq_eq_moebiusFactorK ha (by lia),
+    abs_moebiusFactorK,
     intCast_betaSeq (evenPoly_normPoly a) (Int.sign_sq_of_ne_zero ha0)
       (fun d hd ↦ (gammaSeq_normPoly_pos ha d hd).ne') (by lia),
     ← moebiusFactorK_mul_const γ[a] (by simpa using ha0 : algebraMap ℤ ℚ |a| ≠ 0) hn]

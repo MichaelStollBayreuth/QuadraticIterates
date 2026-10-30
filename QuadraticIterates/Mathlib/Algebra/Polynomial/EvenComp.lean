@@ -5,7 +5,6 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.GCDMonoid.Basic
 public import Mathlib.Algebra.Polynomial.Expand
 
 import Mathlib.Tactic.LinearCombination
@@ -20,6 +19,14 @@ in `X² + c`. Consequently, for an irreducible `F` over a field of characteristi
 divisor of `F ∘ (X² + c)` is trivial. A monic even polynomial over a field that is reducible but
 has no nontrivial even divisor is, up to sign, of the form `g · g(-X)`.
 
+## Main statements
+
+* `Polynomial.exists_eq_comp_X_sq_add_C_of_comp_neg_X_eq`: an even polynomial is `e ∘ (X² + c)`.
+* `Irreducible.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq`,
+  `Irreducible.isUnit_or_associated_of_dvd_comp_of_associated_comp_neg_X`: for irreducible `F`,
+  the divisors of `F ∘ (X² + c)` that are even (up to associates, if `F(c) ≠ 0`) are trivial.
+* `Polynomial.Monic.exists_mul_comp_neg_X_eq_of_not_irreducible`: the factorization `± g · g(-X)`.
+
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
 -/
@@ -29,7 +36,8 @@ polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib
 namespace Polynomial
 
 theorem expand_contract_of_forall_coeff_eq_zero {R : Type*} [CommSemiring R] {p : ℕ} (hp : p ≠ 0)
-    {f : R[X]} (hf : ∀ n, ¬ p ∣ n → f.coeff n = 0) : expand R p (contract p f) = f := by
+    {f : R[X]} (hf : ∀ n, ¬ p ∣ n → f.coeff n = 0) :
+    expand R p (contract p f) = f := by
   ext n
   rw [coeff_expand hp.bot_lt, coeff_contract hp]
   split_ifs with h
@@ -38,28 +46,26 @@ theorem expand_contract_of_forall_coeff_eq_zero {R : Type*} [CommSemiring R] {p 
 
 variable {R : Type*} [CommRing R]
 
-@[simp] lemma X_sq_add_C_comp_neg_X (c : R) : (X ^ 2 + C c).comp (-X) = X ^ 2 + C c := by
-  simp only [add_comp, pow_comp, X_comp, C_comp]
-  ring
+lemma X_sq_add_C_comp_neg_X (c : R) : (X ^ 2 + C c).comp (-X) = X ^ 2 + C c := by simp
 
 @[simp] theorem natDegree_comp_neg_X (p : R[X]) : (p.comp (-X)).natDegree = p.natDegree :=
   natDegree_eq_of_degree_eq degree_comp_neg_X
 
 theorem comp_neg_X_eq_or_eq_neg_of_associated [IsDomain R] {p : R[X]} (hp : p ≠ 0)
-    (h : Associated (p.comp (-X)) p) : p.comp (-X) = p ∨ p.comp (-X) = -p := by
+    (h : Associated (p.comp (-X)) p) :
+    p.comp (-X) = p ∨ p.comp (-X) = -p := by
   obtain ⟨u, hu⟩ := h
   obtain ⟨c, -, hcu⟩ := isUnit_iff.mp u.isUnit
   rw [← hcu] at hu
   have h2 : p * C c = p.comp (-X) := by
-    simpa only [mul_comp, comp_neg_X_comp_neg_X, C_comp] using congrArg (·.comp (-X)) hu
-  have hcsq : c * c = 1 := by
-    have : p * C (c * c) = p * 1 := by rw [mul_one, C_mul, ← mul_assoc, h2, hu]
-    exact C_inj.mp ((mul_left_cancel₀ hp this).trans C_1.symm)
+    simpa only [mul_comp, comp_neg_X_comp_neg_X, C_comp] using congr(($hu).comp (-X))
+  have hcsq : c * c = 1 :=
+    C_inj.mp (mul_left_cancel₀ hp (by rw [C_mul, ← mul_assoc, h2, hu, C_1, mul_one]))
   rcases mul_self_eq_one_iff.mp hcsq with rfl | rfl
   · exact .inl (by simpa using hu)
   · exact .inr (neg_eq_iff_eq_neg.mp (by simpa using hu))
 
-@[simp] theorem expand_two_comp_neg_X (h : R[X]) : (expand R 2 h).comp (-X) = expand R 2 h := by
+@[simp] theorem expand_two_comp_neg_X (f : R[X]) : (expand R 2 f).comp (-X) = expand R 2 f := by
   simp [expand_eq_comp_X_pow, comp_assoc]
 
 section NeZero
@@ -69,7 +75,8 @@ variable [NoZeroDivisors R] [NeZero (2 : R)] {b : R[X]}
 /-- Over a domain of characteristic `≠ 2`, the odd coefficients of a polynomial fixed by
 `X ↦ -X` vanish. -/
 theorem coeff_eq_zero_of_comp_neg_X_eq_of_not_two_dvd (hb : b.comp (-X) = b) {n : ℕ}
-    (hn : ¬ 2 ∣ n) : b.coeff n = 0 := by
+    (hn : ¬ 2 ∣ n) :
+    b.coeff n = 0 := by
   have hcoeff : (b.comp (-X)).coeff n = b.coeff n * (-1) ^ n := by
     simpa using comp_C_mul_X_coeff (p := b) (r := -1) (n := n)
   rw [hb, Odd.neg_one_pow (Nat.odd_iff.mpr (by lia))] at hcoeff
@@ -97,7 +104,8 @@ section Field
 variable {K : Type*} [Field K]
 
 private theorem Monic.eq_C_neg_one_pow_mul_of_associated {g p : K[X]} (hg : g.Monic) (hp : p.Monic)
-    (h : Associated p (g * g.comp (-X))) : p = C ((-1) ^ g.natDegree) * (g * g.comp (-X)) := by
+    (h : Associated p (g * g.comp (-X))) :
+    p = C ((-1) ^ g.natDegree) * (g * g.comp (-X)) := by
   refine eq_of_monic_of_associated hp ?_ (h.trans (associated_unit_mul_left _ _
     (isUnit_C.mpr (isUnit_one.neg.pow _))).symm)
   simpa [mul_left_comm] using hg.mul hg.neg_one_pow_natDegree_mul_comp_neg_X
@@ -166,7 +174,7 @@ theorem _root_.Irreducible.isUnit_or_associated_of_dvd_comp_of_associated_comp_n
     (ne_zero_of_dvd_ne_zero (fun h ↦ h0 (by simp [h])) hd) hassoc with heven | hodd
   · exact hF.isUnit_or_associated_of_dvd_comp_of_comp_neg_X_eq hd heven
   · have hd0 : d.eval 0 = 0 := by
-      have h1 : d.eval 0 = -d.eval 0 := by simpa using congrArg (eval 0) hodd
+      have h1 : d.eval 0 = -d.eval 0 := by simpa using congr(eval 0 $hodd)
       grind [two_ne_zero]
     have h2 := eval_dvd (x := (0 : K)) hd
     rw [hd0, zero_dvd_iff] at h2

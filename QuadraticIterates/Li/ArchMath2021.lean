@@ -7,9 +7,7 @@ module
 
 public import QuadraticIterates.Li.Residues
 
-import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Algebra.Squares
-import QuadraticIterates.Mathlib.Data.Int.Order.Units
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
 /-!
@@ -72,7 +70,7 @@ theorem not_isSquare_abs_bSeq_of_squarefree (ha : ¬IsSquare (-a : ℚ)) {m : �
     (hm : (m : ℤ) = |a| + a.sign + 1) (hnsq : ¬IsSquare (-1 : ZMod m)) {n : ℕ}
     (hsf : Squarefree n) (hn : 1 < n) : ¬IsSquare |bSeq a n| := by
   refine not_isSquare_abs_bSeq_of_dvd_add_succ ha hn
-    ((one_mul n).symm.trans (congrArg _ (Nat.squarefree_iff_radical_eq_self.mp hsf).symm)) ?_ hnsq
+    ((one_mul n).symm.trans congr(1 * $((Nat.squarefree_iff_radical_eq_self.mp hsf).symm))) ?_ hnsq
   rw [hm, gammaSeq_succ _ _ le_rfl, gammaSeq_normPoly_one (ne_zero_of_not_isSquare_neg ha),
     eval_normPoly]
   exact dvd_of_eq (by ring)
@@ -113,9 +111,8 @@ private lemma neg_of_eq_neg_mul : a < 0 := ha ▸ neg_lt_zero.mpr (by positivity
 private lemma even_of_eq_neg_mul : Even a := ⟨-((2 * k + 1) * (4 * k + 3)), by rw [ha]; ring⟩
 
 private lemma neg_emod_four_eq_two_of_eq_neg_mul : -a % 4 = 2 := by
-  rw [ha, neg_neg, show (4 * (k : ℤ) + 2) * (4 * k + 3) = 2 + 4 * (4 * k ^ 2 + 5 * k + 1) by ring,
-    Int.add_mul_emod_self_left]
-  decide
+  subst ha
+  lia
 
 private lemma not_isSquare_neg_of_eq_neg_mul : ¬IsSquare (-a : ℚ) :=
   mod_cast Int.not_isSquare_of_emod_four_eq_two (neg_emod_four_eq_two_of_eq_neg_mul ha)
@@ -194,9 +191,8 @@ theorem not_isSquare_abs_bSeq_of_not_squarefree_of_not_four_dvd_of_emod_four_eq_
     (by obtain ⟨j, hj⟩ := hko; lia)
   obtain ⟨M, hM⟩ : (2 : ℤ) ∣ γ[a] (n / radical n) + γ[a] (n / radical n + 2) := by lia
   obtain ⟨m, hm⟩ := Int.eq_ofNat_of_zero_le (a := M) (by
-    have := gammaSeq_normPoly_pos ha' (n / radical n) (by lia)
-    have := gammaSeq_normPoly_pos ha' (n / radical n + 2) (by lia)
-    lia)
+    lia [gammaSeq_normPoly_pos ha' (n / radical n) (by lia),
+      gammaSeq_normPoly_pos ha' (n / radical n + 2) (by lia)])
   refine not_isSquare_abs_bSeq_of_odd_of_dvd_add_two ha'
     (Nat.div_mul_cancel radical_dvd_self).symm hko (by lia) ⟨2, by rw [← hm, hM]; ring⟩ ?_
     (ZMod.not_isSquare_neg_one_of_emod_four_eq_three (by lia))
@@ -212,7 +208,7 @@ private lemma emod_four_eq_three_of_mul_eq {k : ℕ} {α γ m : ℤ} (hα : α %
   have h := (ZMod.intCast_eq_intCast_iff' m 3 4).mp (by
     have h1 := (ZMod.intCast_eq_intCast_iff' _ 2 4).mpr hγ
     have h2 := (ZMod.intCast_eq_intCast_iff' α 3 4).mpr hα
-    have := congrArg (Int.cast : ℤ → ZMod 4) hm
+    have := congr(($hm : ZMod 4))
     push_cast at this h1 h2
     rw [h1, h2] at this
     generalize (k : ZMod 4) = x at this
@@ -255,9 +251,8 @@ include ha
 private lemma neg_of_eq_neg_mul_add_one : a < 0 := ha ▸ neg_lt_zero.mpr (by positivity)
 
 private lemma emod_four_eq_one_of_eq_neg_mul_add_one : a % 4 = 1 := by
-  rw [ha, show -((4 * (k : ℤ) + 1) * (4 * k + 2) + 1) = 1 + 4 * (-(4 * k ^ 2 + 3 * k + 1)) by ring,
-    Int.add_mul_emod_self_left]
-  decide
+  subst ha
+  lia
 
 /-- The factorization `y + g(g(y)) = (α y + A) (α² y³ - A α y² - (α + B) y + B)` for
 `g = α X² - 1`, `A = 4k + 1`, `B = 4k + 2`, `α = AB + 1`. -/

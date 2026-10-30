@@ -1,0 +1,137 @@
+\chapter{Auxiliary theory}
+\label{chap:paper-auxiliary}
+
+The paper carries out several arguments by hand that are really instances of general theory.
+Those on which the Galois-theoretic part rests --- multiquadratic extensions, invariants of
+$2$-groups, wreath products and even polynomials --- are in Appendix~\ref{chap:auxiliary}. This
+chapter records the rest, which only the route of this part through the~$b_n$ needs: the Möbius
+quotients of a strong divisibility sequence, and two facts about squares. They are developed in
+the generality they naturally have, under \texttt{QuadraticIterates/Mathlib/}, and are candidates
+for upstreaming into Mathlib.
+
+\section{Möbius quotients of a strong divisibility sequence}
+
+\begin{lemma}[Strong divisibility from a translation congruence]
+  \label{lem:strongdvd}
+  \lean{associated_gcd_of_dvd_sub, gcd_eq_normalize_of_dvd_sub}
+  \leanok
+  Let $(c_n)$ be a sequence in a GCD domain with $c_0 = 0$ and $c_m \dvd c_{m+j} - c_j$ for all
+  $m, j$. Then $\gcd(c_m, c_n)$ is associated to $c_{\gcd(m,n)}$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  The Euclidean algorithm on the indices: the hypothesis gives
+  $\gcd(c_{m+j}, c_j) = \gcd(c_m, c_j)$, which is the step of the subtractive algorithm; the
+  junk value $c_0 = 0$ makes the base case $\gcd(c_m, c_0) = c_m$ come out right.
+\end{proof}
+
+\begin{lemma}[Integrality of the Möbius quotients]
+  \label{lem:moebiusfactor}
+  \lean{moebiusFactorK, moebiusFactorK_eq_div, moebiusFactorK_eq_prod, moebiusFactorR, numProd,
+    denProd, denProd_dvd_numProd, moebiusFactorK_isInteger, algebraMap_moebiusFactorR,
+    prod_moebiusFactorR, moebiusFactorR_ne_zero, moebiusFactorR_mul_denProd,
+    factorization_gcd_min, UniqueFactorizationMonoid.normalizedFactors_gcd, isInteger_div_iff_dvd,
+    moebiusFactorK_mul_const, abs_moebiusFactorK}
+  \leanok
+  Let $R$ be a UFD and $(c_n)$ a sequence in $R \setminus \{0\}$ (on positive indices) which is a
+  strong divisibility sequence. Then each Möbius quotient
+  $b_n := \prod_{d \dvd n} c_d^{\mu(n/d)}$ lies in $R$ and is nonzero, and Möbius inversion
+  holds: $c_n = \prod_{d \dvd n} b_d$. Over a field, scaling the sequence by a nonzero constant
+  does not change its Möbius quotients of index $n \ge 2$, and over an ordered field, forming them
+  commutes with taking absolute values.
+\end{lemma}
+\begin{proof}
+  \uses{lem:moebiussign}
+  \leanok
+  Write the quotient as $N/D$ with $N$ the product of the $c_d$ with $\mu(n/d) = 1$ and $D$ the
+  product of those with $\mu(n/d) = -1$. At each prime $p$, strong divisibility bounds
+  $v_p(c_{\gcd(d,d')})$ below by $\min(v_p(c_d), v_p(c_{d'}))$, and a counting argument on the
+  divisor lattice shows $v_p(D) \le v_p(N)$; hence $D \dvd N$.
+\end{proof}
+
+\begin{theorem}[Constant valuation shape]
+  \label{thm:valshape}
+  \uses{def:gammaseq, lem:moebiusfactor}
+  \lean{factorization_periodic_shape, factorization_moebiusFactorR_shape,
+    moebiusFactorR_isRelPrime, factorization_eq_of_dvd_sub, one_le_factorization_iff_dvd,
+    factorization_eq_zero_iff_not_dvd, pow_dvd_iff_le_factorization,
+    emultiplicity_eq_factorization,
+    QuadraticIterates.factorization_gammaSeq_shape,
+    QuadraticIterates.factorization_gammaSeq_of_dvd_eval_zero,
+    QuadraticIterates.gammaSeq_period, QuadraticIterates.sq_dvd_gammaSeq_succ_sub,
+    QuadraticIterates.pow_succ_dvd_gammaSeq_succ_sub,
+    QuadraticIterates.gammaSeq_period_of_dvd_succ_sub_eval_zero,
+    QuadraticIterates.gammaSeq_one_associated_eval_zero, Associated.factorization_eq}
+  \leanok
+  For the iteration sequence of an even polynomial with $\varepsilon^2 = 1$ over a UFD, and each
+  normalized prime $p$, there are $m \ge 1$ and $E$ with $v_p(\gamma_n) = E$ for $m \dvd n$ and
+  $v_p(\gamma_n) = 0$ otherwise. Consequently the valuation of each Möbius quotient $\beta_n$ is
+  supported on the single index $n = m$, so the $\beta_n$ are pairwise coprime.
+\end{theorem}
+\begin{proof}
+  \leanok
+  \uses{lem:moebiussign}
+  Two cases. If $p \dvd g(0)$, the valuation is constantly $v_p(g(0))$, since
+  $\gamma_n^2 \dvd \gamma_{n+1} - g(0)$ forces $v_p(\gamma_{n+1}) = v_p(g(0))$ by induction. If
+  not, let $m$ be minimal with $p \dvd \gamma_m$ and $E := v_p(\gamma_m)$; then
+  $p^{E+1} \dvd \gamma_{m+1} - g(0)$, whence $p \nmid \gamma_{m+1}$, and the sequence is periodic
+  mod $p^{E+1}$ with period $m$ from index $2$ on --- this is the periodicity argument of the
+  proof of Lemma~\ref{lem:1.1}~b), isolated and stated for an arbitrary sequence with these
+  properties (\lname{factorization\_periodic\_shape}).
+\end{proof}
+
+\begin{lemma}[Möbius sums]
+  \label{lem:moebiussign}
+  \lean{Squarefree.card_filter_moebius_div_eq_one_eq_card_filter_eq_neg_one,
+    Squarefree.filter_moebius_div_eq_one_union_filter_eq_neg_one,
+    ArithmeticFunction.prod_pow_moebius_eq_div, ArithmeticFunction.sum_divisors_moebius_div_eq_zero,
+    ArithmeticFunction.sum_divisorsAntidiagonal_moebius_eq_zero,
+    ArithmeticFunction.prod_pow_moebius_eq_prod_divisors_radical,
+    ArithmeticFunction.sum_divisorsAntidiagonal_filter_dvd_moebius,
+    ArithmeticFunction.sum_mul_moebius_boole_nonneg, ArithmeticFunction.sum_mul_moebius_nonneg,
+    ArithmeticFunction.sum_divisors_moebius, Finset.prod_zpow_eq_zpow_sum₀,
+    Finset.card_filter_eq_one_eq_card_filter_eq_neg_one_of_sum_eq_zero}
+  \leanok
+  For squarefree $n'$, the divisors $t$ of $n'$ split into the two sets $S_\pm$ according to
+  the sign of $\mu(n'/t)$, and $\#S_+ = \#S_-$ on every set of divisors on which
+  $\sum \mu(n'/t)$ vanishes (all divisors, if $n' > 1$); so a Möbius product
+  $\prod_{d \dvd n} x_d^{\mu(n/d)}$ is a quotient of two products with the same number of
+  factors; and $\sum_{d \dvd n} \mu(n/d) = 0$ for $n \ge 2$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Standard properties of $\mu$. The equal-cardinality statement is the binomial identity
+  \[ \sum_{k} (-1)^k \binom{r}{k} = 0, \]
+  where $r \ge 1$ is the number of prime divisors of $n'$.
+\end{proof}
+
+\section{Squares}
+
+\begin{lemma}[Non-squares mod $m$]
+  \label{lem:zmodsquare}
+  \lean{ZMod.isSquare_neg_one_of_isSquare_div, ZMod.not_isSquare_neg_one_of_dvd,
+    ZMod.not_isSquare_neg_one_of_emod_four_eq_three, ZMod.not_isSquare_neg_one_of_emod_eight_eq_six,
+    ZMod.not_isSquare_neg_one_of_four_dvd, ZMod.isUnit_intCast_of_isCoprime_of_dvd_add,
+    ZMod.intCast_eq_neg_intCast_of_dvd_add}
+  \leanok
+  If $P \equiv -Q \bmod m$ with $Q$ a unit mod $m$, and $P/Q$ is a square in $\QQ$, then $-1$ is
+  a square mod $m$. Moreover $-1$ is not a square mod $m$ whenever $m$ has a divisor
+  $\equiv 3 \bmod 4$, and not mod $4$.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Reduce a representation $P/Q = (u/v)^2$ modulo $m$ and use that $Q$ is invertible; the
+  supplementary statements are the standard obstructions to $-1$ being a square.
+\end{proof}
+
+\begin{lemma}[Squares and coprimality]
+  \label{lem:coprimesquare}
+  \lean{Int.isSquare_abs_of_isSquare_prod_of_pairwise_isCoprime, isSquare_abs_iff}
+  \leanok
+  If a product of pairwise coprime integers is a square, then the absolute value of each factor
+  is a square.
+\end{lemma}
+\begin{proof}
+  \leanok
+  Compare the $p$-adic valuations: each prime occurs in exactly one factor.
+\end{proof}

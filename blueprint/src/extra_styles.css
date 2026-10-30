@@ -51,3 +51,27 @@ nav.local_toc ul {
 body, h1, h2, h3, h4, h5, h6, p, text {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
+
+/* Labels of enumerate items, written by templates/enumerate.jinja2s: (1), (2), ..., or the label
+   given to \item, as in (C1); upright and right-aligned in the margin of the list, as in the pdf.
+   The top margin of the item's first paragraph collapses through the item, so top: 0 puts the
+   label on the paragraph's first line. */
+ol.enumerate {
+  list-style: none;
+  padding-left: 3rem;
+}
+
+ol.enumerate > li {
+  position: relative;
+}
+
+ol.enumerate > li > span.item_label {
+  position: absolute;
+  right: 100%;
+  margin-right: .5rem;
+  top: 0;
+  font-size: 1rem;
+  font-style: normal;
+  line-height: 1.4rem;
+  white-space: nowrap;
+}

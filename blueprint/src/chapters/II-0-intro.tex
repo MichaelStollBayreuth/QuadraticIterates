@@ -1,0 +1,71 @@
+% The introduction of Part II: its organization, and the introduction of the 1992 paper. The
+% chapter is unnumbered (\chapter*); the paper's own numbering starts in the next chapter.
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+This part reproduces M.~Stoll, \emph{Galois groups over~$\QQ$ of some iterated
+polynomials}~\cite{paper}, and the results of Li~\cite{li2020, li2021} that extend its last
+theorem, along their own proofs, and links each statement to its formalization.
+Chapters~\ref{chap:paper-criterion}--\ref{chap:paper-values} are the three sections
+of~\cite{paper}, and their numbered items carry the paper's numbers behind the prefix~II:
+Lemma~\ref{lem:1.1} is Lemma~1.1 of the paper. Chapter~\ref{chap:paper-auxiliary} collects the general
+theory that the proofs of this part use beyond Appendix~\ref{chap:auxiliary}, and
+Chapter~\ref{chap:li} contains Li's results.
+
+\emph{Shared material.} The objects of the paper are those of Part~I: the iterates~$f_n$
+(Definition~\ref{def:iterates}), the fields~$K_n$ and the groups~$\Om_n$
+(Definition~\ref{def:galois}), the wreath power~$\Ct{n}$ (Definition~\ref{def:wreath}), the
+sequence~$(c_n)$ (Definition~\ref{def:cseq}), the Möbius quotients~$b_n$
+(Definition~\ref{def:bseq}), $2$-independence (Definition~\ref{def:twoindep}) and the iteration
+sequence~$(\gamma_n)$ of an even polynomial (Definition~\ref{def:gammaseq}). So are the
+Galois-theoretic statements of Section~1 of~\cite{paper}: Facts~\ref{facts:1.0} and
+Lemmas~\ref{lem:1.2}, \ref{lem:1.4}, \ref{lem:1.5} and~\ref{lem:1.6} are formalized in
+Appendix~\ref{chap:criterion}, for a rational parameter, and
+Chapter~\ref{chap:paper-criterion} quotes them from there; they are not nodes of the dependency
+graph of their own. What this part adds is the route of the paper through the integers~$b_n$:
+their coprimality (Lemma~\ref{lem:1.1}), the Möbius quotients of the iteration sequences of even
+polynomials (Chapter~\ref{chap:paper-even}), and the values of~$a$ obtained from them
+(Theorem~\ref{thm:section3} and Chapter~\ref{chap:li}).
+
+\emph{Standing hypotheses.} Throughout this part, $a$ is an integer such that~$-a$ is not a
+square in~$\QQ$, $f := X^2 + a \in \ZZ[X]$, and $f_0 := X$, $f_{n+1} := f(f_n) = f_n^2 + a$ are
+its iterates. $K_n$ is the splitting field of~$f_n$ over~$\QQ$ and $\Om_n := \Gal(K_n/\QQ) =
+\Gal(f_n/\QQ)$. In Chapter~\ref{chap:paper-even}, $g \in \ZZ[X^2]$ is an even polynomial and
+$\varepsilon = \pm 1$.
+
+\emph{The formalization.} The Lean sources of this part are in the directories
+\texttt{ArchMath1992} and \texttt{Li} of \texttt{QuadraticIterates/}: the sequences of even
+polynomials of Chapter~\ref{chap:paper-even} in \texttt{Sequences.lean}, the sequence~$(c_n)$ of
+an integer~$a$, the irreducibility of the~$f_n$ and the rescaled polynomial in
+\texttt{Iterates.lean}, and the theorems of Sections~1 and~3 in \texttt{Main.lean}. The
+parameter of the Galois groups is rational, so the statements of this part are about
+\lname{GaloisGroup (a : ℚ) n} with an integer~$a$; for $a : \ZZ$, Lean reads
+\lname{(cSeq a n : ℚ)} as \lname{cSeq} of the parameter $(a : \QQ)$, which is the image of the
+integer~$c_n$ (\lname{intCast\_cSeq}). The integers~$b_n$ of the paper are Lean's \lname{bSeq}
+over~$\ZZ$, whose image in~$\QQ$ is the Möbius quotient of Part~I by Lemma~\ref{lem:1.1}. The
+repository's second comparator configuration (\texttt{comparator/challenges-1992.json}) proves
+the integer challenges --- the three cases of Theorem~\ref{thm:section3} and the theorems of
+Li --- along this part.
+
+\section*{The introduction of the paper}
+
+Throughout this paper, $a$ denotes an integer such that $-a$ is not a square in $\QQ$,
+$f := X^2 + a \in \ZZ[X]$, and $f_0 := X$, $f_{n+1} := f(f_n) = f_n^2 + a$ for all $n \ge 0$, are
+the iterates of $f$. Let $c_1 := -a$ and $c_{n+1} := f(c_n) = c_n^2 + a$
+$(= f_n(-a) = f_n(a) = f_{n+1}(0))$ for $n \ge 1$. There exists an integer sequence $(b_n)_{n
+\ge 1}$ such that for all $n \ge 1$ we have $c_n = \prod_{d \dvd n} b_d$
+(Lemma~\ref{lem:1.1}). Let $K_n$ be the splitting field of $f_n$ over $\QQ$ and denote by
+$\Om_n := \Gal(K_n/\QQ) = \Gal(f_n/\QQ)$ its Galois group over the rational numbers.
+
+This paper deals with the problem of determining $\Om_n$. Following R.~W.~K.~Odoni's paper
+\cite{odoni}, we generalize his result concerning the case $a = 1$ to get for all $n \ge 1$:
+\[ \Om_n \cong \Ct{n}, \text{ if and only if } b_1, b_2, \dots, b_n
+   \text{ are $2$-independent in } \QQ \tag{$*$} \]
+(Theorem~\ref{thm:section1}). $\Om_n$ always injects into $\Ct{n}$, the $n$-fold wreath product
+of $C_2$ with itself. In order to prove the condition on the right hand side of $(*)$ (at least
+for some $a \in \ZZ$), we consider more generally iteration sequences associated to certain even
+polynomials $g \in \ZZ[X^2]$ (Chapter~\ref{chap:paper-even}). Specializing these results, we get
+with $(*)$: if ($a > 0$ and $a \equiv 1$ or $2 \bmod 4$) or ($a < 0$ and $a \equiv 0 \bmod 4$),
+then $\Om_n \cong \Ct{n}$ for all $n \ge 1$ (Theorem~\ref{thm:section3}). Moreover, this gives a
+proof of the conjecture of John~E.~Cremona \cite{cremona}, who verified numerically that, for
+$a = 1$, $|b_n|$ is not a square when $2 \le n \le 5 \cdot 10^7$.

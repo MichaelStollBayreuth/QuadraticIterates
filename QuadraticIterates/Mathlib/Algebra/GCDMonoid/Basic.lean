@@ -21,20 +21,20 @@ A sequence `a` in a GCD domain with `a 0 = 0` satisfying the *translation congru
 `gcd (a m) (a n) = normalize (a (gcd m n))`. This is the arithmetic engine behind the
 Fibonacci-style `Nat.fib_gcd`, isolated from the specific recurrence.
 
-Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
-polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
+Auxiliary material for the formalization of the surjectivity of arboreal Galois representations of
+`X² + a`; upstreaming candidates for Mathlib.
 -/
 
 @[expose] public section
 
-theorem normalize_map_normalize {α : Type*} [MonoidWithZero α] [NormalizationMonoid α]
-    [IsLeftCancelMulZero α] {F : Type*} [FunLike F α α] [MonoidHomClass F α α] (f : F) (x : α) :
+theorem normalize_map_normalize {α : Type*} [MonoidWithZero α] [NormalizationMonoid α] {F : Type*}
+    [FunLike F α α] [MonoidHomClass F α α] (f : F) (x : α) :
     normalize (f (normalize x)) = normalize (f x) :=
   normalize_eq_normalize_iff_associated.mpr ((normalize_associated x).map f)
 
 /-- If `m` divides `a + b` and is relatively prime to `gcd a b`, then `m` is relatively prime to
 `a`: a common divisor of `m` and `a` divides `b`, hence `gcd a b`. -/
-theorem IsRelPrime.of_gcd_right_of_dvd_add {R : Type*} [CommRing R] [IsDomain R] [GCDMonoid R]
+theorem IsRelPrime.of_gcd_right_of_dvd_add {R : Type*} [CommRing R] [GCDMonoid R]
     {m a b : R} (hcop : IsRelPrime m (gcd a b)) (hdvd : m ∣ a + b) : IsRelPrime m a :=
   fun _ hdm hda ↦ hcop hdm (dvd_gcd hda (by simpa using dvd_sub (hdm.trans hdvd) hda))
 

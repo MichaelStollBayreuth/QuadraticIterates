@@ -23,5 +23,6 @@ instance: this makes `Polynomial.Gal.galAction`, the action of `p.Gal` on the ro
 `E`, available with no hypothesis to discharge. (Mathlib has `Polynomial.Gal.splits_ℚ_ℂ`, the
 special case `F = ℚ`, `E = ℂ`, as a local instance.) -/
 instance Polynomial.Gal.instFactSplitsOfIsAlgClosed {F E : Type*} [Field F] [Field E] [Algebra F E]
-    [IsAlgClosed E] {p : F[X]} : Fact (p.map (algebraMap F E)).Splits :=
+    [IsAlgClosed E] {p : F[X]} :
+    Fact (p.map (algebraMap F E)).Splits :=
   ⟨IsAlgClosed.splits _⟩

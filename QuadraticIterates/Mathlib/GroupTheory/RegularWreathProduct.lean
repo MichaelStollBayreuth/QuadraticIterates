@@ -5,11 +5,11 @@ Authors: Michael Stoll
 -/
 module
 
--- Beyond the sibling `Mathlib.GroupTheory.RegularWreathProduct`: homomorphisms into `C₂` are
--- counted through the `𝔽_p`-dual of an elementary abelian group, whence the `ZMod` imports.
-public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.GroupTheory.RegularWreathProduct
 
+-- Beyond the sibling: homomorphisms into `C₂` are counted through the `𝔽_p`-dual of an
+-- elementary abelian group, whence the `ZMod` imports.
+import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.Module.ZMod
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.LinearAlgebra.Dimension.Free
@@ -31,8 +31,7 @@ abelian `2`-quotient of the `n`-fold iterated wreath power of `C₂` has order `
 ## Main statements
 
 * `IsPGroup.exists_injective_monoidHom_iteratedWreathProduct`: the embedding above.
-* `RegularWreathProduct.monoidHomEquiv`: `(D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A)` for commutative
-  `A`.
+* `RegularWreathProduct.monoidHomEquiv`: `(D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A)` for commutative `A`.
 * `RegularWreathProduct.card_monoidHom`, `IteratedWreathProduct.card_monoidHom`: the resulting
   counts.
 * `Nat.card_monoidHom_multiplicative_zmod`: `#(H →* Multiplicative (ZMod p)) = #H` for a finite
@@ -76,7 +75,7 @@ variable {A : Type*} [CommGroup A]
 theorem map_inr_mulSingle [DecidableEq Q] (φ : D ≀ᵣ Q →* A) (x : Q) (d : D) :
     φ (inr (Pi.mulSingle x d)) = φ (inr (Pi.mulSingle 1 d)) := by
   have : (Pi.mulSingle x d : Q → D) = fun y ↦ (Pi.mulSingle 1 d : Q → D) (x⁻¹ * y) := by
-    ext y; simp [Pi.mulSingle_apply, inv_mul_eq_one, eq_comm]
+    ext; simp [Pi.mulSingle_apply, inv_mul_eq_one, eq_comm]
   rw [this, ← inl_mul_inr_mul_inl_inv, map_mul, map_mul, map_inv, mul_inv_cancel_comm]
 
 section Fintype
@@ -88,9 +87,8 @@ def prodLeftHom (α : D →* A) : D ≀ᵣ Q →* A where
   toFun w := ∏ x, α (w.left x)
   map_one' := by simp
   map_mul' w₁ w₂ := by
-    simp only [mul_left, Pi.mul_apply, map_mul, Finset.prod_mul_distrib]
-    congr 1
-    exact Equiv.prod_comp (Equiv.mulLeft w₁.right⁻¹) fun x ↦ α (w₂.left x)
+    simpa [mul_left, Finset.prod_mul_distrib] using
+      Equiv.prod_comp (Equiv.mulLeft w₁.right⁻¹) fun x ↦ α (w₂.left x)
 
 @[simp] theorem prodLeftHom_apply (α : D →* A) (w : D ≀ᵣ Q) :
     prodLeftHom α w = ∏ x, α (w.left x) := rfl
@@ -114,16 +112,8 @@ def monoidHomEquiv : (D ≀ᵣ Q →* A) ≃ (D →* A) × (Q →* A) where
   left_inv φ := by
     ext w
     conv_rhs => rw [← inr_left_mul_inl_right w, map_mul, map_inr_eq_prod]
-    simp only [MonoidHom.mul_apply, prodLeftHom_apply, MonoidHom.comp_apply,
-      MonoidHom.mulSingle_apply, rightHom_eq_right]
-    rw [Finset.prod_congr rfl fun x _ ↦ (map_inr_mulSingle φ x (w.left x)).symm]
-  right_inv p := by
-    refine Prod.ext (MonoidHom.ext fun d ↦ ?_) (MonoidHom.ext fun q ↦ ?_)
-    · simp only [MonoidHom.mul_apply, prodLeftHom_apply, MonoidHom.comp_apply,
-        MonoidHom.mulSingle_apply, rightHom_eq_right, left_inr, right_inr, map_one, mul_one]
-      rw [Fintype.prod_eq_single 1 fun x hx ↦ by simp [Pi.mulSingle_eq_of_ne hx]]
-      simp
-    · simp
+    simp [map_inr_mulSingle φ]
+  right_inv p := by ext <;> simp [Pi.mulSingle_apply, apply_ite]
 
 end Fintype
 
@@ -131,7 +121,7 @@ variable (D Q A) in
 theorem card_monoidHom [Finite Q] :
     Nat.card (D ≀ᵣ Q →* A) = Nat.card (D →* A) * Nat.card (Q →* A) := by
   classical
-  let := Fintype.ofFinite Q
+  have := Fintype.ofFinite Q
   rw [Nat.card_congr monoidHomEquiv, Nat.card_prod]
 
 end CommGroup
@@ -145,7 +135,8 @@ permutation group is given as a group `G` with an injective homomorphism into `E
 theorem IsPGroup.exists_injective_monoidHom_iteratedWreathProduct {p : ℕ} [Fact p.Prime]
     {G : Type*} [Group G] (hG : IsPGroup p G) {X : Type*} [Finite X] {f : G →* Equiv.Perm X}
     (hf : Function.Injective f) {n : ℕ} (hX : Nat.card X ≤ p ^ n) (H : Type*) [Group H] [Finite H]
-    (hH : Nat.card H = p) : ∃ φ : G →* IteratedWreathProduct H n, Function.Injective φ := by
+    (hH : Nat.card H = p) :
+    ∃ φ : G →* IteratedWreathProduct H n, Function.Injective φ := by
   classical
   have := Fintype.ofFinite X
   have := Fintype.ofFinite H
@@ -171,7 +162,8 @@ theorem IteratedWreathProduct.card_monoidHom (D A : Type*) [Group D] [CommGroup 
 
 /-- A finite `𝔽_p`-vector space has as many additive characters `V →+ ZMod p` as elements. -/
 theorem Nat.card_addMonoidHom_zmod (p : ℕ) [Fact p.Prime] (V : Type*) [AddCommGroup V]
-    [Module (ZMod p) V] [Finite V] : Nat.card (V →+ ZMod p) = Nat.card V :=
+    [Module (ZMod p) V] [Finite V] :
+    Nat.card (V →+ ZMod p) = Nat.card V :=
   calc Nat.card (V →+ ZMod p)
       = Nat.card (Module.Dual (ZMod p) V) :=
         Nat.card_congr (AddMonoidHom.toZModLinearMapEquiv p).toEquiv
@@ -192,10 +184,10 @@ theorem Nat.card_monoidHom_multiplicative_zmod {H : Type*} [CommGroup H] [Finite
 /-- A finite group of exponent dividing `2` (automatically abelian) has as many characters
 `H →* Multiplicative (ZMod 2)` as elements. -/
 theorem Nat.card_monoidHom_multiplicative_zmod_two {H : Type*} [Group H] [Finite H]
-    (hexp : ∀ h : H, h ^ 2 = 1) : Nat.card (H →* Multiplicative (ZMod 2)) = Nat.card H := by
-  have hinv (a : H) : a⁻¹ = a := inv_eq_of_mul_eq_one_right (by rw [← sq, hexp])
-  let : CommGroup H :=
-    { ‹Group H› with mul_comm a b := by rw [← hinv (a * b), mul_inv_rev, hinv a, hinv b] }
+    (hexp : ∀ h : H, h ^ 2 = 1) :
+    Nat.card (H →* Multiplicative (ZMod 2)) = Nat.card H := by
+  let : CommGroup H := { ‹Group H› with
+    mul_comm := Commute.of_orderOf_dvd_two fun g ↦ orderOf_dvd_of_pow_eq_one (hexp g) }
   exact card_monoidHom_multiplicative_zmod hexp
 
 /-- `#([C₂]ⁿ →* C₂) = 2^n`: the maximal elementary-abelian 2-quotient of the `n`-fold iterated

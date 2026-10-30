@@ -7,6 +7,8 @@
 ## covers symlinks to papers kept elsewhere on disk: a symlink commits its target path, and an
 ## unguarded `git add -A` in the repository root would otherwise pick one up.
 *.pdf
+## Exception: the author's own preprint on the method of this branch.
+!/paper/arboreal-surjective.pdf
 ## Blueprint
 /blueprint/print/print.log
 /blueprint/web/

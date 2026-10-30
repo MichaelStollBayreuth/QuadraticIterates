@@ -39,3 +39,7 @@ srcDir = "comparator"
 [[lean_lib]]
 name = "Solution"
 srcDir = "comparator"
+
+[[lean_lib]]
+name = "Solution1992"
+srcDir = "comparator"

@@ -424,7 +424,7 @@
     <div>
       <div class="eyebrow">QuadraticIterates · Lean 4 + Mathlib</div>
       <h1>Maximality for <em>x</em>² + <em>a</em></h1>
-      <p class="standfirst">When is the Galois group of every iterate the full automorphism group of the binary tree? Three papers answer that over&nbsp;ℚ. This library formalizes all three — and there is nothing else to formalize.</p>
+      <p class="standfirst">When is the Galois group of every iterate the full automorphism group of the binary tree? Three papers answer that over&nbsp;ℚ. This library formalizes all three — there is nothing else in the literature to formalize — and adds two theorems of its own, one of them for rational <em>a</em>.</p>
     </div>
     <div class="tree-mark" aria-hidden="true">
       <svg viewBox="0 0 160 104" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -470,16 +470,17 @@
     <div class="col">
       <p class="lead">For <var>f</var>(<var>x</var>) = <var>x</var>² + <var>a</var> with <var>a</var> ∈ ℤ, let <var>K</var><sub><var>n</var></sub> be the splitting field of the <var>n</var>-th iterate. Galois acts faithfully on the tree of iterated preimages of 0, so Ω<sub><var>n</var></sub> = Gal(<var>K</var><sub><var>n</var></sub>/ℚ) embeds in Aut(<var>T</var><sub><var>n</var></sub>) ≅ [<var>C</var>₂]<sup><var>n</var></sup>, the <var>n</var>-fold iterated wreath product of the cyclic group <var>C</var>₂ of order 2. The representation is <em>maximal</em> when that embedding is onto, for every <var>n</var>.</p>
 
-      <p>Odoni and Stoll reduced maximality to arithmetic. Put <var>c</var><sub>1</sub> = −<var>a</var> and <var>c</var><sub><var>n</var></sub> = <var>f</var><sup><var>n</var></sup>(0) for <var>n</var> ≥ 2, and let <var>b</var><sub><var>n</var></sub> = ∏<sub><var>d</var>|<var>n</var></sub> <var>c</var><sub><var>d</var></sub><sup>μ(<var>n</var>/<var>d</var>)</sup> be the Möbius-inverted sequence, whose terms are pairwise coprime. Maximality at level <var>n</var> is exactly linear independence of the classes of <var>c</var><sub>1</sub>, …, <var>c</var><sub><var>n</var></sub> in the 𝔽₂-vector space ℚ<sup>×</sup>/(ℚ<sup>×</sup>)². That equivalence is the spine of the whole subject, and it is the spine of this library:</p>
+      <p>Odoni and Stoll reduced maximality to arithmetic. Put <var>c</var><sub>1</sub> = −<var>a</var> and <var>c</var><sub><var>n</var></sub> = <var>f</var><sup><var>n</var></sup>(0) for <var>n</var> ≥ 2, and let <var>b</var><sub><var>n</var></sub> = ∏<sub><var>d</var>|<var>n</var></sub> <var>c</var><sub><var>d</var></sub><sup>μ(<var>n</var>/<var>d</var>)</sup> be the Möbius-inverted sequence, whose terms are pairwise coprime. Maximality at level <var>n</var> is exactly linear independence of the classes of <var>c</var><sub>1</sub>, …, <var>c</var><sub><var>n</var></sub> in the 𝔽₂-vector space ℚ<sup>×</sup>/(ℚ<sup>×</sup>)². That equivalence is the spine of the whole subject, and it is the spine of this library, which proves it for every rational <var>a</var>:</p>
 
-      <pre><span class="kw">theorem</span> section1_tfae (ha : ¬IsSquare (-a : ℚ)) (n : ℕ) :
-    [Nonempty (GaloisGroup a n ≃* WreathPower n),
-     TwoIndependent (<span class="kw">fun</span> i : Fin n ↦ (cSeq a ((i : ℕ) + 1) : ℚ)),
-     TwoIndependent (<span class="kw">fun</span> i : Fin n ↦ (bSeq a ((i : ℕ) + 1) : ℚ))].TFAE</pre>
+      <pre><span class="kw">theorem</span> nonempty_mulEquiv_iff_twoIndependent (a : ℚ) (n : ℕ) :
+    Nonempty (GaloisGroup a n ≃* WreathPower n) ↔
+      TwoIndependent <span class="kw">fun</span> i : Fin n ↦ cSeq a ((i : ℕ) + 1)</pre>
 
       <p><code>TwoIndependent v</code> is that independence spelled out without quotients: no non-empty subfamily of <var>v</var> has a square product. For non-zero rationals it is exactly 𝔽₂-linear independence of the classes in ℚ<sup>×</sup>/(ℚ<sup>×</sup>)², and the library proves the two forms equal.</p>
 
       <p>Because the <var>b</var><sub><var>n</var></sub> are pairwise coprime, independence follows as soon as no |<var>b</var><sub><var>n</var></sub>| is a square for <var>n</var> ≥ 2. Everything since 1985 has been a search for values of <var>a</var> where that non-squareness can be forced for <em>all</em> <var>n</var> at once — and the answer depends, remarkably, only on the sign of <var>a</var> and its residue modulo 4.</p>
+
+      <p>This library does without the <var>b</var><sub><var>n</var></sub>. A quadratic character χ : ℚ<sup>×</sup> → {±1} with χ(<var>c</var><sub><var>n</var></sub>) = −1 and χ(<var>c</var><sub><var>m</var></sub>) = 1 for all <var>m</var> &gt; <var>n</var> shows that no product of the <var>c</var><sub><var>k</var></sub> with smallest index <var>n</var> is a square, and every level is maximal exactly when such a character exists for every <var>n</var>. The sign, the parities of <var>p</var>-adic valuations and the characters induced by Dirichlet characters supply them, by computations modulo a single prime power.</p>
     </div>
   </section>
 
@@ -512,7 +513,7 @@
           <span class="chip settled">Settled</span>
           <p class="src">Stoll 1992</p>
           <p>Contains <code>a = 1</code>, the case Cremona had verified numerically to <code>n = 5·10⁷</code>.</p>
-          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section3_main">section3_main</a></p>
+          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_one">nonempty_mulEquiv_of_pos_of_emod_four_eq_one</a></p>
         </div>
 
         <div class="cell">
@@ -520,7 +521,7 @@
           <span class="chip settled">Settled</span>
           <p class="src">Stoll 1992</p>
           <p>Maximal for every such <var>a</var>, with no further hypothesis.</p>
-          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section3_main">section3_main</a></p>
+          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_two">nonempty_mulEquiv_of_pos_of_emod_four_eq_two</a></p>
         </div>
 
         <div class="cell is-open">
@@ -537,7 +538,7 @@
           <span class="chip settled">Settled</span>
           <p class="src">Stoll 1992</p>
           <p>Maximal whenever −<var>a</var> is not a square.</p>
-          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section3_main">section3_main</a></p>
+          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_zero">nonempty_mulEquiv_of_neg_of_emod_four_eq_zero</a></p>
         </div>
 
         <div class="cell">
@@ -545,16 +546,16 @@
           <span class="chip partial">One family</span>
           <p class="src">Li 2021, Thm 3.9</p>
           <p>Only <code>a = −((4k+1)(4k+2)+1)</code>. The rest of the class is open.</p>
-          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_9">li2021_theorem_3_9</a></p>
+          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Families.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one">nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one</a></p>
         </div>
 
         <div class="cell">
           <span class="cell-label">a &lt; 0, a ≡ 2 (mod 4)</span>
           <span class="chip partial">One family</span>
           <p class="src">Li 2021, Thm 3.3 · extended here</p>
-          <p>Only <code>a = −(4k+2)(4k+3)</code>. Li proved the even-<var>k</var> half, <code>a = −(8k+2)(8k+3)</code>; the odd half is new, by his argument with the residue of the rescaled sequence read modulo 8 instead of modulo 4.</p>
+          <p>Only <code>a = −(4k+2)(4k+3)</code>. Li proved the even-<var>k</var> half, <code>a = −(8k+2)(8k+3)</code>; the odd half is new, the integer case of a family of rational parameters.</p>
           <p class="lapse-note">Contains a failure family: <code>a = −(m²+1)</code> with <var>m</var> odd loses maximality already at level 2.</p>
-          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul">nonempty_mulEquiv_of_eq_neg_mul</a></p>
+          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Families.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two">nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two</a></p>
         </div>
 
         <div class="cell">
@@ -562,7 +563,7 @@
           <span class="chip settled">Settled — iff</span>
           <p class="src">Li 2020, Thm 3.5</p>
           <p>The only class decided in both directions: maximal <strong>exactly when</strong> −<var>a</var>−1 is not a square; otherwise the index is 2 and Ω<sub><var>n</var></sub> ≅ <var>C</var>₄[[<var>C</var>₂]<sup><var>n</var>−2</sup>].</p>
-          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2020.html#QuadraticIterates.li2020_theorem_3_5">li2020_theorem_3_5</a></p>
+          <p class="lean"><a href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three">forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three</a></p>
         </div>
       </div>
     </div>
@@ -575,7 +576,7 @@
       <div class="eyebrow">The library</div>
       <h2>What is formalized, and where</h2>
     </div>
-    <p class="col">Seven named results carry the mathematics, one of them not from the papers; the criterion below them is stated once, in the generality the papers use, and shared.</p>
+    <p class="col">Ten named results carry the mathematics, five of them not from the papers; the criterion at the top is stated once, for a rational parameter, and shared.</p>
 
     <div class="table-wrap">
       <table>
@@ -588,55 +589,67 @@
         </thead>
         <tbody>
           <tr>
-            <td class="what">Ω<sub><var>n</var></sub> ≅ [<var>C</var>₂]<sup><var>n</var></sup> ⟺ the <var>c</var><sub><var>k</var></sub> are 2-independent ⟺ the <var>b</var><sub><var>k</var></sub> are</td>
+            <td class="what">Ω<sub><var>n</var></sub> ≅ [<var>C</var>₂]<sup><var>n</var></sup> ⟺ the <var>c</var><sub><var>k</var></sub>, <var>k</var> ≤ <var>n</var>, are 2-independent</td>
             <td class="who">Stoll 1992, §1</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section1_tfae">section1_tfae</a></td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Galois/Criterion.html#QuadraticIterates.nonempty_mulEquiv_iff_twoIndependent">nonempty_mulEquiv_iff_twoIndependent</a></td>
           </tr>
           <tr>
-            <td class="what">No |<var>b</var><sub><var>k</var></sub>| a square for <var>k</var> ≥ 2 ⟹ maximal</td>
-            <td class="who">Stoll 1992, §1</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section1_of_not_isSquare_abs_bSeq">section1_of_not_isSquare_abs_bSeq</a></td>
+            <td class="what">Maximal ⟺ for every <var>n</var> a character is −1 at <var>c</var><sub><var>n</var></sub> and 1 at all later <var>c</var><sub><var>m</var></sub></td>
+            <td class="who">this formalization</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Characters/Criterion.html#QuadraticIterates.tfae_forall_nonempty_mulEquiv">tfae_forall_nonempty_mulEquiv</a></td>
           </tr>
           <tr>
             <td class="what">Maximality in the three classes <var>a</var> &gt; 0, <var>a</var> ≡ 1, 2 (mod 4) and <var>a</var> &lt; 0, 4 | <var>a</var></td>
             <td class="who">Stoll 1992, §3</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section3_main">section3_main</a></td>
-          </tr>
-          <tr>
-            <td class="what">|<var>b</var><sub><var>n</var></sub>| is not a square for <var>n</var> ≥ 3 when <var>a</var> &lt; 0, <var>a</var> ≡ 3 (mod 4)</td>
-            <td class="who">Li 2020, Thm 3.4</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2020.html#QuadraticIterates.li2020_theorem_3_4">li2020_theorem_3_4</a></td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_one">nonempty_mulEquiv_of_pos_of_emod_four_eq_one</a><br><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.nonempty_mulEquiv_of_pos_of_emod_four_eq_two">nonempty_mulEquiv_of_pos_of_emod_four_eq_two</a><br><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.nonempty_mulEquiv_of_neg_of_emod_four_eq_zero">nonempty_mulEquiv_of_neg_of_emod_four_eq_zero</a></td>
           </tr>
           <tr>
             <td class="what">The <var>a</var> ≡ 3 (mod 4) dichotomy: maximal ⟺ −<var>a</var>−1 not a square</td>
             <td class="who">Li 2020, Thm 3.5</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2020.html#QuadraticIterates.li2020_theorem_3_5">li2020_theorem_3_5</a></td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Integers.html#QuadraticIterates.forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three">forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three</a></td>
           </tr>
           <tr>
             <td class="what">Maximality for <var>a</var> = −(8<var>k</var>+2)(8<var>k</var>+3)</td>
             <td class="who">Li 2021, Thm 3.3</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_3">li2021_theorem_3_3</a></td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Families.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two">nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two</a></td>
           </tr>
           <tr>
             <td class="what">Maximality for <var>a</var> = −(4<var>k</var>+2)(4<var>k</var>+3), all <var>k</var></td>
-            <td class="who">this formalization, by Li's method</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul">nonempty_mulEquiv_of_eq_neg_mul</a></td>
+            <td class="who">this formalization</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Families.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two">nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two</a></td>
           </tr>
           <tr>
             <td class="what">Maximality for <var>a</var> = −((4<var>k</var>+1)(4<var>k</var>+2)+1)</td>
             <td class="who">Li 2021, Thm 3.9</td>
-            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_9">li2021_theorem_3_9</a></td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Families.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one">nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one</a></td>
+          </tr>
+          <tr>
+            <td class="what">Maximality for rational <var>a</var> = <var>r</var>/<var>s</var> with <var>a</var> ≤ −2 or <var>a</var>³ + 2<var>a</var>² + 2<var>a</var> + 2 &gt; 0, in three 2-adic classes of (<var>r</var>, <var>s</var>), when two of three lists of conditions on <var>r</var> and <var>s</var> hold</td>
+            <td class="who">this formalization</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Theorem.html#QuadraticIterates.nonempty_mulEquiv_of_twoAdicClass_of_criteria">nonempty_mulEquiv_of_twoAdicClass_of_criteria</a></td>
+          </tr>
+          <tr>
+            <td class="what">Maximality for <var>a</var> = −ℓ(ℓ+1), ℓ = <var>u</var>/<var>v</var> &gt; 1, (<var>u</var>, <var>v</var>) ≡ (2, 1), (3, 3) (mod 4)</td>
+            <td class="who">this formalization</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Families.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul_add_one">nonempty_mulEquiv_of_eq_neg_mul_add_one</a></td>
+          </tr>
+          <tr>
+            <td class="what">Maximality for <var>a</var> = −(ℓ²+ℓ+1) ≤ −2, ℓ = <var>u</var>/<var>v</var>, (<var>u</var>, <var>v</var>) ≡ (1, 1), (2, 3) (mod 4)</td>
+            <td class="who">this formalization</td>
+            <td><a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Main/Families.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_sq_add_add_one">nonempty_mulEquiv_of_eq_neg_sq_add_add_one</a></td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <p class="col">The results of the three papers are formalized a second time along their own proofs, through the Möbius quotients <var>b</var><sub><var>n</var></sub> of the <var>c</var><sub><var>n</var></sub> (Part II of the blueprint): <a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section1_tfae">section1_tfae</a>, <a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/ArchMath1992/Main.html#QuadraticIterates.section3_main">section3_main</a>, <a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2020.html#QuadraticIterates.li2020_theorem_3_5">li2020_theorem_3_5</a>, <a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.nonempty_mulEquiv_of_eq_neg_mul">nonempty_mulEquiv_of_eq_neg_mul</a> (with <a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_3">li2021_theorem_3_3</a> as its even half) and <a class="lean-link" href="https://michaelstollbayreuth.github.io/QuadraticIterates/docs/QuadraticIterates/Li/ArchMath2021.html#QuadraticIterates.li2021_theorem_3_9">li2021_theorem_3_9</a>.</p>
 
     <p class="col">Two of Stoll's three classes are one theorem, taking the case split as a disjunction of congruences — the shape the paper itself uses:</p>
 
     <pre class="col"><span class="kw">theorem</span> section3_main
     (hcase : (0 &lt; a ∧ a % 4 = 1) ∨ (0 &lt; a ∧ a % 4 = 2) ∨
              (a &lt; 0 ∧ a % 4 = 0 ∧ ¬IsSquare (-a))) :
-    ∀ n ≥ 1, Nonempty (GaloisGroup a n ≃* WreathPower n)</pre>
+    ∀ n ≥ 1, Nonempty (GaloisGroup (a : ℚ) n ≃* WreathPower n)</pre>
 
     <p class="col">The library also carries more than the headline theorems. Li's Lemma 2.2 — formalized in three parts — handles <em>squarefree</em> <var>n</var> in three of the four unsettled boxes. In every open case the obstruction is the same: non-squarefree <var>n</var>, which is precisely where Li had to retreat to two explicit families.</p>
   </section>
@@ -692,7 +705,9 @@
 
       <p>Li reached the same verdict from the other side in 2021: <em>"there seems to be no method other than Stoll's criterion which can show the non-squareness of |b<sub>n</sub>| for infinitely many n."</em> Five years on, that is still true.</p>
 
-      <p>One small exception has since appeared, and it comes out of the formalization itself: Li's family <code>a = −(8k+2)(8k+3)</code> is the even-<var>k</var> half of <code>a = −(4k+2)(4k+3)</code>, and the odd half goes through by his own argument once the residue of the rescaled sequence is read modulo 8 rather than modulo 4 — the <var>a</var> ≡ 2 (mod 4) box above. It is a half-family, not a new class: the verdicts of Jones and Li stand.</p>
+      <p>One small exception has since appeared, and it comes out of the formalization itself: Li's family <code>a = −(8k+2)(8k+3)</code> is the even-<var>k</var> half of <code>a = −(4k+2)(4k+3)</code>, and the odd half holds as well — the <var>a</var> ≡ 2 (mod 4) box above. It is a half-family, not a new class: the verdicts of Jones and Li stand.</p>
+
+      <p>A second addition leaves the integers. For rational <var>a</var> = <var>r</var>/<var>s</var> the critical orbit has integer numerators, and quadratic characters read off their residues: for <var>a</var> ≤ −2 and for <var>a</var>³ + 2<var>a</var>² + 2<var>a</var> + 2 &gt; 0, in three 2-adic classes of (<var>r</var>, <var>s</var>) and when two of three explicit lists of conditions on <var>r</var> and <var>s</var> hold, every level is maximal — Chapter 5 of the blueprint. For <var>s</var> = 1 this gives Stoll's three classes and the sufficient half of Li's dichotomy, and two families of rational parameters contain Li's (Chapter 6). No integer value of <var>a</var> is added: the lattice above is unchanged.</p>
     </div>
   </section>
 
@@ -724,7 +739,7 @@
         <div class="when">2026</div>
         <div>
           <h3>Henderson, Juul, Lattin, Mercado &amp; Schaefer — rational parameters</h3>
-          <p>The one recent paper working over ℚ rather than ℤ: infinitely many surjective examples for <var>c</var> = −<var>a</var> − <var>a</var>² and <var>c</var> = −1 + <var>a</var> − <var>a</var>², with the tree rooted at the strictly preperiodic point <var>a</var>. Rational parameters buy small height — they can land <var>c</var> inside the Mandelbrot set.</p>
+          <p>The one recent paper working over ℚ rather than ℤ: infinitely many surjective examples for <var>c</var> = −<var>a</var> − <var>a</var>² and <var>c</var> = −1 + <var>a</var> − <var>a</var>², with the tree rooted at the strictly preperiodic point <var>a</var>. Rational parameters buy small height — they can land <var>c</var> inside the Mandelbrot set. The rational criterion in this library is the complementary case: the tree stays rooted at 0, and the question is which <var>r</var>/<var>s</var> the residue method reaches.</p>
         </div>
       </div>
 
@@ -765,7 +780,7 @@
 
   <footer>
     <div>
-      Survey of 6 September 2026 — OpenAlex citation graph, arXiv metadata sweeps, and direct computation with the criterion.
+      Survey of 6 September 2026, the rational-parameter theorems added on 7 September 2026 — OpenAlex citation graph, arXiv metadata sweeps, and direct computation with the criterion.
     </div>
     <div class="links">
       <a href="https://github.com/MichaelStollBayreuth/QuadraticIterates">Repository</a>

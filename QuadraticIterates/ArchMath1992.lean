@@ -5,8 +5,6 @@ Authors: Michael Stoll
 -/
 module
 
-public import QuadraticIterates.ArchMath1992.DegreeCriterion
-public import QuadraticIterates.ArchMath1992.Irreducibility
 public import QuadraticIterates.ArchMath1992.Iterates
 public import QuadraticIterates.ArchMath1992.Main
 public import QuadraticIterates.ArchMath1992.Sequences
@@ -15,7 +13,8 @@ public import QuadraticIterates.ArchMath1992.Sequences
 # Galois groups over ℚ of some iterated polynomials
 
 A formalization of M. Stoll, *Galois groups over ℚ of some iterated polynomials*,
-Arch. Math. **59** (1992), 239-244.
+Arch. Math. **59** (1992), 239-244, along the paper's own route (Part II of the blueprint; Part I
+treats the newer approach of `QuadraticIterates.Main.Theorem`).
 
 For an integer `a` such that `-a` is not a square, let `f_n` be the `n`-th iterate of
 `f = X² + a`, let `K_n` be the splitting field of `f_n` over `ℚ` and `Ω_n` its Galois group,
@@ -66,13 +65,19 @@ which always embeds into the `n`-fold iterated wreath product `[C₂]ⁿ`.
 
 ## Implementation notes
 
-`QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6) is proved from the standing
-assumption that `-a` is not a rational square alone, without the paper's maximality hypothesis
-`[K_n : ℚ] = 2 ^ (2 ^ n - 1)`; for `n ≥ 1` that assumption is equivalent to the irreducibility
-of `f_n`.
+The Galois-theoretic part of Section 1 — the iterates, the fields `K_n`, the groups `Ω_n`,
+Odoni's embedding, Lemmas 1.2 and 1.4–1.6 — is shared with Part I and formalized for rational
+parameters in `QuadraticIterates/Galois/`; the definitions `QuadraticIterates.iteratedPoly`,
+`QuadraticIterates.cSeq` and `QuadraticIterates.bSeq` work over any coefficient ring, and an
+integer `a` enters the Galois groups as `(a : ℚ)`.
+`QuadraticIterates.relfinrank_succ_eq_two_pow_iff` (Lemma 1.6) is proved under the
+irreducibility of `f_n` and `c_{n+1} ≠ 0`, without the paper's maximality hypothesis
+`[K_n : ℚ] = 2 ^ (2 ^ n - 1)`; for an integer `a` with `-a` not a square both hold
+(`QuadraticIterates.irreducible_iteratedPoly`,
+`QuadraticIterates.cSeq_ne_zero_of_not_isSquare_neg`).
 
-All declarations live in the `QuadraticIterates` namespace. The development is split over
+All declarations live in the `QuadraticIterates` namespace. The paper-specific part is split over
 `QuadraticIterates/ArchMath1992/`: `Sequences` (the `γ`- and `β`-sequences over general rings and
-over `ℤ`), `Iterates` (the polynomials `f_n`, the fields `K_n`, the groups `Ω_n`, the sequences
-`c` and `b`), `Irreducibility`, `DegreeCriterion` and `Main`.
+over `ℤ`), `Iterates` (the integer sequence `c`, irreducibility, `QuadraticIterates.normPoly`,
+2-independence of integers) and `Main`.
 -/

@@ -6,6 +6,9 @@
 \documentclass[a4paper]{report}
 
 \usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{tocloft}
 
 \usepackage{expl3}
 
@@ -14,10 +17,13 @@
 
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
 
+% The Lean names in \lname contain Unicode (ℚ, χ₄, ≃*, ↦) that Latin Modern Mono lacks.
+\IfFontExistsTF{DejaVu Sans Mono}{\setmonofont{DejaVu Sans Mono}[Scale=MatchLowercase]}{}
+
 \input{macros/common}
 \input{macros/print}
 
-\title{Galois groups over $\mathbb{Q}$ of some iterated polynomials: a blueprint}
+\title{Maximal Galois groups of the iterates of~$x^2 + a$: a blueprint}
 \author{Michael Stoll}
 
 \begin{document}

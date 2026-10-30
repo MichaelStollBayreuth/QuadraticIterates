@@ -7,7 +7,6 @@ module
 
 public import QuadraticIterates.ArchMath1992.Main
 
-import QuadraticIterates.ArchMath1992.Irreducibility
 import QuadraticIterates.Mathlib.Data.Int.Order.Units
 import QuadraticIterates.Mathlib.RingTheory.Radical.NatInt
 
@@ -135,7 +134,7 @@ theorem gammaSeq_normPoly_zmod_eight_of_emod_four_eq_one (ha : a < 0) (ha4 : a %
   have h4 : gammaSeq g' (-1) (2 + 2) = gammaSeq g' (-1) 2 := by
     rw [gammaSeq_succ _ _ (by lia), h3, h2, eval_map_normPoly_of_neg ha]
     rcases hα with h | h <;> rw [h] <;> decide
-  rw [intCast_gammaSeq_normPoly ha, gammaSeq_eq_ite_even_of_add_two_eq g' one_le_two h4 n hn, h2,
+  rw [intCast_gammaSeq_normPoly ha, gammaSeq_eq_ite_even_of_add_two_eq one_le_two h4 n hn, h2,
     h3]
   push_cast
   simp [Nat.even_add]

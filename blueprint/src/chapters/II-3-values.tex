@@ -1,11 +1,13 @@
 \chapter{\texorpdfstring{Some values of $a$ with $\Om_n \cong \Ct{n}$ for all $n$}{Some values of
   a with the full wreath power for all n}}
+\label{chap:paper-values}
 
-We combine the results of Chapters~1 and~2 to get the following.
+We combine the results of Chapters~\ref{chap:paper-criterion} and~\ref{chap:paper-even} to get
+the following.
 
 \begin{definition}[The rescaled polynomial]
   \label{def:normpoly}
-  \uses{def:cseq, def:gammaseq}
+  \uses{def:cseq, def:betaseq, def:bseq}
   \lean{QuadraticIterates.normPoly, QuadraticIterates.eval_normPoly,
     QuadraticIterates.evenPoly_normPoly, QuadraticIterates.evenPoly_X_sq_add_C,
     QuadraticIterates.evenPoly_C_mul_X_sq_add_C,
@@ -26,7 +28,7 @@ We combine the results of Chapters~1 and~2 to get the following.
 
 \begin{theorem}[Section 3]
   \label{thm:section3}
-  \uses{def:normpoly, def:galois, def:wreath}
+  \uses{def:normpoly, def:galois, def:wreath, def:bseq}
   \lean{QuadraticIterates.section3_main, QuadraticIterates.not_isSquare_abs_bSeq,
     QuadraticIterates.not_isSquare_neg_of_cases}
   \leanok
