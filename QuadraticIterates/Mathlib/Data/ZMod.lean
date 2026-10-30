@@ -19,8 +19,8 @@ import QuadraticIterates.Mathlib.RingTheory.Int.Basic
 # `ZMod` lemmas
 
 Residues modulo `8` of odd integers and of integers with a given residue modulo `4`; units modulo
-a prime power; congruence modulo an integer `m` as equality in `ZMod |m|`; integer scalars on a
-`ZMod 2`-module.
+a prime power; congruence modulo an integer `m` as equality in `ZMod |m|`; negatives and units
+modulo `m` when `m ∣ a + b`; integer scalars on a `ZMod 2`-module.
 
 Auxiliary material for the formalization of M. Stoll, *Galois groups over ℚ of some iterated
 polynomials*, Arch. Math. 59 (1992), 239-244; upstreaming candidates for Mathlib.
@@ -83,6 +83,16 @@ lemma ZMod.intCast_eq_intCast_iff_modEq {m a b : ℤ} : (a : ZMod m.natAbs) = b 
 
 @[simp] lemma ZMod.intCast_self_natAbs (m : ℤ) : (m : ZMod m.natAbs) = 0 :=
   (ZMod.intCast_zmod_eq_zero_iff_dvd m m.natAbs).mpr (Int.natAbs_dvd.mpr dvd_rfl)
+
+lemma ZMod.intCast_eq_neg_intCast_of_dvd_add {a b : ℤ} {m : ℕ} (h : (m : ℤ) ∣ a + b) :
+    (b : ZMod m) = -(a : ZMod m) := by
+  rw [← Int.cast_neg, intCast_eq_intCast_iff_dvd_sub, ← neg_add']
+  exact h.neg_right
+
+lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd_add {a b : ℤ} {m : ℕ}
+    (hcop : IsCoprime (m : ℤ) a) (h : (m : ℤ) ∣ a + b) : IsUnit (b : ZMod m) := by
+  simpa [intCast_eq_neg_intCast_of_dvd_add h] using
+    ((coe_int_isUnit_iff_isCoprime a m).mpr hcop).neg
 
 /-! ### `ZMod 2`-modules -/
 
