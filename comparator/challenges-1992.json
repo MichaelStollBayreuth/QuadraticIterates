@@ -1,0 +1,12 @@
+{
+    "challenge_module": "Challenge",
+    "solution_module": "Solution1992",
+    "theorem_names": ["challenge_nonempty_mulEquiv_of_pos_of_emod_four_eq_one",
+                      "challenge_nonempty_mulEquiv_of_pos_of_emod_four_eq_two",
+                      "challenge_nonempty_mulEquiv_of_neg_of_emod_four_eq_zero",
+                      "challenge_nonempty_mulEquiv_of_eq_neg_mul_add_one_of_emod_four_eq_two",
+                      "challenge_nonempty_mulEquiv_of_eq_neg_sq_add_add_one_of_emod_four_eq_one",
+                      "challenge_forall_nonempty_mulEquiv_iff_of_neg_of_emod_four_eq_three"],
+    "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+    "enable_nanoda": false
+}

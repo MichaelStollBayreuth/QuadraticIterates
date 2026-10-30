@@ -28,7 +28,11 @@ of the repository's own build and using only the permitted axioms.
   proofs. Because it depends on nothing in this repository, it is a self-contained specification of
   the claims.
 - [`Solution.lean`](Solution.lean) imports `QuadraticIterates` and proves each statement via the
-  corresponding library theorem.
+  corresponding library theorem of Part I of the blueprint (the new approach).
+- [`Solution1992.lean`](Solution1992.lean) proves the six statements for integer parameters a
+  second time, via the theorems of Part II (the formalizations of the original papers by Stoll and
+  Li, along their own proofs), which it adapts from `n ≥ 1` to all `n` and to the
+  parametrizations of the two families.
 
 `lake comparator` builds and exports both modules inside a `bubblewrap` sandbox (it never loads
 the project's `.olean`s into its own process) and checks that each challenge theorem in the
@@ -52,6 +56,9 @@ Section 3 main result (`a > 0`, `a ≡ 1 mod 4`; `a > 0`, `a ≡ 2 mod 4`; `a < 
 corollaries, where the 2-independence of `c₁ = -a` and `c₂ = a² + a` is spelled out as three
 non-squares, and the third corollary states its classes by congruences alone.
 
+[`challenges-1992.json`](challenges-1992.json) — the first six of these, with `Solution1992` as
+the solution module.
+
 ## Running
 
 Run from the **repository root**; the only prerequisite besides Lean is `bubblewrap` (`bwrap`)
@@ -60,6 +67,7 @@ with unprivileged user namespaces (or installed setuid root):
 ```bash
 scripts/run-comparator.sh               # = lake build QuadraticIterates && lake comparator --config comparator/challenges.json
 scripts/run-comparator.sh --paranoid    # also run all external checkers bundled with Lean
+scripts/run-comparator.sh comparator/challenges-1992.json   # the proofs along the original papers
 ```
 
 Exit code `0` (and `Your solution is okay!`) means the check passed, `1` that it was rejected, `2`
