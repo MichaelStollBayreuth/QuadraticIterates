@@ -224,12 +224,18 @@ squarefree~$d$.
 
 \begin{definition}[The Möbius quotients]
   \label{def:bseq}
-  \uses{def:cseq}
-  \lean{QuadraticIterates.bSeq, QuadraticIterates.prod_divisors_bSeq,
+  \uses{def:cseq, lem:moebiusfactor}
+  \lean{QuadraticIterates.bSeq, QuadraticIterates.bSeq_eq_moebiusFactorR,
+    QuadraticIterates.bSeq_eq_prod, QuadraticIterates.prod_divisors_bSeq,
     QuadraticIterates.bSeq_ne_zero, QuadraticIterates.bSeq_one}
   \leanok
   For~$a$ in a field with $c_n \ne 0$ for all $n \ge 1$, $b_n = \prod_{d \mid n} c_d^{\mu(n/d)}$.
   Then $c_n = \prod_{d \mid n} b_d$ for $n \ge 1$, and $b_1 = -a$.
+  \formalnote{\lname{bSeq} is defined for a parameter in any integral domain, as the preimage
+  of the Möbius product in the fraction field (\lname{moebiusFactorR}, a junk value when the
+  product is not integral); over a field it is the Möbius product (\lname{bSeq\_eq\_prod}).
+  Part~\ref{part:original} uses it over~$\ZZ$, where the product is integral
+  (Lemma~\ref{lem:1.1}).}
 \end{definition}
 
 \begin{lemma}[The Möbius function modulo~$2$]

@@ -8,6 +8,10 @@
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{facts}[theorem]{Facts}
 \newtheorem{conjecture}[theorem]{Conjecture}
+% Statements of the 1992 paper that Part I formalizes in its own form (Appendix A). Part II
+% states them with their numbers and points to their nodes in Part I; they are not nodes.
+\newtheorem{sharedfacts}[theorem]{Facts}
+\newtheorem{sharedlemma}[theorem]{Lemma}
 
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
@@ -22,6 +26,15 @@
 \newcommand{\paperitems}{%
   \setcounter{theorem}{0}\renewcommand{\thetheorem}{\thechapter.\arabic{theorem}}}
 
+% Parts are numbered I and II (plasTeX numbers them in arabic by default).
+\renewcommand{\thepart}{\Roman{part}}
+
+% Part II follows the papers of 1992 and of Li. Its chapters are numbered II.1, II.2, ..., so
+% that the statements of the 1992 paper keep their numbers behind the prefix: Lemma II.1.4 is
+% Lemma 1.4 of that paper. \secondpart also undoes the effect of \appendix on the chapter names.
+\newcommand{\secondpart}{%
+  \setcounter{chapter}{0}\renewcommand{\thechapter}{II.\arabic{chapter}}\restorechapters}
+
 % Notation of the paper.
 \newcommand{\QQ}{\mathbb{Q}}
 \newcommand{\ZZ}{\mathbb{Z}}
@@ -35,6 +48,7 @@
 \newcommand{\ord}{\operatorname{ord}}
 \newcommand{\sgn}{\operatorname{sign}}
 \newcommand{\dvd}{\mathrel{\mid}}
+\newcommand{\rad}{\operatorname{rad}}
 \newcommand{\val}{\operatorname{val}}
 \newcommand{\Leg}[2]{\left(\frac{#1}{#2}\right)}
 \newcommand{\sq}{\square}

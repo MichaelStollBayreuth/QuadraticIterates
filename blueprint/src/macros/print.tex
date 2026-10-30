@@ -15,6 +15,16 @@
 \setlist[enumerate,1]{label=(\arabic*)}
 \setlist[enumerate]{font=\upshape}
 
+% After \appendix, chapters are called "Appendix" and hyperref names their anchors by letters;
+% Part II (\secondpart in macros/common.tex) has chapters again, with anchors of their own, and
+% its longer numbers II.1, II.1.1 get wider boxes in the table of contents (tocloft).
+\makeatletter
+\newcommand{\restorechapters}{%
+  \renewcommand{\@chapapp}{\chaptername}\renewcommand{\theHchapter}{II.\arabic{chapter}}%
+  \addtocontents{toc}{\protect\setlength{\protect\cftchapnumwidth}{2.6em}%
+    \protect\setlength{\protect\cftsecnumwidth}{3.4em}}}
+\makeatother
+
 \newcommand{\lean}[1]{}
 \newcommand{\discussion}[1]{}
 \newcommand{\leanok}{}
