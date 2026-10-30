@@ -1,5 +1,9 @@
 module  -- shake: keep-all --deprecated_module: ignore
 
+public import QuadraticIterates.ArchMath1992
+public import QuadraticIterates.ArchMath1992.Iterates
+public import QuadraticIterates.ArchMath1992.Main
+public import QuadraticIterates.ArchMath1992.Sequences
 public import QuadraticIterates.Characters.Criterion
 public import QuadraticIterates.Characters.Pattern
 public import QuadraticIterates.EvenPoly
@@ -9,6 +13,10 @@ public import QuadraticIterates.Galois.Irreducibility
 public import QuadraticIterates.Galois.Iterates
 public import QuadraticIterates.Galois.Tower
 public import QuadraticIterates.Galois.TwoIndependent
+public import QuadraticIterates.Li
+public import QuadraticIterates.Li.ArchMath2020
+public import QuadraticIterates.Li.ArchMath2021
+public import QuadraticIterates.Li.Residues
 public import QuadraticIterates.Main.Criteria
 public import QuadraticIterates.Main.Families
 public import QuadraticIterates.Main.Further
