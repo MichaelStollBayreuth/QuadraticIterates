@@ -13,7 +13,6 @@ import Mathlib.Data.ZMod.Units
 import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.Tactic.LinearCombination
 import QuadraticIterates.Mathlib.Algebra.BigOperators
-import QuadraticIterates.Mathlib.Algebra.Polynomial.EvenComp
 import QuadraticIterates.Mathlib.Algebra.Squares
 import QuadraticIterates.Mathlib.Algebra.GCDMonoid.Basic
 import QuadraticIterates.Mathlib.Data.ZMod
@@ -83,28 +82,6 @@ lemma evenPoly_C_mul_X_sq_add_C (b c : R) : EvenPoly (C b * X ^ 2 + C c) :=
 
 end EvenPoly
 
-section EvenPoly
-
-variable {R : Type*} [CommRing R] {g : R[X]}
-
-namespace EvenPoly
-
-/-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
-lemma iterate_eval_neg (hg : EvenPoly g) {k : ℕ} (hk : 1 ≤ k) (y : R) :
-    (g.eval ·)^[k] (-y) = (g.eval ·)^[k] y := by
-  obtain ⟨k', rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
-  rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
-
-lemma dvd_eval_sub (hg : EvenPoly g) {N a b : R} (h : N ∣ a ^ 2 - b ^ 2) :
-    N ∣ g.eval a - g.eval b := by
-  obtain ⟨h', rfl⟩ := hg
-  rw [expand_eval, expand_eval]
-  exact h.trans (sub_dvd_eval_sub (a ^ 2) (b ^ 2) h')
-
-end EvenPoly
-
-end EvenPoly
-
 /-! ### The sequences `γ` and `β` -/
 
 /-- The Möbius factors `β_n = ∏_{d ∣ n} γ_d^{μ(n/d)}` of the `γ`-sequence, as elements of the
@@ -121,13 +98,6 @@ lemma betaSeq_eq_moebiusFactorR {R : Type*} [CommRing R] [IsDomain R] (g : R[X])
 section
 
 variable {R : Type*} [CommSemiring R] (g : R[X])
-
-lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
-    gammaSeq g ε (m + n) = (g.eval ·)^[n] (gammaSeq g ε m) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [← add_assoc, gammaSeq_succ g ε (by lia), ih, Function.iterate_succ_apply']
 
 /-- The recursion `γ_{n+1} = g(γ_n)` for the `ε = 1` sequence, valid at every index (including `0`,
 since `γ_0 = 0` and `γ_1 = g(0)`). -/
@@ -522,13 +492,7 @@ section
 open ArithmeticFunction UniqueFactorizationMonoid
 open scoped Finset
 
-variable (g : ℤ[X])
-
-lemma intCast_gammaSeq (ε : ℤ) (S : Type*) [CommRing S] (i : ℕ) : ((gammaSeq g ε i : ℤ) : S)
-    = gammaSeq (g.map (Int.castRingHom S)) (ε : S) i :=
-  map_gammaSeq g (Int.castRingHom S) ε i
-
-variable {g}
+variable {g : ℤ[X]}
 
 /-- **Strong divisibility** over `ℤ`, for even `g` and `ε = ±1`:
 `gcd (γ_m) (γ_n) = |γ_{gcd m n}|`. -/

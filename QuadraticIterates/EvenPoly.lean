@@ -69,6 +69,18 @@ namespace EvenPoly
 
 theorem eval_neg (hg : EvenPoly g) (y : R) : g.eval (-y) = g.eval y := hg.eval_congr (neg_sq y)
 
+/-- The iterates of the evaluation map of an even polynomial are even functions (`k ≥ 1`). -/
+lemma iterate_eval_neg (hg : EvenPoly g) {k : ℕ} (hk : 1 ≤ k) (y : R) :
+    (g.eval ·)^[k] (-y) = (g.eval ·)^[k] y := by
+  obtain ⟨k', rfl⟩ := Nat.exists_eq_add_one_of_ne_zero (Nat.one_le_iff_ne_zero.mp hk)
+  rw [Function.iterate_succ_apply, Function.iterate_succ_apply, hg.eval_neg]
+
+lemma dvd_eval_sub (hg : EvenPoly g) {N a b : R} (h : N ∣ a ^ 2 - b ^ 2) :
+    N ∣ g.eval a - g.eval b := by
+  obtain ⟨h', rfl⟩ := hg
+  rw [expand_eval, expand_eval]
+  exact h.trans (sub_dvd_eval_sub (a ^ 2) (b ^ 2) h')
+
 lemma comp_neg_X (hg : EvenPoly g) : g.comp (-X) = g := by
   obtain ⟨h, rfl⟩ := hg
   exact expand_two_comp_neg_X h
@@ -106,6 +118,13 @@ lemma gammaSeq_succ (ε : R) {n : ℕ} (hn : 1 ≤ n) :
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_one.mpr hn
   rfl
 
+lemma gammaSeq_add (ε : R) {m : ℕ} (hm : 1 ≤ m) (n : ℕ) :
+    gammaSeq g ε (m + n) = (g.eval ·)^[n] (gammaSeq g ε m) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [← add_assoc, gammaSeq_succ g ε (by lia), ih, Function.iterate_succ_apply']
+
 lemma map_gammaSeq {S : Type*} [CommSemiring S] (φ : R →+* S) (ε : R) (n : ℕ) :
     φ (gammaSeq g ε n) = gammaSeq (g.map φ) (φ ε) n := by
   fun_induction gammaSeq g ε n with
@@ -129,5 +148,9 @@ theorem gammaSeq_eq_ite_even_of_add_two_eq {ε : R} {n₀ : ℕ} (hn₀ : 1 ≤ 
   | succ n hn ih => grind [gammaSeq_succ g ε (by lia : 1 ≤ n)]
 
 end
+
+lemma intCast_gammaSeq (g : ℤ[X]) (ε : ℤ) (S : Type*) [CommRing S] (i : ℕ) :
+    ((gammaSeq g ε i : ℤ) : S) = gammaSeq (g.map (Int.castRingHom S)) (ε : S) i :=
+  map_gammaSeq g (Int.castRingHom S) ε i
 
 end QuadraticIterates
