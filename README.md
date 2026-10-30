@@ -22,16 +22,19 @@ criterion of
 
 `Ω_n ≅ [C₂]ⁿ` exactly when `c_1, …, c_n` are 2-independent in `ℚ*/(ℚ*)²`, where `c_1 = −a` and
 `c_{k+1} = c_k² + a`. This criterion is formalized for every rational `a`, together with Odoni's
-embedding theorem, and without the paper's assumption that the iterates are irreducible:
+embedding theorem, and without the 1992 paper's assumption that the iterates are irreducible:
 maximality of `Ω_n` forces `f_1, …, f_n` to be irreducible.
 
 The first formalization (Part I of the [blueprint](#blueprint)) does not reproduce the proofs of
-the paper and its successors, but gives different, simpler proofs of their main results and
-extends them to further cases and to rational parameters. Instead of passing from the `c_n` to their Möbius quotients `b_n`, as those proofs do,
-the formalization works with quadratic characters: every level is maximal if and only if, for
-every `n ≥ 1`, some character `χ : ℚ* → {±1}` has `χ(c_n) = −1` and `χ(c_m) = 1` for all `m > n`.
-Such characters (the sign, the parities of `p`-adic valuations, and characters induced by Dirichlet
-characters) are found by short computations modulo a single prime power, and they give:
+the 1992 paper and its successors, but gives different, simpler proofs of their main results and
+extends them to further cases and to rational parameters, following the paper M. Stoll, *When do
+all iterates of x² + a have maximal Galois group?* (preprint,
+[`paper/arboreal-surjective.pdf`](paper/arboreal-surjective.pdf)). Instead of passing from the
+`c_n` to their Möbius quotients `b_n`, as those proofs do, the formalization works with quadratic
+characters: every level is maximal if and only if, for every `n ≥ 1`, some character
+`χ : ℚ* → {±1}` has `χ(c_n) = −1` and `χ(c_m) = 1` for all `m > n`. Such characters (the sign, the
+parities of `p`-adic valuations, and characters induced by Dirichlet characters) are found by
+short computations modulo a single prime power, and they give:
 
 - a **criterion for rational parameters** `a = r/s`
   (`nonempty_mulEquiv_of_twoAdicClass_of_criteria`): if `a ≤ −2` or `a³ + 2a² + 2a + 2 > 0`, the
@@ -46,8 +49,8 @@ characters) are found by short computations modulo a single prime power, and the
 - **two families** of rational parameters, `a = −ℓ(ℓ + 1)` and `a = −(ℓ² + ℓ + 1)` with `ℓ` in
   certain classes of fractions, outside the reach of the criterion;
 - the **results for integer `a`**, as the case `s = 1`: the main result of Section 3 of the
-  paper (`a > 0` with `a ≡ 1` or `2 mod 4`, or `a < 0` with `a ≡ 0 mod 4` and `−a` not a square),
-  and the theorems of H.-C. Li
+  1992 paper (`a > 0` with `a ≡ 1` or `2 mod 4`, or `a < 0` with `a ≡ 0 mod 4` and `−a` not a
+  square), and the theorems of H.-C. Li
   (Arch. Math. **114** (2020), 265–269, [DOI: 10.1007/s00013-019-01390-x](https://doi.org/10.1007/s00013-019-01390-x);
   Arch. Math. **117** (2021), 133–140, [DOI: 10.1007/s00013-021-01609-w](https://doi.org/10.1007/s00013-021-01609-w)):
   every level is maximal when `a = −(4k+2)(4k+3)` (Li's family `a = −(8k+2)(8k+3)` is the case of
@@ -67,14 +70,15 @@ which `a = r/s` the criterion and the two families cover, coloured by 2-adic cla
 marks the uncovered `a` with `c_1, …, c_6` 2-dependent; [`plots/coverage.py`](plots/coverage.py)
 generates it.
 
-The second formalization (Part II of the blueprint) follows the paper and the two papers of Li
-along their own proofs, through the Möbius quotients `b_n` of the sequence `c_n`: for an integer
-`a` such that `−a` is not a square, the `b_n` are pairwise coprime integers with
-`c_n = ∏_{d ∣ n} b_d`, so `Ω_n ≅ [C₂]ⁿ` for every `n` as soon as none of `|b_2|, |b_3|, …` is a
-square (`section1_of_not_isSquare_abs_bSeq`); the paper and Li show this for the values of `a`
-above by congruences for the `b_n` (`section3_main`, `nonempty_mulEquiv_of_eq_neg_mul`,
-`li2021_theorem_3_9`, `li2020_theorem_3_5`). The two formalizations share the Galois-theoretic
-foundation: the iterates, Odoni's embedding, the degree criterion and the criterion itself.
+The second formalization (Part II of the blueprint) follows the 1992 paper *Galois groups over ℚ
+of some iterated polynomials* and the two papers of H.-C. Li quoted above along their own proofs,
+through the Möbius quotients `b_n` of the sequence `c_n`: for an integer `a` such that `−a` is not
+a square, the `b_n` are pairwise coprime integers with `c_n = ∏_{d ∣ n} b_d`, so `Ω_n ≅ [C₂]ⁿ` for
+every `n` as soon as none of `|b_2|, |b_3|, …` is a square (`section1_of_not_isSquare_abs_bSeq`);
+the 1992 paper and Li show this for the values of `a` above by congruences for the `b_n`
+(`section3_main`, `nonempty_mulEquiv_of_eq_neg_mul`, `li2021_theorem_3_9`, `li2020_theorem_3_5`).
+The two formalizations share the Galois-theoretic foundation: the iterates, Odoni's embedding, the
+degree criterion and the criterion itself.
 
 There is no `sorry`, and no axiom beyond the three of Mathlib.
 
@@ -83,7 +87,7 @@ There is no `sorry`, and no axiom beyond the three of Mathlib.
 The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 
 - [`Galois`](QuadraticIterates/Galois): the iterates `f_n`, the fields `K_n` and the groups `Ω_n`,
-  Odoni's embedding, the degree criterion and the criterion of the paper
+  Odoni's embedding, the degree criterion and the criterion of the 1992 paper
   (`nonempty_mulEquiv_iff_twoIndependent`);
 - [`Characters`](QuadraticIterates/Characters): patterns of characters along a sequence, and the
   criterion in terms of characters (`tfae_forall_nonempty_mulEquiv`);
@@ -98,7 +102,7 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 - [`EvenPoly.lean`](QuadraticIterates/EvenPoly.lean): even polynomials and their iteration
   sequences, of which `c_n` is one;
 - [`ArchMath1992`](QuadraticIterates/ArchMath1992) (with
-  [`ArchMath1992.lean`](QuadraticIterates/ArchMath1992.lean)): the paper along its own proofs —
+  [`ArchMath1992.lean`](QuadraticIterates/ArchMath1992.lean)): the 1992 paper along its own proofs —
   `Sequences` (the iteration sequences of even polynomials and their Möbius quotients `β_n`, over
   general rings and over `ℤ`), `Iterates` (the sequence `c_n` for integer `a`, the irreducibility
   of the iterates, the rescaled polynomial) and `Main` (the integers `b_n`, the theorem of
@@ -115,11 +119,8 @@ The Lean sources are in [`QuadraticIterates`](QuadraticIterates):
 includes a table aligning each result of the three papers with the declarations that formalize
 it, along both routes.
 [`comparator/`](comparator) holds a [comparator](https://github.com/leanprover/comparator)
-harness for the main result of Section 3 (one challenge per case), for the theorems of Li (the
-first one in its strengthened form), and for the criterion for rational parameters and its three
-corollaries, whose challenges reproduce the definitions of the 2-adic classes and lists of
-conditions. A second configuration proves the six challenges about integer `a` along the proofs
-of the original papers.
+harness that certifies the main results independently of the repository's own build; see
+[Checking the results with comparator](#checking-the-results-with-comparator).
 
 ## Blueprint
 
@@ -184,3 +185,41 @@ lake build
 ```
 
 in the root directory of this repository.
+
+## Checking the results with comparator
+
+[Comparator](https://github.com/leanprover/comparator), built into Lake as `lake comparator` since
+Lean v4.35.0, certifies that a Lean development proves a given list of statements. The statements
+are in [`comparator/Challenge.lean`](comparator/Challenge.lean), which imports **only Mathlib**: it
+reproduces the definitions the statements need (`iteratedPoly`, `GaloisGroup`, `WreathPower`, and
+the 2-adic classes and lists of criteria of the main theorem) and states the results with `sorry`
+proofs, so it is a self-contained specification of what is claimed. Comparator checks that a
+solution module proves exactly these statements, with the same definitions (it compares their
+full bodies, so a solution cannot redefine `GaloisGroup`), that the proofs use no axioms beyond
+`propext`, `Quot.sound` and `Classical.choice`, and that the Lean kernel accepts them. There are
+two configurations:
+
+- [`comparator/challenges.json`](comparator/challenges.json): ten challenges — the three cases of
+  the main result of Section 3 of the 1992 paper, the theorems of Li (Theorem 3.3 of 2021 in its
+  strengthened form), the main theorem for rational parameters and its three corollaries —
+  proved in [`comparator/Solution.lean`](comparator/Solution.lean) by the theorems of Part I;
+- [`comparator/challenges-1992.json`](comparator/challenges-1992.json): the six challenges about
+  integer `a`, proved a second time in
+  [`comparator/Solution1992.lean`](comparator/Solution1992.lean) by the theorems of Part II,
+  along the proofs of the original papers.
+
+After `lake exe cache get` (see [Building](#building)), run in the root directory of this
+repository
+
+```bash
+scripts/run-comparator.sh                                  # Part I: comparator/challenges.json
+scripts/run-comparator.sh comparator/challenges-1992.json  # Part II
+```
+
+The script builds the library (`lake build QuadraticIterates`) and then runs
+`lake comparator --config <file>`, which builds and exports the challenge and the solution inside
+a sandbox; this needs [bubblewrap](https://github.com/containers/bubblewrap) (`bwrap`) with
+unprivileged user namespaces. A run that passes ends with `Your solution is okay!` and exit code
+`0`; exit code `1` means that the solution was rejected, `2` that the check could not start.
+`--paranoid` after the configuration also runs the external checkers bundled with Lean besides its
+kernel. [`comparator/README.md`](comparator/README.md) has the details.
