@@ -17,13 +17,20 @@ A formalization in [Lean 4](https://lean-lang.org), based on
 
 for the Galois group over ℚ of the `n`-th iterate of `X² + a` to be the full iterated wreath
 power `[C₂]ⁿ`, for every rational `a`, and of its reformulation by quadratic characters. With it,
-a criterion for rational parameters `a = r/s` in explicit 2-adic classes is proved, together
-with two families of rational parameters; the main result of the paper's Section 3 and the
-theorems of H.-C. Li (Arch. Math. 2020 and 2021) are their integer cases, one of them in a
-stronger form (`a = −(4k+2)(4k+3)` for all `k`, where Li has even `k`). The results of the paper
-and of Li are also formalized along their own proofs, through the Möbius quotients `b_n` of the
-iteration sequence; the blueprint presents the two formalizations as its two parts, on a common
-Galois-theoretic foundation.
+the main results of
+
+> Michael Stoll,
+> *When do all iterates of x² + a have maximal Galois group?*,
+> preprint (2026)
+> ([PDF](https://github.com/MichaelStollBayreuth/QuadraticIterates/blob/main/paper/arboreal-surjective.pdf))
+
+are formalized: a criterion for rational parameters `a = r/s` in explicit 2-adic classes,
+together with two families of rational parameters; the main result of Section 3 of the 1992
+paper and the theorems of H.-C. Li (Arch. Math. 2020 and 2021) are their integer cases, one of
+them in a stronger form (`a = −(4k+2)(4k+3)` for all `k`, where Li has even `k`). The results of
+the 1992 paper and of Li are also formalized along their own proofs, through the Möbius quotients
+`b_n` of the iteration sequence; the blueprint presents the two formalizations as its two parts,
+on a common Galois-theoretic foundation.
 
 - [Blueprint]({{ site.baseurl }}/blueprint/) — the mathematics of both formalizations, with each
   definition and statement linked to the declaration that formalizes it

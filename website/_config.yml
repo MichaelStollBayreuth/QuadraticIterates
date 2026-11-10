@@ -6,6 +6,7 @@ baseurl: /QuadraticIterates
 title: QuadraticIterates
 description: >-
   A Lean 4 formalization of M. Stoll, Galois groups over ℚ of some iterated polynomials,
-  Arch. Math. 59 (1992), 239-244
+  Arch. Math. 59 (1992), 239-244, and of M. Stoll, When do all iterates of x² + a have maximal
+  Galois group? (preprint, 2026)
 theme: minima
 markdown: kramdown
