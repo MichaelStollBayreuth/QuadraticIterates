@@ -29,7 +29,7 @@ The first formalization (Part I of the [blueprint](#blueprint)) does not reprodu
 the 1992 paper and its successors, but gives different, simpler proofs of their main results and
 extends them to further cases and to rational parameters, following the paper M. Stoll, *When do
 all iterates of x² + a have maximal Galois group?* (preprint,
-[`paper/arboreal-surjective.pdf`](paper/arboreal-surjective.pdf)). Instead of passing from the
+[arXiv:2611.14014](https://arxiv.org/abs/2611.14014)). Instead of passing from the
 `c_n` to their Möbius quotients `b_n`, as those proofs do, the formalization works with quadratic
 characters: every level is maximal if and only if, for every `n ≥ 1`, some character
 `χ : ℚ* → {±1}` has `χ(c_n) = −1` and `χ(c_m) = 1` for all `m > n`. Such characters (the sign, the
@@ -128,7 +128,7 @@ harness that certifies the main results independently of the repository's own bu
 blueprint in two parts that develops the mathematics, with statements and proofs, and links each
 item to the declarations that formalize it. In Part I, chapters 1–7 are the sections of the paper
 M. Stoll, *When do all iterates of x² + a have maximal Galois group?* (preprint,
-[`paper/arboreal-surjective.pdf`](paper/arboreal-surjective.pdf)), with the paper's numbering of
+[arXiv:2611.14014](https://arxiv.org/abs/2611.14014)), with the paper's numbering of
 the statements: the introduction with the criterion of the 1992 paper, quadratic characters, sign
 information, the characters `φ_n` for `n ≥ 2`, the Klein four-group of characters with the three
 lists of criteria, the main result with its integer corollary, and the two quadratic families.

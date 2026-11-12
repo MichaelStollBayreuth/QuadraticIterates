@@ -32,6 +32,13 @@ sources:
     license: "© Springer Nature Switzerland AG 2021"
     author_contacted: "no"
     prior_work: ""
+  - title: "When do all iterates of x² + a have maximal Galois group?"
+    authors: ["Michael Stoll"]
+    id: "arXiv:2611.14014"   # preprint (2026), the paper that Part I of the blueprint follows
+    type: "preprint"
+    license: "arXiv.org perpetual, non-exclusive license to distribute"
+    author_contacted: "yes"    # the source author is the formalization author
+    prior_work: ""
 
 # project status
 status:
@@ -63,8 +70,7 @@ status:
     QuadraticIterates/Main/SquareProducts.lean). The rigid
     divisibility of (c_n) and the three possible shapes of n ↦ v_p(c_n) are formalized as well
     (QuadraticIterates/Sequence/Orbit.lean and Valuation.lean). The method is the author's; a
-    preprint on it is in paper/arboreal-surjective.pdf, and the blueprint follows its sections and
-    numbering. The
+    preprint on it is arXiv:2611.14014, and the blueprint follows its sections and numbering. The
     main result of Section 3 of the paper and the theorems of H.-C. Li (Theorem 3.5 of 2020,
     Theorems 3.3, strengthened to a = -l(l+1) for every positive l = 2 mod 4, and 3.9 of 2021)
     are derived as in the preprint: from the level-two criterion at s = 1, as c_2 = a(a+1) is

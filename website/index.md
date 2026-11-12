@@ -21,8 +21,8 @@ the main results of
 
 > Michael Stoll,
 > *When do all iterates of x² + a have maximal Galois group?*,
-> preprint (2026)
-> ([PDF](https://github.com/MichaelStollBayreuth/QuadraticIterates/blob/main/paper/arboreal-surjective.pdf))
+> preprint (2026),
+> [arXiv:2611.14014](https://arxiv.org/abs/2611.14014)
 
 are formalized: a criterion for rational parameters `a = r/s` in explicit 2-adic classes,
 together with two families of rational parameters; the main result of Section 3 of the 1992
