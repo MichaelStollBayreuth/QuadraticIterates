@@ -171,18 +171,17 @@ noncomputable def unitPartChar : MulChar ℚ ℤ :=
 
 variable {p ψ} [Fact p.Prime] {k : ℕ}
 
-private lemma isUnit_apply_sign_mul_ordCompl (hN : N = p ^ k) {m : ℤ} (hm : m ≠ 0) :
-    IsUnit (ψ (m.sign * (ordCompl[p] m.natAbs : ℕ))) := by
+private lemma isUnit_sign_mul_ordCompl (hN : N = p ^ k) {m : ℤ} (hm : m ≠ 0) :
+    IsUnit (m.sign * (ordCompl[p] m.natAbs : ℕ) : ZMod N) := by
   have hdvd : ¬(p : ℤ) ∣ m.sign * (ordCompl[p] m.natAbs : ℕ) := by
     rw [(Int.isUnit_iff_natAbs_eq.mpr (Int.natAbs_sign_of_ne_zero hm)).dvd_mul_left,
       Int.natCast_dvd_natCast]
     exact Nat.not_dvd_ordCompl Fact.out (Int.natAbs_ne_zero.mpr hm)
-  simpa only [Int.cast_mul, Int.cast_natCast] using (ZMod.isUnit_intCast_of_not_dvd hN hdvd).map ψ
+  simpa only [Int.cast_mul, Int.cast_natCast] using ZMod.isUnit_intCast_of_not_dvd hN hdvd
 
 private lemma unitPartChar_intCast_eq (hN : N = p ^ k) (m : ℤ) :
     unitPartChar p ψ m = if m = 0 then 0 else ψ (m.sign * (ordCompl[p] m.natAbs : ℕ)) :=
-  mulCharOfInt_intCast
-    (fun n hn ↦ by simpa [hn] using isUnit_apply_sign_mul_ordCompl (ψ := ψ) hN hn) m
+  mulCharOfInt_intCast (fun n hn ↦ by simpa [hn] using isUnit_sign_mul_ordCompl hN hn) m
 
 lemma unitPartChar_intCast (hN : N = p ^ k) {m : ℤ} (hm : ¬(p : ℤ) ∣ m) :
     unitPartChar p ψ m = ψ m := by
