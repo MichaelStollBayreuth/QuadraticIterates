@@ -97,7 +97,7 @@ lemma moebiusFactorK_ne_zero {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) (n : 
 /-- Möbius inversion in the fraction field: `c n = ∏_{d ∣ n} moebiusFactorK c d`. -/
 lemma prod_moebiusFactorK {c : ℕ → R} (hc : ∀ d ≥ 1, c d ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
     algebraMap R K (c n) = ∏ d ∈ n.divisors, moebiusFactorK (K := K) c d :=
-  ((ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_nonzero
+  ((ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_ne_zero
       (f := moebiusFactorK (K := K) c) (g := fun k ↦ algebraMap R K (c k))
       (fun n _ ↦ moebiusFactorK_ne_zero hc n)
       (fun k hk ↦ (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective R K)).mpr (hc k hk))).mpr

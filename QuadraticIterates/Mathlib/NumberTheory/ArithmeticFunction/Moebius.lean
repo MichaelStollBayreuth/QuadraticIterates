@@ -41,7 +41,8 @@ theorem even_card_filter_squarefree_divisors {n : ℕ} (hn : n ≠ 1) :
     Even #{d ∈ n.divisors | Squarefree d} := by
   rw [← ZMod.natCast_eq_zero_iff_even, card_filter, Nat.cast_sum]
   have h := congr(($(moebius_mul_coe_zeta) n : ZMod 2))
-  rw [coe_mul_zeta_apply, one_apply, ite_eq_right hn, Int.cast_sum, Int.cast_zero] at h
+  rw [coe_mul_zeta_apply, ArithmeticFunction.one_apply, ite_eq_right hn, Int.cast_sum,
+    Int.cast_zero] at h
   simpa [intCast_moebius_zmod_two] using h
 
 end ArithmeticFunction

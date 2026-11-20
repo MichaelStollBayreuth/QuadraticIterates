@@ -63,7 +63,7 @@ lemma ZMod.intCast_eight_eq_or_eq_of_emod_four {x c : ℤ} (h : x % 4 = c) :
 lemma ZMod.isUnit_intCast_of_not_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) {m : ℤ}
     (hm : ¬(p : ℤ) ∣ m) :
     IsUnit (m : ZMod N) := by
-  refine (ZMod.coe_int_isUnit_iff_isCoprime m N).mpr ?_
+  refine (ZMod.isUnit_intCast_iff_isCoprime m N).mpr ?_
   rw [hN, Nat.cast_pow]
   exact ((Nat.prime_iff_prime_int.mp Fact.out).coprime_iff_not_dvd.mpr hm).pow_left
 
@@ -72,7 +72,7 @@ unit. -/
 lemma ZMod.not_isUnit_intCast_of_dvd {p N k : ℕ} [Fact p.Prime] (hN : N = p ^ k) (hk : k ≠ 0)
     {m : ℤ} (hm : (p : ℤ) ∣ m) :
     ¬IsUnit (m : ZMod N) := by
-  rw [ZMod.coe_int_isUnit_iff_isCoprime]
+  rw [ZMod.isUnit_intCast_iff_isCoprime]
   refine fun h ↦ Int.Prime.not_dvd_of_isCoprime Fact.out h hm ?_
   rw [hN, Nat.cast_pow]
   exact dvd_pow_self _ hk
@@ -92,7 +92,7 @@ lemma ZMod.intCast_eq_neg_intCast_of_dvd_add {a b : ℤ} {m : ℕ} (h : (m : ℤ
 lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd_add {a b : ℤ} {m : ℕ}
     (hcop : IsCoprime (m : ℤ) a) (h : (m : ℤ) ∣ a + b) : IsUnit (b : ZMod m) := by
   simpa [intCast_eq_neg_intCast_of_dvd_add h] using
-    ((coe_int_isUnit_iff_isCoprime a m).mpr hcop).neg
+    ((isUnit_intCast_iff_isCoprime a m).mpr hcop).neg
 
 /-! ### `ZMod 2`-modules -/
 

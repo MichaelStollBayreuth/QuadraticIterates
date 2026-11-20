@@ -757,9 +757,9 @@ theorem not_isSquare_betaSeq_of_odd_of_dvd_add_two (hg : EvenPoly g) {ε : ℤ} 
   have hn : 2 ≤ n := hk ▸ hk1.trans_le (Nat.le_mul_of_pos_right k (hn' ▸ Nat.radical_pos n))
   have hn'3 : 3 ≤ n' := hn' ▸ three_le_radical_of_odd_dvd (by lia) (Dvd.intro _ hk.symm) hko hk1
   have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ m).mpr hdvd
-  have hu := (ZMod.coe_int_isUnit_iff_isCoprime _ m).mpr
+  have hu := (ZMod.isUnit_intCast_iff_isCoprime _ m).mpr
     (isCoprime_gammaSeq_of_odd_of_dvd_add_two hg hε h0 hko hdvd)
-  have hu1 := (ZMod.coe_int_isUnit_iff_isCoprime _ m).mpr hcop
+  have hu1 := (ZMod.isUnit_intCast_iff_isCoprime _ m).mpr hcop
   simp only [Int.cast_add, intCast_gammaSeq] at hz hu hu1
   refine not_isSquare_betaSeq_of_prod_eq_neg_prod hg hε hγ (by lia) hn' hk one_ne_zero
     (one_mul _).symm (one_mul _).symm (m := m) ?_ ?_ hnsq <;> push_cast [intCast_gammaSeq]

@@ -47,7 +47,7 @@ private lemma exists_inv_of_dvd_vSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N =
     ∃ σ : ZMod N, (s : ZMod N) * σ = 1 ∧
       cSeq ((r : ZMod N) * σ) n + cSeq ((r : ZMod N) * σ) (n + 1) = 0 ∧
       IsUnit (cSeq ((r : ZMod N) * σ) n) := by
-  obtain ⟨σ, hσ⟩ := ((ZMod.coe_int_isUnit_iff_isCoprime s N).mpr
+  obtain ⟨σ, hσ⟩ := ((ZMod.isUnit_intCast_iff_isCoprime s N).mpr
     ((isCoprime_vSeq_right hrs n).of_isCoprime_of_dvd_left hdvd)).exists_right_inv
   have hsum := cSeq_add_cSeq_succ_eq_zero_of_vSeq hσ hn
     ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr hdvd)
@@ -98,7 +98,7 @@ private lemma exists_inv_of_dvd_uSeq (hrs : IsCoprime r s) {N k : ℕ} (hN : N =
     ∃ σ : ZMod N, (s : ZMod N) * σ = 1 ∧
       cSeq ((r : ZMod N) * σ) (n + 2) = -cSeq ((r : ZMod N) * σ) n ∧
       IsUnit (cSeq ((r : ZMod N) * σ) n) ∧ IsUnit (cSeq ((r : ZMod N) * σ) (n + 1)) := by
-  obtain ⟨σ, hσ⟩ := ((ZMod.coe_int_isUnit_iff_isCoprime s N).mpr
+  obtain ⟨σ, hσ⟩ := ((ZMod.isUnit_intCast_iff_isCoprime s N).mpr
     ((isCoprime_uSeq_right hrs hn).of_isCoprime_of_dvd_left hdvd)).exists_right_inv
   refine ⟨σ, hσ, ?_⟩
   set c := cSeq ((r : ZMod N) * σ)

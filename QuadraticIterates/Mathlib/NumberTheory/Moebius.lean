@@ -32,7 +32,8 @@ namespace ArithmeticFunction
 /-- `∑_{d ∣ n} μ d = [n = 1]`: the Möbius function is the Dirichlet inverse of `ζ`. -/
 theorem sum_divisors_moebius (n : ℕ) :
     ∑ d ∈ n.divisors, μ d = if n = 1 then 1 else 0 := by
-  simpa [moebius_mul_coe_zeta, one_apply] using (coe_mul_zeta_apply (f := μ) (x := n)).symm
+  simpa [moebius_mul_coe_zeta, ArithmeticFunction.one_apply] using
+    (coe_mul_zeta_apply (f := μ) (x := n)).symm
 
 theorem sum_divisorsAntidiagonal_moebius_eq_zero {n : ℕ} (hn : 2 ≤ n) :
     ∑ x ∈ n.divisorsAntidiagonal, μ x.1 = 0 := by

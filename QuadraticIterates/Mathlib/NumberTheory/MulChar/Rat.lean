@@ -181,7 +181,8 @@ private lemma isUnit_apply_sign_mul_ordCompl (hN : N = p ^ k) {m : ℤ} (hm : m 
 
 private lemma unitPartChar_intCast_eq (hN : N = p ^ k) (m : ℤ) :
     unitPartChar p ψ m = if m = 0 then 0 else ψ (m.sign * (ordCompl[p] m.natAbs : ℕ)) :=
-  mulCharOfInt_intCast (fun n hn ↦ by simpa [hn] using isUnit_apply_sign_mul_ordCompl hN hn) m
+  mulCharOfInt_intCast
+    (fun n hn ↦ by simpa [hn] using isUnit_apply_sign_mul_ordCompl (ψ := ψ) hN hn) m
 
 lemma unitPartChar_intCast (hN : N = p ^ k) {m : ℤ} (hm : ¬(p : ℤ) ∣ m) :
     unitPartChar p ψ m = ψ m := by
