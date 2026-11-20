@@ -147,10 +147,8 @@ private lemma exists_prime_odd_factorization (h : ¬IsSquare r) (h' : ¬IsSquare
   rw [Int.isSquare_iff_nonneg_even_factorization] at h h'
   push Not at h h'
   rcases le_total 0 r with hr | hr
-  · obtain ⟨p, hp, hodd⟩ := h hr
-    exact ⟨p, hp, Nat.not_even_iff_odd.mp hodd⟩
-  · obtain ⟨p, hp, hodd⟩ := h' (neg_nonneg.mpr hr)
-    exact ⟨p, hp, Nat.not_even_iff_odd.mp (by simpa using hodd)⟩
+  · exact h hr
+  · simpa using h' (neg_nonneg.mpr hr)
 
 /-- An integer `x ≠ ±□` has a prime `q` with `v_q(x)` odd, that is, with `val_q(x) = -1`. -/
 theorem exists_prime_dvd_valChar_eq_neg_one {x : ℤ} (h : ¬IsSquare x) (h' : ¬IsSquare (-x)) :

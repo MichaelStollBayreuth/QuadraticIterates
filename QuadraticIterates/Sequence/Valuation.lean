@@ -71,7 +71,7 @@ theorem padicValRat_cSeq_of_padicValRat_neg {a : ℚ} (ha : padicValRat p a < 0)
 numerator. -/
 private lemma padicValRat_neg_of_dvd_den {q : ℕ} [Fact q.Prime] {a : ℚ} (h : q ∣ a.den) :
     padicValRat q a < 0 := by
-  have h1 := one_le_padicValNat_of_dvd a.den_nz h
+  have h1 := one_le_multiplicity_of_dvd a.den_nz h
   rw [padicValRat_def, (a.num_or_den_zero_padicVal Fact.out).resolve_right (by lia)]
   lia
 
@@ -81,7 +81,7 @@ private lemma padicValRat_neg_of_dvd_den {q : ℕ} [Fact q.Prime] {a : ℚ} (h :
 `QuadraticIterates.neg_le_cSeq_of_le_neg_two` give the signs. -/
 theorem cSeq_ne_zero {a : ℚ} (h₀ : a ≠ 0) (h₁ : a ≠ -1) {n : ℕ} (hn : 1 ≤ n) : cSeq a n ≠ 0 := by
   by_cases hd : a.den = 1
-  · rw [← Rat.coe_int_num_of_den_eq_one hd] at h₀ h₁ ⊢
+  · rw [← Rat.intCast_num_of_den_eq_one hd] at h₀ h₁ ⊢
     rcases (by lia [(mod_cast h₀ : a.num ≠ 0), (mod_cast h₁ : a.num ≠ -1)] :
       0 < a.num ∨ a.num ≤ -2) with h | h
     · rcases hn.eq_or_lt with rfl | hn

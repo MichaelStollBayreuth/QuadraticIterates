@@ -261,7 +261,7 @@ variable {r s : ℤ}
 
 private lemma isUnit_intCast_zmod_natAbs {m x : ℤ} (h : IsCoprime m x) :
     IsUnit (x : ZMod m.natAbs) :=
-  (ZMod.coe_int_isUnit_iff_isCoprime x _).mpr (by rwa [Int.natCast_natAbs, IsCoprime.abs_left_iff])
+  (ZMod.isUnit_intCast_iff_isCoprime x _).mpr (by rwa [Int.natCast_natAbs, IsCoprime.abs_left_iff])
 
 /-- **`m`-periodicity modulo `w_m²`**: for `m ≥ 2` and `k ≥ 1`,
 `w_{mk} ≡ w_m s^{2^{mk-1} - 2^{m-1}} (mod w_m²)`. Modulo `w_m²`, where `s` has an inverse `σ`, the

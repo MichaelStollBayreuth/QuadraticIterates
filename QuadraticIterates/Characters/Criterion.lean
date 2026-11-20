@@ -176,7 +176,7 @@ theorem hasCharPattern_one_iff_of_prod_divisors {K : Type*} [Field K] {u v : ℕ
         rcases hβ d (Nat.pos_of_mem_divisors hd) with h | h <;> simp [h]
     have key (F : ℕ → ℤ) (hF : ∀ n > 0, F n ≠ 0) (hFε : ∀ n > 0, ∏ d ∈ n.divisors, F d = ε n) :
         (F n : ℚ) = ∏ x ∈ n.divisorsAntidiagonal, (ε x.2 : ℚ) ^ μ x.1 :=
-      ((ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_nonzero
+      ((ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_ne_zero
         (fun n hn ↦ Int.cast_ne_zero.mpr (hF n hn)) hε).mp
         (fun n hn ↦ by rw [← Int.cast_prod, hFε n hn]) n hn).symm
     refine Int.cast_injective (α := ℚ) <|

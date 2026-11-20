@@ -85,7 +85,7 @@ theorem bSeq_ne_zero (hc : ∀ n ≥ 1, cSeq a n ≠ 0) (n : ℕ) : bSeq a n ≠
 
 theorem prod_divisors_bSeq (hc : ∀ n ≥ 1, cSeq a n ≠ 0) {n : ℕ} (hn : 1 ≤ n) :
     ∏ d ∈ n.divisors, bSeq a d = cSeq a n :=
-  (ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_nonzero (fun n _ ↦ bSeq_ne_zero hc n)
+  (ArithmeticFunction.prod_eq_iff_prod_pow_moebius_eq_of_ne_zero (fun n _ ↦ bSeq_ne_zero hc n)
     hc).mpr (fun n _ ↦ (bSeq_eq_prod a n).symm) n hn
 
 /-- For squarefree `d`, `b_d` and `∏_{e ∣ d} c_e` have the same square class: all exponents
@@ -247,7 +247,7 @@ private lemma isSquare_den_iff :
   refine forall₂_congr fun p hp ↦ ?_
   rw [Nat.factorization_def _ hp, padicValRat_def]
   rcases Rat.num_or_den_zero_padicVal a hp with h | h <;> simp only [h]
-  · rcases Nat.eq_zero_or_pos (padicValNat p a.den) with h0 | h0 <;> simp [h0]
+  · rcases Nat.eq_zero_or_pos (multiplicity p a.den) with h0 | h0 <;> simp [h0]
   · simp
 
 /-- `v_p(s) = max(0, -v_p(a))` for the denominator `s` of `a`. -/
@@ -255,7 +255,7 @@ private lemma padicValRat_den :
     padicValRat p a.den = if padicValRat p a < 0 then -padicValRat p a else 0 := by
   rw [padicValRat.of_nat, padicValRat_def]
   rcases Rat.num_or_den_zero_padicVal a (Fact.out : p.Prime) with h | h <;> simp only [h]
-  · rcases Nat.eq_zero_or_pos (padicValNat p a.den) with h0 | h0 <;> simp [h0]
+  · rcases Nat.eq_zero_or_pos (multiplicity p a.den) with h0 | h0 <;> simp [h0]
   · simp
 
 /-- The set `D` of the indices `d ≥ 1` at which the Möbius quotient `b_d` has even valuation at
