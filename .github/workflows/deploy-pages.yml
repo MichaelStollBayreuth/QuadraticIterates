@@ -126,6 +126,17 @@ jobs:
             .lake/build/doc-data/*.doc.trace
           key: DocData-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}-${{ hashFiles('lake-manifest.json') }}
 
+      # Without a cache hit (after every Mathlib bump) the documentation build documents Lean core
+      # and every module of the dependencies, and Lake's own process grows to about 100 GB of
+      # virtual memory (1.2 GB resident). The kernel's default heuristic overcommit refuses to fork
+      # a process that size, so Lake can no longer start `git` for the source links: after the bump
+      # to Lean/Mathlib v4.36.0 the build died twice with "resource exhausted (error code: 12, not
+      # enough memory)" while 14 GB were free, and a 16 GB swap file did not help (2026-11-20).
+      # Always allowing overcommit fixes it (`vm.max_map_count` is not involved: 1048576 on the
+      # runner, at most 24k mappings per process).
+      - name: Allow memory overcommit for the documentation build
+        run: sudo sysctl -w vm.overcommit_memory=1
+
       # Last, because it is by far the most expensive step even when the cache above hits.
       - name: Build the API documentation
         run: ~/.elan/bin/lake build QuadraticIterates:docs
